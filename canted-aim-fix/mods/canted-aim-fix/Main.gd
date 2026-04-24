@@ -1,6 +1,7 @@
 extends Node
 
 const _META_LASER_LATCH = "canted_aim_fix_laser_latch"
+const _LASER_SOUND_VOLUME_OFFSET_DB = -12.0
 
 var _lib
 
@@ -36,13 +37,11 @@ func _weapon_handling(h, delta: float) -> void:
 	h.rotation_degrees.z = lerp(h.rotation_degrees.z, h.targetRotation.z, delta * h.handlingSpeed)
 
 	if gd.isClearing:
-		_laser_deactivate(h)
 		h.targetPosition = data.collisionPosition
 		h.targetRotation = data.collisionRotation
 		return
 
 	if collision.is_colliding():
-		_laser_deactivate(h)
 		h.targetPosition = data.collisionPosition
 		h.targetRotation = data.collisionRotation
 		gd.isColliding = true
@@ -53,20 +52,17 @@ func _weapon_handling(h, delta: float) -> void:
 		gd.isColliding = false
 
 	if gd.isPlacing:
-		_laser_deactivate(h)
 		gd.weaponPosition = 1
 		h.targetPosition = data.lowPosition
 		h.targetRotation = data.lowRotation
 		return
 
 	if gd.isInspecting:
-		_laser_deactivate(h)
 		h.targetPosition = data.inspectPosition
 		h.targetRotation = data.inspectRotation
 		return
 
 	if gd.isRunning || gd.isChecking || (gd.isReloading && data.weaponAction != "Manual"):
-		_laser_deactivate(h)
 		if gd.weaponPosition == 1:
 			h.aimToggle = false
 			h.canted = false
@@ -86,9 +82,8 @@ func _weapon_handling(h, delta: float) -> void:
 
 	if gd.aimMode == 1:
 		h.canted = Input.is_action_pressed("canted")
-	elif gd.aimMode == 2:
-		if Input.is_action_just_pressed("canted"):
-			h.canted = !h.canted
+	elif gd.aimMode == 2 && Input.is_action_just_pressed("canted"):
+		h.canted = !h.canted
 
 	if h.canted:
 		if gd.aimMode == 1:
@@ -151,7 +146,9 @@ func _laser_activate(h) -> void:
 	if node == null or node.active:
 		return
 	node.active = true
+	node.raycast.global_position = node.owner.raycast.global_position
 	node.laser.show()
+	_play_laser_quiet(node)
 	h.set_meta(_META_LASER_LATCH, true)
 
 
@@ -164,3 +161,11 @@ func _laser_deactivate(h) -> void:
 		return
 	node.active = false
 	node.laser.hide()
+	_play_laser_quiet(node)
+
+
+func _play_laser_quiet(node) -> void:
+	var audio = node.audioInstance2D.instantiate()
+	node.add_child(audio)
+	audio.PlayInstance(node.audioLibrary.UIClick)
+	audio.volume_db += _LASER_SOUND_VOLUME_OFFSET_DB
