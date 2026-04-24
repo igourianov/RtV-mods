@@ -1,0 +1,11 @@
+[mod]
+name="Likho's Weapon Handling Fixes"
+id="likhos-weapon-handling-fixes"
+version="1.0.0"
+
+[hooks]
+"res://Scripts/Handling.gd"="WeaponHandling"
+"res://Scripts/WeaponRig.gd"="AmmoCheck, ADS"
+
+[autoload]
+LikhosWeaponHandlingFixes="res://mods/likhos-weapon-handling-fixes/Main.gd"

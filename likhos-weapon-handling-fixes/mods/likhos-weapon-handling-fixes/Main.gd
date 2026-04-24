@@ -1,6 +1,6 @@
 extends Node
 
-const _META_LASER_LATCH = "canted_aim_fix_laser_latch"
+const _META_LASER_LATCH = "likho_laser_latch"
 const _LASER_SOUND_VOLUME_OFFSET_DB = -12.0
 
 var _lib
@@ -8,15 +8,16 @@ var _lib
 
 func _ready() -> void:
 	if not Engine.has_meta("RTVModLib"):
-		push_error("[canted-aim-fix] RTVModLib meta not available")
+		push_error("[likho] RTVModLib meta not available")
 		return
 	_lib = Engine.get_meta("RTVModLib")
-	_lib.hook("handling-weaponhandling", _on_replace)
+	_lib.hook("handling-weaponhandling", _on_weapon_handling)
 	_lib.hook("weaponrig-ads-post", _on_ads_post)
-	print("[canted-aim-fix] hooks registered")
+	_lib.hook("weaponrig-ammocheck", _on_ammo_check)
+	print("[likho] hooks registered")
 
 
-func _on_replace(delta: float) -> void:
+func _on_weapon_handling(delta: float) -> void:
 	var h = _lib._caller
 	if h == null:
 		return
@@ -34,6 +35,23 @@ func _on_ads_post(_delta: float) -> void:
 	if rig.slotData == null or rig.slotData.zoom != 1:
 		return
 	rig.gameData.isScoped = true
+
+
+func _on_ammo_check() -> void:
+	var rig = _lib._caller
+	if rig == null:
+		return
+	if rig.gameData.isChecking:
+		_lib.skip_super()
+		return
+	_ammo_check_preserve_position(rig)
+	_lib.skip_super()
+
+
+func _ammo_check_preserve_position(rig) -> void:
+	var prev_position = rig.gameData.weaponPosition
+	await rig._rtv_vanilla_AmmoCheck()
+	rig.gameData.weaponPosition = prev_position
 
 
 func _weapon_handling(h, delta: float) -> void:
@@ -59,7 +77,7 @@ func _weapon_handling(h, delta: float) -> void:
 		gd.isAiming = false
 		gd.isCanted = false
 		return
-		
+
 	gd.isColliding = false
 
 	if gd.isPlacing:
