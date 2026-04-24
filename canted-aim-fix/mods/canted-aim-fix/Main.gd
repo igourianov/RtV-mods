@@ -95,7 +95,7 @@ func _weapon_handling(h, delta: float) -> void:
 			_laser_activate(h)
 		gd.isCanted = true
 		gd.isAiming = false
-		h.targetPosition = data.cantedPosition
+		h.targetPosition = data.cantedPosition - Vector3(0.0, 0.05, 0.0)
 		h.targetRotation = data.cantedRotation
 		return
 
@@ -120,7 +120,7 @@ func _weapon_handling(h, delta: float) -> void:
 	h.targetRotation = data.aimRotation
 
 	if gd.isScoped && gd.PIP:
-		h.targetPosition += Vector3(0.0, 0.0, 0.08)
+		h.targetPosition += Vector3(0.0, 0.0, 0.05)
 
 
 func _find_laser(h) -> Node:
