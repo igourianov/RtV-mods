@@ -92,7 +92,10 @@ func _weapon_handling(h, delta: float) -> void:
 	if gd.aimMode == 2 && Input.is_action_just_pressed("aim"):
 		h.aimToggle = !h.aimToggle
 
-	gd.isAiming = h.aimToggle if gd.aimMode == 2 else Input.is_action_pressed("aim")
+	if gd.aimMode == 2:
+		gd.isAiming = h.aimToggle
+	else:
+		gd.isAiming = Input.is_action_pressed("aim")
 
 	if not gd.isAiming:
 		h.targetPosition = ready_pos
