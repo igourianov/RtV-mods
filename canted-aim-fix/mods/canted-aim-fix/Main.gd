@@ -77,8 +77,11 @@ func _weapon_handling(h, delta: float) -> void:
 			h.targetRotation = data.highRotation
 			return
 
-	if Input.is_action_just_pressed("canted"):
-		h.canted = !h.canted
+	if gd.aimMode == 1:
+		h.canted = Input.is_action_pressed("canted")
+	elif gd.aimMode == 2:
+		if Input.is_action_just_pressed("canted"):
+			h.canted = !h.canted
 
 	if h.canted:
 		gd.isCanted = true
