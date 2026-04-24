@@ -27,7 +27,5 @@ func _on_replace() -> void:
 
 func _wrap_vanilla(rig) -> void:
 	var prev_position = rig.gameData.weaponPosition
-	print("[ammo-check-fix] wrap_vanilla pre, prev=", prev_position)
 	await rig._rtv_vanilla_AmmoCheck()
-	print("[ammo-check-fix] wrap_vanilla post, restoring=", prev_position)
 	rig.gameData.weaponPosition = prev_position
