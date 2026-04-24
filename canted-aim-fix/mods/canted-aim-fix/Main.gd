@@ -12,7 +12,8 @@ func _ready() -> void:
 		return
 	_lib = Engine.get_meta("RTVModLib")
 	_lib.hook("handling-weaponhandling", _on_replace)
-	print("[canted-aim-fix] hook registered for handling-weaponhandling")
+	_lib.hook("weaponrig-ads-post", _on_ads_post)
+	print("[canted-aim-fix] hooks registered")
 
 
 func _on_replace(delta: float) -> void:
@@ -21,6 +22,18 @@ func _on_replace(delta: float) -> void:
 		return
 	_lib.skip_super()
 	_weapon_handling(h, delta)
+
+
+func _on_ads_post(_delta: float) -> void:
+	var rig = _lib._caller
+	if rig == null or not rig.gameData.PIP:
+		return
+	var optic = rig.activeOptic
+	if optic == null or not optic.attachmentData.variable:
+		return
+	if rig.slotData == null or rig.slotData.zoom != 1:
+		return
+	rig.gameData.isScoped = true
 
 
 func _weapon_handling(h, delta: float) -> void:
@@ -106,8 +119,8 @@ func _weapon_handling(h, delta: float) -> void:
 	h.targetPosition = Vector3(0.0, -parent.aimOffset, data.aimPosition.z) if parent.activeOptic else data.aimPosition
 	h.targetRotation = data.aimRotation
 
-	if gd.isScoped && !gd.PIP:
-		h.targetPosition -= Vector3(0.0, 0.0, 0.1)
+	if gd.isScoped && gd.PIP:
+		h.targetPosition += Vector3(0.0, 0.0, 0.08)
 
 
 func _find_laser(h) -> Node:

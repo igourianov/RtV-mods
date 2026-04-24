@@ -5,6 +5,7 @@ version="1.0.0"
 
 [hooks]
 "res://Scripts/Handling.gd"="WeaponHandling"
+"res://Scripts/WeaponRig.gd"="ADS"
 
 [autoload]
 CantedAimFix="res://mods/canted-aim-fix/Main.gd"
