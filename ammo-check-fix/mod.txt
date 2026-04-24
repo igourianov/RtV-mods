@@ -1,0 +1,7 @@
+[mod]
+name="Ammo Check Fix"
+id="ammo-check-fix"
+version="1.0.0"
+
+[autoload]
+AmmoCheckFix="res://mods/ammo-check-fix/Main.gd"
