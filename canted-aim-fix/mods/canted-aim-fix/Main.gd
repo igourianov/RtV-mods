@@ -26,30 +26,28 @@ func _on_replace(delta: float) -> void:
 func _weapon_handling(h, delta: float) -> void:
 	var gd = h.gameData
 	var data = h.data
-	var collision = h.collision
 
 	if gd.freeze:
 		return
 
-	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), delta * h.handlingSpeed)
-	h.rotation_degrees.x = lerp(h.rotation_degrees.x, h.targetRotation.x, delta * h.handlingSpeed)
-	h.rotation_degrees.y = lerp(h.rotation_degrees.y, h.targetRotation.y, delta * h.handlingSpeed)
-	h.rotation_degrees.z = lerp(h.rotation_degrees.z, h.targetRotation.z, delta * h.handlingSpeed)
+	var speed: float = delta * h.handlingSpeed
+	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), speed)
+	h.rotation_degrees = lerp(h.rotation_degrees, h.targetRotation, speed)
 
 	if gd.isClearing:
 		h.targetPosition = data.collisionPosition
 		h.targetRotation = data.collisionRotation
 		return
 
-	if collision.is_colliding():
+	if h.collision.is_colliding():
 		h.targetPosition = data.collisionPosition
 		h.targetRotation = data.collisionRotation
 		gd.isColliding = true
 		gd.isAiming = false
 		gd.isCanted = false
 		return
-	else:
-		gd.isColliding = false
+		
+	gd.isColliding = false
 
 	if gd.isPlacing:
 		gd.weaponPosition = 1
@@ -62,23 +60,17 @@ func _weapon_handling(h, delta: float) -> void:
 		h.targetRotation = data.inspectRotation
 		return
 
+	var ready_pos = data.highPosition if gd.weaponPosition == 2 else data.lowPosition
+	var ready_rot = data.highRotation if gd.weaponPosition == 2 else data.lowRotation
+
 	if gd.isRunning || gd.isChecking || (gd.isReloading && data.weaponAction != "Manual"):
-		if gd.weaponPosition == 1:
-			h.aimToggle = false
-			h.canted = false
-			gd.isAiming = false
-			gd.isCanted = false
-			h.targetPosition = data.lowPosition
-			h.targetRotation = data.lowRotation
-			return
-		elif gd.weaponPosition == 2:
-			h.aimToggle = false
-			h.canted = false
-			gd.isAiming = false
-			gd.isCanted = false
-			h.targetPosition = data.highPosition
-			h.targetRotation = data.highRotation
-			return
+		h.aimToggle = false
+		h.canted = false
+		gd.isAiming = false
+		gd.isCanted = false
+		h.targetPosition = ready_pos
+		h.targetRotation = ready_rot
+		return
 
 	if gd.aimMode == 1:
 		h.canted = Input.is_action_pressed("canted")
@@ -97,33 +89,22 @@ func _weapon_handling(h, delta: float) -> void:
 	_laser_deactivate(h)
 	gd.isCanted = false
 
-	var aiming := false
-	if gd.aimMode == 1:
-		aiming = Input.is_action_pressed("aim")
-	elif gd.aimMode == 2:
-		if Input.is_action_just_pressed("aim"):
-			h.aimToggle = !h.aimToggle
-		aiming = h.aimToggle
+	if gd.aimMode == 2 && Input.is_action_just_pressed("aim"):
+		h.aimToggle = !h.aimToggle
 
-	if aiming:
-		gd.isAiming = true
-		var parent = h.get_parent()
-		if parent.activeOptic:
-			h.targetPosition = Vector3(0.0, 0.0 - parent.aimOffset, data.aimPosition.z)
-		else:
-			h.targetPosition = data.aimPosition
-		h.targetRotation = data.aimRotation
+	gd.isAiming = h.aimToggle if gd.aimMode == 2 else Input.is_action_pressed("aim")
 
-		if gd.isScoped && !gd.PIP:
-			h.targetPosition -= Vector3(0.0, 0.0, 0.1)
-	else:
-		gd.isAiming = false
-		if gd.weaponPosition == 2:
-			h.targetPosition = data.highPosition
-			h.targetRotation = data.highRotation
-		elif gd.weaponPosition == 1:
-			h.targetPosition = data.lowPosition
-			h.targetRotation = data.lowRotation
+	if not gd.isAiming:
+		h.targetPosition = ready_pos
+		h.targetRotation = ready_rot
+		return
+
+	var parent = h.get_parent()
+	h.targetPosition = Vector3(0.0, -parent.aimOffset, data.aimPosition.z) if parent.activeOptic else data.aimPosition
+	h.targetRotation = data.aimRotation
+
+	if gd.isScoped && !gd.PIP:
+		h.targetPosition -= Vector3(0.0, 0.0, 0.1)
 
 
 func _find_laser(h) -> Node:
