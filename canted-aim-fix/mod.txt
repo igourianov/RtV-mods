@@ -1,0 +1,10 @@
+[mod]
+name="Canted Aim Fix"
+id="canted-aim-fix"
+version="1.0.0"
+
+[hooks]
+"res://Scripts/Handling.gd"="WeaponHandling"
+
+[autoload]
+CantedAimFix="res://mods/canted-aim-fix/Main.gd"
