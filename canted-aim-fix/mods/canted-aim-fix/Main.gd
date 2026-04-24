@@ -1,5 +1,7 @@
 extends Node
 
+const _META_LASER_LATCH = "canted_aim_fix_laser_latch"
+
 var _lib
 
 
@@ -34,11 +36,13 @@ func _weapon_handling(h, delta: float) -> void:
 	h.rotation_degrees.z = lerp(h.rotation_degrees.z, h.targetRotation.z, delta * h.handlingSpeed)
 
 	if gd.isClearing:
+		_laser_deactivate(h)
 		h.targetPosition = data.collisionPosition
 		h.targetRotation = data.collisionRotation
 		return
 
 	if collision.is_colliding():
+		_laser_deactivate(h)
 		h.targetPosition = data.collisionPosition
 		h.targetRotation = data.collisionRotation
 		gd.isColliding = true
@@ -49,17 +53,20 @@ func _weapon_handling(h, delta: float) -> void:
 		gd.isColliding = false
 
 	if gd.isPlacing:
+		_laser_deactivate(h)
 		gd.weaponPosition = 1
 		h.targetPosition = data.lowPosition
 		h.targetRotation = data.lowRotation
 		return
 
 	if gd.isInspecting:
+		_laser_deactivate(h)
 		h.targetPosition = data.inspectPosition
 		h.targetRotation = data.inspectRotation
 		return
 
 	if gd.isRunning || gd.isChecking || (gd.isReloading && data.weaponAction != "Manual"):
+		_laser_deactivate(h)
 		if gd.weaponPosition == 1:
 			h.aimToggle = false
 			h.canted = false
@@ -84,12 +91,15 @@ func _weapon_handling(h, delta: float) -> void:
 			h.canted = !h.canted
 
 	if h.canted:
+		if gd.aimMode == 1:
+			_laser_activate(h)
 		gd.isCanted = true
 		gd.isAiming = false
 		h.targetPosition = data.cantedPosition
 		h.targetRotation = data.cantedRotation
 		return
 
+	_laser_deactivate(h)
 	gd.isCanted = false
 
 	var aiming := false
@@ -119,3 +129,38 @@ func _weapon_handling(h, delta: float) -> void:
 		elif gd.weaponPosition == 1:
 			h.targetPosition = data.lowPosition
 			h.targetRotation = data.lowRotation
+
+
+func _find_laser(h) -> Node:
+	var rig = h.get_parent()
+	if rig == null:
+		return null
+	var atts = rig.get("attachments")
+	if atts == null:
+		return null
+	for child in atts.get_children():
+		if child.visible and child.has_method("PlayLaser"):
+			return child
+	return null
+
+
+func _laser_activate(h) -> void:
+	if h.get_meta(_META_LASER_LATCH, false):
+		return
+	var node = _find_laser(h)
+	if node == null or node.active:
+		return
+	node.active = true
+	node.laser.show()
+	h.set_meta(_META_LASER_LATCH, true)
+
+
+func _laser_deactivate(h) -> void:
+	if not h.get_meta(_META_LASER_LATCH, false):
+		return
+	h.set_meta(_META_LASER_LATCH, false)
+	var node = _find_laser(h)
+	if node == null:
+		return
+	node.active = false
+	node.laser.hide()
