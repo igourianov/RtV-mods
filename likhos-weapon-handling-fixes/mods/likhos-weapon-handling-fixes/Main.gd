@@ -35,6 +35,7 @@ func _on_ads_post(_delta: float) -> void:
 	if rig.slotData == null or rig.slotData.zoom != 1:
 		return
 	rig.gameData.isScoped = true
+	optic.camera.fov = rig.gameData.baseFOV - 45
 
 
 func _on_ammo_check() -> void:
