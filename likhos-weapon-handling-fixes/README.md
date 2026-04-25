@@ -52,8 +52,10 @@ In **hold aim mode**, holding canted now also turns the equipped laser sight on;
 
 Picture-in-picture mode renders the world through the scope as a subviewport rather than zooming the main camera. The intent is to feel like you're actually looking through the optic. Two tweaks push that further:
 
-- **Weapon brought closer to your face when aiming through PIP.** The scope mesh sits closer to the camera, so the lens fills more of the view, like a proper cheek-weld to the eyepiece.
-- **Variable scopes behave the same at every magnification.** Vanilla treats 1x on a variable optic as not-scoped: scope depth-of-field blur, the scoped sway profile and a few other "scoped" systems disengage at 1x but engage at 2x and 3x. Toggling magnification flips the entire visual treatment, which is jarring. The mod keeps "scoped" status on at all zoom levels so 1x, 2x and 3x feel consistent.
+- **Weapon brought a bit closer to your face when aiming through PIP.** The scope mesh sits closer to the camera, so the lens fills more of the view, like a proper cheek-weld to the eyepiece.
+- **Variable scopes behave the same at every magnification (realism).** A real variable optic at 1x is still glass in front of your eye, with the same eye relief, the same depth-of-field characteristics and the same hold-still demands as 2x or 3x. Vanilla pretends 1x = no scope: depth-of-field blur, the scoped sway profile and other "scoped" systems disengage at 1x but engage at 2x and 3x, so dialing magnification flips between two completely different visual modes. The mod keeps "scoped" status on at all zoom levels so 1x, 2x and 3x feel like the same optic at different magnifications, the way they would in real life.
+
+> **Mount your scope realistically.** The PIP tweaks are balanced around the scope being mounted at a real-world position: ocular (rear) lens roughly in line with the end of the receiver, as you'd run it on an actual rifle. Sliding the scope too far forward gives you a weird minification effect (the lens shows the world shrunk to a small island in the middle); sliding it too far back puts the camera inside the scope body and you end up looking at the eyepiece interior instead of through it.
 
 ## Compatibility
 
