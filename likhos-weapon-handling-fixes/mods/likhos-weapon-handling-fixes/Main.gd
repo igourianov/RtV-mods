@@ -213,8 +213,8 @@ func _weapon_handling(h, delta: float) -> void:
 		gd.isAiming = false
 		if _preferences != null:
 			gd.lookSensitivity = _preferences.aimSensitivity
-		h.targetPosition = data.cantedPosition - Vector3(0.0, 0.05, 0.0)
-		h.targetRotation = data.cantedRotation
+		h.targetPosition = data.cantedPosition - Vector3(-0.05, 0.05, 0.0)
+		h.targetRotation = data.cantedRotation + Vector3(0.0, 00.0, -20.0)
 		return
 
 	_laser_deactivate(h)
