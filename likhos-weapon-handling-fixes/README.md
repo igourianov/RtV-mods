@@ -38,24 +38,30 @@ In **hold aim mode**, holding canted now also turns the equipped laser sight on;
 Picture-in-picture mode renders the world through the scope as a subviewport rather than zooming the main camera. The intent is to feel like you're actually looking through the optic. Two tweaks push that further:
 
 - **Weapon brought a bit closer to your face when aiming through PIP.** The scope mesh sits closer to the camera, so the lens fills more of the view, like a proper cheek-weld to the eyepiece.
-- **Variable scopes behave the same at every magnification (realism).** A real variable optic at 1x is still glass in front of your eye, with the same eye relief, the same depth-of-field characteristics and the same hold-still demands as 2x or 3x. Vanilla pretends 1x = no scope: depth-of-field blur, the scoped sway profile and other "scoped" systems disengage at 1x but engage at 2x and 3x, so dialing magnification flips between two completely different visual modes. The mod keeps "scoped" status on at all zoom levels so 1x, 2x and 3x feel like the same optic at different magnifications, the way they would in real life.
-- **Magnification dialed back to usable values across the board.** Vanilla pushes way too much zoom on every level: an LPVO ran ~4× / 7× / 23× across its three settings, and prism sights ran at the same ~23×. That's far beyond what you'd field on these optics in real life and it makes them effectively unusable, the slightest hand wobble swings the reticle off-target. The mod tones the LPVO down at all three settings (now roughly 3× / 5× / 14×) and brings prism sights down to a fixed ~7× so they actually function as the intermediate-range optics they're supposed to be.
+- **Realistic eye relief regardless of how the scope is mounted.** Real magnified optics have a narrow eye-relief window: mount the scope too far forward or back on the rail and you'd get scope shadow that vignettes the sight picture down to an unusable speck. Rather than restrict where you can position the scope along the rail, the mod parks the camera at the proper distance behind the rear lens automatically, so the picture through the optic stays clean wherever you've slid the scope.
+- **Main camera FOV no longer narrows when scoped.** Vanilla zooms your overall screen FOV in on top of the PIP magnification, a leftover from the pre-PIP zoom era. The result is that the world *around* the scope ring also shrinks toward the center, which never happens looking through real glass. The mod keeps the main camera at your base FOV so only the inside of the optic magnifies, the way a real scope works.
+- **LPVOs no longer act like red dot at 1x (realism).** A real variable optic at 1x is still glass in front of your eye, with the same eye relief, the same depth-of-field characteristics and the same hold-still demands as 2x or 3x. Vanilla pretends 1x = no scope: depth-of-field blur, the scoped sway profile and other "scoped" systems disengage at 1x but engage at 2x and 3x, so dialing magnification flips between two completely different visual modes. The mod keeps "scoped" status on at all zoom levels so 1x, 2x and 3x feel like the same optic at different magnifications, the way they would in real life.
+- **Magnification range tweaked for usability.** Scope magnification values were nudged down a touch so every setting lands in a comfortable, usable range.
+- **Dynamic depth-of-field tied to magnification.** Vanilla applies a single fixed scope DOF blur regardless of magnification level. Now the blur scales with the optic's magnification: low-power optics get little to no DOF (matching how a 1× sight feels), while higher-magnification scopes get progressively more blur to convey the shallower depth of field a real magnified optic produces. LPVOs at the low end (1× setting) get no scope DOF at all, since they're effectively a red dot at that zoom.
+- **Scope DOF also blurs close objects, not just distant ones.** Vanilla's scope DOF only softens far distances, leaving anything near the camera (the scope body, the weapon receiver, foreground cover) razor-sharp while the background goes soft. Real magnified optics lock focus at the target distance and let *everything* outside that plane fall off, including the foreground. The mod enables near-DOF during PIP scope use so the framing around the optic gently softens too, matching how a magnified optic actually pulls your focus to the target.
 
-> **Mount your scope realistically.** The PIP tweaks are balanced around the scope being mounted at a real-world position: ocular (rear) lens roughly in line with the end of the receiver, as you'd run it on an actual rifle. Sliding the scope too far forward gives you a weird minification effect (the lens shows the world shrunk to a small island in the middle); sliding it too far back puts the camera inside the scope body and you end up looking at the eyepiece interior instead of through it.
-
-### Mouse sensitivity follows the situation
+### Mouse sensitivity scales with zoom
 
 Vanilla picks mouse speed from your **Look / Aim / Scope** sensitivity sliders based on whether you're aiming and scoped. A few cases get the wrong slider; the mod fixes them:
 
 - **Canted aim now uses your Aim sensitivity.** Vanilla flags canted as "not aiming" internally and ends up running the (much faster) Look slider during canted, which makes the pose hard to control. While canted, the mod mirrors your Look slider to your Aim slider; restored on canted exit.
-- **Variable-scope sensitivity scales with magnification.** Tunable optics ran a single Scope slider value across all zoom levels, so 1× and 3× had the same mouse feel even though the apparent angular rate differs by ~5×. Now:
-   - At 1× (~3× magnification): uses the **Aim** slider, since 1× on an LPVO is effectively a red-dot stance.
-   - At 2× (~5× magnification): uses the **Scope** slider, your baseline.
-   - At 3× (~14× magnification): uses **Scope × 0.5**, halved so the high-zoom pose stays controllable.
+- **Variable-scope sensitivity scales with magnification.** Tunable optics ran a single Scope slider value across all zoom levels, so a low-power and high-power setting had the same mouse feel even though the apparent angular rate is very different. Now:
+   - LPVO at the 1× setting uses the **Aim** slider, since it's effectively a red-dot stance.
+   - LPVO at the middle setting uses the **Scope** slider, your baseline.
+   - LPVO at the high setting uses **Scope × 0.5**, halved so the high-zoom pose stays controllable.
 
 Fixed scopes (prism sights, fixed-magnification optics) are untouched, they keep using your Scope slider directly as in vanilla.
 
 Net effect: tune Look / Aim / Scope once and the mod picks the right slider per situation.
+
+## Why this is one mod and not several
+
+These changes started out as separate mods. The catch is that Road to Vostok's scripts have a handful of "god" methods that fold a lot of unrelated behavior into a single function and mix state mutation with rendering side effects in the same call. Hooking a method through the mod loader is all-or-nothing, you can't override only part of a function. So as soon as one fix needed to touch, say, `Handling.WeaponHandling`, every other tweak that also lives in that method had to ship in the same mod or get clobbered by it. That's how the ammo-check, canted, laser and PIP changes ended up bundled together.
 
 ## Requirements
 
@@ -64,9 +70,21 @@ Net effect: tune Look / Aim / Scope once and the mod picks the right slider per 
 
 ## Compatibility
 
-This mod fully replaces two vanilla functions (`Handling.WeaponHandling` and `WeaponRig.AmmoCheck`). Other mods that also try to replace those functions will conflict. Pick one.
+This mod hooks four vanilla methods through Metro Mod Loader:
 
-It also adds a non-replacing tweak after `WeaponRig.ADS` runs. That coexists with other mods cleanly.
+**Full replacements** (other mods that also replace these will conflict, pick one):
+
+- `Handling.WeaponHandling`
+- `WeaponRig.AmmoCheck`
+
+**Post hooks** (additive, run after vanilla, coexist with other mods cleanly):
+
+- `WeaponRig.ADS`
+- `Camera.ScopeDOF`
+
+## Known issues
+
+- **Laser beam doesn't line up with the dot at very close range.** On targets right in front of you the visible beam diverges from the projected dot. This is a vanilla bug, not something the mod introduces. Vanilla simply hid it by having the gun model block the close portion of the beam; this mod's tweaked weapon pose moves the gun out of that path, exposing the misalignment.
 
 ## Install
 
