@@ -8,6 +8,7 @@ const _CLICK_OUT_PATH = "res://mods/likhos-weapon-handling-fixes/click-out.wav"
 var _lib
 var _click_in: AudioStreamWAV
 var _click_out: AudioStreamWAV
+var _preferences: Preferences
 
 
 func _ready() -> void:
@@ -17,6 +18,7 @@ func _ready() -> void:
 	_lib = Engine.get_meta("RTVModLib")
 	_click_in = _load_wav(_CLICK_IN_PATH)
 	_click_out = _load_wav(_CLICK_OUT_PATH)
+	_preferences = Preferences.Load()
 	_lib.hook("handling-weaponhandling", _on_weapon_handling)
 	_lib.hook("weaponrig-ads-post", _on_ads_post)
 	_lib.hook("weaponrig-ammocheck", _on_ammo_check)
@@ -67,10 +69,16 @@ func _on_ads_post(delta: float) -> void:
 		1:
 			rig.gameData.isScoped = true
 			optic.camera.fov = lerp(optic.camera.fov, 25.0, delta * 10.0)
+			if _preferences != null:
+				rig.gameData.scopeSensitivity = _preferences.aimSensitivity
 		2:
 			optic.camera.fov = lerp(optic.camera.fov, 14.0, delta * 10.0)
+			if _preferences != null:
+				rig.gameData.scopeSensitivity = _preferences.scopeSensitivity
 		3:
 			optic.camera.fov = lerp(optic.camera.fov, 5.0, delta * 10.0)
+			if _preferences != null:
+				rig.gameData.scopeSensitivity = _preferences.scopeSensitivity * 0.5
 
 
 
@@ -136,6 +144,7 @@ func _weapon_handling(h, delta: float) -> void:
 		h.canted = false
 		gd.isAiming = false
 		gd.isCanted = false
+		_restore_look_sensitivity(gd)
 		h.targetPosition = ready_pos
 		h.targetRotation = ready_rot
 		return
@@ -150,12 +159,15 @@ func _weapon_handling(h, delta: float) -> void:
 			_laser_activate(h)
 		gd.isCanted = true
 		gd.isAiming = false
+		if _preferences != null:
+			gd.lookSensitivity = _preferences.aimSensitivity
 		h.targetPosition = data.cantedPosition - Vector3(0.0, 0.05, 0.0)
 		h.targetRotation = data.cantedRotation
 		return
 
 	_laser_deactivate(h)
 	gd.isCanted = false
+	_restore_look_sensitivity(gd)
 
 	if gd.aimMode == 2 && Input.is_action_just_pressed("aim"):
 		h.aimToggle = !h.aimToggle
@@ -176,6 +188,11 @@ func _weapon_handling(h, delta: float) -> void:
 
 	if gd.isScoped && gd.PIP:
 		h.targetPosition += Vector3(0.0, 0.0, 0.05)
+
+
+func _restore_look_sensitivity(gd) -> void:
+	if _preferences != null:
+		gd.lookSensitivity = _preferences.lookSensitivity
 
 
 func _find_laser(h) -> Node:

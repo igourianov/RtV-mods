@@ -43,6 +43,20 @@ Picture-in-picture mode renders the world through the scope as a subviewport rat
 
 > **Mount your scope realistically.** The PIP tweaks are balanced around the scope being mounted at a real-world position: ocular (rear) lens roughly in line with the end of the receiver, as you'd run it on an actual rifle. Sliding the scope too far forward gives you a weird minification effect (the lens shows the world shrunk to a small island in the middle); sliding it too far back puts the camera inside the scope body and you end up looking at the eyepiece interior instead of through it.
 
+### Mouse sensitivity follows the situation
+
+Vanilla picks mouse speed from your **Look / Aim / Scope** sensitivity sliders based on whether you're aiming and scoped. A few cases get the wrong slider; the mod fixes them:
+
+- **Canted aim now uses your Aim sensitivity.** Vanilla flags canted as "not aiming" internally and ends up running the (much faster) Look slider during canted, which makes the pose hard to control. While canted, the mod mirrors your Look slider to your Aim slider; restored on canted exit.
+- **Variable-scope sensitivity scales with magnification.** Tunable optics ran a single Scope slider value across all zoom levels, so 1× and 3× had the same mouse feel even though the apparent angular rate differs by ~5×. Now:
+   - At 1× (~3× magnification): uses the **Aim** slider, since 1× on an LPVO is effectively a red-dot stance.
+   - At 2× (~5× magnification): uses the **Scope** slider, your baseline.
+   - At 3× (~14× magnification): uses **Scope × 0.5**, halved so the high-zoom pose stays controllable.
+
+Fixed scopes (prism sights, fixed-magnification optics) are untouched, they keep using your Scope slider directly as in vanilla.
+
+Net effect: tune Look / Aim / Scope once and the mod picks the right slider per situation.
+
 ## Requirements
 
 - Road to Vostok 0.1.1.3 (Godot 4.6.2)
