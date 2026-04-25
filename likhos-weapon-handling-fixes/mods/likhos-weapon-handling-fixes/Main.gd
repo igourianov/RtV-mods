@@ -7,18 +7,13 @@ const _LASER_IN_START = 0.0
 const _LASER_IN_DURATION = 0.015
 const _LASER_OUT_START = 0.120
 const _LASER_OUT_DURATION = 0.0
-const _BASELINE_OPTIC_RAIL_Z = 0.05
-const _SCOPE_Z_OVERRIDES := {
-	"vudu_active": -0.06,
-	"leopard_active": -0.085,
-	"acog_active": -0.015
-}
+const _SCOPE_AIM_OFFSET = -0.05
 
 var _lib
 var _flashlight_stream: AudioStream
 var _preferences: Preferences
 var _current_scope_mag: float = 0.0
-var _ads_log_frame: int = 0
+var _lens_min_z_cache := {}
 
 
 func _ready() -> void:
@@ -49,15 +44,12 @@ func _on_ads_post(delta: float) -> void:
 	var rig = _lib._caller
 	if rig == null || !rig.gameData.PIP || !rig.gameData.isAiming || rig.gameData.isColliding:
 		_current_scope_mag = 0.0
-		_ads_log_frame = 0
 		return
 
 	var optic = rig.activeOptic
 	if optic == null:
 		_current_scope_mag = 0.0
 		return
-
-	_debug_log_optic(optic)
 
 	if optic.attachmentData.scope && !rig.gameData.secondaryOptic:
 		optic.camera.fov = 12
@@ -89,39 +81,24 @@ func _on_ads_post(delta: float) -> void:
 	_current_scope_mag = rig.gameData.baseFOV / max(optic.camera.fov, 1.0)
 
 
-func _optic_key(optic) -> String:
-	if optic.scene_file_path != "":
-		return optic.scene_file_path.get_file().get_basename().to_lower()
-	return optic.name.to_lower()
-
-
-func _optic_lens_local_pos(optic) -> Vector3:
+func _optic_lens_local_min_z(optic) -> float:
+	var key = optic.scene_file_path if optic.scene_file_path != "" else optic.name
+	if _lens_min_z_cache.has(key):
+		return _lens_min_z_cache[key]
 	if optic.mesh == null or optic.mesh.mesh == null:
-		return Vector3.ZERO
+		return 0.0
 	var arrays = optic.mesh.mesh.surface_get_arrays(optic.maskIndex)
 	if arrays.is_empty():
-		return Vector3.ZERO
+		return 0.0
 	var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 	if verts.is_empty():
-		return Vector3.ZERO
+		return 0.0
 	var t = optic.mesh.transform
-	var sum := Vector3.ZERO
+	var min_z = INF
 	for v in verts:
-		sum += t * v
-	return sum / verts.size()
-
-
-func _debug_log_optic(optic) -> void:
-	_ads_log_frame += 1
-	if _ads_log_frame % 30 != 1:
-		return
-	var cam = get_viewport().get_camera_3d()
-	if cam == null:
-		return
-	var cam_z = cam.to_local(optic.global_position).z
-	var lens_world = optic.global_transform * _optic_lens_local_pos(optic)
-	var lens_cam_z = cam.to_local(lens_world).z
-	print("[likho-tune] key=%s  optic.z=%.4f  cam_local_z=%.4f  lens_cam_z=%.4f" % [_optic_key(optic), optic.position.z, cam_z, lens_cam_z])
+		min_z = min(min_z, (t * v).z)
+	_lens_min_z_cache[key] = min_z
+	return min_z
 
 
 func _on_scope_dof_post(_delta: float) -> void:
@@ -239,15 +216,11 @@ func _weapon_handling(h, delta: float) -> void:
 	var parent = h.get_parent()
 	var optic = parent.activeOptic
 	if optic:
-		var aim_z = data.aimPosition.z + (optic.position.z - _BASELINE_OPTIC_RAIL_Z)
-		aim_z += _SCOPE_Z_OVERRIDES.get(_optic_key(optic), 0.0)
+		var aim_z = (optic.transform * Vector3(0, 0, _optic_lens_local_min_z(optic))).z + _SCOPE_AIM_OFFSET
 		h.targetPosition = Vector3(0.0, -parent.aimOffset, aim_z)
 	else:
 		h.targetPosition = data.aimPosition
 	h.targetRotation = data.aimRotation
-
-	if gd.isScoped && gd.PIP:
-		h.targetPosition += Vector3(0.0, 0.0, 0.05)
 
 
 func _restore_look_sensitivity(gd) -> void:
