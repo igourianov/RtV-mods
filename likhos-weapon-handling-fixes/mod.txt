@@ -1,11 +1,12 @@
 [mod]
 name="Likho's Weapon Handling Fixes"
 id="likhos-weapon-handling-fixes"
-version="1.3.136"
+version="1.4.168"
 
 [hooks]
 "res://Scripts/Handling.gd"="WeaponHandling"
 "res://Scripts/WeaponRig.gd"="AmmoCheck, ADS"
+"res://Scripts/Camera.gd"="ScopeDOF"
 
 [autoload]
 LikhosWeaponHandlingFixes="res://mods/likhos-weapon-handling-fixes/Main.gd"
