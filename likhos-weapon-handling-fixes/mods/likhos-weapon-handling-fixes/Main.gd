@@ -8,6 +8,7 @@ const _LASER_IN_DURATION = 0.015
 const _LASER_OUT_START = 0.120
 const _LASER_OUT_DURATION = 0.0
 const _SCOPE_AIM_OFFSET = -0.05
+const _LENS_SCREEN_FRACTION = 0.9
 
 var _lib
 var _flashlight_stream: AudioStream
@@ -52,9 +53,9 @@ func _on_ads_post(delta: float) -> void:
 		return
 
 	if optic.attachmentData.scope && !rig.gameData.secondaryOptic:
-		optic.camera.fov = 12
+		optic.camera.fov = rig.gameData.baseFOV * _LENS_SCREEN_FRACTION / 4.0
 		rig.gameData.aimFOV = rig.gameData.baseFOV
-		_current_scope_mag = rig.gameData.baseFOV / 12.0
+		_current_scope_mag = rig.gameData.baseFOV / max(optic.camera.fov, 1.0)
 		return
 
 	if !optic.attachmentData.variable || rig.slotData == null:
@@ -66,15 +67,15 @@ func _on_ads_post(delta: float) -> void:
 	match rig.slotData.zoom:
 		1:
 			rig.gameData.isScoped = true
-			optic.camera.fov = lerp(optic.camera.fov, 50.0, delta * 10.0)
+			optic.camera.fov = lerp(optic.camera.fov, rig.gameData.baseFOV * _LENS_SCREEN_FRACTION / 1.1, delta * 10.0)
 			if _preferences != null:
 				rig.gameData.scopeSensitivity = _preferences.aimSensitivity
 		2:
-			optic.camera.fov = lerp(optic.camera.fov, 16.0, delta * 10.0)
+			optic.camera.fov = lerp(optic.camera.fov, rig.gameData.baseFOV * _LENS_SCREEN_FRACTION / 3.0, delta * 10.0)
 			if _preferences != null:
 				rig.gameData.scopeSensitivity = _preferences.scopeSensitivity
 		3:
-			optic.camera.fov = lerp(optic.camera.fov, 8.0, delta * 10.0)
+			optic.camera.fov = lerp(optic.camera.fov, rig.gameData.baseFOV * _LENS_SCREEN_FRACTION / 6.0, delta * 10.0)
 			if _preferences != null:
 				rig.gameData.scopeSensitivity = _preferences.scopeSensitivity * 0.5
 
