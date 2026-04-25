@@ -8,7 +8,7 @@ const _LASER_IN_DURATION = 0.015
 const _LASER_OUT_START = 0.120
 const _LASER_OUT_DURATION = 0.0
 const _SCOPE_AIM_OFFSET = -0.05
-const _LENS_SCREEN_FRACTION = 0.9
+const _LENS_SCREEN_FRACTION = 1.0
 
 var _lib
 var _flashlight_stream: AudioStream
