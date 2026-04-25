@@ -22,18 +22,18 @@ Mods live at the repo root, one folder per mod. When modifying behavior, first l
 
 ## Mod structure
 
-Each mod folder is the zippable tree: its contents are what goes at the root of the distributed `.zip` / `.vmz`. Required layout:
+Each mod folder is the zippable tree. Source layout in this repo:
 
 ```
-<mod-id>/                       ← repo root folder = zip root
-├── mod.txt                     ← MUST be at archive root
-└── mods/
-    └── <mod-id>/               ← namespace to avoid collisions
-        ├── Main.gd             ← autoload entry point (registers overrides)
-        └── <OverrideScript>.gd ← extends "res://Scripts/<Original>.gd"
+<mod-id>/                       ← repo root folder
+├── mod.txt                     ← shipped at archive root
+├── README.md                   ← optional, shipped at archive root
+└── Scripts/                    ← namespaced mod scripts
+    ├── Main.gd                 ← autoload entry point (registers overrides)
+    └── <OverrideScript>.gd     ← extends "res://Scripts/<Original>.gd"
 ```
 
-The `id` in `mod.txt` must match the `mods/<mod-id>/` folder name and use only `a-z`, `-`, `_`.
+`build.ps1` ships `mod.txt` and `README.md` at the archive root and packages everything else under `mods/<mod-id>/` preserving relative paths, so `Scripts/Main.gd` becomes `mods/<mod-id>/Scripts/Main.gd` in the archive and resolves at runtime as `res://mods/<mod-id>/Scripts/Main.gd`. The `id` in `mod.txt` must match the source folder name and use only `a-z`, `-`, `_`.
 
 ### `mod.txt` (Godot ConfigFile / INI)
 
@@ -45,7 +45,7 @@ version="1.0.0"
 priority=0                      ; optional, higher loads later
 
 [autoload]
-MyModMain="res://mods/my-mod-id/Main.gd"
+MyModMain="res://mods/my-mod-id/Scripts/Main.gd"
 ```
 
 ### Script override pattern (`[hooks]` + RTVModLib)
@@ -73,10 +73,10 @@ version="1.0.0"
 "res://Scripts/WeaponRig.gd"="AmmoCheck"
 
 [autoload]
-MyMod="res://mods/my-mod-id/Main.gd"
+MyMod="res://mods/my-mod-id/Scripts/Main.gd"
 ```
 
-`mods/<mod-id>/Main.gd`:
+`Scripts/Main.gd` (zipped to `mods/<mod-id>/Scripts/Main.gd`):
 
 ```gdscript
 extends Node
@@ -135,7 +135,7 @@ Two-pass restart: when the mod set changes, the loader generates a new hook pack
 - **`[registry]`**: opt-in to `Database.gd` wrapping; required for `lib.register()` / `lib.override()`.
 - **`.hook("<prefix>-<method>[-pre|-post|-callback]", cb)`**: identical effect to `lib.hook(...)` called on `RTVModLib`; the loader source-scans `.hook()` calls and auto-enrolls the target path in the wrap mask, so `[hooks]` in `mod.txt` is only needed when your hook registration goes through a callback indirection the scanner can't see.
 - **`[script_extend]` / `[script_overrides]`**: declarative `take_over_path`. Works for scripts that aren't preloaded by a game autoload; otherwise use `[hooks]`.
-- **Asset replacement:** drop a file at the matching `res://` path, either inside `mods/<mod-id>/` for namespaced content or at the vanilla path to override.
+- **Asset replacement:** all files are namespaced under `mods/<mod-id>/` by the build, so `Resources/Foo.tres` in source resolves at `res://mods/<mod-id>/Resources/Foo.tres`. To override a vanilla asset at its original path, you'd need to either change the build to ship that file at the archive root, or hook the load site instead.
 - **Autofix:** the loader silently strips `.reload()` calls from mod source and repairs some Godot 3-era syntax. Safe to ignore.
 
 Reference wiki (community, slightly out of date for v3.0.1): https://github.com/ametrocavich/vostok-modding-wiki/wiki

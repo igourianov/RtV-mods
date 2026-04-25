@@ -66,7 +66,7 @@ function Update-ModVersion {
 }
 
 function New-ModZip {
-	param([string]$SourceDir, [string]$ZipPath)
+	param([string]$SourceDir, [string]$ZipPath, [string]$ModId)
 
 	if (Test-Path -LiteralPath $ZipPath) {
 		Remove-Item -LiteralPath $ZipPath -Force
@@ -80,7 +80,12 @@ function New-ModZip {
 	try {
 		Get-ChildItem -LiteralPath $sourceFull -Recurse -File | ForEach-Object {
 			$relative = $_.FullName.Substring($prefixLen).Replace('\', '/')
-			[System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $_.FullName, $relative, $level) | Out-Null
+			if ($relative -eq 'mod.txt' -or $relative -eq 'README.md') {
+				$entry = $relative
+			} else {
+				$entry = "mods/$ModId/$relative"
+			}
+			[System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $_.FullName, $entry, $level) | Out-Null
 		}
 	} finally {
 		$zip.Dispose()
@@ -97,7 +102,7 @@ foreach ($folder in $folders) {
 	$newVersion = Update-ModVersion -ModTxtPath $modTxt
 
 	$zipPath = Join-Path $ModsDir "$($folder.Name).vmz"
-	New-ModZip -SourceDir $folder.FullName -ZipPath $zipPath
+	New-ModZip -SourceDir $folder.FullName -ZipPath $zipPath -ModId $folder.Name
 
 	if ($newVersion) {
 		Write-Host "built: $($folder.Name) v$newVersion -> $zipPath"

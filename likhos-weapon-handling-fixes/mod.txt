@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Weapon Handling Fixes"
 id="likhos-weapon-handling-fixes"
-version="1.5.210"
+version="1.5.213"
 
 [hooks]
 "res://Scripts/Handling.gd"="WeaponHandling"
@@ -9,7 +9,7 @@ version="1.5.210"
 "res://Scripts/Camera.gd"="ScopeDOF"
 
 [autoload]
-LikhosWeaponHandlingFixes="res://mods/likhos-weapon-handling-fixes/Main.gd"
+LikhosWeaponHandlingFixes="res://mods/likhos-weapon-handling-fixes/Scripts/Main.gd"
 
 [updates]
 modworkshop=56366
