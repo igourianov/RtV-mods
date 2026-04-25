@@ -41,6 +41,29 @@ function Get-ModFolders {
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
+function Update-ModVersion {
+	param([string]$ModTxtPath)
+
+	$content = [System.IO.File]::ReadAllText($ModTxtPath)
+	$pattern = '(?m)^(version\s*=\s*")(\d+)\.(\d+)\.(\d+)(")'
+	$m = [regex]::Match($content, $pattern)
+	if (-not $m.Success) {
+		Write-Warning "Skipping version bump: '$ModTxtPath' has no version=`"X.Y.Z`" line."
+		return $null
+	}
+
+	$major = [int]$m.Groups[2].Value
+	$minor = [int]$m.Groups[3].Value
+	$patch = [int]$m.Groups[4].Value + 1
+	$newVersion = "$major.$minor.$patch"
+	$replacement = '${1}' + $newVersion + '${5}'
+	$newContent = [regex]::Replace($content, $pattern, $replacement)
+
+	$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+	[System.IO.File]::WriteAllText($ModTxtPath, $newContent, $utf8NoBom)
+	return $newVersion
+}
+
 function New-ModZip {
 	param([string]$SourceDir, [string]$ZipPath)
 
@@ -69,7 +92,15 @@ if ($folders.Count -eq 0) {
 }
 
 foreach ($folder in $folders) {
+	$modTxt = Join-Path $folder.FullName 'mod.txt'
+	$newVersion = Update-ModVersion -ModTxtPath $modTxt
+
 	$zipPath = Join-Path $ModsDir "$($folder.Name).vmz"
 	New-ModZip -SourceDir $folder.FullName -ZipPath $zipPath
-	Write-Host "built: $($folder.Name) -> $zipPath"
+
+	if ($newVersion) {
+		Write-Host "built: $($folder.Name) v$newVersion -> $zipPath"
+	} else {
+		Write-Host "built: $($folder.Name) -> $zipPath"
+	}
 }
