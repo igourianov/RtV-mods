@@ -130,8 +130,10 @@ func _on_scope_dof_post(_delta: float) -> void:
 	var cam = _lib._caller
 	if cam == null || cam.attribute == null:
 		return
-	cam.attribute.dof_blur_amount = clamp((_current_scope_mag - 2.0) * 0.015, 0.0, 0.3)
-
+	cam.attribute.dof_blur_near_enabled = true
+	cam.attribute.dof_blur_near_distance = 0.04
+	cam.attribute.dof_blur_near_transition = 5.0
+	cam.attribute.dof_blur_amount = clamp((_current_scope_mag - 2.0) * 0.010, 0.0, 0.20)
 
 
 func _on_ammo_check() -> void:
