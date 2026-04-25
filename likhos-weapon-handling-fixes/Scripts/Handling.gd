@@ -7,6 +7,7 @@ const _LASER_IN_DURATION = 0.015
 const _LASER_OUT_START = 0.120
 const _LASER_OUT_DURATION = 0.0
 const _SCOPE_AIM_OFFSET = -0.05
+const _FLASHLIGHT_WAV_PATH = "res://Audio/Interaction/Files/Flashlight.wav"
 
 var _lib
 var _preferences: Preferences
@@ -14,10 +15,12 @@ var _flashlight_stream: AudioStream
 var _lens_min_z_cache := {}
 
 
-func _init(lib, preferences: Preferences, flashlight_stream: AudioStream) -> void:
+func _init(lib, preferences: Preferences) -> void:
 	_lib = lib
 	_preferences = preferences
-	_flashlight_stream = flashlight_stream
+	_flashlight_stream = load(_FLASHLIGHT_WAV_PATH)
+	if _flashlight_stream == null:
+		push_warning("[likho] failed to load %s" % _FLASHLIGHT_WAV_PATH)
 
 
 func on_weapon_handling(delta: float) -> void:
