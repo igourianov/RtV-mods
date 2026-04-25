@@ -44,17 +44,34 @@ func _on_weapon_handling(delta: float) -> void:
 	_weapon_handling(h, delta)
 
 
-func _on_ads_post(_delta: float) -> void:
+func _on_ads_post(delta: float) -> void:
 	var rig = _lib._caller
-	if rig == null or not rig.gameData.PIP:
+	if rig == null || !rig.gameData.PIP:
 		return
+
 	var optic = rig.activeOptic
-	if optic == null or not optic.attachmentData.variable:
+	if optic == null:
 		return
-	if rig.slotData == null or rig.slotData.zoom != 1:
+
+	if optic.attachmentData.scope && !rig.gameData.secondaryOptic:
+		optic.camera.fov = 10
 		return
-	rig.gameData.isScoped = true
-	optic.camera.fov = rig.gameData.baseFOV - 45
+
+	if !optic.attachmentData.variable:
+		return
+
+	if rig.slotData == null:
+		return
+
+	match rig.slotData.zoom:
+		1:
+			rig.gameData.isScoped = true
+			optic.camera.fov = lerp(optic.camera.fov, 25.0, delta * 10.0)
+		2:
+			optic.camera.fov = lerp(optic.camera.fov, 14.0, delta * 10.0)
+		3:
+			optic.camera.fov = lerp(optic.camera.fov, 5.0, delta * 10.0)
+
 
 
 func _on_ammo_check() -> void:
@@ -148,7 +165,7 @@ func _weapon_handling(h, delta: float) -> void:
 	else:
 		gd.isAiming = Input.is_action_pressed("aim")
 
-	if not gd.isAiming:
+	if !gd.isAiming:
 		h.targetPosition = ready_pos
 		h.targetRotation = ready_rot
 		return
@@ -169,7 +186,7 @@ func _find_laser(h) -> Node:
 	if atts == null:
 		return null
 	for child in atts.get_children():
-		if child.visible and child.has_method("PlayLaser"):
+		if child.visible && child.has_method("PlayLaser"):
 			return child
 	return null
 
