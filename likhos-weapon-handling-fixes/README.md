@@ -31,7 +31,7 @@ In **hold aim mode**, holding canted now also turns the equipped laser sight on;
 
 - Only fires in hold mode. Toggle-aim users keep manual laser control as in vanilla.
 - If your laser was already on before you entered canted, the mod leaves it alone, no flicker on release.
-- Placeholder feedback sound: the auto-toggle currently hijacks the UI click effect at reduced volume. A dedicated laser tap sound is planned for a future release.
+- The attachment click sound is split into press (in) and release (out) halves, so holding canted feels like holding a physical button: you hear it click in when you engage and click out when you let go.
 
 ### PIP scope mode: more realistic, more consistent
 

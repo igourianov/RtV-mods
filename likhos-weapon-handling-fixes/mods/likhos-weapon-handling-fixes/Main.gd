@@ -1,9 +1,13 @@
 extends Node
 
 const _META_LASER_LATCH = "likho_laser_latch"
-const _LASER_SOUND_VOLUME_OFFSET_DB = -12.0
+const _LASER_SOUND_VOLUME_DB = -12.0
+const _CLICK_IN_PATH = "res://mods/likhos-weapon-handling-fixes/click-in.wav"
+const _CLICK_OUT_PATH = "res://mods/likhos-weapon-handling-fixes/click-out.wav"
 
 var _lib
+var _click_in: AudioStreamWAV
+var _click_out: AudioStreamWAV
 
 
 func _ready() -> void:
@@ -11,10 +15,25 @@ func _ready() -> void:
 		push_error("[likho] RTVModLib meta not available")
 		return
 	_lib = Engine.get_meta("RTVModLib")
+	_click_in = _load_wav(_CLICK_IN_PATH)
+	_click_out = _load_wav(_CLICK_OUT_PATH)
 	_lib.hook("handling-weaponhandling", _on_weapon_handling)
 	_lib.hook("weaponrig-ads-post", _on_ads_post)
 	_lib.hook("weaponrig-ammocheck", _on_ammo_check)
 	print("[likho] hooks registered")
+
+
+func _load_wav(path: String) -> AudioStreamWAV:
+	var f = FileAccess.open(path, FileAccess.READ)
+	if f == null:
+		push_warning("[likho] failed to open %s" % path)
+		return null
+	var bytes = f.get_buffer(f.get_length())
+	f.close()
+	var stream = AudioStreamWAV.load_from_buffer(bytes)
+	if stream == null:
+		push_warning("[likho] failed to parse wav at %s" % path)
+	return stream
 
 
 func _on_weapon_handling(delta: float) -> void:
@@ -164,7 +183,7 @@ func _laser_activate(h) -> void:
 	node.active = true
 	node.raycast.global_position = node.owner.raycast.global_position
 	node.laser.show()
-	_play_laser_quiet(node)
+	_play_laser_sound(node, _click_in)
 	h.set_meta(_META_LASER_LATCH, true)
 
 
@@ -177,11 +196,16 @@ func _laser_deactivate(h) -> void:
 		return
 	node.active = false
 	node.laser.hide()
-	_play_laser_quiet(node)
+	_play_laser_sound(node, _click_out)
 
 
-func _play_laser_quiet(node) -> void:
+func _play_laser_sound(node, stream: AudioStreamWAV) -> void:
 	var audio = node.audioInstance2D.instantiate()
 	node.add_child(audio)
-	audio.PlayInstance(node.audioLibrary.UIClick)
-	audio.volume_db += _LASER_SOUND_VOLUME_OFFSET_DB
+	if stream != null:
+		audio.stream = stream
+		audio.volume_db = _LASER_SOUND_VOLUME_DB
+		audio.play()
+	else:
+		audio.PlayInstance(node.audioLibrary.UIClick)
+		audio.volume_db += _LASER_SOUND_VOLUME_DB
