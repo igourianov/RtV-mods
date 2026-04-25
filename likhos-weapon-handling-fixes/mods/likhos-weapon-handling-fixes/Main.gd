@@ -2,12 +2,14 @@ extends Node
 
 const _META_LASER_LATCH = "likho_laser_latch"
 const _LASER_SOUND_VOLUME_DB = -12.0
-const _CLICK_IN_PATH = "res://mods/likhos-weapon-handling-fixes/click-in.wav"
-const _CLICK_OUT_PATH = "res://mods/likhos-weapon-handling-fixes/click-out.wav"
+const _FLASHLIGHT_WAV_PATH = "res://Audio/Interaction/Files/Flashlight.wav"
+const _LASER_IN_START = 0.0
+const _LASER_IN_DURATION = 0.015
+const _LASER_OUT_START = 0.120
+const _LASER_OUT_DURATION = 0.0
 
 var _lib
-var _click_in: AudioStreamWAV
-var _click_out: AudioStreamWAV
+var _flashlight_stream: AudioStream
 var _preferences: Preferences
 
 
@@ -16,26 +18,14 @@ func _ready() -> void:
 		push_error("[likho] RTVModLib meta not available")
 		return
 	_lib = Engine.get_meta("RTVModLib")
-	_click_in = _load_wav(_CLICK_IN_PATH)
-	_click_out = _load_wav(_CLICK_OUT_PATH)
+	_flashlight_stream = load(_FLASHLIGHT_WAV_PATH)
+	if _flashlight_stream == null:
+		push_warning("[likho] failed to load %s" % _FLASHLIGHT_WAV_PATH)
 	_preferences = Preferences.Load()
 	_lib.hook("handling-weaponhandling", _on_weapon_handling)
 	_lib.hook("weaponrig-ads-post", _on_ads_post)
 	_lib.hook("weaponrig-ammocheck", _on_ammo_check)
 	print("[likho] hooks registered")
-
-
-func _load_wav(path: String) -> AudioStreamWAV:
-	var f = FileAccess.open(path, FileAccess.READ)
-	if f == null:
-		push_warning("[likho] failed to open %s" % path)
-		return null
-	var bytes = f.get_buffer(f.get_length())
-	f.close()
-	var stream = AudioStreamWAV.load_from_buffer(bytes)
-	if stream == null:
-		push_warning("[likho] failed to parse wav at %s" % path)
-	return stream
 
 
 func _on_weapon_handling(delta: float) -> void:
@@ -217,7 +207,7 @@ func _laser_activate(h) -> void:
 	node.active = true
 	node.raycast.global_position = node.owner.raycast.global_position
 	node.laser.show()
-	_play_laser_sound(node, _click_in)
+	_play_laser_sound(node, _LASER_IN_START, _LASER_IN_DURATION)
 	h.set_meta(_META_LASER_LATCH, true)
 
 
@@ -230,16 +220,22 @@ func _laser_deactivate(h) -> void:
 		return
 	node.active = false
 	node.laser.hide()
-	_play_laser_sound(node, _click_out)
+	_play_laser_sound(node, _LASER_OUT_START, _LASER_OUT_DURATION)
 
 
-func _play_laser_sound(node, stream: AudioStreamWAV) -> void:
+func _play_laser_sound(node, start: float, duration: float) -> void:
 	var audio = node.audioInstance2D.instantiate()
 	node.add_child(audio)
-	if stream != null:
-		audio.stream = stream
+	if _flashlight_stream != null:
+		audio.stream = _flashlight_stream
 		audio.volume_db = _LASER_SOUND_VOLUME_DB
-		audio.play()
+		audio.play(start)
+		if duration > 0.0:
+			var timer = node.get_tree().create_timer(duration, false)
+			timer.timeout.connect(func() -> void:
+				if is_instance_valid(audio):
+					audio.stop()
+			)
 	else:
 		audio.PlayInstance(node.audioLibrary.UIClick)
 		audio.volume_db += _LASER_SOUND_VOLUME_DB
