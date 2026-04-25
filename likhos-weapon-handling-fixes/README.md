@@ -2,21 +2,6 @@
 
 A mod for Road to Vostok that smooths over a few quirks around ammo checking, canted aim and scope positioning.
 
-## Requirements
-
-- Road to Vostok 0.1.1.3 (Godot 4.6.2)
-- [Metro Mod Loader](https://github.com/ametrocavich/vostok-mod-loader/wiki) v3.0.1 or later (separate install, not bundled with the game)
-
-## Install
-
-Drop `likhos-weapon-handling-fixes.vmz` into your game's `mods/` folder. On a default Steam install:
-
-```
-<Steam>\steamapps\common\Road to Vostok\mods\
-```
-
-Launch the game. The mod loader picks it up automatically. The first time you install or update a mod, the loader does a one-shot restart to finish wiring the hooks. After that, no more restarts.
-
 ## What it changes
 
 ### Ammo check no longer forces weapon into raised position (bug fix)
@@ -57,11 +42,26 @@ Picture-in-picture mode renders the world through the scope as a subviewport rat
 
 > **Mount your scope realistically.** The PIP tweaks are balanced around the scope being mounted at a real-world position: ocular (rear) lens roughly in line with the end of the receiver, as you'd run it on an actual rifle. Sliding the scope too far forward gives you a weird minification effect (the lens shows the world shrunk to a small island in the middle); sliding it too far back puts the camera inside the scope body and you end up looking at the eyepiece interior instead of through it.
 
+## Requirements
+
+- Road to Vostok 0.1.1.3 (Godot 4.6.2)
+- [Metro Mod Loader](https://github.com/ametrocavich/vostok-mod-loader/wiki) v3.0.1 or later (separate install, not bundled with the game)
+
 ## Compatibility
 
 This mod fully replaces two vanilla functions (`Handling.WeaponHandling` and `WeaponRig.AmmoCheck`). Other mods that also try to replace those functions will conflict. Pick one.
 
 It also adds a non-replacing tweak after `WeaponRig.ADS` runs. That coexists with other mods cleanly.
+
+## Install
+
+Drop `likhos-weapon-handling-fixes.vmz` into your game's `mods/` folder. On a default Steam install:
+
+```
+<Steam>\steamapps\common\Road to Vostok\mods\
+```
+
+Launch the game. The mod loader picks it up automatically. The first time you install or update a mod, the loader does a one-shot restart to finish wiring the hooks. After that, no more restarts.
 
 ## Uninstall
 
