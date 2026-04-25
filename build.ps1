@@ -2,7 +2,8 @@
 [CmdletBinding()]
 param(
 	[string]$Mod,
-	[string]$ModsDir
+	[string]$ModsDir,
+	[switch]$Launch
 )
 
 $ErrorActionPreference = 'Stop'
@@ -103,4 +104,15 @@ foreach ($folder in $folders) {
 	} else {
 		Write-Host "built: $($folder.Name) -> $zipPath"
 	}
+}
+
+if ($Launch) {
+	$gameDir = Split-Path -Parent $ModsDir
+	$exePath = Join-Path $gameDir 'RTV.exe'
+	if (-not (Test-Path -LiteralPath $exePath)) {
+		throw "Game executable not found: $exePath"
+	}
+	Write-Host "launching: $exePath"
+	Start-Process -FilePath $exePath -WorkingDirectory $gameDir -RedirectStandardOutput 'NUL' 
+	#cmd.exe /c "start `"`" /D `"$gameDir`" `"$exePath`"" *>$null
 }
