@@ -33,7 +33,7 @@ In **hold aim mode**, holding canted now also turns the equipped laser sight on;
 - If your laser was already on before you entered canted, the mod leaves it alone, no flicker on release.
 - The attachment click sound is split into press (in) and release (out) halves, so holding canted feels like holding a physical button: you hear it click in when you engage and click out when you let go.
 
-### PIP scope mode: more realistic, more consistent
+### PIP scope mode: realism
 
 Picture-in-picture mode renders the world through the scope as a subviewport rather than zooming the main camera. The intent is to feel like you're actually looking through the optic. Two tweaks push that further:
 
@@ -63,6 +63,11 @@ The default lowered weapon mode is replaced with much more comfortable patrol mo
 - Applies to all long guns
 - Does not needlessly obstruct view
 - Does not trick you into thinking you can shoot from this mode
+
+### Manual reload (bug fix)
+
+Manual reload (Mosin, 870) now forces user out of the aim (canted or otherwise) and into defaul low position. The animation that opens the bolt was causing clipping issues with Mosin scope.
+It made no sense that vanilla allowed user to reload manual guns while ADSing to begin with.
 
 ## Why this is one mod and not several
 
