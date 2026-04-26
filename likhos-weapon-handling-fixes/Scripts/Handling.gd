@@ -8,6 +8,9 @@ const _LASER_OUT_START = 0.120
 const _LASER_OUT_DURATION = 0.0
 const _SCOPE_AIM_OFFSET = -0.05
 const _FLASHLIGHT_WAV_PATH = "res://Audio/Interaction/Files/Flashlight.wav"
+const _PATROL_POSITION = Vector3(0.06, -0.18, -0.25)
+const _PATROL_ROTATION = Vector3(25, 50, -20)
+const _PATROL_WEAPON_TYPES = {"Rifle": null, "SMG": null, "Bolt": null, "Shotgun": null}
 
 var _lib
 var _preferences: Preferences
@@ -38,6 +41,9 @@ func _weapon_handling(h, delta: float) -> void:
 	if gd.freeze:
 		return
 
+	var lowPosition = _PATROL_POSITION if _PATROL_WEAPON_TYPES.has(data.weaponType) else data.lowPosition
+	var lowRotation = _PATROL_ROTATION if _PATROL_WEAPON_TYPES.has(data.weaponType) else data.lowRotation
+
 	var speed: float = delta * h.handlingSpeed
 	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), speed)
 	h.rotation_degrees = lerp(h.rotation_degrees, h.targetRotation, speed)
@@ -59,8 +65,8 @@ func _weapon_handling(h, delta: float) -> void:
 
 	if gd.isPlacing:
 		gd.weaponPosition = 1
-		h.targetPosition = data.lowPosition
-		h.targetRotation = data.lowRotation
+		h.targetPosition = lowPosition
+		h.targetRotation = lowRotation
 		return
 
 	if gd.isInspecting:
@@ -68,17 +74,18 @@ func _weapon_handling(h, delta: float) -> void:
 		h.targetRotation = data.inspectRotation
 		return
 
-	var ready_pos = data.highPosition if gd.weaponPosition == 2 else data.lowPosition
-	var ready_rot = data.highRotation if gd.weaponPosition == 2 else data.lowRotation
-
 	if gd.isRunning || gd.isChecking || (gd.isReloading && data.weaponAction != "Manual"):
 		h.aimToggle = false
 		h.canted = false
 		gd.isAiming = false
 		gd.isCanted = false
 		_restore_look_sensitivity(gd)
-		h.targetPosition = ready_pos
-		h.targetRotation = ready_rot
+		if gd.weaponPosition == 2:
+			h.targetPosition = data.highPosition
+			h.targetRotation = data.highRotation
+		else:
+			h.targetPosition = lowPosition
+			h.targetRotation = lowRotation
 		return
 
 	if gd.aimMode == 1:
@@ -110,8 +117,12 @@ func _weapon_handling(h, delta: float) -> void:
 		gd.isAiming = Input.is_action_pressed("aim")
 
 	if !gd.isAiming:
-		h.targetPosition = ready_pos
-		h.targetRotation = ready_rot
+		if gd.weaponPosition == 2:
+			h.targetPosition = data.highPosition
+			h.targetRotation = data.highRotation
+		else:
+			h.targetPosition = lowPosition
+			h.targetRotation = lowRotation
 		return
 
 	var parent = h.get_parent()

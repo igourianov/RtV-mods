@@ -57,6 +57,13 @@ Fixed scopes (prism sights) are untouched, they keep using your Scope slider dir
 
 Net effect: tune Look / Aim / Scope once and the mod picks the right slider per situation.
 
+### Patrol mode
+
+The default lowered weapon mode is replaced with much more comfortable patrol mode where rifle rests across your chest.
+- Applies to all long guns
+- Does not needlessly obstruct view
+- Does not trick you into thinking you can shoot from this mode
+
 ## Why this is one mod and not several
 
 These changes started out as separate mods. The catch is that Road to Vostok's scripts have a handful of "god" methods that fold a lot of unrelated behavior into a single function and mix state mutation with rendering side effects in the same call. Hooking a method through the mod loader is all-or-nothing, you can't override only part of a function. So as soon as one fix needed to touch, say, `Handling.WeaponHandling`, every other tweak that also lives in that method had to ship in the same mod or get clobbered by it. That's how the ammo-check, canted, laser and PIP changes ended up bundled together.
