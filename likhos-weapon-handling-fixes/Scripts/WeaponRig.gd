@@ -29,6 +29,8 @@ func _ammo_check_preserve_position(rig) -> void:
 
 func on_ads_post(delta: float) -> void:
 	var rig = _lib._caller
+	if !rig.gameData.PIP:
+		return
 	if rig == null || !rig.gameData.PIP || !rig.gameData.isAiming || rig.gameData.isColliding:
 		current_scope_mag = 0.0
 		return
