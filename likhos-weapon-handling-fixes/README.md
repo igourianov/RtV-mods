@@ -1,8 +1,19 @@
 # Likho's Weapon Handling Fixes
 
-A mod for Road to Vostok that smooths over a few quirks around ammo checking, canted aim and scope positioning.
+A mod for Road to Vostok that fixes several weapon handling bugs and adds realism features.
 
-## What it changes
+### Features
+* Major rework of the PIP scope mode for realism
+* Canted aim is now a separate action, and auto-activates equipped laser
+* Mouse senitivity scales with zoom
+* Default weapon position changed into patrol mode
+
+### Fixes
+* Fixed ammo check stamina drain
+* Fixed Canted aim toggle blocked by interactables
+* Fixed clipping issues when reloading manual guns
+
+# Detailed changes
 
 ### Ammo check no longer forces weapon into raised position (bug fix)
 
@@ -24,6 +35,8 @@ This mod makes canted independent:
 - Canted respects your aim-mode setting (hold vs toggle), separately from the aim button.
 - Sprinting, reloading or doing an ammo check cancels canted, mirroring how those cancel aim-toggle.
 - The canted weapon pose is nudged slightly down so the gun obscures less of the upper screen.
+
+I recommend rebinding Canted aim to a mouse side button fom the default MMB.
 
 ### Canted-hold auto-activates the laser
 
@@ -69,20 +82,20 @@ The default lowered weapon mode is replaced with much more comfortable patrol mo
 Manual reload (Mosin, 870) now forces user out of the aim (canted or otherwise) and into defaul low position. The animation that opens the bolt was causing clipping issues with Mosin scope.
 It made no sense that vanilla allowed user to reload manual guns while ADSing to begin with.
 
-## Why this is one mod and not several
+# Why this is one mod and not several
 
 These changes started out as separate mods. The catch is that Road to Vostok's scripts have a handful of "god" methods that fold a lot of unrelated behavior into a single function and mix state mutation with rendering side effects in the same call. Hooking a method through the mod loader is all-or-nothing, you can't override only part of a function. So as soon as one fix needed to touch, say, `Handling.WeaponHandling`, every other tweak that also lives in that method had to ship in the same mod or get clobbered by it. That's how the ammo-check, canted, laser and PIP changes ended up bundled together.
 
-## Known issues
+# Known issues
 
 - **Laser beam doesn't line up with the dot at very close range.** On targets right in front of you the visible beam diverges from the projected dot. This is a vanilla bug, not something the mod introduces. Vanilla simply hid it by having the gun model block the close portion of the beam; this mod's tweaked weapon pose moves the gun out of that path, exposing the misalignment.
 
-## Requirements
+# Requirements
 
 - Road to Vostok 0.1.1.3 (Godot 4.6.2)
 - [Metro Mod Loader](https://github.com/ametrocavich/vostok-mod-loader/wiki) v3.0.1 or later (separate install, not bundled with the game)
 
-## Compatibility
+# Compatibility
 
 This mod hooks four vanilla methods through Metro Mod Loader:
 
@@ -96,7 +109,7 @@ This mod hooks four vanilla methods through Metro Mod Loader:
 - `WeaponRig.ADS`
 - `Camera.ScopeDOF`
 
-## Install
+# Install / Uninstall
 
 Drop `likhos-weapon-handling-fixes.vmz` into your game's `mods/` folder. On a default Steam install:
 
@@ -106,6 +119,4 @@ Drop `likhos-weapon-handling-fixes.vmz` into your game's `mods/` folder. On a de
 
 Launch the game. The mod loader picks it up automatically. The first time you install or update a mod, the loader does a one-shot restart to finish wiring the hooks. After that, no more restarts.
 
-## Uninstall
-
-Delete `likhos-weapon-handling-fixes.vmz` from the `mods/` folder and relaunch the game.
+To uninstall simply delete `likhos-weapon-handling-fixes.vmz` from the `mods/` folder and relaunch the game.
