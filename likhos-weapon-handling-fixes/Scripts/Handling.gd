@@ -74,6 +74,13 @@ func _weapon_handling(h, delta: float) -> void:
 		h.targetRotation = data.inspectRotation
 		return
 
+	if gd.isInserting:
+		h.targetPosition = data.lowPosition 
+		h.targetRotation = data.lowRotation
+		gd.isAiming = false
+		gd.isCanted = false
+		return
+
 	if gd.isRunning || gd.isChecking || (gd.isReloading && data.weaponAction != "Manual"):
 		h.aimToggle = false
 		h.canted = false
@@ -130,10 +137,10 @@ func _weapon_handling(h, delta: float) -> void:
 	if optic && (optic.attachmentData.scope || optic.attachmentData.variable) && gd.PIP:
 		var aim_z = (optic.transform * Vector3(0, 0, _optic_lens_local_min_z(optic))).z + _SCOPE_AIM_OFFSET
 		h.targetPosition = Vector3(0.0, -parent.aimOffset, aim_z)
-	elif optic:
+			elif optic:
 		h.targetPosition = Vector3(0.0, -parent.aimOffset, data.aimPosition.z)
 		if gd.isScoped:
-			h.targetPosition -= Vector3(0.0, 0.0, 0.1)
+			h.targetPosition += Vector3(0.0, 0.0, -0.1)
 	else:
 		h.targetPosition = data.aimPosition
 	h.targetRotation = data.aimRotation
