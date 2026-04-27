@@ -69,6 +69,15 @@ func on_ammo_check_post() -> void:
 func on_ads_post(delta: float) -> void:
 	var rig = _lib._caller
 	active_rig = rig
+
+	# Vanilla leaves gameData.secondaryOptic set when the active optic changes outside
+	# the Inspect attach/detach path. The next optic's _physics_process then disables
+	# its PIP surface and never re-enables it.
+	if rig.gameData.secondaryOptic:
+		var current = rig.activeOptic
+		if current == null or not current.attachmentData.secondary or current.secondary == null:
+			rig.gameData.secondaryOptic = false
+
 	if !rig.gameData.PIP:
 		return
 	if rig == null || !rig.gameData.PIP || !rig.gameData.isAiming || rig.gameData.isColliding:
