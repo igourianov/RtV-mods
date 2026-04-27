@@ -3,6 +3,7 @@ extends RefCounted
 var _lib
 var _preferences: Preferences
 var current_scope_mag: float = 0.0
+var active_rig: WeaponRig
 var _ammo_check_saved_position: int = 0
 
 
@@ -27,6 +28,7 @@ func on_ammo_check_post() -> void:
 
 func on_ads_post(delta: float) -> void:
 	var rig = _lib._caller
+	active_rig = rig
 	if !rig.gameData.PIP:
 		return
 	if rig == null || !rig.gameData.PIP || !rig.gameData.isAiming || rig.gameData.isColliding:

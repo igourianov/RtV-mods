@@ -32,7 +32,7 @@ func _init_hooks(lib):
 	_weapon_rig = _WeaponRig.new(lib, preferences)
 	_handling = _Handling.new(lib, preferences)
 	_camera = _Camera.new(lib, _weapon_rig)
-	_controller = _Controller.new(lib, preferences)
+	_controller = _Controller.new(lib, _weapon_rig, preferences)
 	_noise = _Noise.new(lib, preferences)
 	_tilt = _Tilt.new(lib)
 
