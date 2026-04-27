@@ -18,4 +18,4 @@ func on_scope_dof_post(_delta: float) -> void:
 	cam.attribute.dof_blur_near_enabled = true
 	cam.attribute.dof_blur_near_distance = 0.04
 	cam.attribute.dof_blur_near_transition = 5.0
-	cam.attribute.dof_blur_amount = clamp((_weapon_rig.current_scope_mag - 2.0) * 0.010, 0.0, 0.20)
+	cam.attribute.dof_blur_amount = clamp((_weapon_rig.current_scope_mag - 2.0) * 0.03, 0.0, 0.20)
