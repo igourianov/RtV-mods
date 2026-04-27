@@ -6,6 +6,7 @@ A mod for Road to Vostok that fixes several weapon handling bugs and adds realis
 * Major rework of the PIP scope mode for realism
 * Canted aim is now a separate action, and auto-activates equipped laser
 * Mouse senitivity scales with zoom
+* Movement speeds rework
 * Default weapon position changed into patrol mode
 
 ### Fixes
@@ -69,6 +70,14 @@ Vanilla picks mouse speed from your **Look / Aim / Scope** sensitivity sliders b
 Fixed scopes (prism sights) are untouched, they keep using your Scope slider directly as in vanilla.
 
 Net effect: tune Look / Aim / Scope once and the mod picks the right slider per situation.
+
+### Movement speed rework
+
+Rescaled movement speeds and added new break points.
+
+**Vanilla:** crouch/walk/sprint = 1 / 2.5 / 5
+
+**New:** crouch/walk/sprint/walk-canted/walk-scoped = 0.7 / 3 / 7 / 2.25 / 1.8 
 
 ### Patrol mode
 
