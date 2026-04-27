@@ -1,11 +1,11 @@
 [mod]
 name="Likho's Weapon Handling Fixes"
 id="likhos-weapon-handling-fixes"
-version="1.7.324"
+version="1.7.328"
 
 [hooks]
 "res://Scripts/Handling.gd"="WeaponHandling"
-"res://Scripts/WeaponRig.gd"="AmmoCheck, ADS"
+"res://Scripts/WeaponRig.gd"="AmmoCheck, ADS, _input"
 "res://Scripts/Camera.gd"="ScopeDOF"
 "res://Scripts/Controller.gd"="MovementStates"
 "res://Scripts/Noise.gd"="_physics_process"

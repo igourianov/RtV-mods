@@ -12,6 +12,46 @@ func _init(lib, preferences: Preferences) -> void:
 	_preferences = preferences
 
 
+func on_input_pre(event) -> void:
+	var rig = _lib._caller
+	if rig == null:
+		return
+
+	var gd = rig.gameData
+
+	if (gd.freeze
+		|| gd.isPlacing
+		|| gd.isReloading
+		|| gd.isInserting
+		|| gd.isChecking
+		|| gd.isCaching
+		|| gd.isTransitioning
+		|| gd.isFiring):
+		return
+
+	if Input.is_action_pressed("rail_movement"):
+		return
+	if gd.isInspecting:
+		return
+	if gd.isAiming:
+		return
+
+	if not (event is InputEventMouseButton and event.is_pressed()):
+		return
+
+	var optic = rig.activeOptic
+	if optic == null or not optic.attachmentData.variable:
+		return
+
+	var slotData = rig.slotData
+	if event.button_index == MOUSE_BUTTON_WHEEL_UP and slotData.zoom != 3:
+		slotData.zoom += 1
+		rig.PlayRailMove()
+	elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN and slotData.zoom != 1:
+		slotData.zoom -= 1
+		rig.PlayRailMove()
+
+
 func on_ammo_check_pre() -> void:
 	var rig = _lib._caller
 	if rig == null:
