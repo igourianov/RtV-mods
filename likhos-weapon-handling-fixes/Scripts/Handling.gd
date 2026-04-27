@@ -8,6 +8,7 @@ const _LASER_OUT_START = 0.120
 const _LASER_OUT_DURATION = 0.0
 const _FIXED_SCOPE_AIM_OFFSET = -0.035
 const _VARIABLE_SCOPE_AIM_OFFSET = -0.05
+const _SECONDARY_OPTIC_Y_OFFSET = 0.005
 const _FLASHLIGHT_WAV_PATH = "res://Audio/Interaction/Files/Flashlight.wav"
 const _PATROL_POSITION = Vector3(0.06, -0.18, -0.25)
 const _PATROL_ROTATION = Vector3(25, 50, -20)
@@ -135,14 +136,16 @@ func _weapon_handling(h, delta: float) -> void:
 
 	var parent = h.get_parent()
 	var optic = parent.activeOptic
-	if optic && gd.PIP && optic.attachmentData.scope:
+	if optic && gd.PIP && optic.attachmentData.scope && !gd.secondaryOptic:
 		var aim_z = _optic_lens_aim_z(optic) + _FIXED_SCOPE_AIM_OFFSET
 		h.targetPosition = Vector3(0.0, -parent.aimOffset, aim_z)
-	elif optic && gd.PIP && optic.attachmentData.variable:
+	elif optic && gd.PIP && optic.attachmentData.variable && !gd.secondaryOptic:
 		var aim_z = _optic_lens_aim_z(optic) + _VARIABLE_SCOPE_AIM_OFFSET
 		h.targetPosition = Vector3(0.0, -parent.aimOffset, aim_z)
 	elif optic:
 		h.targetPosition = Vector3(0.0, -parent.aimOffset, data.aimPosition.z)
+		if gd.secondaryOptic:
+			h.targetPosition.y += _SECONDARY_OPTIC_Y_OFFSET
 		if gd.isScoped:
 			h.targetPosition += Vector3(0.0, 0.0, -0.1)
 	else:
