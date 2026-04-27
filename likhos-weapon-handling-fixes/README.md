@@ -77,7 +77,9 @@ Rescaled movement speeds and added new break points.
 
 **Vanilla:** crouch/walk/sprint = 1 / 2.5 / 5
 
-**New:** crouch/walk/sprint/walk-canted/walk-scoped = 0.7 / 3 / 7 / 2.25 / 1.8 
+**Updated:** crouch/walk/sprint = 0.7 / 3 / 7
+
+**New:** walk-canted/walk-aiming-1x/walk-scoped = 2.25 / 1.8 / 0.7
 
 ### Patrol mode
 
