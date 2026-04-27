@@ -135,17 +135,12 @@ func _weapon_handling(h, delta: float) -> void:
 
 	var parent = h.get_parent()
 	var optic = parent.activeOptic
-	if optic && gd.PIP:
-		if optic.attachmentData.scope:
-			var aim_z = _optic_lens_aim_z(optic) + _FIXED_SCOPE_AIM_OFFSET
-			h.targetPosition = Vector3(0.0, -parent.aimOffset, aim_z)
-		elif optic.attachmentData.variable:
-			var aim_z = _optic_lens_aim_z(optic) + _VARIABLE_SCOPE_AIM_OFFSET
-			h.targetPosition = Vector3(0.0, -parent.aimOffset, aim_z)
-		else:
-			h.targetPosition = Vector3(0.0, -parent.aimOffset, data.aimPosition.z)
-			if gd.isScoped:
-				h.targetPosition += Vector3(0.0, 0.0, -0.1)
+	if optic && gd.PIP && optic.attachmentData.scope:
+		var aim_z = _optic_lens_aim_z(optic) + _FIXED_SCOPE_AIM_OFFSET
+		h.targetPosition = Vector3(0.0, -parent.aimOffset, aim_z)
+	elif optic && gd.PIP && optic.attachmentData.variable:
+		var aim_z = _optic_lens_aim_z(optic) + _VARIABLE_SCOPE_AIM_OFFSET
+		h.targetPosition = Vector3(0.0, -parent.aimOffset, aim_z)
 	elif optic:
 		h.targetPosition = Vector3(0.0, -parent.aimOffset, data.aimPosition.z)
 		if gd.isScoped:
