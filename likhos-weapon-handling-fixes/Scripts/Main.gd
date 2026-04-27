@@ -38,7 +38,8 @@ func _init_hooks(lib):
 
 	var hooks: Array[int] = [
 		_register_hook(lib, "handling-weaponhandling", _handling.on_weapon_handling),
-		_register_hook(lib, "weaponrig-ammocheck", _weapon_rig.on_ammo_check),
+		_register_hook(lib, "weaponrig-ammocheck-pre", _weapon_rig.on_ammo_check_pre),
+		_register_hook(lib, "weaponrig-ammocheck-post", _weapon_rig.on_ammo_check_post),
 		_register_hook(lib, "weaponrig-ads-post", _weapon_rig.on_ads_post),
 		_register_hook(lib, "camera-scopedof-post", _camera.on_scope_dof_post),
 		_register_hook(lib, "controller-movementstates-pre", _controller.on_movement_states_pre),

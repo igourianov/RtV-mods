@@ -3,6 +3,7 @@ extends RefCounted
 var _lib
 var _preferences: Preferences
 var current_scope_mag: float = 0.0
+var _ammo_check_saved_position: int = 0
 
 
 func _init(lib, preferences: Preferences) -> void:
@@ -10,21 +11,18 @@ func _init(lib, preferences: Preferences) -> void:
 	_preferences = preferences
 
 
-func on_ammo_check() -> void:
+func on_ammo_check_pre() -> void:
 	var rig = _lib._caller
 	if rig == null:
 		return
-	if rig.gameData.isChecking:
-		_lib.skip_super()
+	_ammo_check_saved_position = rig.gameData.weaponPosition
+
+
+func on_ammo_check_post() -> void:
+	var rig = _lib._caller
+	if rig == null:
 		return
-	_ammo_check_preserve_position(rig)
-	_lib.skip_super()
-
-
-func _ammo_check_preserve_position(rig) -> void:
-	var prev_position = rig.gameData.weaponPosition
-	await rig._rtv_vanilla_AmmoCheck()
-	rig.gameData.weaponPosition = prev_position
+	rig.gameData.weaponPosition = _ammo_check_saved_position
 
 
 func on_ads_post(delta: float) -> void:
