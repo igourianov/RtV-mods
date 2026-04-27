@@ -51,7 +51,7 @@ In **hold aim mode**, holding canted now also turns the equipped laser sight on;
 
 Picture-in-picture mode renders the world through the scope as a subviewport rather than zooming the main camera. The intent is to feel like you're actually looking through the optic. Two tweaks push that further:
 
-- **Realistic eye relief regardless of how the scope is mounted.** Real magnified optics have a narrow eye-relief window: mount the scope too far forward or back on the rail and you'd get scope shadow that vignettes the sight picture down to an unusable speck. Rather than restrict where you can position the scope along the rail, the mod parks the camera at the proper distance behind the rear lens automatically, so the picture through the optic stays clean wherever you've slid the scope.
+- **Realistic eye relief.** Real magnified optics have a narrow eye-relief window. The mod parks the camera at the proper distance behind the rear lens automatically, so the sight picture stays clean regardless of scope positioning. Eye relief: LPVOs 5cm, fixed scopes 3.5cm.
 - **Main camera FOV no longer narrows when scoped.** Vanilla zooms your overall screen FOV in on top of the PIP magnification, a leftover from the pre-PIP zoom era. The result is that the world *around* the scope ring also shrinks toward the center, which never happens looking through real glass. The mod keeps the main camera at your base FOV so only the inside of the optic magnifies, the way a real scope works.
 - **LPVOs stay "scoped" at 1x.** Vanilla flips DOF blur, scope sway and other scoped systems off at 1x and back on at higher zoom, so dialing magnification toggles between two different visual modes. A real LPVO is glass in front of your eye at every setting; the mod keeps scoped status on across all zoom levels so all three feel like the same optic at different magnifications.
 - **Magnification dialed to real-world values.** Prism sights (HAMR, ACOG) sit at a fixed 4x. LPVOs (Leupold, VUDU) step through 1.1x, 3x and 6x across their low/mid/high settings, in line with the variable optics they're modeled on.
@@ -119,7 +119,7 @@ This mod hooks six vanilla methods and their variants through Metro Mod Loader:
 - `Camera.ScopeDOF` (post)
 - `Controller.MovementStates` (pre and post)
 - `Noise._physics_process` (post)
-- `Tilt._physics_process` (pre only)
+- `Tilt._physics_process` (pre)
 
 # Install / Uninstall
 
