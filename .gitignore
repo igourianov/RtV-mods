@@ -1,2 +1,4 @@
 src/
 build.config.json
+Godot/
+*.uid
