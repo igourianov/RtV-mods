@@ -8,23 +8,26 @@ A mod for Road to Vostok that fixes several weapon handling bugs and adds realis
 * Mouse senitivity scales with zoom
 * Movement speeds rework
 * Default weapon position changed into patrol mode
+* Change LPVO zoom without aiming
 
 ### Fixes
 * Fixed ammo check stamina drain
 * Fixed Canted aim toggle blocked by interactables
 * Fixed clipping issues when reloading manual guns
+* Fixed HAMR secondary optic permanently breaking other scopes in PIP mode
+* Fixed HAMR secondary optic vertical offset
 
 # Detailed changes
 
-### Ammo check no longer forces weapon into raised position (bug fix)
+### PIP scope mode: realism
 
-Vanilla bug: after an ammo check, the weapon snaps to the raised position regardless of whether you were carrying it raised or lowered before the check.
-Fix: the weapon's prior raised/lowered state is captured before the check and restored after, so you stay in whichever stance you were in.
+Picture-in-picture mode renders the world through the scope as a subviewport rather than zooming the main camera. The intent is to feel like you're actually looking through the optic. Two tweaks push that further:
 
-### Canted no longer blocked while looking at an interactable (bug fix)
-
-Vanilla bug: pointing at an interactable (door, item, container) silently disables the canted toggle until you look away. Nothing in the UI hints at this and it's easy to think the keybind is broken.
-Fix: the interaction gate on canted is removed, so canted toggles regardless of what you're looking at.
+- **Realistic eye relief.** Real magnified optics have a narrow eye-relief window. The mod parks the camera at the proper distance behind the rear lens automatically, so the sight picture stays clean regardless of scope positioning. Eye relief: LPVOs 5cm, fixed scopes 3.5cm.
+- **Main camera FOV no longer narrows when scoped.** Vanilla zooms your overall screen FOV in on top of the PIP magnification, a leftover from the pre-PIP zoom era. The result is that the world *around* the scope ring also shrinks toward the center, which never happens looking through real glass. The mod keeps the main camera at your base FOV so only the inside of the optic magnifies, the way a real scope works.
+- **LPVOs stay "scoped" at 1x.** Vanilla flips DOF blur, scope sway and other scoped systems off at 1x and back on at higher zoom, so dialing magnification toggles between two different visual modes. A real LPVO is glass in front of your eye at every setting; the mod keeps scoped status on across all zoom levels so all three feel like the same optic at different magnifications.
+- **Magnification dialed to real-world values.** Prism sights (HAMR, ACOG) sit at a fixed 4x. LPVOs (Leupold, VUDU) step through 1.1x, 3x and 6x across their low/mid/high settings, in line with the variable optics they're modeled on.
+- **Scope depth-of-field reworked.** Vanilla applies a single fixed blur to far distances only, regardless of magnification, leaving anything close to the camera (scope body, receiver, foreground cover) razor-sharp. The mod scales DOF intensity with magnification (1× LPVO setting gets none, higher zoom gets progressively more) and enables near-DOF too, so the foreground softens alongside the background. The result feels closer to how a real magnified optic locks focus at the target distance and lets everything else fall off.
 
 ### Canted aim is its own action
 
@@ -46,16 +49,6 @@ In **hold aim mode**, holding canted now also turns the equipped laser sight on;
 - Only fires in hold mode. Toggle-aim users keep manual laser control as in vanilla.
 - If your laser was already on before you entered canted, the mod leaves it alone, no flicker on release.
 - The attachment click sound is split into press (in) and release (out) halves, so holding canted feels like holding a physical button: you hear it click in when you engage and click out when you let go.
-
-### PIP scope mode: realism
-
-Picture-in-picture mode renders the world through the scope as a subviewport rather than zooming the main camera. The intent is to feel like you're actually looking through the optic. Two tweaks push that further:
-
-- **Realistic eye relief.** Real magnified optics have a narrow eye-relief window. The mod parks the camera at the proper distance behind the rear lens automatically, so the sight picture stays clean regardless of scope positioning. Eye relief: LPVOs 5cm, fixed scopes 3.5cm.
-- **Main camera FOV no longer narrows when scoped.** Vanilla zooms your overall screen FOV in on top of the PIP magnification, a leftover from the pre-PIP zoom era. The result is that the world *around* the scope ring also shrinks toward the center, which never happens looking through real glass. The mod keeps the main camera at your base FOV so only the inside of the optic magnifies, the way a real scope works.
-- **LPVOs stay "scoped" at 1x.** Vanilla flips DOF blur, scope sway and other scoped systems off at 1x and back on at higher zoom, so dialing magnification toggles between two different visual modes. A real LPVO is glass in front of your eye at every setting; the mod keeps scoped status on across all zoom levels so all three feel like the same optic at different magnifications.
-- **Magnification dialed to real-world values.** Prism sights (HAMR, ACOG) sit at a fixed 4x. LPVOs (Leupold, VUDU) step through 1.1x, 3x and 6x across their low/mid/high settings, in line with the variable optics they're modeled on.
-- **Scope depth-of-field reworked.** Vanilla applies a single fixed blur to far distances only, regardless of magnification, leaving anything close to the camera (scope body, receiver, foreground cover) razor-sharp. The mod scales DOF intensity with magnification (1× LPVO setting gets none, higher zoom gets progressively more) and enables near-DOF too, so the foreground softens alongside the background. The result feels closer to how a real magnified optic locks focus at the target distance and lets everything else fall off.
 
 ### Mouse sensitivity scales with zoom
 
@@ -88,10 +81,32 @@ The default lowered weapon mode is replaced with much more comfortable patrol mo
 - Does not needlessly obstruct view
 - Does not trick you into thinking you can shoot from this mode
 
+### LPVO zoom
+
+Vanilla locks zoom to aiming mode only. This change makes you able to change zoom without having to aim.
+**WARNING** Rebind the weapon raise/lower buttons to keep useg them.
+
+### Canted no longer blocked while looking at an interactable (bug fix)
+
+Vanilla bug: pointing at an interactable (door, item, container) silently disables the canted toggle until you look away. Nothing in the UI hints at this and it's easy to think the keybind is broken.
+Fix: the interaction gate on canted is removed, so canted toggles regardless of what you're looking at.
+
 ### Manual reload (bug fix)
 
 Manual reload (Mosin, 870) now forces user out of the aim (canted or otherwise) and into defaul low position. The animation that opens the bolt was causing clipping issues with Mosin scope.
 It made no sense that vanilla allowed user to reload manual guns while ADSing to begin with.
+
+### HAMR fixes
+
+Vanialla HAMR has serious issues.
+- Switching to secondary optic and then equipping another magnified scope permanently disables the PIP plane, making scope appear broken.
+- red dot on the secondary optic sits too high within the window
+Fixed both. 
+
+### Ammo check no longer forces weapon into raised position (bug fix)
+
+Vanilla bug: after an ammo check, the weapon snaps to the raised position regardless of whether you were carrying it raised or lowered before the check.
+Fix: the weapon's prior raised/lowered state is captured before the check and restored after, so you stay in whichever stance you were in.
 
 # Why this is one mod and not several
 
@@ -118,6 +133,7 @@ This mod hooks six vanilla methods and their variants through Metro Mod Loader:
 
 - `WeaponRig.AmmoCheck` (pre and post)
 - `WeaponRig.ADS` (post)
+- `WeaponRig._input` (pre and post)
 - `Camera.ScopeDOF` (post)
 - `Controller.MovementStates` (pre and post)
 - `Noise._physics_process` (post)
