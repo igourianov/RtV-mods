@@ -20,7 +20,7 @@ func on_movement_states_pre(_delta: float) -> void:
 
 	ctrl.crouchSpeed = 0.7
 	ctrl.walkSpeed = 3.0
-	ctrl.sprintSpeed = 7.0
+	ctrl.sprintSpeed = 6.0
 
 
 
