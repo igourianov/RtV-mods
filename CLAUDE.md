@@ -20,6 +20,10 @@ Key facts when reading `src/`:
 
 Mods live at the repo root, one folder per mod. When modifying behavior, first locate the relevant script/scene in `src/` to understand the original implementation, then author the mod files at the root. Do not edit files under `src/`.
 
+## Syntax rules
+
+* When writing boolean operations - use C-type operators
+
 ## Mod structure
 
 Each mod folder is the zippable tree. Source layout in this repo:
