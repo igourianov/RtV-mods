@@ -4,12 +4,28 @@ var McmHelpers = preload("res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Help
 
 var crosshair_style: String
 var crosshair_color: Color
+var crouch_speed: float
+var walk_speed: float
+var sprint_speed: float
+var aim_speed_mult: float
+var cant_speed_mult: float
+var scope_speed_mult: float
 
 const MOD_ID = "likhos-weapon-handling-fixes"
 const FILE_PATH = "user://MCM/likhos-weapon-handling-fixes"
 const FILE_NAME = "config.ini"
 const DEFAULT_CROSSHAIR_COLOR = Color(1.0, 0.4, 0.0, 0.65)
 const DEFAULT_CROSSHAIR = "2dot"
+const DEFAULT_CROUCH_SPEED = 0.7
+const DEFAULT_WALK_SPEED = 3.0
+const DEFAULT_SPRINT_SPEED = 6.0
+const DEFAULT_AIM_SPEED_MULT = 0.6
+const DEFAULT_CANT_SPEED_MULT = 0.75
+const DEFAULT_SCOPE_SPEED_MULT = 0.3
+const SPEED_MIN = 0.0
+const SPEED_MAX = 20.0
+const MULT_MIN = 0.1
+const MULT_MAX = 1.5
 
 func _init():
 	var config = _create_config_template()
@@ -37,9 +53,21 @@ func _init():
 func _apply_config(config: ConfigFile):
 	crosshair_style = config.get_value("Dropdown", "crosshair", {}).get("value", DEFAULT_CROSSHAIR).substr(1)
 	crosshair_color = config.get_value("Color", "crosshairColor", {}).get("value", DEFAULT_CROSSHAIR_COLOR)
+	crouch_speed = config.get_value("Float", "crouchSpeed", {}).get("value", DEFAULT_CROUCH_SPEED)
+	walk_speed = config.get_value("Float", "walkSpeed", {}).get("value", DEFAULT_WALK_SPEED)
+	sprint_speed = config.get_value("Float", "sprintSpeed", {}).get("value", DEFAULT_SPRINT_SPEED)
+	aim_speed_mult = config.get_value("Float", "aimSpeedMult", {}).get("value", DEFAULT_AIM_SPEED_MULT)
+	cant_speed_mult = config.get_value("Float", "cantSpeedMult", {}).get("value", DEFAULT_CANT_SPEED_MULT)
+	scope_speed_mult = config.get_value("Float", "scopeSpeedMult", {}).get("value", DEFAULT_SCOPE_SPEED_MULT)
 
 func _create_config_template():
 	var config := ConfigFile.new()
+	var pos = 0
+	var next_pos = func() -> pos += 1; return pos
+
+	config.set_value("Category", "Crosshair", { "menu_pos" = 1 })
+	config.set_value("Category", "Movement speeds", { "menu_pos" = 2 })
+
 
 	config.set_value("Dropdown", "crosshair", {
 		"name" = "Crosshair",
@@ -50,14 +78,84 @@ func _create_config_template():
 			"1off": "Off",
 			"2dot": "Dot",
 			"3seg-cross": "Segmented cross"
-		}
+		},
+		"menu_pos" = next_pos.call(),
+		"category" = "Crosshair"
 	})
 
 	config.set_value("Color", "crosshairColor", {
 		"name" = "Crosshair Color",
 		"tooltip" = "Crosshair Color",
 		"default" = DEFAULT_CROSSHAIR_COLOR,
-		"value" = DEFAULT_CROSSHAIR_COLOR
+		"value" = DEFAULT_CROSSHAIR_COLOR,
+		"menu_pos" = next_pos.call(),
+		"category" = "Crosshair"
+	})
+
+	config.set_value("Float", "crouchSpeed", {
+		"name" = "Crouch Speed",
+		"tooltip" = "Movement speed while crouching",
+		"default" = DEFAULT_CROUCH_SPEED,
+		"value" = DEFAULT_CROUCH_SPEED,
+		"minRange" = SPEED_MIN,
+		"maxRange" = SPEED_MAX,
+		"menu_pos" = next_pos.call(),
+		"category" = "Movement speeds"
+	})
+
+	config.set_value("Float", "walkSpeed", {
+		"name" = "Walk Speed",
+		"tooltip" = "Base walking speed",
+		"default" = DEFAULT_WALK_SPEED,
+		"value" = DEFAULT_WALK_SPEED,
+		"minRange" = SPEED_MIN,
+		"maxRange" = SPEED_MAX,
+		"menu_pos" = next_pos.call(),
+		"category" = "Movement speeds"
+	})
+
+	config.set_value("Float", "sprintSpeed", {
+		"name" = "Sprint Speed",
+		"tooltip" = "Movement speed while sprinting",
+		"default" = DEFAULT_SPRINT_SPEED,
+		"value" = DEFAULT_SPRINT_SPEED,
+		"minRange" = SPEED_MIN,
+		"maxRange" = SPEED_MAX,
+		"menu_pos" = next_pos.call(),
+		"category" = "Movement speeds"
+	})
+
+	config.set_value("Float", "aimSpeedMult", {
+		"name" = "Aim Speed Multiplier",
+		"tooltip" = "Walk-speed multiplier while aiming",
+		"default" = DEFAULT_AIM_SPEED_MULT,
+		"value" = DEFAULT_AIM_SPEED_MULT,
+		"minRange" = MULT_MIN,
+		"maxRange" = MULT_MAX,
+		"menu_pos" = next_pos.call(),
+		"category" = "Movement speeds"
+	})
+
+	config.set_value("Float", "cantSpeedMult", {
+		"name" = "Cant Speed Multiplier",
+		"tooltip" = "Walk-speed multiplier while canted",
+		"default" = DEFAULT_CANT_SPEED_MULT,
+		"value" = DEFAULT_CANT_SPEED_MULT,
+		"minRange" = MULT_MIN,
+		"maxRange" = MULT_MAX,
+		"menu_pos" = next_pos.call(),
+		"category" = "Movement speeds"
+	})
+
+	config.set_value("Float", "scopeSpeedMult", {
+		"name" = "Scope Speed Multiplier",
+		"tooltip" = "Walk-speed multiplier while scoped at full zoom",
+		"default" = DEFAULT_SCOPE_SPEED_MULT,
+		"value" = DEFAULT_SCOPE_SPEED_MULT,
+		"minRange" = MULT_MIN,
+		"maxRange" = MULT_MAX,
+		"menu_pos" = next_pos.call(),
+		"category" = "Movement speeds"
 	})
 
 	return config
