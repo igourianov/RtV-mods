@@ -1,4 +1,4 @@
-extends RefCounted
+﻿extends RefCounted
 
 var McmHelpers = preload("res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Helpers.tres")
 
@@ -68,111 +68,111 @@ func _create_config_template():
 	var pos = [0]
 	var next_pos = func(): pos[0] += 1; return pos[0]
 
-	config.set_value("Category", "Crosshair", { "menu_pos" = 1 })
-	config.set_value("Category", "Canted mode", { "menu_pos" = 2 })
-	config.set_value("Category", "Movement speeds", { "menu_pos" = 3 })
+	config.set_value("Category", "Crosshair", { "menu_pos": 1 })
+	config.set_value("Category", "Canted mode", { "menu_pos": 2 })
+	config.set_value("Category", "Movement speeds", { "menu_pos": 3 })
 
 	config.set_value("Dropdown", "crosshair", {
-		"name" = "Crosshair",
-		"tooltip" = "Used for exploration only", # (picking up items and interacting with objects)",
-		"default" = DEFAULT_CROSSHAIR,
-		"value" = DEFAULT_CROSSHAIR,
-		"options" = {
+		"name": "Crosshair",
+		"tooltip": "Used for exploration only",
+		"default": DEFAULT_CROSSHAIR,
+		"value": DEFAULT_CROSSHAIR,
+		"options": {
 			"1off": "Off",
 			"2dot": "Dot",
 			"3seg-cross": "Segmented cross"
 		},
-		"menu_pos" = next_pos.call(),
-		"category" = "Crosshair"
+		"menu_pos": next_pos.call(),
+		"category": "Crosshair"
 	})
 
 	config.set_value("Color", "crosshairColor", {
-		"name" = "Crosshair Color",
-		"tooltip" = "Crosshair Color",
-		"default" = DEFAULT_CROSSHAIR_COLOR,
-		"value" = DEFAULT_CROSSHAIR_COLOR,
-		"menu_pos" = next_pos.call(),
-		"category" = "Crosshair"
+		"name": "Crosshair Color",
+		"tooltip": "Crosshair Color",
+		"default": DEFAULT_CROSSHAIR_COLOR,
+		"value": DEFAULT_CROSSHAIR_COLOR,
+		"menu_pos": next_pos.call(),
+		"category": "Crosshair"
 	})
 
 	config.set_value("Dropdown", "cantMode", {
-		"name" = "Canted Aim Mode",
-		"tooltip" = "Behavior of the canted aim input",
-		"default" = DEFAULT_CANT_MODE,
-		"value" = DEFAULT_CANT_MODE,
-		"options" = {
+		"name": "Canted Aim Mode",
+		"tooltip": "Behavior of the canted aim input",
+		"default": DEFAULT_CANT_MODE,
+		"value": DEFAULT_CANT_MODE,
+		"options": {
 			"1default": "Default (follow Aim Mode)",
 			"2hold": "Hold",
 			"3toggle": "Toggle"
 		},
-		"menu_pos" = next_pos.call(),
-		"category" = "Canted mode"
+		"menu_pos": next_pos.call(),
+		"category": "Canted mode"
 	})
 
 	config.set_value("Float", "crouchSpeed", {
-		"name" = "Crouch Speed",
-		"tooltip" = "Movement speed while crouching",
-		"default" = DEFAULT_CROUCH_SPEED,
-		"value" = DEFAULT_CROUCH_SPEED,
-		"minRange" = SPEED_MIN,
-		"maxRange" = SPEED_MAX,
-		"menu_pos" = next_pos.call(),
-		"category" = "Movement speeds"
+		"name": "Crouch Speed",
+		"tooltip": "Movement speed while crouching",
+		"default": DEFAULT_CROUCH_SPEED,
+		"value": DEFAULT_CROUCH_SPEED,
+		"minRange": SPEED_MIN,
+		"maxRange": SPEED_MAX,
+		"menu_pos": next_pos.call(),
+		"category": "Movement speeds"
 	})
 
 	config.set_value("Float", "walkSpeed", {
-		"name" = "Walk Speed",
-		"tooltip" = "Base walking speed",
-		"default" = DEFAULT_WALK_SPEED,
-		"value" = DEFAULT_WALK_SPEED,
-		"minRange" = SPEED_MIN,
-		"maxRange" = SPEED_MAX,
-		"menu_pos" = next_pos.call(),
-		"category" = "Movement speeds"
+		"name": "Walk Speed",
+		"tooltip": "Base walking speed",
+		"default": DEFAULT_WALK_SPEED,
+		"value": DEFAULT_WALK_SPEED,
+		"minRange": SPEED_MIN,
+		"maxRange": SPEED_MAX,
+		"menu_pos": next_pos.call(),
+		"category": "Movement speeds"
 	})
 
 	config.set_value("Float", "sprintSpeed", {
-		"name" = "Sprint Speed",
-		"tooltip" = "Movement speed while sprinting",
-		"default" = DEFAULT_SPRINT_SPEED,
-		"value" = DEFAULT_SPRINT_SPEED,
-		"minRange" = SPEED_MIN,
-		"maxRange" = SPEED_MAX,
-		"menu_pos" = next_pos.call(),
-		"category" = "Movement speeds"
+		"name": "Sprint Speed",
+		"tooltip": "Movement speed while sprinting",
+		"default": DEFAULT_SPRINT_SPEED,
+		"value": DEFAULT_SPRINT_SPEED,
+		"minRange": SPEED_MIN,
+		"maxRange": SPEED_MAX,
+		"menu_pos": next_pos.call(),
+		"category": "Movement speeds"
 	})
 
 	config.set_value("Float", "aimSpeedMult", {
-		"name" = "Aim Speed Multiplier",
-		"tooltip" = "Walk-speed multiplier while aiming",
-		"default" = DEFAULT_AIM_SPEED_MULT,
-		"value" = DEFAULT_AIM_SPEED_MULT,
-		"minRange" = MULT_MIN,
-		"maxRange" = MULT_MAX,
-		"menu_pos" = next_pos.call(),
-		"category" = "Movement speeds"
+		"name": "Aim Speed Multiplier",
+		"tooltip": "Walk-speed multiplier while aiming",
+		"default": DEFAULT_AIM_SPEED_MULT,
+		"value": DEFAULT_AIM_SPEED_MULT,
+		"minRange": MULT_MIN,
+		"maxRange": MULT_MAX,
+		"menu_pos": next_pos.call(),
+		"category": "Movement speeds"
 	})
 
 	config.set_value("Float", "cantSpeedMult", {
-		"name" = "Cant Speed Multiplier",
-		"tooltip" = "Walk-speed multiplier while canted",
-		"default" = DEFAULT_CANT_SPEED_MULT,
-		"value" = DEFAULT_CANT_SPEED_MULT,
-		"minRange" = MULT_MIN,
-		"maxRange" = MULT_MAX,
-		"menu_pos" = next_pos.call(),
-		"category" = "Movement speeds"
+		"name": "Cant Speed Multiplier",
+		"tooltip": "Walk-speed multiplier while canted",
+		"default": DEFAULT_CANT_SPEED_MULT,
+		"value": DEFAULT_CANT_SPEED_MULT,
+		"minRange": MULT_MIN,
+		"maxRange": MULT_MAX,
+		"menu_pos": next_pos.call(),
+		"category": "Movement speeds"
 	})
 
 	config.set_value("Float", "scopeSpeedMult", {
-		"name" = "Scope Speed Multiplier",
-		"tooltip" = "Walk-speed multiplier while scoped at full zoom",
-		"default" = DEFAULT_SCOPE_SPEED_MULT,
-		"value" = DEFAULT_SCOPE_SPEED_MULT,
-		"minRange" = MULT_MIN,
-		"maxRange" = MULT_MAX,
-		"menu_pos" = next_pos.call(),
-		"category" = "Movement speeds"
+		"name": "Scope Speed Multiplier",
+		"tooltip": "Walk-speed multiplier while scoped at full zoom",
+		"default": DEFAULT_SCOPE_SPEED_MULT,
+		"value": DEFAULT_SCOPE_SPEED_MULT,
+		"minRange": MULT_MIN,
+		"maxRange": MULT_MAX,
+		"menu_pos": next_pos.call(),
+		"category": "Movement speeds"
 	})
 
 	return config

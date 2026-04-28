@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Weapon Handling Fixes"
 id="likhos-weapon-handling-fixes"
-version="1.9.379"
+version="1.9.381"
 
 [hooks]
 "res://Scripts/Handling.gd"="WeaponHandling"

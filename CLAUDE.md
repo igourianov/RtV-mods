@@ -23,6 +23,7 @@ Mods live at the repo root, one folder per mod. When modifying behavior, first l
 ## Syntax rules
 
 * When writing boolean operations - use C-type operators
+* Use colon for dictionary {"key": "value"} pairs 
 
 ## Mod structure
 
