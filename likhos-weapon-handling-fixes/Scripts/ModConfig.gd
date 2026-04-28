@@ -4,6 +4,7 @@ var McmHelpers = preload("res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Help
 
 var crosshair_style: String
 var crosshair_color: Color
+var cant_mode: String
 var crouch_speed: float
 var walk_speed: float
 var sprint_speed: float
@@ -16,6 +17,7 @@ const FILE_PATH = "user://MCM/likhos-weapon-handling-fixes"
 const FILE_NAME = "config.ini"
 const DEFAULT_CROSSHAIR_COLOR = Color(1.0, 0.4, 0.0, 0.65)
 const DEFAULT_CROSSHAIR = "2dot"
+const DEFAULT_CANT_MODE = "1default"
 const DEFAULT_CROUCH_SPEED = 0.7
 const DEFAULT_WALK_SPEED = 3.0
 const DEFAULT_SPRINT_SPEED = 6.0
@@ -53,6 +55,7 @@ func _init():
 func _apply_config(config: ConfigFile):
 	crosshair_style = config.get_value("Dropdown", "crosshair", {}).get("value", DEFAULT_CROSSHAIR).substr(1)
 	crosshair_color = config.get_value("Color", "crosshairColor", {}).get("value", DEFAULT_CROSSHAIR_COLOR)
+	cant_mode = config.get_value("Dropdown", "cantMode", {}).get("value", DEFAULT_CANT_MODE).substr(1)
 	crouch_speed = config.get_value("Float", "crouchSpeed", {}).get("value", DEFAULT_CROUCH_SPEED)
 	walk_speed = config.get_value("Float", "walkSpeed", {}).get("value", DEFAULT_WALK_SPEED)
 	sprint_speed = config.get_value("Float", "sprintSpeed", {}).get("value", DEFAULT_SPRINT_SPEED)
@@ -62,12 +65,12 @@ func _apply_config(config: ConfigFile):
 
 func _create_config_template():
 	var config := ConfigFile.new()
-	var pos = 0
-	var next_pos = func() -> pos += 1; return pos
+	var pos = [0]
+	var next_pos = func(): pos[0] += 1; return pos[0]
 
 	config.set_value("Category", "Crosshair", { "menu_pos" = 1 })
-	config.set_value("Category", "Movement speeds", { "menu_pos" = 2 })
-
+	config.set_value("Category", "Canted mode", { "menu_pos" = 2 })
+	config.set_value("Category", "Movement speeds", { "menu_pos" = 3 })
 
 	config.set_value("Dropdown", "crosshair", {
 		"name" = "Crosshair",
@@ -90,6 +93,20 @@ func _create_config_template():
 		"value" = DEFAULT_CROSSHAIR_COLOR,
 		"menu_pos" = next_pos.call(),
 		"category" = "Crosshair"
+	})
+
+	config.set_value("Dropdown", "cantMode", {
+		"name" = "Canted Aim Mode",
+		"tooltip" = "Behavior of the canted aim input",
+		"default" = DEFAULT_CANT_MODE,
+		"value" = DEFAULT_CANT_MODE,
+		"options" = {
+			"1default": "Default (follow Aim Mode)",
+			"2hold": "Hold",
+			"3toggle": "Toggle"
+		},
+		"menu_pos" = next_pos.call(),
+		"category" = "Canted mode"
 	})
 
 	config.set_value("Float", "crouchSpeed", {

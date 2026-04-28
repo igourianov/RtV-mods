@@ -16,13 +16,15 @@ const _PATROL_WEAPON_TYPES = {"Rifle": null, "SMG": null, "Bolt": null, "Shotgun
 
 var _lib
 var _preferences: Preferences
+var _config
 var _flashlight_stream: AudioStream
 var _lens_min_z_cache := {}
 
 
-func _init(lib, preferences: Preferences) -> void:
+func _init(lib, preferences: Preferences, config) -> void:
 	_lib = lib
 	_preferences = preferences
+	_config = config
 	_flashlight_stream = load(_FLASHLIGHT_WAV_PATH)
 	if _flashlight_stream == null:
 		push_warning("[likho] failed to load %s" % _FLASHLIGHT_WAV_PATH)
@@ -97,10 +99,17 @@ func _weapon_handling(h, delta: float) -> void:
 			h.targetRotation = lowRotation
 		return
 
-	if gd.aimMode == 1:
-		h.canted = Input.is_action_pressed("canted")
-	elif gd.aimMode == 2 && Input.is_action_just_pressed("canted"):
-		h.canted = !h.canted
+	match _config.cant_mode:
+		"hold":
+			h.canted = Input.is_action_pressed("canted")
+		"toggle":
+			if Input.is_action_just_pressed("canted"):
+				h.canted = !h.canted
+		_:
+			if gd.aimMode == 1:
+				h.canted = Input.is_action_pressed("canted")
+			elif gd.aimMode == 2 && Input.is_action_just_pressed("canted"):
+				h.canted = !h.canted
 
 	if h.canted:
 		if gd.aimMode == 1:
