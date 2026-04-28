@@ -2,6 +2,8 @@
 
 A mod for Road to Vostok that fixes several weapon handling bugs and adds realism features.
 
+Now with MCM support!
+
 ## New Features
 * Major rework of the PIP scope mode for realism
 * Canted aim is now independent with optional laser auto-activation in hold mode
