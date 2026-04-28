@@ -34,7 +34,7 @@ Rescaled movement speeds and added new break points.
 
 **Vanilla:** crouch/walk/sprint = 1 / 2.5 / 5
 
-**Updated:** crouch/walk/sprint = 0.7 / 3 / 7
+**Updated:** crouch/walk/sprint = 0.7 / 3 / 6
 
 **New:** walk-canted/walk-aiming-1x/walk-scoped = 2.25 / 1.8 / 0.7
 
