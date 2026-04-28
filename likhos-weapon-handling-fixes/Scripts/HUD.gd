@@ -13,7 +13,7 @@ func _init(lib) -> void:
 
 func on_ready_post() -> void:
 	var hud = _lib._caller
-	if hud == null:
+	if !hud:
 		return
 	if hud.has_meta("hud_tweaks_crosshair"):
 		return
@@ -37,18 +37,18 @@ func on_ready_post() -> void:
 
 func on_physics_process_post(_delta: float) -> void:
 	var hud = _lib._caller
-	if hud == null:
+	if !hud:
 		return
 	var gd = hud.gameData
-	hud.tooltip.visible = gd.interaction and not gd.transition and not gd.isAiming and not gd.isCanted
+	hud.tooltip.visible = gd.interaction && !gd.transition && !gd.isAiming && !gd.isCanted
 	var crosshair = hud.get_meta("hud_tweaks_crosshair", null)
-	if crosshair == null:
+	if !crosshair:
 		return
-	if gd.menu or gd.isDead or gd.isInspecting or gd.transition or gd.isTransitioning:
+	if gd.menu || gd.isDead || gd.isInspecting || gd.transition || gd.isTransitioning:
 		crosshair.hide()
 		return
-	var aimable = gd.primary or gd.secondary
-	crosshair.visible = (not gd.isAiming and not gd.isCanted) or not aimable
+	var aimable = gd.primary || gd.secondary
+	crosshair.visible = (!gd.isAiming && !gd.isCanted) || !aimable
 
 func _draw_crosshair(c: Control) -> void:
 	var center := c.size * 0.5
