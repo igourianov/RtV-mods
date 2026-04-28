@@ -40,7 +40,8 @@ func on_physics_process_post(_delta: float) -> void:
 	if !hud:
 		return
 	var gd = hud.gameData
-	hud.tooltip.visible = gd.interaction && !gd.transition && !gd.isAiming && !gd.isCanted
+	var isAimingMode = gd.isAimin || gd.isCanted || gd.weaponPosition == 2
+	hud.tooltip.visible = gd.interaction && !gd.transition && !isAimingMode
 	var crosshair = hud.get_meta("hud_tweaks_crosshair", null)
 	if !crosshair:
 		return
@@ -48,7 +49,7 @@ func on_physics_process_post(_delta: float) -> void:
 		crosshair.hide()
 		return
 	var aimable = gd.primary || gd.secondary
-	crosshair.visible = (!gd.isAiming && !gd.isCanted) || !aimable
+	crosshair.visible = !isAimingMode || !aimable
 
 func _draw_crosshair(c: Control) -> void:
 	var center := c.size * 0.5

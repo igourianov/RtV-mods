@@ -9,6 +9,7 @@ A mod for Road to Vostok that fixes several weapon handling bugs and adds realis
 * Movement speeds rework
 * Default weapon position changed into patrol mode
 * Change LPVO zoom without aiming
+* Crosshair in idle mode
 
 ### Fixes
 * Fixed ammo check stamina drain
