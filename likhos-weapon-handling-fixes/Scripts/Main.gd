@@ -7,6 +7,7 @@ const _Controller = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Con
 const _Noise = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Noise.gd")
 const _Tilt = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Tilt.gd")
 const _HUD = preload("res://mods/likhos-weapon-handling-fixes/Scripts/HUD.gd")
+const _ModConfig = preload("res://mods/likhos-weapon-handling-fixes/Scripts/ModConfig.gd")
 
 var _handling
 var _weapon_rig
@@ -15,8 +16,10 @@ var _controller
 var _noise
 var _tilt
 var _hud
+var _config
 
 func _ready() -> void:
+	_config = _ModConfig.new()
 	var lib = Engine.get_meta("RTVModLib")
 	if lib == null:
 		push_error("[likho] RTVModLib meta not available")
@@ -37,7 +40,7 @@ func _init_hooks(lib):
 	_controller = _Controller.new(lib, _weapon_rig, preferences)
 	_noise = _Noise.new(lib, preferences)
 	_tilt = _Tilt.new(lib)
-	_hud = _HUD.new(lib)
+	_hud = _HUD.new(lib, _config)
 
 	var hooks: Array[int] = [
 		_register_hook(lib, "handling-weaponhandling", _handling.on_weapon_handling),

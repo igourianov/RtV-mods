@@ -1,17 +1,17 @@
 extends RefCounted
 
 var _lib
+var _config
 
-const _CROSSHAIR_COLOR := Color(1.0, 1.0, 1.0, 0.9)
 const _CROSSHAIR_SHADOW := Color(0, 0, 0, 0.7)
-const _CROSSHAIR_STYLE := "dot"  # valid values: "arms", "dot"
 const _DOT_RADIUS := 1.5
 const _ARM_LENGTH := 6.0
 const _ARM_THICKNESS := 2.0
 const _CENTER_GAP := 8.0
 
-func _init(lib) -> void:
+func _init(lib, config) -> void:
 	_lib = lib
+	_config = config
 
 func on_ready_post() -> void:
 	var hud = _lib._caller
@@ -48,17 +48,19 @@ func on_physics_process_post(_delta: float) -> void:
 	var crosshair = hud.get_meta("hud_tweaks_crosshair", null)
 	if !crosshair:
 		return
-	crosshair.visible = !aimingMode && !aimBlocked
+	crosshair.visible = !aimingMode && !aimBlocked && _config.crosshair_style != "off"
 
 func _draw_crosshair(c: Control) -> void:
 	var center := c.size * 0.5
-	match _CROSSHAIR_STYLE:
+	match _config.crosshair_style:
 		"dot":
 			c.draw_circle(center + Vector2(1, 1), _DOT_RADIUS, _CROSSHAIR_SHADOW)
-			c.draw_circle(center, _DOT_RADIUS, _CROSSHAIR_COLOR)
-		_:
+			c.draw_circle(center, _DOT_RADIUS, _config.crosshair_color)
+		"seg-cross":
 			_draw_arms(c, center + Vector2(1, 1), _CROSSHAIR_SHADOW)
-			_draw_arms(c, center, _CROSSHAIR_COLOR)
+			_draw_arms(c, center, _config.crosshair_color)
+		_:
+			pass
 
 func _draw_arms(c: Control, center: Vector2, color: Color) -> void:
 	var t := _ARM_THICKNESS
