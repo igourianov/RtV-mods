@@ -2,25 +2,23 @@
 
 A mod for Road to Vostok that fixes several weapon handling bugs and adds realism features.
 
-### Features
+## New Features
 * Major rework of the PIP scope mode for realism
-* Canted aim is now a separate action, and auto-activates equipped laser
-* Mouse senitivity scales with zoom
-* Movement speeds rework
-* Default weapon position changed into patrol mode
-* Change LPVO zoom without aiming
-* Crosshair in idle mode
+* Canted aim is now independent with optional laser auto-activation in hold mode
+* Mouse sensitivity scales with zoom and stance (canted uses Aim, LPVO 1× uses Aim, mid/high use Scope/Scope×0.5)
+* Movement speeds rescaled and added new breakpoints
+* Default weapon position changed to patrol mode (rifle rests across chest)
+* LPVO zoom accessible without aiming - conflicts with lower/raise weapon - **REBIND**
+* Crosshair in idle mode for interactions (auto-disabled when aiming/canted/raised)
 
-### Fixes
-* Fixed ammo check stamina drain
-* Fixed Canted aim toggle blocked by interactables
-* Fixed clipping issues when reloading manual guns
-* Fixed HAMR secondary optic permanently breaking other scopes in PIP mode
-* Fixed HAMR secondary optic vertical offset
+## Vanilla Fixes
+* Ammo check no longer forces weapon into raised position (prior stance preserved)
+* Canted aim toggle no longer blocked by interactables
+* Manual reload (Mosin, 870) clipping issues fixed (weapon moves to default low position)
+* Fied HAMR secondary optic PIP plane breakage and vertical offset
+* Interactable tooltip no longer blocks vision when aiming around doorways
 
-# Detailed changes
-
-### PIP scope mode: realism
+## PIP scope mode: realism
 
 Picture-in-picture mode renders the world through the scope as a subviewport rather than zooming the main camera. The intent is to feel like you're actually looking through the optic. Two tweaks push that further:
 
@@ -30,42 +28,7 @@ Picture-in-picture mode renders the world through the scope as a subviewport rat
 - **Magnification dialed to real-world values.** Prism sights (HAMR, ACOG) sit at a fixed 4x. LPVOs (Leupold, VUDU) step through 1.1x, 3x and 6x across their low/mid/high settings, in line with the variable optics they're modeled on.
 - **Scope depth-of-field reworked.** Vanilla applies a single fixed blur to far distances only, regardless of magnification, leaving anything close to the camera (scope body, receiver, foreground cover) razor-sharp. The mod scales DOF intensity with magnification (1× LPVO setting gets none, higher zoom gets progressively more) and enables near-DOF too, so the foreground softens alongside the background. The result feels closer to how a real magnified optic locks focus at the target distance and lets everything else fall off.
 
-### Canted aim is its own action
-
-Vanilla treats canted as a sub-action of aiming: you have to be aiming first, and releasing aim drops you out of canted.
-
-This mod makes canted independent:
-
-- Press/hold canted from any weapon-ready state. You don't have to enter aim mode first.
-- Canted respects your aim-mode setting (hold vs toggle), separately from the aim button.
-- Sprinting, reloading or doing an ammo check cancels canted, mirroring how those cancel aim-toggle.
-- The canted weapon pose is nudged slightly down so the gun obscures less of the upper screen.
-
-I recommend rebinding Canted aim to a mouse side button fom the default MMB.
-
-### Canted-hold auto-activates the laser
-
-In **hold aim mode**, holding canted now also turns the equipped laser sight on; releasing canted turns it off. Convenient for quick low-light snap shots without juggling the laser key.
-
-- Only fires in hold mode. Toggle-aim users keep manual laser control as in vanilla.
-- If your laser was already on before you entered canted, the mod leaves it alone, no flicker on release.
-- The attachment click sound is split into press (in) and release (out) halves, so holding canted feels like holding a physical button: you hear it click in when you engage and click out when you let go.
-
-### Mouse sensitivity scales with zoom
-
-Vanilla picks mouse speed from your **Look / Aim / Scope** sensitivity sliders based on whether you're aiming and scoped. A few cases get the wrong slider; the mod fixes them:
-
-- **Canted aim now uses your Aim sensitivity.** Vanilla flags canted as "not aiming" internally and ends up running the (much faster) Look slider during canted, which makes the pose hard to control. While canted, the mod mirrors your Look slider to your Aim slider; restored on canted exit.
-- **Variable-scope sensitivity scales with magnification.** Tunable optics ran a single Scope slider value across all zoom levels, so a low-power and high-power setting had the same mouse feel even though the apparent angular rate is very different. Now:
-   - LPVO at the 1× setting uses the **Aim** slider, since it's effectively a red-dot stance.
-   - LPVO at the middle setting uses the **Scope** slider, your baseline.
-   - LPVO at the high setting uses **Scope × 0.5**, halved so the high-zoom pose stays controllable.
-
-Fixed scopes (prism sights) are untouched, they keep using your Scope slider directly as in vanilla.
-
-Net effect: tune Look / Aim / Scope once and the mod picks the right slider per situation.
-
-### Movement speed rework
+## Movement speed rework
 
 Rescaled movement speeds and added new break points.
 
@@ -74,40 +37,6 @@ Rescaled movement speeds and added new break points.
 **Updated:** crouch/walk/sprint = 0.7 / 3 / 7
 
 **New:** walk-canted/walk-aiming-1x/walk-scoped = 2.25 / 1.8 / 0.7
-
-### Patrol mode
-
-The default lowered weapon mode is replaced with much more comfortable patrol mode where rifle rests across your chest.
-- Applies to all long guns
-- Does not needlessly obstruct view
-- Does not trick you into thinking you can shoot from this mode
-
-### LPVO zoom
-
-Vanilla locks zoom to aiming mode only. This change makes you able to change zoom without having to aim.
-**WARNING** Rebind the weapon raise/lower buttons to keep useg them.
-
-### Canted no longer blocked while looking at an interactable (bug fix)
-
-Vanilla bug: pointing at an interactable (door, item, container) silently disables the canted toggle until you look away. Nothing in the UI hints at this and it's easy to think the keybind is broken.
-Fix: the interaction gate on canted is removed, so canted toggles regardless of what you're looking at.
-
-### Manual reload (bug fix)
-
-Manual reload (Mosin, 870) now forces user out of the aim (canted or otherwise) and into defaul low position. The animation that opens the bolt was causing clipping issues with Mosin scope.
-It made no sense that vanilla allowed user to reload manual guns while ADSing to begin with.
-
-### HAMR fixes
-
-Vanialla HAMR has serious issues.
-- Switching to secondary optic and then equipping another magnified scope permanently disables the PIP plane, making scope appear broken.
-- red dot on the secondary optic sits too high within the window
-Fixed both. 
-
-### Ammo check no longer forces weapon into raised position (bug fix)
-
-Vanilla bug: after an ammo check, the weapon snaps to the raised position regardless of whether you were carrying it raised or lowered before the check.
-Fix: the weapon's prior raised/lowered state is captured before the check and restored after, so you stay in whichever stance you were in.
 
 # Why this is one mod and not several
 
