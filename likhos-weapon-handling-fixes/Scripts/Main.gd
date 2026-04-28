@@ -6,6 +6,7 @@ const _Camera = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Camera.
 const _Controller = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Controller.gd")
 const _Noise = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Noise.gd")
 const _Tilt = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Tilt.gd")
+const _HUD = preload("res://mods/likhos-weapon-handling-fixes/Scripts/HUD.gd")
 
 var _handling
 var _weapon_rig
@@ -13,6 +14,7 @@ var _camera
 var _controller
 var _noise
 var _tilt
+var _hud
 
 func _ready() -> void:
 	var lib = Engine.get_meta("RTVModLib")
@@ -35,6 +37,7 @@ func _init_hooks(lib):
 	_controller = _Controller.new(lib, _weapon_rig, preferences)
 	_noise = _Noise.new(lib, preferences)
 	_tilt = _Tilt.new(lib)
+	_hud = _HUD.new(lib)
 
 	var hooks: Array[int] = [
 		_register_hook(lib, "handling-weaponhandling", _handling.on_weapon_handling),
@@ -46,7 +49,9 @@ func _init_hooks(lib):
 		_register_hook(lib, "controller-movementstates-pre", _controller.on_movement_states_pre),
 		_register_hook(lib, "controller-movementstates-post", _controller.on_movement_states_post),
 		_register_hook(lib, "noise-_physics_process-post", _noise.on_physics_process_post),
-		_register_hook(lib, "tilt-_physics_process-pre", _tilt.on_physics_process_pre)
+		_register_hook(lib, "tilt-_physics_process-pre", _tilt.on_physics_process_pre),
+		_register_hook(lib, "hud-_ready-post", _hud.on_ready_post),
+		_register_hook(lib, "hud-_physics_process-post", _hud.on_physics_process_post)
 	]
 
 	var registered = hooks.filter(func(id): return id > -1)
