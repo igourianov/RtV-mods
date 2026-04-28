@@ -2,8 +2,10 @@ extends RefCounted
 
 var _lib
 
-const _CROSSHAIR_COLOR := Color(1.0, 0.4, 0.0, 0.65)
+const _CROSSHAIR_COLOR := Color(1.0, 1.0, 1.0, 0.9)
 const _CROSSHAIR_SHADOW := Color(0, 0, 0, 0.7)
+const _CROSSHAIR_STYLE := "dot"  # valid values: "arms", "dot"
+const _DOT_RADIUS := 1.5
 const _ARM_LENGTH := 6.0
 const _ARM_THICKNESS := 2.0
 const _CENTER_GAP := 8.0
@@ -50,8 +52,13 @@ func on_physics_process_post(_delta: float) -> void:
 
 func _draw_crosshair(c: Control) -> void:
 	var center := c.size * 0.5
-	_draw_arms(c, center + Vector2(1, 1), _CROSSHAIR_SHADOW)
-	_draw_arms(c, center, _CROSSHAIR_COLOR)
+	match _CROSSHAIR_STYLE:
+		"dot":
+			c.draw_circle(center + Vector2(1, 1), _DOT_RADIUS, _CROSSHAIR_SHADOW)
+			c.draw_circle(center, _DOT_RADIUS, _CROSSHAIR_COLOR)
+		_:
+			_draw_arms(c, center + Vector2(1, 1), _CROSSHAIR_SHADOW)
+			_draw_arms(c, center, _CROSSHAIR_COLOR)
 
 func _draw_arms(c: Control, center: Vector2, color: Color) -> void:
 	var t := _ARM_THICKNESS
