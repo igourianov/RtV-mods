@@ -4,6 +4,8 @@ Road to Vostok mod that adds tactical realism features and fixes a whole host of
 
 Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 
+>Feedback and likes are welcome!
+
 ## New Features
 * Major rework of the PIP scope mode for realism
 * Canted aim is now independent with optional laser auto-activation in hold mode (disable in MCM)
