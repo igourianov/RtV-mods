@@ -79,6 +79,7 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 
 - `Handling.WeaponHandling`
 - `WeaponRig._input`
+- `Character.Stamina`
 
 **Pre + Post hooks** (additive, run before/after vanilla, coexist with other mods cleanly):
 
@@ -93,10 +94,6 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `HUD._ready` (post)
 - `HUD._physics_process` (post)
 - `Recoil.ApplyRecoil` (post)
-
-**Other hooks:**
-
-- `Character.Stamina`
 
 # Install / Uninstall
 
