@@ -1,17 +1,18 @@
 [mod]
 name="Likho's Weapon Handling Fixes"
 id="likhos-weapon-handling-fixes"
-version="1.9.394"
+version="1.10.395"
 
 [hooks]
 "res://Scripts/Handling.gd"="WeaponHandling"
-"res://Scripts/WeaponRig.gd"="AmmoCheck, ADS, _input"
+"res://Scripts/WeaponRig.gd"="AmmoCheck, ADS, _input, _physics_process"
 "res://Scripts/Camera.gd"="ScopeDOF"
 "res://Scripts/Controller.gd"="MovementStates"
 "res://Scripts/Noise.gd"="_physics_process"
 "res://Scripts/Tilt.gd"="_physics_process"
 "res://Scripts/HUD.gd"="_ready, _physics_process"
 "res://Scripts/Recoil.gd"="ApplyRecoil"
+"res://Scripts/Character.gd"="Stamina"
 
 [autoload]
 LikhosWeaponHandlingFixes="res://mods/likhos-weapon-handling-fixes/Scripts/Main.gd"

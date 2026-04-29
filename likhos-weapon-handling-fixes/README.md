@@ -12,6 +12,8 @@ Now with MCM support!
 * Default weapon position changed to patrol mode (rifle rests across chest)
 * LPVO zoom accessible without aiming - conflicts with lower/raise weapon - **REBIND**
 * Crosshair in idle mode for interactions (auto-disabled when aiming/canted/raised)
+* Ability to toggle secondary optic out of aim with visual que of the toggle
+* Rework of the inspect mode and associated bindings
 
 ## Vanilla Fixes
 * Ammo check no longer forces weapon into raised position (prior stance preserved)
@@ -40,6 +42,14 @@ Rescaled movement speeds and added new break points.
 
 **New:** walk-canted/walk-aiming-1x/walk-scoped = 2.25 / 1.8 / 0.7
 
+## Inspect mode rework
+
+* Fixed and rewrote several overlapping and dangling key bindings and states.
+* Rail movement now works only in inspect mode. Rail movement binding is now unused.
+* Weapon rotation in inspect mode is now done with the Canted aim binding.
+* Stamina drain removed
+* Added ammo check visuals to the inspect mode (disable via MCM menu)
+
 # Why this is one mod and not several
 
 These changes started out as separate mods. The catch is that Road to Vostok's scripts have a handful of "god" methods that fold a lot of unrelated behavior into a single function and mix state mutation with rendering side effects in the same call. Hooking a method through the mod loader is all-or-nothing, you can't override only part of a function. So as soon as one fix needed to touch, say, `Handling.WeaponHandling`, every other tweak that also lives in that method had to ship in the same mod or get clobbered by it. That's how the ammo-check, canted, laser and PIP changes ended up bundled together.
@@ -60,12 +70,13 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 **Replace hooks** (other mods that also replace these will conflict, pick one):
 
 - `Handling.WeaponHandling`
+- `WeaponRig._input`
 
 **Pre + Post hooks** (additive, run before/after vanilla, coexist with other mods cleanly):
 
 - `WeaponRig.AmmoCheck` (pre and post)
 - `WeaponRig.ADS` (post)
-- `WeaponRig._input` (pre)
+- `WeaponRig._physics_process` (pre)
 - `Camera.ScopeDOF` (post)
 - `Controller.MovementStates` (pre and post)
 - `Noise._physics_process` (post)
@@ -73,6 +84,10 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `HUD._ready` (post)
 - `HUD._physics_process` (post)
 - `Recoil.ApplyRecoil` (post)
+
+**Other hooks:**
+
+- `Character.Stamina`
 
 # Install / Uninstall
 

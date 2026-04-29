@@ -46,6 +46,9 @@ func on_physics_process_post(_delta: float) -> void:
 	var aimingMode = gd.isAiming || gd.isCanted || gd.weaponPosition == 2
 	var aimBlocked = gd.menu || gd.isDead || gd.isInspecting || gd.transition || gd.isTransitioning
 	hud.tooltip.visible = gd.interaction && !gd.transition && !aimingMode
+	if gd.isInspecting && _config.ammo_in_inspect == "show":
+		hud.magazine.visible = true
+		hud.chamber.visible = true
 	if !is_instance_valid(_crosshair):
 		return
 	_crosshair.visible = !aimingMode && !aimBlocked && _config.crosshair_style != "off"

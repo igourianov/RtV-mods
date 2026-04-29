@@ -14,10 +14,11 @@ func _init(lib, preferences: Preferences) -> void:
 	_preferences = preferences
 
 
-func on_input_pre(event) -> void:
+func on_input(event) -> void:
 	var rig = _lib._caller
 	if rig == null:
 		return
+	_lib.skip_super()
 
 	var gd = rig.gameData
 
@@ -31,11 +32,54 @@ func on_input_pre(event) -> void:
 		|| gd.isFiring):
 		return
 
-	if Input.is_action_pressed("rail_movement"):
+	if Input.is_action_just_pressed("inspect"):
+		gd.isInspecting = !gd.isInspecting
+		gd.isFiring = false
+
+		if gd.isInspecting:
+			gd.inspectPosition = 1
+			rig.PlayInspectStart()
+			rig.animator["parameters/conditions/Inspect_Front"] = true
+			rig.animator["parameters/conditions/Inspect_Idle"] = false
+			rig.UpdateBullets()
+			rig.UpdateHUD()
+		else:
+			if gd.inspectPosition == 1:
+				rig.PlayInspectEnd()
+				rig.animator["parameters/conditions/Inspect_Front"] = false
+				rig.animator["parameters/conditions/Inspect_Idle"] = true
+			elif gd.inspectPosition == 2:
+				rig.PlayInspectEnd()
+				rig.animator["parameters/conditions/Inspect_Back"] = false
+				rig.animator["parameters/conditions/Inspect_Idle"] = true
+				gd.inspectPosition = 1
 		return
+
 	if gd.isInspecting:
-		return
-	if gd.isAiming:
+		if Input.is_action_just_pressed("canted"):
+			if gd.inspectPosition == 1:
+				rig.PlayInspectRotate()
+				rig.animator["parameters/conditions/Inspect_Front"] = false
+				rig.animator["parameters/conditions/Inspect_Back"] = true
+				gd.inspectPosition = 2
+			elif gd.inspectPosition == 2:
+				rig.PlayInspectRotate()
+				rig.animator["parameters/conditions/Inspect_Front"] = true
+				rig.animator["parameters/conditions/Inspect_Back"] = false
+				gd.inspectPosition = 1
+
+		if event is InputEventMouseButton && event.is_pressed():
+			var optic = rig.activeOptic
+			if optic == null || !optic.railMovement:
+				return
+			if event.button_index == MOUSE_BUTTON_WHEEL_UP && optic.position.z < optic.maxPosition:
+				optic.position.z += 0.01
+				rig.slotData.position += 0.01
+				rig.PlayRailMove()
+			elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN && optic.position.z > optic.minPosition:
+				optic.position.z -= 0.01
+				rig.slotData.position -= 0.01
+				rig.PlayRailMove()
 		return
 
 	if Input.is_action_just_pressed("secondary_optic"):
@@ -44,20 +88,25 @@ func on_input_pre(event) -> void:
 			gd.secondaryOptic = !gd.secondaryOptic
 			rig.UpdateAimOffset()
 
-	if not (event is InputEventMouseButton and event.is_pressed()):
-		return
+	if event is InputEventMouseButton && event.is_pressed():
+		var optic = rig.activeOptic
+		if optic == null || !optic.attachmentData.variable:
+			return
+		var slotData = rig.slotData
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP && slotData.zoom != 3:
+			slotData.zoom += 1
+			rig.PlayRailMove()
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN && slotData.zoom != 1:
+			slotData.zoom -= 1
+			rig.PlayRailMove()
 
-	var optic = rig.activeOptic
-	if optic == null or not optic.attachmentData.variable:
-		return
 
-	var slotData = rig.slotData
-	if event.button_index == MOUSE_BUTTON_WHEEL_UP and slotData.zoom != 3:
-		slotData.zoom += 1
-		rig.PlayRailMove()
-	elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN and slotData.zoom != 1:
-		slotData.zoom -= 1
-		rig.PlayRailMove()
+func on_physics_process_pre(_delta: float) -> void:
+	var rig = _lib._caller
+	if rig == null:
+		return
+	if rig.gameData.isInspecting:
+		_lib.skip_super()
 
 
 func on_ammo_check_pre() -> void:

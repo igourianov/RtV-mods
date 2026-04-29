@@ -5,6 +5,7 @@ var McmHelpers = preload("res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Help
 var crosshair_style: String
 var crosshair_color: Color
 var cant_mode: String
+var ammo_in_inspect: String
 var crouch_speed: float
 var walk_speed: float
 var sprint_speed: float
@@ -18,6 +19,7 @@ const FILE_NAME = "config.ini"
 const DEFAULT_CROSSHAIR_COLOR = Color(1.0, 0.4, 0.0, 0.65)
 const DEFAULT_CROSSHAIR = "2dot"
 const DEFAULT_CANT_MODE = "1default"
+const DEFAULT_AMMO_IN_INSPECT = "1show"
 const DEFAULT_CROUCH_SPEED = 0.7
 const DEFAULT_WALK_SPEED = 3.0
 const DEFAULT_SPRINT_SPEED = 6.0
@@ -56,6 +58,7 @@ func _apply_config(config: ConfigFile):
 	crosshair_style = config.get_value("Dropdown", "crosshair", {}).get("value", DEFAULT_CROSSHAIR).substr(1)
 	crosshair_color = config.get_value("Color", "crosshairColor", {}).get("value", DEFAULT_CROSSHAIR_COLOR)
 	cant_mode = config.get_value("Dropdown", "cantMode", {}).get("value", DEFAULT_CANT_MODE).substr(1)
+	ammo_in_inspect = config.get_value("Dropdown", "ammoInInspect", {}).get("value", DEFAULT_AMMO_IN_INSPECT).substr(1)
 	crouch_speed = config.get_value("Float", "crouchSpeed", {}).get("value", DEFAULT_CROUCH_SPEED)
 	walk_speed = config.get_value("Float", "walkSpeed", {}).get("value", DEFAULT_WALK_SPEED)
 	sprint_speed = config.get_value("Float", "sprintSpeed", {}).get("value", DEFAULT_SPRINT_SPEED)
@@ -70,7 +73,8 @@ func _create_config_template():
 
 	config.set_value("Category", "Crosshair", { "menu_pos": 1 })
 	config.set_value("Category", "Canted mode", { "menu_pos": 2 })
-	config.set_value("Category", "Movement speeds", { "menu_pos": 3 })
+	config.set_value("Category", "Inspect", { "menu_pos": 3 })
+	config.set_value("Category", "Movement speeds", { "menu_pos": 4 })
 
 	config.set_value("Dropdown", "crosshair", {
 		"name": "Crosshair",
@@ -107,6 +111,19 @@ func _create_config_template():
 		},
 		"menu_pos": next_pos.call(),
 		"category": "Canted mode"
+	})
+
+	config.set_value("Dropdown", "ammoInInspect", {
+		"name": "Ammo Overlay In Inspect",
+		"tooltip": "Show magazine and chamber overlays while inspecting the weapon",
+		"default": DEFAULT_AMMO_IN_INSPECT,
+		"value": DEFAULT_AMMO_IN_INSPECT,
+		"options": {
+			"1show": "Show",
+			"2hide": "Hide"
+		},
+		"menu_pos": next_pos.call(),
+		"category": "Inspect"
 	})
 
 	config.set_value("Float", "crouchSpeed", {

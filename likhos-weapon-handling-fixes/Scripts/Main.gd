@@ -9,6 +9,7 @@ const _Tilt = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Tilt.gd")
 const _HUD = preload("res://mods/likhos-weapon-handling-fixes/Scripts/HUD.gd")
 const _ModConfig = preload("res://mods/likhos-weapon-handling-fixes/Scripts/ModConfig.gd")
 const _Recoil = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Recoil.gd")
+const _Character = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Character.gd")
 
 var _handling
 var _weapon_rig
@@ -19,6 +20,7 @@ var _tilt
 var _hud
 var _config
 var _recoil
+var _character
 
 func _ready() -> void:
 	_config = _ModConfig.new()
@@ -44,13 +46,15 @@ func _init_hooks(lib):
 	_tilt = _Tilt.new(lib)
 	_hud = _HUD.new(lib, _config)
 	_recoil = _Recoil.new(lib)
+	_character = _Character.new(lib)
 
 	var hooks: Array[int] = [
 		_register_hook(lib, "handling-weaponhandling", _handling.on_weapon_handling),
 		_register_hook(lib, "weaponrig-ammocheck-pre", _weapon_rig.on_ammo_check_pre),
 		_register_hook(lib, "weaponrig-ammocheck-post", _weapon_rig.on_ammo_check_post),
 		_register_hook(lib, "weaponrig-ads-post", _weapon_rig.on_ads_post),
-		_register_hook(lib, "weaponrig-_input-pre", _weapon_rig.on_input_pre),
+		_register_hook(lib, "weaponrig-_input", _weapon_rig.on_input),
+		_register_hook(lib, "weaponrig-_physics_process-pre", _weapon_rig.on_physics_process_pre),
 		_register_hook(lib, "camera-scopedof-post", _camera.on_scope_dof_post),
 		_register_hook(lib, "controller-movementstates-pre", _controller.on_movement_states_pre),
 		_register_hook(lib, "controller-movementstates-post", _controller.on_movement_states_post),
@@ -58,7 +62,8 @@ func _init_hooks(lib):
 		_register_hook(lib, "tilt-_physics_process-pre", _tilt.on_physics_process_pre),
 		_register_hook(lib, "hud-_ready-post", _hud.on_ready_post),
 		_register_hook(lib, "hud-_physics_process-post", _hud.on_physics_process_post),
-		_register_hook(lib, "recoil-applyrecoil-post", _recoil.on_apply_recoil_post)
+		_register_hook(lib, "recoil-applyrecoil-post", _recoil.on_apply_recoil_post),
+		_register_hook(lib, "character-stamina", _character.on_stamina)
 	]
 
 	var registered = hooks.filter(func(id): return id > -1)
