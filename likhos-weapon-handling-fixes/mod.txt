@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Weapon Handling Fixes"
 id="likhos-weapon-handling-fixes"
-version="1.9.381"
+version="1.9.384"
 
 [hooks]
 "res://Scripts/Handling.gd"="WeaponHandling"
@@ -11,6 +11,7 @@ version="1.9.381"
 "res://Scripts/Noise.gd"="_physics_process"
 "res://Scripts/Tilt.gd"="_physics_process"
 "res://Scripts/HUD.gd"="_ready, _physics_process"
+"res://Scripts/Recoil.gd"="ApplyRecoil"
 
 [autoload]
 LikhosWeaponHandlingFixes="res://mods/likhos-weapon-handling-fixes/Scripts/Main.gd"
