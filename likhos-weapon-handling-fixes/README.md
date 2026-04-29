@@ -1,17 +1,17 @@
-# Likho's Weapon Handling Fixes
+# Likho's VosTac
 
-A mod for Road to Vostok that fixes several weapon handling bugs and adds realism features.
+Road to Vostok mod that adds tactical realism features and fixes a whole host of vanilla bugs related to weapon handling.
 
-Now with MCM support!
+Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 
 ## New Features
 * Major rework of the PIP scope mode for realism
 * Canted aim is now independent with optional laser auto-activation in hold mode
 * Mouse sensitivity scales with zoom and stance (canted uses Aim, LPVO 1× uses Aim, mid/high use Scope/Scope×0.5)
-* Movement speeds rescaled and added new breakpoints
+* Movement speeds rescaled and added new breakpoints (see MCM settings)
 * Default weapon position changed to patrol mode (rifle rests across chest)
 * LPVO zoom accessible without aiming - conflicts with lower/raise weapon - **REBIND**
-* Crosshair in idle mode for interactions (auto-disabled when aiming/canted/raised)
+* Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in MCM)
 * Ability to toggle secondary optic out of aim with visual que of the toggle
 * Rework of the inspect mode and associated bindings
 
@@ -34,7 +34,7 @@ Picture-in-picture mode renders the world through the scope as a subviewport rat
 
 ## Movement speed rework
 
-Rescaled movement speeds and added new break points.
+Rescaled movement speeds and added new break points. You can edit all these values in MCM.
 
 **Vanilla:** crouch/walk/sprint = 1 / 2.5 / 5
 
