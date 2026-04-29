@@ -12,6 +12,7 @@ var sprint_speed: float
 var aim_speed_mult: float
 var cant_speed_mult: float
 var scope_speed_mult: float
+var laser_auto_on: bool
 
 const MOD_ID = "likhos-weapon-handling-fixes"
 const FILE_PATH = "user://MCM/likhos-weapon-handling-fixes"
@@ -26,6 +27,7 @@ const DEFAULT_SPRINT_SPEED = 6.0
 const DEFAULT_AIM_SPEED_MULT = 0.6
 const DEFAULT_CANT_SPEED_MULT = 0.75
 const DEFAULT_SCOPE_SPEED_MULT = 0.3
+const DEFAULT_LASER_AUTO_ON = true
 const SPEED_MIN = 0.0
 const SPEED_MAX = 20.0
 const MULT_MIN = 0.1
@@ -65,6 +67,7 @@ func _apply_config(config: ConfigFile):
 	aim_speed_mult = config.get_value("Float", "aimSpeedMult", {}).get("value", DEFAULT_AIM_SPEED_MULT)
 	cant_speed_mult = config.get_value("Float", "cantSpeedMult", {}).get("value", DEFAULT_CANT_SPEED_MULT)
 	scope_speed_mult = config.get_value("Float", "scopeSpeedMult", {}).get("value", DEFAULT_SCOPE_SPEED_MULT)
+	laser_auto_on = config.get_value("Bool", "laserAutoOn", {}).get("value", DEFAULT_LASER_AUTO_ON)
 
 func _create_config_template():
 	var config := ConfigFile.new()
@@ -109,6 +112,15 @@ func _create_config_template():
 			"2hold": "Hold",
 			"3toggle": "Toggle"
 		},
+		"menu_pos": next_pos.call(),
+		"category": "Canted mode"
+	})
+
+	config.set_value("Bool", "laserAutoOn", {
+		"name": "Laser Auto-On",
+		"tooltip": "Auto-activate the laser when entering canted aim in hold mode",
+		"default": DEFAULT_LASER_AUTO_ON,
+		"value": DEFAULT_LASER_AUTO_ON,
 		"menu_pos": next_pos.call(),
 		"category": "Canted mode"
 	})

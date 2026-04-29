@@ -6,7 +6,7 @@ Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 
 ## New Features
 * Major rework of the PIP scope mode for realism
-* Canted aim is now independent with optional laser auto-activation in hold mode
+* Canted aim is now independent with optional laser auto-activation in hold mode (disable in MCM)
 * Mouse sensitivity scales with zoom and stance (canted uses Aim, LPVO 1× uses Aim, mid/high use Scope/Scope×0.5)
 * Movement speeds rescaled and added new breakpoints (see MCM settings)
 * Default weapon position changed to patrol mode (rifle rests across chest)

@@ -125,7 +125,7 @@ func _weapon_handling(h, delta: float) -> void:
 				h.canted = !h.canted
 
 	if h.canted:
-		if gd.aimMode == 1:
+		if gd.aimMode == 1 && _config.laser_auto_on:
 			_laser_activate(h)
 		gd.isCanted = true
 		gd.isAiming = false
