@@ -37,6 +37,14 @@ func on_input_pre(event) -> void:
 		return
 	if gd.isAiming:
 		return
+		
+	if Input.is_action_just_pressed("secondary_optic"):
+		var sec_optic = rig.activeOptic
+		if sec_optic != null && sec_optic.attachmentData.secondary && sec_optic.secondary != null:
+			gd.secondaryOptic = !gd.secondaryOptic
+			rig.UpdateAimOffset()
+			rig.PlayRailMove()
+
 
 	if not (event is InputEventMouseButton and event.is_pressed()):
 		return
