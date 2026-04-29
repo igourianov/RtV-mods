@@ -5,6 +5,8 @@ var _preferences: Preferences
 var current_scope_mag: float = 0.0
 var active_rig: WeaponRig
 var _ammo_check_saved_position: int = 0
+var _last_optic_for_scale = null
+var _cached_lens_scale: float = 1.0
 
 
 func _init(lib, preferences: Preferences) -> void:
@@ -70,17 +72,17 @@ func on_ads_post(delta: float) -> void:
 	var rig = _lib._caller
 	active_rig = rig
 
+	var gd = rig.gameData
+
 	# Vanilla leaves gameData.secondaryOptic set when the active optic changes outside
 	# the Inspect attach/detach path. The next optic's _physics_process then disables
 	# its PIP surface and never re-enables it.
-	if rig.gameData.secondaryOptic:
+	if gd.secondaryOptic:
 		var current = rig.activeOptic
-		if current == null or not current.attachmentData.secondary or current.secondary == null:
-			rig.gameData.secondaryOptic = false
+		if current == null || !current.attachmentData.secondary || current.secondary == null:
+			gd.secondaryOptic = false
 
-	if !rig.gameData.PIP:
-		return
-	if rig == null || !rig.gameData.PIP || !rig.gameData.isAiming || rig.gameData.isColliding:
+	if !gd.PIP || !gd.isAiming || gd.isColliding:
 		current_scope_mag = 0.0
 		return
 
@@ -89,33 +91,43 @@ func on_ads_post(delta: float) -> void:
 		current_scope_mag = 0.0
 		return
 
-	var lens_scale = optic.transform.basis.get_scale().y
+	var att = optic.attachmentData
 
-	if optic.attachmentData.scope && !rig.gameData.secondaryOptic:
-		optic.camera.fov = rig.gameData.baseFOV * lens_scale / 4.0
-		rig.gameData.aimFOV = rig.gameData.baseFOV
-		current_scope_mag = rig.gameData.baseFOV / max(optic.camera.fov, 1.0)
+	var lens_scale: float
+	if optic == _last_optic_for_scale:
+		lens_scale = _cached_lens_scale
+	else:
+		lens_scale = optic.transform.basis.get_scale().y
+		_cached_lens_scale = lens_scale
+		_last_optic_for_scale = optic
+
+	var base_fov = gd.baseFOV
+
+	if att.scope && !gd.secondaryOptic:
+		optic.camera.fov = base_fov * lens_scale / 4.0
+		gd.aimFOV = base_fov
+		current_scope_mag = base_fov / max(optic.camera.fov, 1.0)
 		return
 
-	if !optic.attachmentData.variable || rig.slotData == null:
+	if !att.variable || rig.slotData == null:
 		current_scope_mag = 0.0
 		return
 
-	rig.gameData.aimFOV = rig.gameData.baseFOV
+	gd.aimFOV = base_fov
 
 	match rig.slotData.zoom:
 		1:
-			rig.gameData.isScoped = true
-			optic.camera.fov = lerp(optic.camera.fov, rig.gameData.baseFOV * lens_scale / 1.1, delta * 10.0)
+			gd.isScoped = true
+			optic.camera.fov = lerp(optic.camera.fov, base_fov * lens_scale / 1.1, delta * 10.0)
 			if _preferences != null:
-				rig.gameData.scopeSensitivity = _preferences.aimSensitivity
+				gd.scopeSensitivity = _preferences.aimSensitivity
 		2:
-			optic.camera.fov = lerp(optic.camera.fov, rig.gameData.baseFOV * lens_scale / 3.0, delta * 10.0)
+			optic.camera.fov = lerp(optic.camera.fov, base_fov * lens_scale / 3.0, delta * 10.0)
 			if _preferences != null:
-				rig.gameData.scopeSensitivity = _preferences.scopeSensitivity
+				gd.scopeSensitivity = _preferences.scopeSensitivity
 		3:
-			optic.camera.fov = lerp(optic.camera.fov, rig.gameData.baseFOV * lens_scale / 6.0, delta * 10.0)
+			optic.camera.fov = lerp(optic.camera.fov, base_fov * lens_scale / 6.0, delta * 10.0)
 			if _preferences != null:
-				rig.gameData.scopeSensitivity = _preferences.scopeSensitivity * 0.5
+				gd.scopeSensitivity = _preferences.scopeSensitivity * 0.5
 
-	current_scope_mag = rig.gameData.baseFOV / max(optic.camera.fov, 1.0)
+	current_scope_mag = base_fov / max(optic.camera.fov, 1.0)

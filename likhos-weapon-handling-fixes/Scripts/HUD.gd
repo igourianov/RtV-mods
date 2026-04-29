@@ -2,6 +2,7 @@ extends RefCounted
 
 var _lib
 var _config
+var _crosshair: Control
 
 const _CROSSHAIR_SHADOW := Color(0, 0, 0, 0.7)
 const _DOT_RADIUS := 1.5
@@ -17,7 +18,7 @@ func on_ready_post() -> void:
 	var hud = _lib._caller
 	if !hud:
 		return
-	if hud.has_meta("hud_tweaks_crosshair"):
+	if is_instance_valid(_crosshair) && _crosshair.get_parent() == hud:
 		return
 	var crosshair := Control.new()
 	crosshair.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -31,8 +32,8 @@ func on_ready_post() -> void:
 	crosshair.offset_bottom = 12
 	crosshair.draw.connect(_draw_crosshair.bind(crosshair))
 	hud.add_child(crosshair)
-	hud.set_meta("hud_tweaks_crosshair", crosshair)
 	crosshair.hide()
+	_crosshair = crosshair
 
 	hud.tooltip.offset_top += 32
 	hud.tooltip.offset_bottom += 32
@@ -45,10 +46,9 @@ func on_physics_process_post(_delta: float) -> void:
 	var aimingMode = gd.isAiming || gd.isCanted || gd.weaponPosition == 2
 	var aimBlocked = gd.menu || gd.isDead || gd.isInspecting || gd.transition || gd.isTransitioning
 	hud.tooltip.visible = gd.interaction && !gd.transition && !aimingMode
-	var crosshair = hud.get_meta("hud_tweaks_crosshair", null)
-	if !crosshair:
+	if !is_instance_valid(_crosshair):
 		return
-	crosshair.visible = !aimingMode && !aimBlocked && _config.crosshair_style != "off"
+	_crosshair.visible = !aimingMode && !aimBlocked && _config.crosshair_style != "off"
 
 func _draw_crosshair(c: Control) -> void:
 	var center := c.size * 0.5
