@@ -55,7 +55,7 @@ These changes started out as separate mods. The catch is that Road to Vostok's s
 
 # Compatibility
 
-This mod hooks six vanilla methods and their variants through Metro Mod Loader:
+This mod hooks multiple vanilla methods through Metro Mod Loader:
 
 **Replace hooks** (other mods that also replace these will conflict, pick one):
 
@@ -65,11 +65,14 @@ This mod hooks six vanilla methods and their variants through Metro Mod Loader:
 
 - `WeaponRig.AmmoCheck` (pre and post)
 - `WeaponRig.ADS` (post)
-- `WeaponRig._input` (pre and post)
+- `WeaponRig._input` (pre)
 - `Camera.ScopeDOF` (post)
 - `Controller.MovementStates` (pre and post)
 - `Noise._physics_process` (post)
 - `Tilt._physics_process` (pre)
+- `HUD._ready` (post)
+- `HUD._physics_process` (post)
+- `Recoil.ApplyRecoil` (post)
 
 # Install / Uninstall
 
