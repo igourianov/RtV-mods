@@ -13,6 +13,8 @@ const _PATROL_POSITION = Vector3(0.06, -0.18, -0.25)
 const _PATROL_ROTATION = Vector3(25, 50, -20)
 const _PATROL_WEAPON_TYPES = {"Rifle": null, "SMG": null, "Bolt": null, "Shotgun": null}
 const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-10.0, 0.0, 0.0)
+const _MOSIN_LOW_ROTATION_OFFSET = Vector3(-15.0, 15.0, 0.0)
+const _REMINGTON_870_LOW_ROTATION_OFFSET = Vector3(-20.0, 10.0, 0.0)
 
 var _lib
 var _preferences: Preferences
@@ -51,6 +53,10 @@ func _weapon_handling(h, delta: float) -> void:
 		lowRotation = data.lowRotation
 	elif gd.secondaryOptic:
 		lowRotation = _PATROL_ROTATION + _SECONDARY_OPTIC_LOW_ROTATION_OFFSET
+	elif data.file == "Mosin":
+		lowRotation = _PATROL_ROTATION + _MOSIN_LOW_ROTATION_OFFSET
+	elif data.file == "Remington_870":
+		lowRotation = _PATROL_ROTATION + _REMINGTON_870_LOW_ROTATION_OFFSET
 	else:
 		lowRotation = _PATROL_ROTATION
 		
