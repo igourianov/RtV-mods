@@ -12,6 +12,7 @@ const _FLASHLIGHT_WAV_PATH = "res://Audio/Interaction/Files/Flashlight.wav"
 const _PATROL_POSITION = Vector3(0.06, -0.18, -0.25)
 const _PATROL_ROTATION = Vector3(25, 50, -20)
 const _PATROL_WEAPON_TYPES = {"Rifle": null, "SMG": null, "Bolt": null, "Shotgun": null}
+const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-10.0, 0.0, 0.0)
 
 var _lib
 var _preferences: Preferences
@@ -45,7 +46,14 @@ func _weapon_handling(h, delta: float) -> void:
 		return
 
 	var lowPosition = _PATROL_POSITION if _PATROL_WEAPON_TYPES.has(data.weaponType) else data.lowPosition
-	var lowRotation = _PATROL_ROTATION if _PATROL_WEAPON_TYPES.has(data.weaponType) else data.lowRotation
+	var lowRotation: Vector3
+	if !_PATROL_WEAPON_TYPES.has(data.weaponType):
+		lowRotation = data.lowRotation
+	elif gd.secondaryOptic:
+		lowRotation = _PATROL_ROTATION + _SECONDARY_OPTIC_LOW_ROTATION_OFFSET
+	else:
+		lowRotation = _PATROL_ROTATION
+		
 
 	var speed: float = delta * h.handlingSpeed
 	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), speed)
