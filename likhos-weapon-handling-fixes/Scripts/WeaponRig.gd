@@ -32,7 +32,7 @@ func on_input(event) -> void:
 		|| gd.isFiring):
 		return
 
-	if Input.is_action_just_pressed("inspect"):
+	if event.is_action_pressed("inspect"):
 		gd.isInspecting = !gd.isInspecting
 		gd.isFiring = false
 
@@ -56,7 +56,7 @@ func on_input(event) -> void:
 		return
 
 	if gd.isInspecting:
-		if Input.is_action_just_pressed("canted"):
+		if event.is_action_pressed("canted"):
 			if gd.inspectPosition == 1:
 				rig.PlayInspectRotate()
 				rig.animator["parameters/conditions/Inspect_Front"] = false
@@ -82,7 +82,7 @@ func on_input(event) -> void:
 				rig.PlayRailMove()
 		return
 
-	if Input.is_action_just_pressed("secondary_optic"):
+	if event.is_action_pressed("secondary_optic"):
 		var sec_optic = rig.activeOptic
 		if sec_optic != null && sec_optic.attachmentData.secondary && sec_optic.secondary != null:
 			gd.secondaryOptic = !gd.secondaryOptic
@@ -121,6 +121,19 @@ func on_ammo_check_post() -> void:
 	if rig == null:
 		return
 	rig.gameData.weaponPosition = _ammo_check_saved_position
+
+
+func on_ready_post() -> void:
+	var rig = _lib._caller
+	if rig == null:
+		return
+	# Vanilla M4A1_Rig.tscn sets backSightIndex but never sets frontSightIndex,
+	# leaving it at the export default 0. With foldSights = true, UpdateAimOffset
+	# writes a fold rotation to bone 0 (M4A1_Body, the root) every call, which
+	# the AnimationTree reverts on the next physics tick — visible as a flicker.
+	# Alias frontSightIndex to backSightIndex so the redundant write is harmless.
+	if rig.data != null && rig.data.foldSights && rig.backSightIndex > 0 && rig.frontSightIndex == 0:
+		rig.frontSightIndex = rig.backSightIndex
 
 
 func on_ads_post(delta: float) -> void:

@@ -19,7 +19,7 @@ Now with MCM support!
 * Ammo check no longer forces weapon into raised position (prior stance preserved)
 * Canted aim toggle no longer blocked by interactables
 * Manual reload (Mosin, 870) clipping issues fixed (weapon moves to default low position)
-* Fied HAMR secondary optic PIP plane breakage and vertical offset
+* Number of HAMR fixes
 * Interactable tooltip no longer blocks vision when aiming around doorways
 
 ## PIP scope mode: realism
@@ -50,6 +50,14 @@ Rescaled movement speeds and added new break points.
 * Stamina drain removed
 * Added ammo check visuals to the inspect mode (disable via MCM menu)
 
+## HAMR love
+
+HAMR in vanilla is bugged to hell and back. This mod introduces fixes and usability changes for secondary optic mode:
+* HAMR's secondary can now be activated from outside aim mode, and it gives user visual que as to current state
+* Fixed HAMR's secondary optic switch permanently killing PIP plane on other scopes (state wasn't being properly reset)
+* Fixed HAMR's secondary optic vertical offset on all AK rifles (not RK), SVD and Vintorez (missing rotation calc)
+* Fixed HAMR causing major flickering when toggling secondary on M4A1 (bug with foldable iron sights)
+
 # Why this is one mod and not several
 
 These changes started out as separate mods. The catch is that Road to Vostok's scripts have a handful of "god" methods that fold a lot of unrelated behavior into a single function and mix state mutation with rendering side effects in the same call. Hooking a method through the mod loader is all-or-nothing, you can't override only part of a function. So as soon as one fix needed to touch, say, `Handling.WeaponHandling`, every other tweak that also lives in that method had to ship in the same mod or get clobbered by it. That's how the ammo-check, canted, laser and PIP changes ended up bundled together.
@@ -77,6 +85,7 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `WeaponRig.AmmoCheck` (pre and post)
 - `WeaponRig.ADS` (post)
 - `WeaponRig._physics_process` (pre)
+- `WeaponRig._ready` (post)
 - `Camera.ScopeDOF` (post)
 - `Controller.MovementStates` (pre and post)
 - `Noise._physics_process` (post)

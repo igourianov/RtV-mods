@@ -55,6 +55,7 @@ func _init_hooks(lib):
 		_register_hook(lib, "weaponrig-ads-post", _weapon_rig.on_ads_post),
 		_register_hook(lib, "weaponrig-_input", _weapon_rig.on_input),
 		_register_hook(lib, "weaponrig-_physics_process-pre", _weapon_rig.on_physics_process_pre),
+		_register_hook(lib, "weaponrig-_ready-post", _weapon_rig.on_ready_post),
 		_register_hook(lib, "camera-scopedof-post", _camera.on_scope_dof_post),
 		_register_hook(lib, "controller-movementstates-pre", _controller.on_movement_states_pre),
 		_register_hook(lib, "controller-movementstates-post", _controller.on_movement_states_post),
