@@ -4,7 +4,7 @@ Road to Vostok mod that adds tactical realism features and fixes a whole host of
 
 Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 
->Feedback and likes are welcome!
+*Feedback and likes are welcome!*
 
 ## New Features
 * Major rework of the PIP scope mode for realism
@@ -50,7 +50,7 @@ Rescaled movement speeds and added new break points. You can edit all these valu
 * Rail movement now works only in inspect mode. Rail movement binding is now unused.
 * Weapon rotation in inspect mode is now done with the Canted aim binding.
 * Stamina drain removed
-* Added ammo check visuals to the inspect mode (disable via MCM menu)
+* Added ammo and attachment cards to the inspect mode (disable via MCM menu)
 
 ## HAMR love
 

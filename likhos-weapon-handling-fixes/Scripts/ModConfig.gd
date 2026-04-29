@@ -5,7 +5,7 @@ var McmHelpers = preload("res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Help
 var crosshair_style: String
 var crosshair_color: Color
 var cant_mode: String
-var ammo_in_inspect: String
+var ammo_tooltips: bool
 var crouch_speed: float
 var walk_speed: float
 var sprint_speed: float
@@ -13,6 +13,7 @@ var aim_speed_mult: float
 var cant_speed_mult: float
 var scope_speed_mult: float
 var laser_auto_on: bool
+var attachment_tooltips: bool
 
 const MOD_ID = "likhos-weapon-handling-fixes"
 const FILE_PATH = "user://MCM/likhos-weapon-handling-fixes"
@@ -20,7 +21,7 @@ const FILE_NAME = "config.ini"
 const DEFAULT_CROSSHAIR_COLOR = Color(1.0, 0.4, 0.0, 0.65)
 const DEFAULT_CROSSHAIR = "2dot"
 const DEFAULT_CANT_MODE = "1default"
-const DEFAULT_AMMO_IN_INSPECT = "1show"
+const DEFAULT_AMMO_TOOLTIPS = true
 const DEFAULT_CROUCH_SPEED = 0.7
 const DEFAULT_WALK_SPEED = 3.0
 const DEFAULT_SPRINT_SPEED = 6.0
@@ -28,6 +29,7 @@ const DEFAULT_AIM_SPEED_MULT = 0.6
 const DEFAULT_CANT_SPEED_MULT = 0.75
 const DEFAULT_SCOPE_SPEED_MULT = 0.3
 const DEFAULT_LASER_AUTO_ON = true
+const DEFAULT_ATTACHMENT_TOOLTIPS = true
 const SPEED_MIN = 0.0
 const SPEED_MAX = 20.0
 const MULT_MIN = 0.1
@@ -60,7 +62,7 @@ func _apply_config(config: ConfigFile):
 	crosshair_style = config.get_value("Dropdown", "crosshair", {}).get("value", DEFAULT_CROSSHAIR).substr(1)
 	crosshair_color = config.get_value("Color", "crosshairColor", {}).get("value", DEFAULT_CROSSHAIR_COLOR)
 	cant_mode = config.get_value("Dropdown", "cantMode", {}).get("value", DEFAULT_CANT_MODE).substr(1)
-	ammo_in_inspect = config.get_value("Dropdown", "ammoInInspect", {}).get("value", DEFAULT_AMMO_IN_INSPECT).substr(1)
+	ammo_tooltips = config.get_value("Bool", "ammoTooltips", {}).get("value", DEFAULT_AMMO_TOOLTIPS)
 	crouch_speed = config.get_value("Float", "crouchSpeed", {}).get("value", DEFAULT_CROUCH_SPEED)
 	walk_speed = config.get_value("Float", "walkSpeed", {}).get("value", DEFAULT_WALK_SPEED)
 	sprint_speed = config.get_value("Float", "sprintSpeed", {}).get("value", DEFAULT_SPRINT_SPEED)
@@ -68,6 +70,7 @@ func _apply_config(config: ConfigFile):
 	cant_speed_mult = config.get_value("Float", "cantSpeedMult", {}).get("value", DEFAULT_CANT_SPEED_MULT)
 	scope_speed_mult = config.get_value("Float", "scopeSpeedMult", {}).get("value", DEFAULT_SCOPE_SPEED_MULT)
 	laser_auto_on = config.get_value("Bool", "laserAutoOn", {}).get("value", DEFAULT_LASER_AUTO_ON)
+	attachment_tooltips = config.get_value("Bool", "attachmentTooltips", {}).get("value", DEFAULT_ATTACHMENT_TOOLTIPS)
 
 func _create_config_template():
 	var config := ConfigFile.new()
@@ -125,15 +128,20 @@ func _create_config_template():
 		"category": "Canted mode"
 	})
 
-	config.set_value("Dropdown", "ammoInInspect", {
-		"name": "Ammo Overlay In Inspect",
+	config.set_value("Bool", "ammoTooltips", {
+		"name": "Show ammo cards",
 		"tooltip": "Show magazine and chamber overlays while inspecting the weapon",
-		"default": DEFAULT_AMMO_IN_INSPECT,
-		"value": DEFAULT_AMMO_IN_INSPECT,
-		"options": {
-			"1show": "Show",
-			"2hide": "Hide"
-		},
+		"default": DEFAULT_AMMO_TOOLTIPS,
+		"value": DEFAULT_AMMO_TOOLTIPS,
+		"menu_pos": next_pos.call(),
+		"category": "Inspect"
+	})
+
+	config.set_value("Bool", "attachmentTooltips", {
+		"name": "Show attachment cards",
+		"tooltip": "Show attachment names (optic, muzzle, laser) over the weapon while inspecting",
+		"default": DEFAULT_ATTACHMENT_TOOLTIPS,
+		"value": DEFAULT_ATTACHMENT_TOOLTIPS,
 		"menu_pos": next_pos.call(),
 		"category": "Inspect"
 	})
