@@ -1,3 +1,2 @@
 - Implement ammo check by holding reload button
 - Compatibility with Oldman's mod
-- Figure something with LPVO zoom
