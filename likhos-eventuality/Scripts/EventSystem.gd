@@ -56,7 +56,7 @@ func _activate_dynamic_event(es) -> void:
 
 
 func _delayed_call(es, event) -> void:
-	var delay = randi_range(10, 300)
+	var delay = randi_range(30, 300)
 	print("[likho] event activated: \(event.name) | Delay: %02d:%02d" % [floor(delay / 60.0), delay % 60])
 	await es.get_tree().create_timer(delay, false).timeout
 	Callable(es, event.function).call()
