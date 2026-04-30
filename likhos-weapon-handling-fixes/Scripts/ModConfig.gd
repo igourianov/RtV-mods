@@ -7,6 +7,9 @@ var crosshair_color: Color
 var cant_mode: String
 var lpvo_oof_zoom: String
 var disable_zoom_dof: bool
+var disable_optic_override: bool
+var disable_canted_override: bool
+var disable_lowered_override: bool
 var ammo_tooltips: bool
 var crouch_speed: float
 var walk_speed: float
@@ -25,6 +28,9 @@ const DEFAULT_CROSSHAIR = "2dot"
 const DEFAULT_CANT_MODE = "1default"
 const DEFAULT_LPVO_OOF_ZOOM = "1enabled"
 const DEFAULT_DISABLE_ZOOM_DOF = false
+const DEFAULT_DISABLE_OPTIC_OVERRIDE = false
+const DEFAULT_DISABLE_CANTED_OVERRIDE = false
+const DEFAULT_DISABLE_LOWERED_OVERRIDE = false
 const DEFAULT_AMMO_TOOLTIPS = true
 const DEFAULT_CROUCH_SPEED = 0.7
 const DEFAULT_WALK_SPEED = 3.0
@@ -68,6 +74,9 @@ func _apply_config(config: ConfigFile):
 	cant_mode = config.get_value("Dropdown", "cantMode", {}).get("value", DEFAULT_CANT_MODE).substr(1)
 	lpvo_oof_zoom = config.get_value("Dropdown", "lpvoOofZoom", {}).get("value", DEFAULT_LPVO_OOF_ZOOM).substr(1)
 	disable_zoom_dof = config.get_value("Bool", "disableZoomDof", {}).get("value", DEFAULT_DISABLE_ZOOM_DOF)
+	disable_optic_override = config.get_value("Bool", "disableOpticOverride", {}).get("value", DEFAULT_DISABLE_OPTIC_OVERRIDE)
+	disable_canted_override = config.get_value("Bool", "disableCantedOverride", {}).get("value", DEFAULT_DISABLE_CANTED_OVERRIDE)
+	disable_lowered_override = config.get_value("Bool", "disableLoweredOverride", {}).get("value", DEFAULT_DISABLE_LOWERED_OVERRIDE)
 	ammo_tooltips = config.get_value("Bool", "ammoTooltips", {}).get("value", DEFAULT_AMMO_TOOLTIPS)
 	crouch_speed = config.get_value("Float", "crouchSpeed", {}).get("value", DEFAULT_CROUCH_SPEED)
 	walk_speed = config.get_value("Float", "walkSpeed", {}).get("value", DEFAULT_WALK_SPEED)
@@ -172,6 +181,33 @@ func _create_config_template():
 		"tooltip": "Completely disable depth-of-field blur when looking through scopes",
 		"default": DEFAULT_DISABLE_ZOOM_DOF,
 		"value": DEFAULT_DISABLE_ZOOM_DOF,
+		"menu_pos": next_pos.call(),
+		"category": "Aim tweaks"
+	})
+
+	config.set_value("Bool", "disableOpticOverride", {
+		"name": "Disable optic position override",
+		"tooltip": "Use vanilla aim position when scoped. Skips the mod's eye-relief and Y-offset adjustments.",
+		"default": DEFAULT_DISABLE_OPTIC_OVERRIDE,
+		"value": DEFAULT_DISABLE_OPTIC_OVERRIDE,
+		"menu_pos": next_pos.call(),
+		"category": "Aim tweaks"
+	})
+
+	config.set_value("Bool", "disableCantedOverride", {
+		"name": "Disable canted position override",
+		"tooltip": "Use vanilla canted position and rotation. Skips the mod's Y offset and roll tweak.",
+		"default": DEFAULT_DISABLE_CANTED_OVERRIDE,
+		"value": DEFAULT_DISABLE_CANTED_OVERRIDE,
+		"menu_pos": next_pos.call(),
+		"category": "Aim tweaks"
+	})
+
+	config.set_value("Bool", "disableLoweredOverride", {
+		"name": "Disable lowered position override",
+		"tooltip": "Use vanilla low position and rotation. Skips the mod's patrol-mode replacement.",
+		"default": DEFAULT_DISABLE_LOWERED_OVERRIDE,
+		"value": DEFAULT_DISABLE_LOWERED_OVERRIDE,
 		"menu_pos": next_pos.call(),
 		"category": "Aim tweaks"
 	})

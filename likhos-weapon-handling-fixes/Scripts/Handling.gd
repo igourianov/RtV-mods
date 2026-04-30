@@ -47,18 +47,23 @@ func _weapon_handling(h, delta: float) -> void:
 	if gd.freeze:
 		return
 
-	var lowPosition = _PATROL_POSITION if _PATROL_WEAPON_TYPES.has(data.weaponType) else data.lowPosition
+	var lowPosition: Vector3
 	var lowRotation: Vector3
-	if !_PATROL_WEAPON_TYPES.has(data.weaponType):
+	if _config.disable_lowered_override:
+		lowPosition = data.lowPosition
 		lowRotation = data.lowRotation
-	elif gd.secondaryOptic:
-		lowRotation = _PATROL_ROTATION + _SECONDARY_OPTIC_LOW_ROTATION_OFFSET
-	elif data.file == "Mosin":
-		lowRotation = _PATROL_ROTATION + _MOSIN_LOW_ROTATION_OFFSET
-	elif data.file == "Remington_870":
-		lowRotation = _PATROL_ROTATION + _REMINGTON_870_LOW_ROTATION_OFFSET
 	else:
-		lowRotation = _PATROL_ROTATION
+		lowPosition = _PATROL_POSITION if _PATROL_WEAPON_TYPES.has(data.weaponType) else data.lowPosition
+		if !_PATROL_WEAPON_TYPES.has(data.weaponType):
+			lowRotation = data.lowRotation
+		elif gd.secondaryOptic:
+			lowRotation = _PATROL_ROTATION + _SECONDARY_OPTIC_LOW_ROTATION_OFFSET
+		elif data.file == "Mosin":
+			lowRotation = _PATROL_ROTATION + _MOSIN_LOW_ROTATION_OFFSET
+		elif data.file == "Remington_870":
+			lowRotation = _PATROL_ROTATION + _REMINGTON_870_LOW_ROTATION_OFFSET
+		else:
+			lowRotation = _PATROL_ROTATION
 		
 
 	var speed: float = delta * h.handlingSpeed
@@ -131,8 +136,12 @@ func _weapon_handling(h, delta: float) -> void:
 		gd.isAiming = false
 		if _preferences != null:
 			gd.lookSensitivity = _preferences.aimSensitivity
-		h.targetPosition = data.cantedPosition + Vector3(0.0, -0.05, 0.0)
-		h.targetRotation = data.cantedRotation + Vector3(0.0, 0.0, -20.0)
+		if _config.disable_canted_override:
+			h.targetPosition = data.cantedPosition
+			h.targetRotation = data.cantedRotation
+		else:
+			h.targetPosition = data.cantedPosition + Vector3(0.0, -0.05, 0.0)
+			h.targetRotation = data.cantedRotation + Vector3(0.0, 0.0, -20.0)
 		return
 
 	_laser_deactivate(h)
@@ -157,25 +166,34 @@ func _weapon_handling(h, delta: float) -> void:
 		return
 
 	var parent = h.get_parent()
-	var optic = parent.activeOptic
-	if optic && gd.PIP && optic.attachmentData.scope && !gd.secondaryOptic:
-		var aim_z = _optic_lens_aim_z(optic) + _FIXED_SCOPE_AIM_OFFSET
-		h.targetPosition = Vector3(0.0, -parent.aimOffset, aim_z)
-	elif optic && gd.PIP && optic.attachmentData.variable && !gd.secondaryOptic:
-		var aim_z = _optic_lens_aim_z(optic) + _VARIABLE_SCOPE_AIM_OFFSET
-		h.targetPosition = Vector3(0.0, -parent.aimOffset, aim_z)
-	elif optic:
-		var y_offset: float = parent.aimOffset
-		if gd.secondaryOptic && optic.secondary != null:
-			var primary_in_rig: Vector3 = parent.to_local(optic.global_position)
-			var secondary_in_rig: Vector3 = parent.to_local(optic.secondary.global_position)
-			y_offset = optic.position.y + (secondary_in_rig.y - primary_in_rig.y)
-		h.targetPosition = Vector3(0.0, -y_offset, data.aimPosition.z)
-		if gd.isScoped:
-			h.targetPosition += Vector3(0.0, 0.0, -0.1)
+	if _config.disable_optic_override:
+		if parent.activeOptic:
+			h.targetPosition = Vector3(0.0, -parent.aimOffset, data.aimPosition.z)
+		else:
+			h.targetPosition = data.aimPosition
+		h.targetRotation = data.aimRotation
+		if gd.isScoped && !gd.PIP:
+			h.targetPosition -= Vector3(0.0, 0.0, 0.1)
 	else:
-		h.targetPosition = data.aimPosition
-	h.targetRotation = data.aimRotation
+		var optic = parent.activeOptic
+		if optic && gd.PIP && optic.attachmentData.scope && !gd.secondaryOptic:
+			var aim_z = _optic_lens_aim_z(optic) + _FIXED_SCOPE_AIM_OFFSET
+			h.targetPosition = Vector3(0.0, -parent.aimOffset, aim_z)
+		elif optic && gd.PIP && optic.attachmentData.variable && !gd.secondaryOptic:
+			var aim_z = _optic_lens_aim_z(optic) + _VARIABLE_SCOPE_AIM_OFFSET
+			h.targetPosition = Vector3(0.0, -parent.aimOffset, aim_z)
+		elif optic:
+			var y_offset: float = parent.aimOffset
+			if gd.secondaryOptic && optic.secondary != null:
+				var primary_in_rig: Vector3 = parent.to_local(optic.global_position)
+				var secondary_in_rig: Vector3 = parent.to_local(optic.secondary.global_position)
+				y_offset = optic.position.y + (secondary_in_rig.y - primary_in_rig.y)
+			h.targetPosition = Vector3(0.0, -y_offset, data.aimPosition.z)
+			if gd.isScoped:
+				h.targetPosition += Vector3(0.0, 0.0, -0.1)
+		else:
+			h.targetPosition = data.aimPosition
+		h.targetRotation = data.aimRotation
 
 
 func _optic_lens_aim_z(optic) -> float:
