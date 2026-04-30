@@ -31,7 +31,14 @@ Two main changes were made:
 
 ## Fighter jet
 
-Once triggered, will spawn repeatedly at random intervals (60-300 seconds).
+Once triggered, will repeat anywhere between 3-10 times at random intervals (60-300 seconds).
+
+## MCM config
+
+Published all event probabilities as MCM config values. Note that probability does not override avilability. E.g. Punisher wont be avilable before day 5, even if you set him to 100%.
+
+I *DO NOT RECOMMEND* changing them unless it is to trigger long wanted event (like Punisher) once and then revert. The probability stacking made it seem like vanilla events are way too rare. You may find that after this mod fix, events are quite common and might be annoying.
+
 
 ## Compatibility
 

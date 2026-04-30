@@ -1,6 +1,7 @@
 extends RefCounted
 
 var _lib
+var _config
 var _rollBonus: Dictionary = {}
 var _jetCounter: int = 0
 
@@ -12,8 +13,9 @@ const blockers := {
 }
 
 
-func _init(lib) -> void:
+func _init(lib, config) -> void:
 	_lib = lib
+	_config = config
 
 
 func on_activate_dynamic_event() -> void:
@@ -40,14 +42,15 @@ func _activate_dynamic_event(es) -> void:
 	for e in events:
 		var blocker: String = blockers.get(e.function, null)
 		var bonus: float = _rollBonus.get(e.function, 0.0)
+		var basePossibility: float = _config.get_probability(e.function, e.possibility)
 
 		if blocker != null && activated.has(blocker):
-			bonus += e.possibility
+			bonus += basePossibility
 			_rollBonus.set(e.function, bonus)
 			print("[likho] event skipped: %s | Blocked by: %s | Next roll bonus: +%s" % [e.function, blocker, bonus])
 			continue
 
-		var threshold: float = e.possibility + bonus
+		var threshold: float = basePossibility + bonus
 		var roll: float = randi_range(1, 100)
 		_rollBonus.set(e.function, 0.0)
 

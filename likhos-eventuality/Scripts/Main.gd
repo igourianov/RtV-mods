@@ -2,12 +2,15 @@ extends Node
 
 const _EventSystem = preload("res://mods/likhos-eventuality/Scripts/EventSystem.gd")
 const _Police = preload("res://mods/likhos-eventuality/Scripts/Police.gd")
+const _ModConfig = preload("res://mods/likhos-eventuality/Scripts/ModConfig.gd")
 
 var _event_system
 var _police
+var _config
 
 
 func _ready() -> void:
+	_config = _ModConfig.new()
 	if not Engine.has_meta("RTVModLib"):
 		push_error("[likho] RTVModLib meta not available")
 		return
@@ -21,7 +24,7 @@ func _ready() -> void:
 
 
 func _init_hooks(lib):
-	_event_system = _EventSystem.new(lib)
+	_event_system = _EventSystem.new(lib, _config)
 	_police = _Police.new(lib)
 
 	var hooks: Array[int] = [
