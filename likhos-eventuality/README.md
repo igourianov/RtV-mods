@@ -47,12 +47,12 @@ This mod hooks vanilla methods through Metro Mod Loader:
 **Replace hooks** (other mods that also replace these will conflict, pick one):
 
 - `EventSystem.ActivateDynamicEvent`
-- `Police.States`
 
 **Post hooks** (additive, run after vanilla, coexist with other mods cleanly):
 
-- `EventSystem.FighterJet` (post)
-- `Police._ready` (post)
+- `EventSystem.FighterJet`
+- `Police._ready`
+- `Police.States`
 
 ## Install / Uninstall
 
