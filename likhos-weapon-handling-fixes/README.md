@@ -14,7 +14,7 @@ Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 * Default weapon position changed to patrol mode (rifle rests across chest)
 * LPVO zoom accessible without aiming - conflicts with lower/raise weapon - **REBIND**
 * Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in MCM)
-* Ability to toggle secondary optic out of aim with visual que of the toggle
+* Ability to toggle secondary optic out of aim with visual cue of the toggle
 * Rework of the inspect mode and associated bindings
 
 ## Vanilla Fixes
@@ -51,7 +51,7 @@ Rescaled movement speeds and added new break points. You can edit all these valu
 ## HAMR love
 
 HAMR in vanilla is bugged to hell and back. This mod introduces fixes and usability changes for secondary optic mode:
-* HAMR's secondary can now be activated from outside aim mode, and it gives user visual que as to current state
+* HAMR's secondary can now be activated from outside aim mode, and it gives user visual cue as to current state
 * Fixed HAMR's secondary optic switch permanently killing PIP plane on other scopes (state wasn't being properly reset)
 * Fixed HAMR's secondary optic vertical offset on all AK rifles (not RK), SVD and Vintorez (missing rotation calc)
 * Fixed HAMR causing major flickering when toggling secondary on M4A1 (bug with foldable iron sights)
