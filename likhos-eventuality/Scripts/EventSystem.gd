@@ -26,6 +26,7 @@ func on_activate_dynamic_event() -> void:
 func _activate_dynamic_event(es) -> void:
 
 	print("[likho] available events: %s" % [es.dynamicEvents.map(func(el): return el.function)])
+	print("[likho] pending roll bonuses: %s" % [rollBonuses])
 
 	if es.dynamicEvents.size() == 0:
 		return
@@ -41,7 +42,7 @@ func _activate_dynamic_event(es) -> void:
 		if blocker != null && activated.has(blocker):
 			bonus += e.possibility
 			rollBonuses.set(e.function, bonus)
-			print("[likho] event skipped: %s | Blocked by: %s | Next roll bonus: +%s" % [e.name, blocker, bonus])
+			print("[likho] event skipped: %s | Blocked by: %s | Next roll bonus: +%s" % [e.function, blocker, bonus])
 			continue
 
 		var threshold: float = e.possibility + bonus
@@ -49,17 +50,17 @@ func _activate_dynamic_event(es) -> void:
 		rollBonuses.set(e.function, 0.0)
 
 		if roll > threshold:
-			print("[likho] event missed: %s | Roll: %s/%s" % [e.name, roll, threshold])
+			print("[likho] event missed: %s | Roll: %s/%s" % [e.function, roll, threshold])
 			continue
 
 		activated[e.function] = true
 
 		if e.instant:
-			print("[likho] event activated: %s | Roll: %s/%s" % [e.name, roll, threshold])
+			print("[likho] event activated: %s | Roll: %s/%s" % [e.function, roll, threshold])
 			Callable(es, e.function).call()
 		else:
 			var delay = randi_range(30, 300)
-			print("[likho] event activated: %s | Roll: %s/%s | Delay: %02d:%02d" % [e.name, roll, threshold, int(floor(delay / 60.0)), delay % 60])
+			print("[likho] event activated: %s | Roll: %s/%s | Delay: %02d:%02d" % [e.function, roll, threshold, int(floor(delay / 60.0)), delay % 60])
 			_activate_delayed_event(es, delay, e.function) # no await on purpose
 
 func _activate_delayed_event(es, delay, name):
