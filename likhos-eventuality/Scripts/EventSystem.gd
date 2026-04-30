@@ -1,8 +1,9 @@
 extends RefCounted
 
 var _lib
+var _rollBonus: Dictionary = {}
+var _jetCounter: int = 0
 
-var rollBonuses: Dictionary = {}
 const blockers := {
 	"BTR": "Police",
 	"Police": "BTR",
@@ -26,28 +27,29 @@ func on_activate_dynamic_event() -> void:
 func _activate_dynamic_event(es) -> void:
 
 	print("[likho] available events: %s" % [es.dynamicEvents.map(func(el): return el.function)])
-	print("[likho] pending roll bonuses: %s" % [rollBonuses])
+	print("[likho] pending roll bonuses: %s" % [_rollBonus])
 
 	if es.dynamicEvents.size() == 0:
 		return
 
+	_jetCounter = int(randi_range(3, 10))
 	var activated: Dictionary = {}
 	var events = es.dynamicEvents.duplicate()
 	events.shuffle()
 
 	for e in events:
 		var blocker: String = blockers.get(e.function, null)
-		var bonus: float = rollBonuses.get(e.function, 0.0)
+		var bonus: float = _rollBonus.get(e.function, 0.0)
 
 		if blocker != null && activated.has(blocker):
 			bonus += e.possibility
-			rollBonuses.set(e.function, bonus)
+			_rollBonus.set(e.function, bonus)
 			print("[likho] event skipped: %s | Blocked by: %s | Next roll bonus: +%s" % [e.function, blocker, bonus])
 			continue
 
 		var threshold: float = e.possibility + bonus
-		var roll = randi_range(1, 100)
-		rollBonuses.set(e.function, 0.0)
+		var roll: float = randi_range(1, 100)
+		_rollBonus.set(e.function, 0.0)
 
 		if roll > threshold:
 			print("[likho] event missed: %s | Roll: %s/%s" % [e.function, roll, threshold])
@@ -69,7 +71,8 @@ func _activate_delayed_event(es, delay, name):
 
 func on_fighter_jet_post() -> void:
 	var es = _lib._caller
-	if es == null:
+	_jetCounter -= 1
+	if es == null || _jetCounter <= 0:
 		return
 	_schedule_fighter_jet(es)
 
