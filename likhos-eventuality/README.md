@@ -6,17 +6,17 @@ Road to Vostok mod that improves dynamic event spawning so that they closer repr
 
 Vanilla stacks probabilities, resulting much lower chances of individual event spawning than declared in the UI. 
 
-For example: you have `["FighterJet", "Police", "Airdrop", "CrashSite"]` events avilable in the Village, with individual probabilities being `25% / 10% / 10% / 10%`. The actual trigger chance for them is `6.25% / 2.5% / 2.5% / 2.5%` (declared chance divided by number of avilable events).
+For example: you have `["FighterJet", "Police", "Airdrop", "CrashSite"]` events available in the Village, with individual probabilities being `25% / 10% / 10% / 10%`. The actual trigger chance for them is `6.25% / 2.5% / 2.5% / 2.5%` (declared chance divided by number of available events).
 
 ---
 
 This mod turns this math around. Each dynamic event now gets its own die roll. There now could potentially be multiple events active on the map.
 
 Notable exceptions:
-- Punisher is exclusive with BTR
+- Police van is exclusive with BTR
 - Airdrop is exclusive with the heli crash site
 
-Events skipped because of exclusivity will pass on their their probability as a roll bonus onto the next map load. Roll bonus resets when roll occurs, but accumulates on skipped rolls.
+Events skipped because of exclusivity will pass on their probability as a roll bonus onto the next map load. Roll bonus resets when roll occurs, but accumulates on skipped rolls.
 
 E.g. if you got two Airdrops in a row, then the trigger chance for heli crash on the third map load will be 30% instead of 10%.
 
@@ -35,7 +35,7 @@ Once triggered, will repeat anywhere between 3-10 times at random intervals (60-
 
 ## MCM config
 
-Published all event probabilities as MCM config values. Note that probability does not override avilability. E.g. Punisher wont be avilable before day 5, even if you set him to 100%.
+Published all event probabilities as MCM config values. Note that probability does not override availability. E.g. Punisher won't be available before day 5, even if you set him to 100%.
 
 I *DO NOT RECOMMEND* changing them unless it is to trigger long wanted event (like Punisher) once and then revert. The probability stacking made it seem like vanilla events are way too rare. You may find that after this mod fix, events are quite common and might be annoying.
 

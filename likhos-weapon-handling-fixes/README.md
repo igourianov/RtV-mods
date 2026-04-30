@@ -51,7 +51,7 @@ Rescaled movement speeds and added new break points. You can edit all these valu
 ## HAMR love
 
 HAMR in vanilla is bugged to hell and back. This mod introduces fixes and usability changes for secondary optic mode:
-* HAMR's secondary can now be activated from outside aim mode, and it gives user visual cue as to current state
+* HAMR's secondary can now be activated from outside aim mode, and it gives the user a visual cue as to current state
 * Fixed HAMR's secondary optic switch permanently killing PIP plane on other scopes (state wasn't being properly reset)
 * Fixed HAMR's secondary optic vertical offset on all AK rifles (not RK), SVD and Vintorez (missing rotation calc)
 * Fixed HAMR causing major flickering when toggling secondary on M4A1 (bug with foldable iron sights)
