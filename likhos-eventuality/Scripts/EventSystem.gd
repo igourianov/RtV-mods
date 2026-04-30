@@ -35,21 +35,21 @@ func _activate_dynamic_event(es) -> void:
 		var partner = _EXCLUSIONS.get(e.function, null)
 		if partner != null && activated.has(partner):
 			rollbonus += e.possibility * 0.5
-			print("[likho] event skipped: \(e.name) | Exclusive with: \(partner) | Next roll bonus: +\(rollbonus)")
+			print("[likho] event skipped: %s | Exclusive with: %s | Next roll bonus: +%s" % [e.name, partner, rollbonus])
 			continue
 
 		var threshold: float = e.possibility + rollbonus
 		var roll = randi_range(1, 100)
 
 		if roll > threshold:
-			print("[likho] event missed: \(e.name) | Roll: \(roll)/\(100 - threshold)")
+			print("[likho] event missed: %s | Roll: %s/%s" % [e.name, roll, threshold])
 			continue
 
 		rollbonus = 0.0
 		activated[e.function] = true
 
 		if e.instant:
-			print("[likho] event activated: \(e.name)")
+			print("[likho] event activated: %s" % e.name)
 			Callable(es, e.function).call()
 		else:
 			_delayed_call(es, e)
@@ -57,7 +57,7 @@ func _activate_dynamic_event(es) -> void:
 
 func _delayed_call(es, event) -> void:
 	var delay = randi_range(30, 300)
-	print("[likho] event activated: \(event.name) | Delay: %02d:%02d" % [floor(delay / 60.0), delay % 60])
+	print("[likho] event activated: %s | Delay: %02d:%02d" % [event.name, int(floor(delay / 60.0)), delay % 60])
 	await es.get_tree().create_timer(delay, false).timeout
 	Callable(es, event.function).call()
 
@@ -71,7 +71,7 @@ func on_fighter_jet_post() -> void:
 
 func _schedule_fighter_jet(es) -> void:
 	var delay = randi_range(60, 300)
-	print("[likho] FighterJet re-trigger scheduled | Delay: %02d:%02d" % [floor(delay / 60.0), delay % 60])
+	print("[likho] FighterJet triggered | Nex one in: %02d:%02d" % [int(floor(delay / 60.0)), delay % 60])
 	await es.get_tree().create_timer(delay, false).timeout
 	if !is_instance_valid(es):
 		return
