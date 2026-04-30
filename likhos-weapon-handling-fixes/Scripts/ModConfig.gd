@@ -6,6 +6,7 @@ var crosshair_style: String
 var crosshair_color: Color
 var cant_mode: String
 var lpvo_oof_zoom: String
+var disable_zoom_dof: bool
 var ammo_tooltips: bool
 var crouch_speed: float
 var walk_speed: float
@@ -23,6 +24,7 @@ const DEFAULT_CROSSHAIR_COLOR = Color(1.0, 0.4, 0.0, 0.65)
 const DEFAULT_CROSSHAIR = "2dot"
 const DEFAULT_CANT_MODE = "1default"
 const DEFAULT_LPVO_OOF_ZOOM = "1enabled"
+const DEFAULT_DISABLE_ZOOM_DOF = false
 const DEFAULT_AMMO_TOOLTIPS = true
 const DEFAULT_CROUCH_SPEED = 0.7
 const DEFAULT_WALK_SPEED = 3.0
@@ -65,6 +67,7 @@ func _apply_config(config: ConfigFile):
 	crosshair_color = config.get_value("Color", "crosshairColor", {}).get("value", DEFAULT_CROSSHAIR_COLOR)
 	cant_mode = config.get_value("Dropdown", "cantMode", {}).get("value", DEFAULT_CANT_MODE).substr(1)
 	lpvo_oof_zoom = config.get_value("Dropdown", "lpvoOofZoom", {}).get("value", DEFAULT_LPVO_OOF_ZOOM).substr(1)
+	disable_zoom_dof = config.get_value("Bool", "disableZoomDof", {}).get("value", DEFAULT_DISABLE_ZOOM_DOF)
 	ammo_tooltips = config.get_value("Bool", "ammoTooltips", {}).get("value", DEFAULT_AMMO_TOOLTIPS)
 	crouch_speed = config.get_value("Float", "crouchSpeed", {}).get("value", DEFAULT_CROUCH_SPEED)
 	walk_speed = config.get_value("Float", "walkSpeed", {}).get("value", DEFAULT_WALK_SPEED)
@@ -160,6 +163,15 @@ func _create_config_template():
 			"2disabled": "Disabled",
 			"3rail": "Rail movement"
 		},
+		"menu_pos": next_pos.call(),
+		"category": "Aim tweaks"
+	})
+
+	config.set_value("Bool", "disableZoomDof", {
+		"name": "Disable zoom DOF",
+		"tooltip": "Completely disable depth-of-field blur when looking through scopes",
+		"default": DEFAULT_DISABLE_ZOOM_DOF,
+		"value": DEFAULT_DISABLE_ZOOM_DOF,
 		"menu_pos": next_pos.call(),
 		"category": "Aim tweaks"
 	})
