@@ -8,7 +8,7 @@ Each dynamic event now gets its own die roll and there now could potentially be 
 
 Notable exceptions:
 - Punisher is exclusive with BTR
-- Care package drop is exclusive with the chopper crash site
+- Airdrop is exclusive with the chopper crash site
 
 Events skipped because of exclusivity will pass on half of their spawn chance onto the next event as a roll bonus.
 
@@ -22,7 +22,7 @@ Two main changes to make to make it easier to obtain his hat:
 
 ## Fighter jet
 
-Once triggered, will spawn repeatedly at random intervals.
+Once triggered, will spawn repeatedly at random intervals (60-300 seconds).
 
 ## Compatibility
 
