@@ -1,10 +1,10 @@
 [mod]
 name="Likho's Eventuality"
 id="likhos-eventuality"
-version="1.1.22"
+version="1.1.27"
 
 [hooks]
-"res://Scripts/EventSystem.gd"="ActivateDynamicEvent, FighterJet"
+"res://Scripts/EventSystem.gd"="ActivateDynamicEvent, FighterJet, CrashSite"
 "res://Scripts/Police.gd"="States, _ready"
 
 [autoload]

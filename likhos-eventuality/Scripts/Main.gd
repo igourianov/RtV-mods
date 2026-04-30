@@ -30,6 +30,7 @@ func _init_hooks(lib):
 	var hooks: Array[int] = [
 		_register_hook(lib, "eventsystem-activatedynamicevent", _event_system.on_activate_dynamic_event),
 		_register_hook(lib, "eventsystem-fighterjet-post", _event_system.on_fighter_jet_post),
+		_register_hook(lib, "eventsystem-crashsite", _event_system.on_crash_site),
 		_register_hook(lib, "police-_ready-post", _police.on_ready_post),
 		_register_hook(lib, "police-states-post", _police.on_states_post)
 	]

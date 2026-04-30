@@ -1,6 +1,11 @@
 # Likho's Eventuality
 
-Road to Vostok mod that improves dynamic event spawning so that they closer represent declared probabilities.
+Road to Vostok mod that improves dynamic event spawning so that they more closely represent declared probabilities.
+
+* Fixed individual event probabilities to follow declared values
+* Police van without sirens is no longer a dud
+* Heli crash site now plays a sound to let you know it has spawned
+* Fighter jet repeats
 
 ## Probability math
 
@@ -29,6 +34,10 @@ Two main changes were made:
 - Event variant without sirens will now trigger the boss just the same
 - Van speed reduced from 25 to 15, so it's much easier to catch him (or to run away)
 
+## Heli crash site
+
+The crash site will now trigger an audible explosion (5-20 sec delay after loading the map) whenever it spawns. Now you know to look for it.
+
 ## Fighter jet
 
 Once triggered, will repeat anywhere between 3-10 times at random intervals (60-300 seconds).
@@ -47,6 +56,7 @@ This mod hooks vanilla methods through Metro Mod Loader:
 **Replace hooks** (other mods that also replace these will conflict, pick one):
 
 - `EventSystem.ActivateDynamicEvent`
+- `EventSystem.CrashSite`
 
 **Post hooks** (additive, run after vanilla, coexist with other mods cleanly):
 

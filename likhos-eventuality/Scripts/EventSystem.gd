@@ -5,6 +5,8 @@ var _config
 var _rollBonus: Dictionary = {}
 var _jetCounter: int = 0
 
+const _AUDIO_LIBRARY := preload("res://Resources/AudioLibrary.tres")
+
 const blockers := {
 	"BTR": "Police",
 	"Police": "BTR",
@@ -87,3 +89,51 @@ func _schedule_fighter_jet(es) -> void:
 	if !is_instance_valid(es):
 		return
 	Callable(es, "FighterJet").call()
+
+
+func on_crash_site() -> void:
+	var es = _lib._caller
+	_lib.skip_super()
+	if es == null:
+		return
+	var crashesRoot = es.crashes
+	if crashesRoot == null || crashesRoot.get_child_count() == 0:
+		return
+	var spawn = crashesRoot.get_child(randi_range(0, crashesRoot.get_child_count() - 1))
+	var crashSite = es.crash.instantiate()
+	spawn.add_child(crashSite)
+	crashSite.global_transform = spawn.global_transform
+
+	var delay = randi_range(5, 20)
+	print("[likho] CrashSite triggered | Boom in: %ss at %s" % [delay, spawn.global_position])
+	_play_delayed_explosion(es, spawn.global_position, delay)
+
+
+func _play_delayed_explosion(es, pos: Vector3, initialDelay: float) -> void:
+	await es.get_tree().create_timer(initialDelay, false).timeout
+	if !is_instance_valid(es):
+		return
+	var audioEvent = _AUDIO_LIBRARY.grenadeExplosionOutdoorClose
+	if audioEvent == null || audioEvent.audioClips.is_empty():
+		return
+	var count := randi_range(3, 5)
+	for i in count:
+		if i > 0:
+			var gap := randf_range(0.2, 0.4) + float(count - i) * 0.25
+			await es.get_tree().create_timer(gap, false).timeout
+			if !is_instance_valid(es):
+				return
+		_spawn_explosion(es, pos, audioEvent, 5.0 + float(i) * 3.0)
+
+
+func _spawn_explosion(es, pos: Vector3, audioEvent, volumeBoost: float) -> void:
+	var player := AudioStreamPlayer3D.new()
+	player.bus = &"SFX"
+	player.stream = audioEvent.audioClips.pick_random()
+	player.unit_size = 100.0
+	player.max_distance = 2000.0
+	player.volume_db = audioEvent.volume + volumeBoost
+	es.get_tree().get_root().add_child(player)
+	player.global_position = pos
+	player.play()
+	player.finished.connect(player.queue_free)
