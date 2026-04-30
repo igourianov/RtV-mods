@@ -2,6 +2,7 @@ extends RefCounted
 
 var _lib
 var _preferences: Preferences
+var _config
 var current_scope_mag: float = 0.0
 var active_rig: WeaponRig
 var _ammo_check_saved_position: int = 0
@@ -9,9 +10,10 @@ var _last_optic_for_scale = null
 var _cached_lens_scale: float = 1.0
 
 
-func _init(lib, preferences: Preferences) -> void:
+func _init(lib, preferences: Preferences, config) -> void:
 	_lib = lib
 	_preferences = preferences
+	_config = config
 
 
 func on_input(event) -> void:
@@ -91,6 +93,11 @@ func on_input(event) -> void:
 	if event is InputEventMouseButton && event.is_pressed():
 		var optic = rig.activeOptic
 		if optic == null || !optic.attachmentData.variable:
+			return
+		var zooming = (gd.isAiming
+			|| _config.lpvo_oof_zoom == "enabled"
+			|| (_config.lpvo_oof_zoom == "rail" && Input.is_action_pressed("rail_movement")))
+		if !zooming:
 			return
 		var slotData = rig.slotData
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP && slotData.zoom != 3:

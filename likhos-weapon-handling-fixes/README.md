@@ -12,7 +12,7 @@ Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 * Mouse sensitivity scales with zoom and stance (canted uses Aim, LPVO 1× uses Aim, mid/high use Scope/Scope×0.5)
 * Movement speeds rescaled and added new breakpoints (see MCM settings)
 * Default weapon position changed to patrol mode (rifle rests across chest)
-* LPVO zoom accessible without aiming - conflicts with lower/raise weapon - **REBIND**
+* LPVO zoom accessible without aiming - conflicts with lower/raise weapon - **REBIND** or change setting in MCM
 * Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in MCM)
 * Ability to toggle secondary optic out of aim with visual cue of the toggle
 * Rework of the inspect mode and associated bindings

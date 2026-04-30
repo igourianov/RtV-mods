@@ -5,6 +5,7 @@ var McmHelpers = preload("res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Help
 var crosshair_style: String
 var crosshair_color: Color
 var cant_mode: String
+var lpvo_oof_zoom: String
 var ammo_tooltips: bool
 var crouch_speed: float
 var walk_speed: float
@@ -21,6 +22,7 @@ const FILE_NAME = "config.ini"
 const DEFAULT_CROSSHAIR_COLOR = Color(1.0, 0.4, 0.0, 0.65)
 const DEFAULT_CROSSHAIR = "2dot"
 const DEFAULT_CANT_MODE = "1default"
+const DEFAULT_LPVO_OOF_ZOOM = "1enabled"
 const DEFAULT_AMMO_TOOLTIPS = true
 const DEFAULT_CROUCH_SPEED = 0.7
 const DEFAULT_WALK_SPEED = 3.0
@@ -62,6 +64,7 @@ func _apply_config(config: ConfigFile):
 	crosshair_style = config.get_value("Dropdown", "crosshair", {}).get("value", DEFAULT_CROSSHAIR).substr(1)
 	crosshair_color = config.get_value("Color", "crosshairColor", {}).get("value", DEFAULT_CROSSHAIR_COLOR)
 	cant_mode = config.get_value("Dropdown", "cantMode", {}).get("value", DEFAULT_CANT_MODE).substr(1)
+	lpvo_oof_zoom = config.get_value("Dropdown", "lpvoOofZoom", {}).get("value", DEFAULT_LPVO_OOF_ZOOM).substr(1)
 	ammo_tooltips = config.get_value("Bool", "ammoTooltips", {}).get("value", DEFAULT_AMMO_TOOLTIPS)
 	crouch_speed = config.get_value("Float", "crouchSpeed", {}).get("value", DEFAULT_CROUCH_SPEED)
 	walk_speed = config.get_value("Float", "walkSpeed", {}).get("value", DEFAULT_WALK_SPEED)
@@ -80,7 +83,8 @@ func _create_config_template():
 	config.set_value("Category", "Crosshair", { "menu_pos": 1 })
 	config.set_value("Category", "Canted mode", { "menu_pos": 2 })
 	config.set_value("Category", "Inspect", { "menu_pos": 3 })
-	config.set_value("Category", "Movement speeds", { "menu_pos": 4 })
+	config.set_value("Category", "Aim tweaks", { "menu_pos": 4 })
+	config.set_value("Category", "Movement speeds", { "menu_pos": 5 })
 
 	config.set_value("Dropdown", "crosshair", {
 		"name": "Crosshair",
@@ -144,6 +148,20 @@ func _create_config_template():
 		"value": DEFAULT_ATTACHMENT_TOOLTIPS,
 		"menu_pos": next_pos.call(),
 		"category": "Inspect"
+	})
+
+	config.set_value("Dropdown", "lpvoOofZoom", {
+		"name": "LPVO out-of-aim zoom",
+		"tooltip": "Allow changing LPVO zoom level when not aiming. Rail movement: require Rail Movement binding held as a modifier.",
+		"default": DEFAULT_LPVO_OOF_ZOOM,
+		"value": DEFAULT_LPVO_OOF_ZOOM,
+		"options": {
+			"1enabled": "Enabled",
+			"2disabled": "Disabled",
+			"3rail": "Rail movement"
+		},
+		"menu_pos": next_pos.call(),
+		"category": "Aim tweaks"
 	})
 
 	config.set_value("Float", "crouchSpeed", {
