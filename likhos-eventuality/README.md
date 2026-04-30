@@ -2,23 +2,32 @@
 
 Road to Vostok mod that improves dynamic event spawning so that they closer represent declared probabilities.
 
-## Probability
+## Probability math
 
-Each dynamic event now gets its own die roll and there now could potentially be multiple events active on the map.
+Vanilla stacks probabilities, resulting much lower chances of individual event spawning than declared in the UI. 
+
+For example: you have `["FighterJet", "Police", "Airdrop", "CrashSite"]` events avilable in the Village, with individual probabilities being `25% / 10% / 10% / 10%`. The actual trigger chance for them is `6.25% / 2.5% / 2.5% / 2.5%` (declared chance divided by number of avilable events).
+
+---
+
+This mod turns this math around. Each dynamic event now gets its own die roll. There now could potentially be multiple events active on the map.
 
 Notable exceptions:
 - Punisher is exclusive with BTR
-- Airdrop is exclusive with the chopper crash site
+- Airdrop is exclusive with the heli crash site
 
-Events skipped because of exclusivity will pass on half of their spawn chance onto the next event as a roll bonus.
+Events skipped because of exclusivity will pass on their their probability as a roll bonus onto the next map load. Roll bonus resets when roll occurs, but accumulates on skipped rolls.
+
+E.g. if you got two Airdrops in a row, then the trigger chance for heli crash on the third map load will be 30% instead of 10%.
+
 
 ## Punisher
 
-Vanilla Punisher is incredibly hard to catch because of accumulating probabilities.
+Vanilla Punisher is incredibly hard to catch because of accumulating probabilities. This is compounded by the fact that Police van has two distinct modes (with sirens and without) activated 50/50, so the real chance of getting Punisher encounter is more like 1%.
 
-Two main changes to make to make it easier to obtain his hat:
+Two main changes were made:
 - Event variant without sirens will now trigger the boss just the same
-- Van speed reduced from 25 to 15, so it's much easier to catch him
+- Van speed reduced from 25 to 15, so it's much easier to catch him (or to run away)
 
 ## Fighter jet
 

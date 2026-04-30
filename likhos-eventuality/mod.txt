@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Eventuality"
 id="likhos-eventuality"
-version="1.0.15"
+version="1.0.17"
 
 [hooks]
 "res://Scripts/EventSystem.gd"="ActivateDynamicEvent, FighterJet"
