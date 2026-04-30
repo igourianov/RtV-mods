@@ -26,23 +26,19 @@ Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 
 ## PIP scope mode: realism
 
-Picture-in-picture mode renders the world through the scope as a subviewport rather than zooming the main camera. The intent is to feel like you're actually looking through the optic. Two tweaks push that further:
-
-- **Realistic eye relief.** Real magnified optics have a narrow eye-relief window. The mod parks the camera at the proper distance behind the rear lens automatically, so the sight picture stays clean regardless of scope positioning. Eye relief: LPVOs 5cm, fixed scopes 3.5cm.
-- **Main camera FOV no longer narrows when scoped.** Vanilla zooms your overall screen FOV in on top of the PIP magnification, a leftover from the pre-PIP zoom era. The result is that the world *around* the scope ring also shrinks toward the center, which never happens looking through real glass. The mod keeps the main camera at your base FOV so only the inside of the optic magnifies, the way a real scope works.
-- **LPVOs stay "scoped" at 1x.** Vanilla flips DOF blur, scope sway and other scoped systems off at 1x and back on at higher zoom, so dialing magnification toggles between two different visual modes. A real LPVO is glass in front of your eye at every setting; the mod keeps scoped status on across all zoom levels so all three feel like the same optic at different magnifications.
-- **Magnification dialed to real-world values.** Prism sights (HAMR, ACOG) sit at a fixed 4x. LPVOs (Leupold, VUDU) step through 1.1x, 3x and 6x across their low/mid/high settings, in line with the variable optics they're modeled on.
-- **Scope depth-of-field reworked.** Vanilla applies a single fixed blur to far distances only, regardless of magnification, leaving anything close to the camera (scope body, receiver, foreground cover) razor-sharp. The mod scales DOF intensity with magnification (1× LPVO setting gets none, higher zoom gets progressively more) and enables near-DOF too, so the foreground softens alongside the background. The result feels closer to how a real magnified optic locks focus at the target distance and lets everything else fall off.
+Vanilla PIP is completely unusable - every scope feels like a "scout" scope. This mod addresses that:
+- **Realistic eye relief:** camera parked at proper distance behind rear lens (LPVOs 5cm, fixed scopes 3.5cm)
+- **Main camera FOV no longer narrows when scoped** — only the inside of the optic magnifies
+- **LPVOs stay "scoped" at 1x** — realistic lens distortion and DOF even at 1x
+- **Magnification dialed to real-world values:** prism sights 4x, LPVOs 1.1x/3x/6x
+- **Scope DOF reworked:** scales with magnification, near-DOF enabled for foreground/background softening
 
 ## Movement speed rework
 
 Rescaled movement speeds and added new break points. You can edit all these values in MCM.
-
-**Vanilla:** crouch/walk/sprint = 1 / 2.5 / 5
-
-**Updated:** crouch/walk/sprint = 0.7 / 3 / 6
-
-**New:** walk-canted/walk-aiming-1x/walk-scoped = 2.25 / 1.8 / 0.7
+- **Vanilla:** crouch/walk/sprint = 1 / 2.5 / 5
+- **Updated:** crouch/walk/sprint = 0.7 / 3 / 6
+- **New:** walk-canted/walk-aiming-1x/walk-scoped = 2.25 / 1.8 / 0.9 (defined in MCM as multipliers of walk speed)
 
 ## Inspect mode rework
 
