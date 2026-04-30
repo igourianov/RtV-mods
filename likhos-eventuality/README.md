@@ -16,7 +16,7 @@ Notable exceptions:
 - Punisher is exclusive with BTR
 - Airdrop is exclusive with the heli crash site
 
-Events skipped because of exclusivity will pass on their their probability as a roll bonus onto the next map load. Roll bonus resets when roll occurs, but accumulates on skipped rolls.
+Events skipped because of exclusivity will pass on their probability as a roll bonus onto the next map load. Roll bonus resets when roll occurs, but accumulates on skipped rolls.
 
 E.g. if you got two Airdrops in a row, then the trigger chance for heli crash on the third map load will be 30% instead of 10%.
 
