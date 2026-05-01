@@ -63,6 +63,16 @@ HAMR in vanilla is bugged to hell and back. This mod introduces fixes and usabil
 * Fixed HAMR's secondary optic vertical offset on all AK rifles (not RK), SVD and Vintorez (missing rotation calc)
 * Fixed HAMR causing major flickering when toggling secondary on M4A1 (bug with foldable iron sights)
 
+## Dynamic weapon handling speed
+
+This is how fast it takes to transition from one pose to another. Vanilla has it static.
+
+This mod makes handling speed dependent on two factors:
+* Stance: Default=100%, Red dot=115%, Canted aim=130%, LPVO at 1x=105%, Magnified scope=80%
+* Weapon weight (with attachments). Base=4kg, Heavier=slower, Lighter=faster. Weight factor in MCM: 0=no effect on speed, 1.0=actual weight difference from base
+
+You can disable this function completely in MCM.
+
 # Why this is one mod and not several
 
 These changes started out as separate mods. The catch is that Road to Vostok's scripts have a handful of "god" methods that fold a lot of unrelated behavior into a single function and mix state mutation with rendering side effects in the same call. Hooking a method through the mod loader is all-or-nothing, you can't override only part of a function. So as soon as one fix needed to touch, say, `Handling.WeaponHandling`, every other tweak that also lives in that method had to ship in the same mod or get clobbered by it. That's how the ammo-check, canted, laser and PIP changes ended up bundled together.
