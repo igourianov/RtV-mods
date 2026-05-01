@@ -116,23 +116,23 @@ func _play_delayed_explosion(es, pos: Vector3, initialDelay: float) -> void:
 	var audioEvent = _AUDIO_LIBRARY.grenadeExplosionOutdoorClose
 	if audioEvent == null || audioEvent.audioClips.is_empty():
 		return
-	var count := randi_range(3, 5)
+	var count := randi_range(2, 4)
 	for i in count:
 		if i > 0:
-			var gap := randf_range(0.2, 0.4) + float(count - i) * 0.25
+			var gap := randf_range(0.2, 1.0)
 			await es.get_tree().create_timer(gap, false).timeout
 			if !is_instance_valid(es):
 				return
-		_spawn_explosion(es, pos, audioEvent, 5.0 + float(i) * 3.0)
+		_spawn_explosion(es, pos, audioEvent)
 
 
-func _spawn_explosion(es, pos: Vector3, audioEvent, volumeBoost: float) -> void:
+func _spawn_explosion(es, pos: Vector3, audioEvent) -> void:
 	var player := AudioStreamPlayer3D.new()
 	player.bus = &"SFX"
 	player.stream = audioEvent.audioClips.pick_random()
 	player.unit_size = 100.0
 	player.max_distance = 2000.0
-	player.volume_db = audioEvent.volume + volumeBoost
+	player.volume_db = audioEvent.volume
 	es.get_tree().get_root().add_child(player)
 	player.global_position = pos
 	player.play()
