@@ -62,7 +62,7 @@ func _apply_for_weapon(weapon_path: String, mag_entries: Dictionary) -> void:
 			push_warning(_PREFIX, "%s is not a Magazine (subtype=%s)" % [mag_path, mag.subtype])
 			continue
 		if !weapon.compatible.has(mag):
-			weapon.compatible.append(mag)
+			weapon.compatible.insert(0, mag)
 		entries.append({
 			"mag": mag,
 			"tweaks": mag_entries[mag_path],
