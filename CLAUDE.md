@@ -16,9 +16,9 @@ Key facts when reading `src/`:
 - Global groups and other engine config live in `src/project.godot`.
 - `.gd.uid` files are Godot's UID sidecars, keep them paired with their `.gd` when referenced.
 
-## `vostol-mod-loader/` holds the loader source + docs (read-only reference)
+## `vostok-mod-loader/` holds the loader source + docs (read-only reference)
 
-A clone of the Metro Mod Loader repo lives at `vostol-mod-loader/vostok-mod-loader/`. Browse it whenever the loader's behavior is unclear or when debugging an unfamiliar log line. Do not edit anything inside it.
+A clone of the Metro Mod Loader repo lives at `vostok-mod-loader/`. Browse it whenever the loader's behavior is unclear or when debugging an unfamiliar log line. Do not edit anything inside it.
 
 Layout:
 - `src/*.gd` — loader implementation. Notable files:
@@ -184,7 +184,7 @@ func _wrap_async(rig) -> void:
 
 #### RTVModLib API surface
 
-Beyond `hook` / `skip_super`, the lib exposes (see `vostol-mod-loader/.../src/hooks_api.gd`):
+Beyond `hook` / `skip_super`, the lib exposes (see `vostok-mod-loader/.../src/hooks_api.gd`):
 
 | Method / signal | Purpose |
 |---|---|
@@ -237,7 +237,7 @@ lib.get_entry(lib.Registry.ITEMS, "Potato")                             # read c
 
 All verbs return `bool`. Failures `push_warning` with the reason.
 
-Registry constants on `lib.Registry`: `SCENES`, `ITEMS`, `LOOT`, `SOUNDS`, `RECIPES`, `EVENTS`, `TRADER_POOLS`, `TRADER_TASKS`, `INPUTS`, `SCENE_PATHS`, `SHELTERS`, `RANDOM_SCENES`, `AI_TYPES`, `FISH_SPECIES`, `RESOURCES`. Each supports a subset of the verbs (some are append-only and reject `override`/`patch`; `RESOURCES` supports only `patch`/`revert`). See `vostol-mod-loader/.../docs/wiki/Registry.md` for the full per-registry table and example shapes.
+Registry constants on `lib.Registry`: `SCENES`, `ITEMS`, `LOOT`, `SOUNDS`, `RECIPES`, `EVENTS`, `TRADER_POOLS`, `TRADER_TASKS`, `INPUTS`, `SCENE_PATHS`, `SHELTERS`, `RANDOM_SCENES`, `AI_TYPES`, `FISH_SPECIES`, `RESOURCES`. Each supports a subset of the verbs (some are append-only and reject `override`/`patch`; `RESOURCES` supports only `patch`/`revert`). See `vostok-mod-loader/docs/wiki/Registry.md` for the full per-registry table and example shapes.
 
 **Conflict semantics, applied across every registry:**
 
@@ -269,8 +269,8 @@ Registry constants on `lib.Registry`: `SCENES`, `ITEMS`, `LOOT`, `SOUNDS`, `RECI
 - **Autofix:** the loader silently strips `.reload()` calls from mod source and repairs Godot 3-era syntax (`tool` → `@tool`, `onready var` → `@onready var`, `base()` → `super.<method>()`, bodyless `if X:` blocks get `pass`). Safe to ignore.
 
 References (in order of preference for lookups):
-- `vostol-mod-loader/vostok-mod-loader/docs/wiki/*.md` — local clone of the loader-specific wiki. Authoritative for v3.0.1 behavior. `Hooks.md`, `Registry.md`, `Mod-Format.md`, `Limitations.md`, `Modules.md` are the most useful.
-- `vostol-mod-loader/vostok-mod-loader/src/*.gd` — loader source. Grep for log strings, behavior, edge cases.
+- `vostok-mod-loader/docs/wiki/*.md` — local clone of the loader-specific wiki. Authoritative for v3.0.1 behavior. `Hooks.md`, `Registry.md`, `Mod-Format.md`, `Limitations.md`, `Modules.md` are the most useful.
+- `vostok-mod-loader/src/*.gd` — loader source. Grep for log strings, behavior, edge cases.
 - `D:\SteamLibrary\steamapps\common\Road to Vostok\modloader.gd` — built single-file loader as installed; matches the repo at the build commit.
 - https://github.com/ametrocavich/vostok-mod-loader/wiki — same content as the local wiki, online.
 - https://github.com/ametrocavich/vostok-modding-wiki/wiki — older community wiki, slightly out of date for v3.0.1.
@@ -288,7 +288,7 @@ Runtime log lives at `%APPDATA%\Road to Vostok\logs\godot.log` (plus session-sta
 
 Mount cache (unpacked `.vmz`s) is at `%APPDATA%\Road to Vostok\vmz_mount_cache\` - handy for verifying what actually got deployed. Hook pack at `%APPDATA%\Road to Vostok\modloader_hooks\framework_pack.zip` is the generated rewrite; vanilla source cache lives next to it under `vanilla/`.
 
-When a behavior is unclear, grep `vostol-mod-loader/vostok-mod-loader/src/` for the log string or symptom; the wiki cites source line numbers for every claim.
+When a behavior is unclear, grep `vostok-mod-loader/src/` for the log string or symptom; the wiki cites source line numbers for every claim.
 
 ## Build / install
 
