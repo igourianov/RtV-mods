@@ -13,12 +13,13 @@ The actual gun in player's hands will still show its default magazine mesh, as i
 
 ## Compatibility
 
-This mod hooks vanilla methods through Metro Mod Loader:
+This mod uses the registry API and hooks vanilla methods through Metro Mod Loader:
+
+**Registry API** (patches item definitions):
+- Uses `lib.patch()` on gun items to inject foreign magazines into their tetris scenes and compatible attachments
 
 **Replace hooks** (other mods that also replace these will conflict, pick one):
-
-- `Item.UpdateAttachments`
-- `Interface.GetMagazine`
+- `Interface.GetMagazine` (necessary for mag reloading to work)
 
 ## Install / Uninstall
 
