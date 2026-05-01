@@ -2,14 +2,14 @@
 
 Road to Vostok mod that allows for using cross-compatible magazines as they should be in real life.
 
-Fllowing guns can now cross use each other's magazines:
+Following guns can now cross use each other's magazines:
 * AK-74SU <-> AK-12
 * AKM <-> RK variants
 * KAR-21 (.223 version) <-> STANAG pattern rifles
 
 ## Not in scope / Will not fix
 
-The actual gun in player's hands will still show it's default magazine mesh, as it is a part of the gun. To fix this would be way too much effort.
+The actual gun in player's hands will still show its default magazine mesh, as it is a part of the gun. To fix this would be way too much effort.
 
 ## Compatibility
 
