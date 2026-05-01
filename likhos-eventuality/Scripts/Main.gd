@@ -12,16 +12,14 @@ var _config
 
 func _ready() -> void:
 	_config = _ModConfig.new()
-	if not Engine.has_meta("RTVModLib"):
-		push_error(_PREFIX, "RTVModLib meta not available")
-		return
 	var lib = Engine.get_meta("RTVModLib")
+	if lib == null:
+		push_warning(_PREFIX, "RTVModLib not available")
+		return
 	if lib._is_ready:
 		_init_hooks(lib)
 	else:
-		lib.frameworks_ready.connect(func():
-			_init_hooks(lib)
-		)
+		lib.frameworks_ready.connect(func(): _init_hooks(lib))
 
 
 func _init_hooks(lib):

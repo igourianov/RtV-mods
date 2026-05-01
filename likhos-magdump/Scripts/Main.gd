@@ -11,10 +11,11 @@ func _ready() -> void:
 	for weapon_path in CompatTable.COMPAT:
 		_apply_for_weapon(weapon_path, CompatTable.COMPAT[weapon_path])
 
-	if !Engine.has_meta("RTVModLib"):
-		push_error(_PREFIX, "RTVModLib not available; icon overlays disabled")
-		return
 	_lib = Engine.get_meta("RTVModLib")
+	if _lib == null:
+		push_warning(_PREFIX, "RTVModLib not available")
+		return
+
 	if _lib._is_ready:
 		_register_hooks()
 	else:
