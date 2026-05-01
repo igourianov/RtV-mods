@@ -10,6 +10,7 @@ var disable_zoom_dof: bool
 var disable_optic_override: bool
 var disable_canted_override: bool
 var disable_lowered_override: bool
+var nvg_pip_blur: bool
 var ammo_tooltips: bool
 var crouch_speed: float
 var walk_speed: float
@@ -19,6 +20,7 @@ var cant_speed_mult: float
 var scope_speed_mult: float
 var laser_auto_on: bool
 var attachment_tooltips: bool
+var pip_anti_aliasing: bool
 
 const MOD_ID = "likhos-weapon-handling-fixes"
 const FILE_PATH = "user://MCM/likhos-weapon-handling-fixes"
@@ -31,6 +33,7 @@ const DEFAULT_DISABLE_ZOOM_DOF = false
 const DEFAULT_DISABLE_OPTIC_OVERRIDE = false
 const DEFAULT_DISABLE_CANTED_OVERRIDE = false
 const DEFAULT_DISABLE_LOWERED_OVERRIDE = false
+const DEFAULT_NVG_PIP_BLUR = true
 const DEFAULT_AMMO_TOOLTIPS = true
 const DEFAULT_CROUCH_SPEED = 0.7
 const DEFAULT_WALK_SPEED = 3.0
@@ -40,6 +43,7 @@ const DEFAULT_CANT_SPEED_MULT = 0.75
 const DEFAULT_SCOPE_SPEED_MULT = 0.3
 const DEFAULT_LASER_AUTO_ON = true
 const DEFAULT_ATTACHMENT_TOOLTIPS = true
+const DEFAULT_PIP_ANTI_ALIASING = true
 const SPEED_MIN = 0.0
 const SPEED_MAX = 20.0
 const MULT_MIN = 0.1
@@ -77,6 +81,7 @@ func _apply_config(config: ConfigFile):
 	disable_optic_override = config.get_value("Bool", "disableOpticOverride", {}).get("value", DEFAULT_DISABLE_OPTIC_OVERRIDE)
 	disable_canted_override = config.get_value("Bool", "disableCantedOverride", {}).get("value", DEFAULT_DISABLE_CANTED_OVERRIDE)
 	disable_lowered_override = config.get_value("Bool", "disableLoweredOverride", {}).get("value", DEFAULT_DISABLE_LOWERED_OVERRIDE)
+	nvg_pip_blur = config.get_value("Bool", "nvgPipBlur", {}).get("value", DEFAULT_NVG_PIP_BLUR)
 	ammo_tooltips = config.get_value("Bool", "ammoTooltips", {}).get("value", DEFAULT_AMMO_TOOLTIPS)
 	crouch_speed = config.get_value("Float", "crouchSpeed", {}).get("value", DEFAULT_CROUCH_SPEED)
 	walk_speed = config.get_value("Float", "walkSpeed", {}).get("value", DEFAULT_WALK_SPEED)
@@ -86,6 +91,7 @@ func _apply_config(config: ConfigFile):
 	scope_speed_mult = config.get_value("Float", "scopeSpeedMult", {}).get("value", DEFAULT_SCOPE_SPEED_MULT)
 	laser_auto_on = config.get_value("Bool", "laserAutoOn", {}).get("value", DEFAULT_LASER_AUTO_ON)
 	attachment_tooltips = config.get_value("Bool", "attachmentTooltips", {}).get("value", DEFAULT_ATTACHMENT_TOOLTIPS)
+	pip_anti_aliasing = config.get_value("Bool", "pipAntiAliasing", {}).get("value", DEFAULT_PIP_ANTI_ALIASING)
 
 func _create_config_template():
 	var config := ConfigFile.new()
@@ -208,6 +214,24 @@ func _create_config_template():
 		"tooltip": "Use vanilla low position and rotation. Skips the mod's patrol-mode replacement.",
 		"default": DEFAULT_DISABLE_LOWERED_OVERRIDE,
 		"value": DEFAULT_DISABLE_LOWERED_OVERRIDE,
+		"menu_pos": next_pos.call(),
+		"category": "Aim tweaks"
+	})
+
+	config.set_value("Bool", "nvgPipBlur", {
+		"name": "Blur scope PIP under NVG",
+		"tooltip": "Blur the magnified optic's picture-in-picture image while aiming with night vision active",
+		"default": DEFAULT_NVG_PIP_BLUR,
+		"value": DEFAULT_NVG_PIP_BLUR,
+		"menu_pos": next_pos.call(),
+		"category": "Aim tweaks"
+	})
+
+	config.set_value("Bool", "pipAntiAliasing", {
+		"name": "Scope PIP Anti-Aliasing",
+		"tooltip": "Enable anti-aliasing on the magnified optic's picture-in-picture view",
+		"default": DEFAULT_PIP_ANTI_ALIASING,
+		"value": DEFAULT_PIP_ANTI_ALIASING,
 		"menu_pos": next_pos.call(),
 		"category": "Aim tweaks"
 	})

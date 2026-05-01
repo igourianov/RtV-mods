@@ -32,6 +32,8 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 - **LPVOs stay "scoped" at 1x** — realistic lens distortion and DOF even at 1x
 - **Magnification dialed to real-world values:** prism sights 4x, LPVOs 1.1x/3x/6x
 - **Scope DOF reworked:** scales with magnification, near-DOF enabled for foreground/background softening
+- **PIP MSAA matches main viewport:** the optic's SubViewport now mirrors the antialiasing settings used by the rest of the game - vanilla left it disabled (disable in MCM if it causes performance issues)
+- **NVG-aware PIP blur:** when night vision is active and you aim a magnified optic, the PIP image will now blurs. Real scopes cannot work under NVG because of eye relief differences (disable in MCM)
 
 ## Movement speed rework
 
@@ -91,6 +93,7 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `Tilt._physics_process` (pre)
 - `HUD._ready` (post)
 - `Recoil.ApplyRecoil` (post)
+- `Optic._physics_process` (pre)
 
 # Install / Uninstall
 
