@@ -69,6 +69,8 @@ priority=0                      ; optional, higher loads later
 MyModMain="res://mods/my-mod-id/Scripts/Main.gd"
 ```
 
+Do not modify mod version property unless specifically requested to do so. Build process does it automatically.
+
 ### Script override pattern (RTVModLib hooks)
 
 The installed loader is **Metro Mod Loader v3.0.1** (`<game>/modloader.gd`). Despite what the older community wiki documents, neither the autoload + `take_over_path` pattern nor `[script_extend]` reliably overrides game scripts. Here's why:
