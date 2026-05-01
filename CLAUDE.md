@@ -16,6 +16,22 @@ Key facts when reading `src/`:
 - Global groups and other engine config live in `src/project.godot`.
 - `.gd.uid` files are Godot's UID sidecars, keep them paired with their `.gd` when referenced.
 
+## `vostol-mod-loader/` holds the loader source + docs (read-only reference)
+
+A clone of the Metro Mod Loader repo lives at `vostol-mod-loader/vostok-mod-loader/`. Browse it whenever the loader's behavior is unclear or when debugging an unfamiliar log line. Do not edit anything inside it.
+
+Layout:
+- `src/*.gd` — loader implementation. Notable files:
+    - `hooks_api.gd` — RTVModLib public surface (`hook`, `unhook`, `skip_super`, etc.) and dispatch internals.
+    - `registry.gd` + `registry/<store>.gd` — registry verbs and per-store handlers (items, scenes, loot, ...).
+    - `rewriter.gd`, `hook_pack.gd` — codegen pipeline that produces dispatch wrappers around vanilla methods.
+    - `mod_loading.gd`, `mod_discovery.gd` — mod scan/mount pipeline.
+    - `boot.gd`, `lifecycle.gd` — two-pass restart, override.cfg lifecycle.
+    - `constants.gd` — `MODLOADER_VERSION`, `RTV_SKIP_LIST`, `RTV_RESOURCE_*_SKIP`.
+- `docs/wiki/*.md` — full reference: `Hooks.md`, `Registry.md`, `Mod-Format.md`, `Architecture.md`, `Limitations.md`, `Modules.md`, etc. Use `Modules.md` to find which file owns a given concern, then jump into `src/`.
+
+When in doubt about behavior or an error message, grep this folder before guessing or asking.
+
 ## Working on a mod
 
 Mods live at the repo root, one folder per mod. When modifying behavior, first locate the relevant script/scene in `src/` to understand the original implementation, then author the mod files at the root. Do not edit files under `src/`.
@@ -53,20 +69,19 @@ priority=0                      ; optional, higher loads later
 MyModMain="res://mods/my-mod-id/Scripts/Main.gd"
 ```
 
-### Script override pattern (`[hooks]` + RTVModLib)
+### Script override pattern (RTVModLib hooks)
 
-The installed loader is **Metro Mod Loader v3.0.1** (`<game>/modloader.gd`). Despite what the community wiki documents, neither the autoload + `take_over_path` pattern nor `[script_extend]` reliably overrides game scripts. Here's why:
+The installed loader is **Metro Mod Loader v3.0.1** (`<game>/modloader.gd`). Despite what the older community wiki documents, neither the autoload + `take_over_path` pattern nor `[script_extend]` reliably overrides game scripts. Here's why:
 
 Game autoloads (`Database`, `Loader`, `Simulation`) do module-scope `const Makarov_Rig = preload(...)` on every weapon scene, knife, fishing rod, etc. Those preloads resolve each scene's ext_resource script references at parse time. Any later `take_over_path("res://Scripts/WeaponRig.gd")` updates the `res://` cache for *future* `load()` calls but **does not** alter the preloaded scenes' already-bound Resource references. So override methods declared that way never fire for preloaded weapons. `[script_extend]` hits this same problem; the loader logs `No user opt-in declarations` to flag it.
 
-The working pattern uses the loader's **hook codegen** instead. At static init (before any game autoload runs), the loader mounts a generated "hook pack" that rewrites each declared vanilla method into a dispatch wrapper. The wrapper looks up registered callbacks on `Engine.get_meta("RTVModLib")` and routes to them. Preloaded scenes bind to the wrapped vanilla, so hook callbacks fire on every instance.
+The working pattern uses the loader's **hook codegen**. At static init (before any game autoload runs), the loader mounts a generated "hook pack" that rewrites each opt-in vanilla method into a dispatch wrapper. The wrapper looks up registered callbacks on `Engine.get_meta("RTVModLib")` and routes to them. Preloaded scenes bind to the wrapped vanilla, so hook callbacks fire on every instance.
 
-Two things need to line up:
+#### Auto-enrollment is the primary path
 
-1. `mod.txt` must declare `[hooks]` so the codegen wraps the target method.
-2. A mod autoload must call `RTVModLib.hook("<stem>-<method>", callback)` at `_ready()` to register the actual behavior. The stem is the lowercase filename without `.gd` (e.g. `"weaponrig"`); method name is the original casing.
+When your mod source contains a literal `lib.hook("stem-method[-suffix]", cb)` call, the loader source-scans your `.gd` files at load time, sees the call, and enrolls `res://Scripts/<Stem>.gd :: <method>` into the wrap surface automatically. **You do not need a `[hooks]` block in `mod.txt` for the common case.** The scanner is the 95% path.
 
-`mod.txt`:
+`mod.txt` (no `[hooks]` needed):
 
 ```
 [mod]
@@ -74,14 +89,11 @@ name="My Mod"
 id="my-mod-id"
 version="1.0.0"
 
-[hooks]
-"res://Scripts/WeaponRig.gd"="AmmoCheck"
-
 [autoload]
 MyMod="res://mods/my-mod-id/Scripts/Main.gd"
 ```
 
-`Scripts/Main.gd` (zipped to `mods/<mod-id>/Scripts/Main.gd`):
+`Scripts/Main.gd`:
 
 ```gdscript
 extends Node
@@ -94,6 +106,13 @@ func _ready() -> void:
         push_error("RTVModLib not available")
         return
     _lib = Engine.get_meta("RTVModLib")
+    if _lib._is_ready:
+        _register()
+    else:
+        _lib.frameworks_ready.connect(func(): _register())
+
+
+func _register() -> void:
     _lib.hook("weaponrig-ammocheck", _on_replace)
 
 
@@ -103,18 +122,50 @@ func _on_replace() -> void:
     _lib.skip_super()  # tell the wrapper not to run vanilla after our replace
 ```
 
-Hook variants:
+`frameworks_ready` is emitted once after every mod's autoload finished. Use it whenever your registration logic depends on other mods' overrides being applied (or when in doubt). Connecting via lambda matches the existing pattern in `likhos-weapon-handling-fixes`.
 
-- `"<stem>-<method>"` — **replace** hook. Single owner; runs *before* vanilla. Call `_lib.skip_super()` to prevent vanilla from running after your callback returns.
-- `"<stem>-<method>-pre"` — runs before vanilla, cannot prevent it.
-- `"<stem>-<method>-post"` — runs *after* vanilla completes (including after any internal `await`s for coroutines).
-- `"<stem>-<method>-callback"` — deferred dispatch after post.
+#### `[hooks]` is the escape hatch
 
-`_lib._caller` is set to the instance the wrapper is running on, refreshed right before each pre/replace/post dispatch.
+Declare `[hooks]` in `mod.txt` only when the scanner can't see your registration:
 
-The original vanilla body is renamed to `_rtv_vanilla_<MethodName>` on the wrapped script and remains callable via duck-typing: `rig._rtv_vanilla_AmmoCheck()`. Use this to wrap vanilla with before/after logic when a single replace hook is cleaner than pre + post.
+- Hooks registered via callback indirection (e.g. `register_hook(lib, name, cb)` helper functions where the literal `name` is in a different mod or computed at runtime).
+- `ModLoader.add_hook(...)` from a non-`!` autoload — the compat shim runs after pack generation, too late to enroll.
+- A whole script you want wrapped without enumerating methods.
 
-Caveat for coroutine vanilla methods (with `await`): the wrapper's internal `_wrapper_active` re-entry guard bypasses hook dispatch on nested calls and calls the renamed vanilla directly. A replace hook that *itself* uses `await` is not awaited by the wrapper, so keep the replace body synchronous. If you need to wrap an async vanilla, spawn a background coroutine from the replace and `skip_super()`:
+Format. Quote both key and value (the path contains `/`/`:`/`.`, the value is a bare identifier that ConfigFile rejects unquoted):
+
+```
+[hooks]
+"res://Scripts/Interface.gd"="GetMagazine, _ready"   ; specific methods
+"res://Scripts/Camera.gd"="*"                        ; wildcard, all methods
+"res://Scripts/Camera.gd"=""                         ; empty value also means all
+```
+
+Method names are case-insensitive (the loader normalizes to lowercase).
+
+#### Hook variants and dispatch order
+
+```
+<stem>-<method>            ← replace
+<stem>-<method>-pre        ← runs before vanilla
+<stem>-<method>-post       ← runs after vanilla (awaits coroutines)
+<stem>-<method>-callback   ← deferred via call_deferred() after post
+```
+
+Stem is the lowercase filename without `.gd`. Method is also lowercased. So `Interface.gd :: GetMagazine` → `interface-getmagazine[-pre|-post|-callback]`. The `_input` method becomes `<stem>-_input` (leading underscore preserved).
+
+Behavior:
+
+- **Replace** is single-owner: first registration wins, second `hook()` returns `-1`. Inside the callback, call `_lib.skip_super()` to suppress vanilla. The callback's **return value becomes the method's return value**, so replacing methods that return data works.
+- **pre** runs before vanilla, can't prevent it. Return value ignored.
+- **post** runs after vanilla completes, including after any internal `await`. Return value ignored.
+- **callback** is deferred via `Callable.bindv(args).call_deferred()`. Return value ignored.
+
+Hook callbacks receive the **same arguments as vanilla**. `_lib._caller` is set to the instance the wrapper is running on, refreshed before each pre/replace/post dispatch.
+
+The original vanilla body is renamed to `_rtv_vanilla_<MethodName>` on the wrapped script and is callable via duck-typing: `rig._rtv_vanilla_AmmoCheck()`. Use this to wrap vanilla with before/after logic when a single replace hook is cleaner than pre + post.
+
+Coroutine vanilla methods (with `await`): the wrapper's `_wrapper_active` re-entry guard bypasses dispatch on nested calls and runs the renamed vanilla directly. A replace hook that *itself* uses `await` is not awaited by the wrapper, so keep the replace body synchronous. To wrap an async vanilla, spawn a background coroutine from the replace and `skip_super()`:
 
 ```gdscript
 func _on_replace() -> void:
@@ -131,20 +182,98 @@ func _wrap_async(rig) -> void:
     rig.gameData.weaponPosition = prev
 ```
 
-Two-pass restart: when the mod set changes, the loader generates a new hook pack in Pass 1 and immediately restarts the game with `--modloader-restart` so Pass 2 boots with the hook pack mounted at file-scope. The user only launches once; the restart is automatic. Expect to see `Preparing two-pass restart` in the session-stamped log and then a fresh `godot.log` for the Pass 2 session.
+#### RTVModLib API surface
+
+Beyond `hook` / `skip_super`, the lib exposes (see `vostol-mod-loader/.../src/hooks_api.gd`):
+
+| Method / signal | Purpose |
+|---|---|
+| `hook(name, cb, priority=100) -> int` | Register, return id. Replace: returns `-1` if already taken. |
+| `unhook(id) -> void` | Remove a registration by id. |
+| `add_hook(path, method, cb, before=true) -> int` | godot-mod-loader compat wrapper. |
+| `has_hooks(name) -> bool` | Any callbacks registered at this name? |
+| `has_replace(name) -> bool` | Replace owner present? |
+| `get_replace_owner(name) -> int` | Id of the replace owner, or `-1`. |
+| `skip_super() -> void` | Inside a replace: suppress vanilla. |
+| `seq() -> int` | Monotonic dispatch counter (test instrumentation). |
+| `static version() / major_version() / minor_version() / patch_version()` | Read `MODLOADER_VERSION`. |
+| `frameworks_ready` (signal) | Emitted after all mod autoloads finish their overrideScript work. |
+| `_caller` | Instance the current dispatch is running on. |
+| `_is_ready` (bool) | True after `frameworks_ready` fired. |
+
+Lower priority values fire first within the same suffix bucket.
+
+#### Scripts that don't dispatch hooks (skip lists)
+
+The loader refuses to wrap certain scripts because rewriting them breaks runtime semantics. From `constants.gd`:
+
+- **`RTV_SKIP_LIST`**: `TreeRenderer`, `MuzzleFlash`, `Hit`, `ParticleInstance`, `Message`, `Mine`, `Explosion`. Reasons range from `@tool`-only to await-coroutine-killing wrappers to GPUParticles3D `set_script` corruption.
+- **`RTV_RESOURCE_SERIALIZED_SKIP`**: save-data scripts (`CharacterSave`, `ContainerSave`, `FurnitureSave`, `ItemSave`, `Preferences`, `ShelterSave`, `SlotData`, `SwitchSave`, `TraderSave`, `Validator`, `WorldSave`). Wrapping them would embed mod-dependent paths into save files.
+- **`RTV_RESOURCE_DATA_SKIP`**: data-only resource scripts (`AIWeaponData`, `AttachmentData`, `ItemData`, `LootTable`, `Recipes`, etc., 25 entries). They have no method call sites to intercept; hook the consumers instead.
+
+Hooking a method on any of these is a no-op. If you need to influence behavior in one of those code paths, find the consumer (e.g. for `Hit`, hook the spawner that creates Hit instances).
+
+#### Two-pass restart
+
+When the mod set changes, the loader generates a new hook pack in Pass 1 and immediately restarts the game with `--modloader-restart` so Pass 2 boots with the hook pack mounted at file-scope. The user only launches once; the restart is automatic. Expect to see `Preparing two-pass restart` in the session-stamped log and then a fresh `godot.log` for the Pass 2 session.
+
+### Registry data API (`[registry]` + RTVModLib)
+
+Reversible mutations on game data stores: items, scenes, loot tables, sounds, recipes, events, trader pools/tasks, inputs, scene paths, shelters, AI types, fish species, plus an arbitrary-`.tres` escape hatch. Used for adding, replacing or tweaking content without writing hook callbacks.
+
+Opt in with an empty `[registry]` section in `mod.txt`. Without it, `lib.register(...)` calls silently no-op because the loader skips the `Database.gd` / `Loader.gd` / `AISpawner.gd` / `FishPool.gd` rewrites the registry depends on.
+
+```gdscript
+var lib = Engine.get_meta("RTVModLib")
+await lib.frameworks_ready  # only if you also depend on hooks being ready
+
+lib.register(lib.Registry.ITEMS, "my_potion", potion_resource)          # add new
+lib.override(lib.Registry.SCENES, "Potato", preload("..."))             # replace whole entry
+lib.patch(lib.Registry.ITEMS, "Potato", {"weight": 0.1, "value": 500})  # mutate specific fields
+lib.remove(lib.Registry.ITEMS, "my_potion")                             # undo register
+lib.revert(lib.Registry.SCENES, "Potato")                               # undo override/patch
+lib.get_entry(lib.Registry.ITEMS, "Potato")                             # read current state
+```
+
+All verbs return `bool`. Failures `push_warning` with the reason.
+
+Registry constants on `lib.Registry`: `SCENES`, `ITEMS`, `LOOT`, `SOUNDS`, `RECIPES`, `EVENTS`, `TRADER_POOLS`, `TRADER_TASKS`, `INPUTS`, `SCENE_PATHS`, `SHELTERS`, `RANDOM_SCENES`, `AI_TYPES`, `FISH_SPECIES`, `RESOURCES`. Each supports a subset of the verbs (some are append-only and reject `override`/`patch`; `RESOURCES` supports only `patch`/`revert`). See `vostol-mod-loader/.../docs/wiki/Registry.md` for the full per-registry table and example shapes.
+
+**Conflict semantics, applied across every registry:**
+
+- `register` on a colliding id (vanilla const or another mod's prior register) fails, no silent overwrite.
+- `override` on an already-overridden id fails; the second mod must `revert` first.
+- `patch` on the same field across mods is last-write-wins, but the stash holds the **true vanilla** value, so any later `revert` returns to vanilla and silently drops both mods' patches.
+- `patch` on different fields keeps independent stashes per field; multiple mods coexist.
+- Array-based registries (`loot`, `recipes`, `events`, `trader_tasks`) accept multiple `register` calls additively.
+
+**Timing.** Register during your mod's `_ready()`. Trader stock, `LootContainer`, `LootSimulation`, `AudioLibrary` `@export` bindings and the keybind UI all cache once during their own `_ready()`; runtime re-registration after that updates the store but consumers won't see it until the next cache refresh.
+
+**`Database.get(name)` vs `Database.NAME`.** The registry routes `SCENES` lookups through an injected `_get()` on `Database`. Property-syntax access to a vanilla `const` (`Database.Potato`) is resolved at compile time and bypasses `_get()`, missing any registry override. Use `Database.get("Potato")` (or `Database["Potato"]`) so registry overrides apply.
+
+**Registry vs. hooks vs. direct mutation.**
+
+- Registry: scalar field tweaks (`weight`, `damage`, `volume`), wholesale replacement (override an item/scene), adding new entries (recipe, event, item, input action). Reversible, isolated from other mods.
+- Hooks: intercepting vanilla method calls. Behavior changes; custom logic before/after/instead of vanilla.
+- Direct resource mutation (`load(path).field.append(...)` at autoload `_ready()`): **additive list changes**. Registry's `patch` writes whole field values, so two mods patching the same list-field clobber each other; direct `append` lets multiple mods coexist without coordination. `likhos-magdump`'s cross-compat magazine list uses this pattern.
 
 ### Other loader features
 
-- **`[autoload]`**: register a singleton node. Prefix path with `!` for early autoloads. Path must exist in the archive or the loader aborts with `Autoload path not found in archive`.
-- **`[hooks]`**: per-method wrap declaration. Quote both key and value since the key contains `/`, `:`, `.` and the value is a bare identifier that Godot's `ConfigFile` parser rejects unquoted (the loader logs `ConfigFile parse error: Unexpected identifier '...'` followed by `Invalid mod -- mod.txt failed to parse`). Formats: `"res://Scripts/X.gd"="methodA, methodB"` (specific), `"res://Scripts/X.gd"="*"` or `"res://Scripts/X.gd"=""` (all methods).
-- **`[registry]`**: opt-in to `Database.gd` wrapping; required for `lib.register()` / `lib.override()`.
-- **`.hook("<prefix>-<method>[-pre|-post|-callback]", cb)`**: identical effect to `lib.hook(...)` called on `RTVModLib`; the loader source-scans `.hook()` calls and auto-enrolls the target path in the wrap mask, so `[hooks]` in `mod.txt` is only needed when your hook registration goes through a callback indirection the scanner can't see.
-- **`[script_extend]` / `[script_overrides]`**: declarative `take_over_path`. Works for scripts that aren't preloaded by a game autoload; otherwise use `[hooks]`.
-- **Asset replacement:** all files are namespaced under `mods/<mod-id>/` by the build, so `Resources/Foo.tres` in source resolves at `res://mods/<mod-id>/Resources/Foo.tres`. To override a vanilla asset at its original path, you'd need to either change the build to ship that file at the archive root, or hook the load site instead.
-- **Autofix:** the loader silently strips `.reload()` calls from mod source and repairs some Godot 3-era syntax. Safe to ignore.
+- **`[autoload]`**: register a singleton node. Prefix path with `!` for early autoloads (loaded via `[autoload_prepend]` in `override.cfg`, before the game's own autoloads). Path must exist in the archive or the loader aborts with `Autoload path not found in archive`.
+- **`[hooks]`**: escape hatch for static method enrollment when the `.hook()` scanner can't see your call site. See "Auto-enrollment" above for when you actually need it.
+- **`[registry]`**: opt-in to the registry data API. See the "Registry data API" section above.
+- **`[script_extend]` / `[script_overrides]`**: declarative `take_over_path`. Works for scripts that aren't preloaded by a game autoload; otherwise use hooks. Extends-chained overrides compose with hooks: the rewritten vanilla ships at the original path and `super.method(...)` from the override lands on the dispatch wrapper.
+- **Asset replacement:** all files are namespaced under `mods/<mod-id>/` by the build, so `Resources/Foo.tres` in source resolves at `res://mods/<mod-id>/Resources/Foo.tres`. To override a vanilla asset at its original path you'd need to either change the build to ship that file at the archive root, or hook the load site instead.
+- **Class_name collisions are fatal.** A mod that re-declares an existing vanilla `class_name` triggers Godot's `"Class X hides a global script class"` and crashes. Don't reuse vanilla class names; pick a mod-specific name.
+- **`take_over_path` on `class_name` scripts is unsafe** (Godot bug #83542). The hook system dodges this since rewritten scripts ship at the original path; mods doing manual `take_over_path` on a `class_name` vanilla can crash unpredictably.
+- **Autofix:** the loader silently strips `.reload()` calls from mod source and repairs Godot 3-era syntax (`tool` → `@tool`, `onready var` → `@onready var`, `base()` → `super.<method>()`, bodyless `if X:` blocks get `pass`). Safe to ignore.
 
-Reference wiki (community, slightly out of date for v3.0.1): https://github.com/ametrocavich/vostok-modding-wiki/wiki
-Authoritative reference: read `D:\SteamLibrary\steamapps\common\Road to Vostok\modloader.gd` directly.
+References (in order of preference for lookups):
+- `vostol-mod-loader/vostok-mod-loader/docs/wiki/*.md` — local clone of the loader-specific wiki. Authoritative for v3.0.1 behavior. `Hooks.md`, `Registry.md`, `Mod-Format.md`, `Limitations.md`, `Modules.md` are the most useful.
+- `vostol-mod-loader/vostok-mod-loader/src/*.gd` — loader source. Grep for log strings, behavior, edge cases.
+- `D:\SteamLibrary\steamapps\common\Road to Vostok\modloader.gd` — built single-file loader as installed; matches the repo at the build commit.
+- https://github.com/ametrocavich/vostok-mod-loader/wiki — same content as the local wiki, online.
+- https://github.com/ametrocavich/vostok-modding-wiki/wiki — older community wiki, slightly out of date for v3.0.1.
 
 ### Debugging
 
@@ -154,8 +283,12 @@ Runtime log lives at `%APPDATA%\Road to Vostok\logs\godot.log` (plus session-sta
 - `[script_extend] res://... -> res://mods/...` confirms the override mapping parsed.
 - `[OverrideVerify]` lines confirm the take-over actually happened post-autoload.
 - `No user opt-in declarations` means you shipped a mod with no `[script_extend]` / `[hooks]` / `[registry]` / `.hook()` and no overrides will apply.
+- `[RTVCodegen]` lines trace hook pack generation.
+- `[ModScan]` lines flag suspicious code patterns (security scanner; informational, never blocks loading).
 
-Mount cache (unpacked `.vmz`s) is at `%APPDATA%\Road to Vostok\vmz_mount_cache\` - handy for verifying what actually got deployed.
+Mount cache (unpacked `.vmz`s) is at `%APPDATA%\Road to Vostok\vmz_mount_cache\` - handy for verifying what actually got deployed. Hook pack at `%APPDATA%\Road to Vostok\modloader_hooks\framework_pack.zip` is the generated rewrite; vanilla source cache lives next to it under `vanilla/`.
+
+When a behavior is unclear, grep `vostol-mod-loader/vostok-mod-loader/src/` for the log string or symptom; the wiki cites source line numbers for every claim.
 
 ## Build / install
 
@@ -182,4 +315,4 @@ Usage:
 .\build.ps1 -ModsDir 'X:\path\to\mods'  # one-off override, bypasses config
 ```
 
-Existing zips in the target are overwritten. Launch the game after building; check the loader log (see "Debugging" below, if documented) for load errors.
+Existing zips in the target are overwritten. Launch the game after building; check the loader log (see "Debugging") for load errors.

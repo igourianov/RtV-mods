@@ -1,4 +1,5 @@
 src/
 build.config.json
 Godot/
+vostol-mod-loader/
 *.uid
