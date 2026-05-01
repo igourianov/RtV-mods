@@ -4,6 +4,10 @@ Road to Vostok mod that adds tactical realism features and fixes a whole host of
 
 Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 
+## Check out my other mods
+* [Likho's Eventuality](https://modworkshop.net/mod/56468) - fixes/enhancements to the dynamic events
+* [Likho's Magdump](https://modworkshop.net/mod/56489) - rifle magazine compatibility mod
+
 *Feedback and likes are welcome!*
 
 ## New Features
@@ -70,7 +74,8 @@ These changes started out as separate mods. The catch is that Road to Vostok's s
 # Requirements
 
 - Road to Vostok 0.1.1.3 (Godot 4.6.2)
-- [Metro Mod Loader](https://github.com/ametrocavich/vostok-mod-loader/wiki) v3.0.1 or later (separate install, not bundled with the game)
+- [Metro Mod Loader](https://modworkshop.net/mod/56483) v3.0.1 or later (separate install, not bundled with the game)
+- [Mod Configuration Menu](https://modworkshop.net/mod/53713)
 
 # Compatibility
 

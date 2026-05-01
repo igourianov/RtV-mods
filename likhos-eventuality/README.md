@@ -7,6 +7,12 @@ Road to Vostok mod that improves dynamic event spawning so that they more closel
 * Heli crash site now plays a sound to let you know it has spawned
 * Fighter jet repeats
 
+## Check out my other mods
+* [Likho's VosTac](https://modworkshop.net/mod/56366) - comprehensive tactical realism and gun mechanics fixes mod
+* [Likho's Magdump](https://modworkshop.net/mod/56489) - rifle magazine compatibility mod
+
+*Feedback and likes are welcome!*
+
 ## Probability math
 
 Vanilla stacks probabilities, resulting much lower chances of individual event spawning than declared in the UI. 
@@ -79,4 +85,5 @@ To uninstall simply delete `likhos-eventuality.vmz` from the `mods/` folder and 
 ## Requirements
 
 - Road to Vostok 0.1.1.3 (Godot 4.6.2)
-- [Metro Mod Loader](https://github.com/ametrocavich/vostok-mod-loader/wiki) v3.0.1 or later (separate install, not bundled with the game)
+- [Metro Mod Loader](https://modworkshop.net/mod/56483) v3.0.1 or later (separate install, not bundled with the game)
+- [Mod Configuration Menu](https://modworkshop.net/mod/53713)
