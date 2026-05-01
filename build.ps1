@@ -92,20 +92,64 @@ function New-ModZip {
 	}
 }
 
+function Test-GitAvailable {
+	$result = & git -C $repoRoot rev-parse --is-inside-work-tree 2>$null
+	return $LASTEXITCODE -eq 0
+}
+
+function Test-FolderDirty {
+	param([string]$FolderPath, [string]$FolderName)
+
+	$result = & git -C $repoRoot status --porcelain -- $FolderName 2>$null
+	return -not [string]::IsNullOrEmpty($result)
+}
+
+function Get-CurrentModVersion {
+	param([string]$ModTxtPath)
+
+	$content = [System.IO.File]::ReadAllText($ModTxtPath)
+	$pattern = '(?m)^(version\s*=\s*")(\d+)\.(\d+)\.(\d+)(")'
+	$m = [regex]::Match($content, $pattern)
+	if (-not $m.Success) {
+		return $null
+	}
+	return "$($m.Groups[2].Value).$($m.Groups[3].Value).$($m.Groups[4].Value)"
+}
+
 $folders = @(Get-ModFolders)
 if ($folders.Count -eq 0) {
 	throw "No mod folders found (looked for directories containing mod.txt)."
 }
 
+$gitAvailable = Test-GitAvailable
+$gitWarningShown = $false
+
 foreach ($folder in $folders) {
 	$modTxt = Join-Path $folder.FullName 'mod.txt'
-	$newVersion = Update-ModVersion -ModTxtPath $modTxt
+
+	$shouldBump = $true
+	if ($gitAvailable) {
+		$folderDirty = Test-FolderDirty -FolderPath $folder.FullName -FolderName $folder.Name
+		$shouldBump = $folderDirty
+	} elseif (-not $gitWarningShown) {
+		Write-Warning "Git not available; falling back to always-bumping version. Either git is not installed or this is not a git repository."
+		$gitWarningShown = $true
+	}
+
+	$version = $null
+	if ($shouldBump) {
+		$version = Update-ModVersion -ModTxtPath $modTxt
+	}
+
+	if (-not $version) {
+		$version = Get-CurrentModVersion -ModTxtPath $modTxt
+	}
 
 	$zipPath = Join-Path $ModsDir "$($folder.Name).vmz"
 	New-ModZip -SourceDir $folder.FullName -ZipPath $zipPath -ModId $folder.Name
 
-	if ($newVersion) {
-		Write-Host "built: $($folder.Name) v$newVersion -> $zipPath"
+	if ($version) {
+		Write-Host "built: $($folder.Name) v$version -> $zipPath"
 	} else {
 		Write-Host "built: $($folder.Name) -> $zipPath"
 	}
@@ -118,6 +162,6 @@ if ($Launch) {
 		throw "Game executable not found: $exePath"
 	}
 	Write-Host "launching: $exePath"
-	Start-Process -FilePath $exePath -WorkingDirectory $gameDir -RedirectStandardOutput 'NUL' 
+	Start-Process -FilePath $exePath -WorkingDirectory $gameDir -RedirectStandardOutput 'NUL'
 	#cmd.exe /c "start `"`" /D `"$gameDir`" `"$exePath`"" *>$null
 }
