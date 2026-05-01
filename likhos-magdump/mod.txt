@@ -1,0 +1,7 @@
+[mod]
+name="Likho's Magdump"
+id="likhos-magdump"
+version="1.0.1"
+
+[autoload]
+LikhosMagdump="res://mods/likhos-magdump/Scripts/Main.gd"
