@@ -3,6 +3,7 @@ extends RefCounted
 var _lib
 var _config
 var _crosshair: Control
+var _driver: Node
 
 const _CROSSHAIR_SHADOW := Color(0, 0, 0, 0.7)
 const _DOT_RADIUS := 1.5
@@ -33,15 +34,38 @@ func on_ready_post() -> void:
 		return
 	_setup_crosshair(hud)
 	_setup_attachment_tooltips(hud)
+	_attach_driver(hud)
 
-func on_physics_process_post(_delta: float) -> void:
-	var hud = _lib._caller
-	if !hud:
+# Per-tick driver attached as a child Node of the HUD. Replaces the previous
+# hud-_physics_process-post hook so our updates run independently of HUD's
+# own _physics_process. Other mods may override HUD._physics_process without
+# calling super() (e.g. WeaponsAndEquipmentConditions), which would otherwise
+# break post-hook dispatch and freeze the crosshair / tooltips.
+func _attach_driver(hud) -> void:
+	if is_instance_valid(_driver) && _driver.get_parent() == hud:
 		return
-	_update_interaction_tooltip(hud)
-	_update_ammo_overlays(hud)
-	_update_crosshair_visibility(hud)
-	_update_attachment_tooltips(hud)
+	var driver := _Driver.new(hud, self)
+	driver.name = "LikhosHUDDriver"
+	hud.add_child(driver)
+	_driver = driver
+
+class _Driver extends Node:
+	var _hud
+	var _logic
+
+	func _init(hud, logic) -> void:
+		_hud = hud
+		_logic = logic
+
+	func _physics_process(_delta: float) -> void:
+		if _hud == null or not is_instance_valid(_hud):
+			return
+		if _logic == null:
+			return
+		_logic._update_interaction_tooltip(_hud)
+		_logic._update_ammo_overlays(_hud)
+		_logic._update_crosshair_visibility(_hud)
+		_logic._update_attachment_tooltips(_hud)
 
 func _draw_crosshair(c: Control) -> void:
 	var center := c.size * 0.5

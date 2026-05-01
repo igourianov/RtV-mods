@@ -90,7 +90,6 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `Noise._physics_process` (post)
 - `Tilt._physics_process` (pre)
 - `HUD._ready` (post)
-- `HUD._physics_process` (post)
 - `Recoil.ApplyRecoil` (post)
 
 # Install / Uninstall
