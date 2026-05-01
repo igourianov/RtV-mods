@@ -60,7 +60,7 @@ func _init():
 
 	McmHelpers.RegisterConfiguration(
 		MOD_ID,
-		"Likho's Weapon Handling Fixes",
+		"Likho's VosTac",
 		FILE_PATH,
 		"Likho's collection of game fixes and realism improvements",
 		{

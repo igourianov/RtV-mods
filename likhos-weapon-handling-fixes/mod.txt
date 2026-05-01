@@ -1,7 +1,7 @@
 [mod]
 name="Likho's VosTac"
 id="likhos-weapon-handling-fixes"
-version="1.10.425"
+version="1.10.426"
 
 [hooks]
 "res://Scripts/Handling.gd"="WeaponHandling"
