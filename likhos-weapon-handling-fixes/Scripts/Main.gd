@@ -62,7 +62,6 @@ func _init_hooks(lib):
 		_register_hook(lib, "noise-_physics_process-post", _noise.on_physics_process_post),
 		_register_hook(lib, "tilt-_physics_process-pre", _tilt.on_physics_process_pre),
 		_register_hook(lib, "hud-_ready-post", _hud.on_ready_post),
-		_register_hook(lib, "hud-_physics_process-post", _hud.on_physics_process_post),
 		_register_hook(lib, "recoil-applyrecoil-post", _recoil.on_apply_recoil_post),
 		_register_hook(lib, "character-stamina", _character.on_stamina)
 	]
