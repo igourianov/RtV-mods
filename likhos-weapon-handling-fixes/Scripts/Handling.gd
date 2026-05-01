@@ -16,13 +16,24 @@ const _PATROL_WEAPON_TYPES = {"Rifle": null, "SMG": null, "Bolt": null, "Shotgun
 const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-10.0, 0.0, 0.0)
 const _MOSIN_LOW_ROTATION_OFFSET = Vector3(-15.0, 15.0, 0.0)
 const _REMINGTON_870_LOW_ROTATION_OFFSET = Vector3(-20.0, 10.0, 0.0)
+const _BASE_WEAPON_WEIGHT = 4.0
+const _META_TOTAL_WEIGHT = "likho_total_weight"
+
+# the handling speed modifier - read as % of base
+enum HandlingMode {
+	Default = 100,
+	RDS = 115,
+	Cant = 130,
+	Scope1x = 105,
+	ScopeZoom = 80
+}
 
 var _lib
 var _preferences: Preferences
 var _config
 var _flashlight_stream: AudioStream
 var _lens_min_z_cache := {}
-
+var _handlingMode = HandlingMode.Default
 
 func _init(lib, preferences: Preferences, config) -> void:
 	_lib = lib
@@ -44,6 +55,8 @@ func on_weapon_handling(delta: float) -> void:
 func _weapon_handling(h, delta: float) -> void:
 	var gd = h.gameData
 	var data = h.data
+	var rig = h.get_parent()
+	var optic = rig.activeOptic
 
 	if gd.freeze:
 		return
@@ -65,15 +78,20 @@ func _weapon_handling(h, delta: float) -> void:
 			lowRotation = _PATROL_ROTATION + _REMINGTON_870_LOW_ROTATION_OFFSET
 		else:
 			lowRotation = _PATROL_ROTATION
-		
-
-	var speed: float = delta * h.handlingSpeed
-	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), speed)
-	h.rotation_degrees = lerp(h.rotation_degrees, h.targetRotation, speed)
+	
+	var speed: float
+	if _config.override_handling_speed:
+		var weightFactor = _BASE_WEAPON_WEIGHT / lerp(_BASE_WEAPON_WEIGHT, _total_weapon_weight(rig), _config.handling_speed_weight_factor)
+		speed = h.handlingSpeed * (_handlingMode / 100.0) * weightFactor
+	else:
+		speed = h.handlingSpeed
+	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), delta * speed)
+	h.rotation_degrees = lerp(h.rotation_degrees, h.targetRotation, delta * speed)
 
 	if gd.isClearing:
 		h.targetPosition = data.collisionPosition
 		h.targetRotation = data.collisionRotation
+		_handlingMode = HandlingMode.Default
 		return
 
 	if h.collision.is_colliding():
@@ -82,6 +100,7 @@ func _weapon_handling(h, delta: float) -> void:
 		gd.isColliding = true
 		gd.isAiming = false
 		gd.isCanted = false
+		_handlingMode = HandlingMode.Default
 		return
 
 	gd.isColliding = false
@@ -90,11 +109,13 @@ func _weapon_handling(h, delta: float) -> void:
 		gd.weaponPosition = 1
 		h.targetPosition = lowPosition
 		h.targetRotation = lowRotation
+		_handlingMode = HandlingMode.Default
 		return
 
 	if gd.isInspecting:
 		h.targetPosition = data.inspectPosition
 		h.targetRotation = data.inspectRotation
+		_handlingMode = HandlingMode.Default
 		return
 
 	if gd.isInserting:
@@ -102,6 +123,7 @@ func _weapon_handling(h, delta: float) -> void:
 		h.targetRotation = data.lowRotation
 		gd.isAiming = false
 		gd.isCanted = false
+		_handlingMode = HandlingMode.Default
 		return
 
 	if gd.isRunning || gd.isChecking || (gd.isReloading && data.weaponAction != "Manual"):
@@ -110,6 +132,7 @@ func _weapon_handling(h, delta: float) -> void:
 		gd.isAiming = false
 		gd.isCanted = false
 		_restore_look_sensitivity(gd)
+		_handlingMode = HandlingMode.Default
 		if gd.weaponPosition == 2:
 			h.targetPosition = data.highPosition
 			h.targetRotation = data.highRotation
@@ -131,6 +154,7 @@ func _weapon_handling(h, delta: float) -> void:
 				h.canted = !h.canted
 
 	if h.canted:
+		_handlingMode = HandlingMode.Cant
 		if gd.aimMode == 1 && _config.laser_auto_on:
 			_laser_activate(h)
 		gd.isCanted = true
@@ -166,28 +190,35 @@ func _weapon_handling(h, delta: float) -> void:
 			h.targetRotation = lowRotation
 		return
 
-	var parent = h.get_parent()
+	if optic == null:
+		_handlingMode = HandlingMode.Default
+	elif optic.attachmentData.scope && !gd.secondaryOptic:
+		_handlingMode = HandlingMode.ScopeZoom
+	elif optic.attachmentData.variable:
+		_handlingMode = HandlingMode.Scope1x if rig.slotData.zoom == 1 else HandlingMode.ScopeZoom
+	else:
+		_handlingMode = HandlingMode.RDS
+
 	if _config.disable_optic_override:
-		if parent.activeOptic:
-			h.targetPosition = Vector3(0.0, -parent.aimOffset, data.aimPosition.z)
+		if rig.activeOptic:
+			h.targetPosition = Vector3(0.0, -rig.aimOffset, data.aimPosition.z)
 		else:
 			h.targetPosition = data.aimPosition
 		h.targetRotation = data.aimRotation
 		if gd.isScoped && !gd.PIP:
 			h.targetPosition -= Vector3(0.0, 0.0, 0.1)
 	else:
-		var optic = parent.activeOptic
 		if optic && gd.PIP && optic.attachmentData.scope && !gd.secondaryOptic:
 			var aim_z = _optic_lens_aim_z(optic) + _FIXED_SCOPE_AIM_OFFSET
-			h.targetPosition = Vector3(0.0, -parent.aimOffset, aim_z)
+			h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z)
 		elif optic && gd.PIP && optic.attachmentData.variable && !gd.secondaryOptic:
 			var aim_z = _optic_lens_aim_z(optic) + _VARIABLE_SCOPE_AIM_OFFSET
-			h.targetPosition = Vector3(0.0, -parent.aimOffset, aim_z)
+			h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z)
 		elif optic:
-			var y_offset: float = parent.aimOffset
+			var y_offset: float = rig.aimOffset
 			if gd.secondaryOptic && optic.secondary != null:
-				var primary_in_rig: Vector3 = parent.to_local(optic.global_position)
-				var secondary_in_rig: Vector3 = parent.to_local(optic.secondary.global_position)
+				var primary_in_rig: Vector3 = rig.to_local(optic.global_position)
+				var secondary_in_rig: Vector3 = rig.to_local(optic.secondary.global_position)
 				y_offset = optic.position.y + (secondary_in_rig.y - primary_in_rig.y)
 			h.targetPosition = Vector3(0.0, -y_offset, data.aimPosition.z)
 			if gd.isScoped:
@@ -195,6 +226,27 @@ func _weapon_handling(h, delta: float) -> void:
 		else:
 			h.targetPosition = data.aimPosition
 		h.targetRotation = data.aimRotation
+
+
+func on_rig_update_post(_animate) -> void:
+	var manager = _lib._caller
+	if manager == null or manager.get_child_count() == 0:
+		return
+	var rig = manager.get_child(manager.get_child_count() - 1)
+	if rig != null:
+		rig.remove_meta(_META_TOTAL_WEIGHT)
+
+
+func _total_weapon_weight(rig) -> float:
+	var total: float = rig.get_meta(_META_TOTAL_WEIGHT, -1.0)
+	if total >= 0.0:
+		return total
+	total = rig.slotData.itemData.weight
+	for nestedItem in rig.slotData.nested:
+		total += nestedItem.weight
+	rig.set_meta(_META_TOTAL_WEIGHT, total)
+	print(_PREFIX, "gun weight: %.1fkg" % total)
+	return total
 
 
 func _optic_lens_aim_z(optic) -> float:

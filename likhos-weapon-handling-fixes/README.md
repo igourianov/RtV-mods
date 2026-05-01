@@ -16,6 +16,7 @@ Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 * Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in MCM)
 * Ability to toggle secondary optic out of aim with visual cue of the toggle
 * Rework of the inspect mode and associated bindings
+* Weapon handling speed now scales with wheight and aim stance (disable in MCM)
 
 ## Vanilla Fixes
 * Ammo check no longer forces weapon into raised position (prior stance preserved)
@@ -94,6 +95,7 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `HUD._ready` (post)
 - `Recoil.ApplyRecoil` (post)
 - `Optic._physics_process` (pre)
+- `RigManager.UpdateRig` (post)
 
 # Install / Uninstall
 

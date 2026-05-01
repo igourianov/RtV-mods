@@ -52,6 +52,7 @@ func _init_hooks(lib):
 
 	var hooks: Array[int] = [
 		_register_hook(lib, "handling-weaponhandling", _handling.on_weapon_handling),
+		_register_hook(lib, "rigmanager-updaterig-post", _handling.on_rig_update_post),
 		_register_hook(lib, "weaponrig-ammocheck-pre", _weapon_rig.on_ammo_check_pre),
 		_register_hook(lib, "weaponrig-ammocheck-post", _weapon_rig.on_ammo_check_post),
 		_register_hook(lib, "weaponrig-ads-post", _weapon_rig.on_ads_post),
