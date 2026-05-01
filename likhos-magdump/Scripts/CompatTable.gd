@@ -9,34 +9,14 @@ extends RefCounted
 # Direction matters: A accepting B's mag does not imply B accepts A's mag.
 
 const COMPAT := {
-	"res://Items/Weapons/AK-12/AK-12.tres": {
-		"res://Items/Weapons/AKS-74U/AKS-74U_Magazine.tres": {},
-	},
-	"res://Items/Weapons/AKS-74U/AKS-74U.tres": {
-		"res://Items/Weapons/AK-12/AK-12_Magazine.tres": {},
-	},
-	"res://Items/Weapons/RK-62/RK-62.tres": {
-		"res://Items/Weapons/AKM/AKM_Magazine.tres": {},
-	},
-	"res://Items/Weapons/RK-62/RK-62M.tres": {
-		"res://Items/Weapons/AKM/AKM_Magazine.tres": {},
-	},
-	"res://Items/Weapons/RK-95/RK-95.tres": {
-		"res://Items/Weapons/AKM/AKM_Magazine.tres": {},
-	},
-	"res://Items/Weapons/AKM/AKM.tres": {
-		"res://Items/Weapons/RK-62/RK_Magazine.tres": {},
-	},
-	"res://Items/Weapons/HK416/HK416.tres": {
-		"res://Items/Weapons/KAR-21/KAR-21_223_Magazine.tres": {},
-	},
-	"res://Items/Weapons/M4A1/M4A1.tres": {
-		"res://Items/Weapons/KAR-21/KAR-21_223_Magazine.tres": {},
-	},
-	"res://Items/Weapons/MK18/MK18.tres": {
-		"res://Items/Weapons/KAR-21/KAR-21_223_Magazine.tres": {},
-	},
-	"res://Items/Weapons/KAR-21/KAR-21_223.tres": {
-		"res://Items/Weapons/M4A1/STANAG_Magazine.tres": {},
-	},
+	"AK_12": ["AKS_74U_Magazine"],
+	"AKS_74U": ["AK_12_Magazine"],
+	"RK_62": ["AKM_Magazine"],
+	"RK_62M": ["AKM_Magazine"],
+	"RK_95": ["AKM_Magazine"],
+	"AKM": ["RK_Magazine"],
+	"HK416": ["KAR_21_223_Magazine"],
+	"M4A1": ["KAR_21_223_Magazine"],
+	"MK18": ["KAR_21_223_Magazine"],
+	"KAR_21_223": ["STANAG_Magazine"],
 }
