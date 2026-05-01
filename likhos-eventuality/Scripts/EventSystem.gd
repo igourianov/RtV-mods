@@ -1,5 +1,7 @@
 extends RefCounted
 
+const _PREFIX = "[likho-evt]"
+
 var _lib
 var _config
 var _rollBonus: Dictionary = {}
@@ -30,8 +32,8 @@ func on_activate_dynamic_event() -> void:
 
 func _activate_dynamic_event(es) -> void:
 
-	print("[likho] available events: %s" % [es.dynamicEvents.map(func(el): return el.function)])
-	print("[likho] pending roll bonuses: %s" % [_rollBonus])
+	print(_PREFIX, "available events: %s" % [es.dynamicEvents.map(func(el): return el.function)])
+	print(_PREFIX, "pending roll bonuses: %s" % [_rollBonus])
 
 	if es.dynamicEvents.size() == 0:
 		return
@@ -49,7 +51,7 @@ func _activate_dynamic_event(es) -> void:
 		if blocker != null && activated.has(blocker):
 			bonus += basePossibility
 			_rollBonus.set(e.function, bonus)
-			print("[likho] event skipped: %s | Blocked by: %s | Next roll bonus: +%s" % [e.function, blocker, bonus])
+			print(_PREFIX, "event skipped: %s | Blocked by: %s | Next roll bonus: +%s" % [e.function, blocker, bonus])
 			continue
 
 		var threshold: float = basePossibility + bonus
@@ -57,17 +59,17 @@ func _activate_dynamic_event(es) -> void:
 		_rollBonus.set(e.function, 0.0)
 
 		if roll > threshold:
-			print("[likho] event missed: %s | Roll: %s/%s" % [e.function, roll, threshold])
+			print(_PREFIX, "event missed: %s | Roll: %s/%s" % [e.function, roll, threshold])
 			continue
 
 		activated[e.function] = true
 
 		if e.instant:
-			print("[likho] event activated: %s | Roll: %s/%s" % [e.function, roll, threshold])
+			print(_PREFIX, "event activated: %s | Roll: %s/%s" % [e.function, roll, threshold])
 			Callable(es, e.function).call()
 		else:
 			var delay = randi_range(30, 300)
-			print("[likho] event activated: %s | Roll: %s/%s | Delay: %02d:%02d" % [e.function, roll, threshold, int(floor(delay / 60.0)), delay % 60])
+			print(_PREFIX, "event activated: %s | Roll: %s/%s | Delay: %02d:%02d" % [e.function, roll, threshold, int(floor(delay / 60.0)), delay % 60])
 			_activate_delayed_event(es, delay, e.function) # no await on purpose
 
 func _activate_delayed_event(es, delay, name):
@@ -84,7 +86,7 @@ func on_fighter_jet_post() -> void:
 
 func _schedule_fighter_jet(es) -> void:
 	var delay = randi_range(60, 300)
-	print("[likho] FighterJet triggered | Nex one in: %02d:%02d" % [int(floor(delay / 60.0)), delay % 60])
+	print(_PREFIX, "FighterJet triggered | Nex one in: %02d:%02d" % [int(floor(delay / 60.0)), delay % 60])
 	await es.get_tree().create_timer(delay, false).timeout
 	if !is_instance_valid(es):
 		return
@@ -105,7 +107,7 @@ func on_crash_site() -> void:
 	crashSite.global_transform = spawn.global_transform
 
 	var delay = randi_range(5, 20)
-	print("[likho] CrashSite triggered | Boom in: %ss at %s" % [delay, spawn.global_position])
+	print(_PREFIX, "CrashSite triggered | Boom in: %ss at %s" % [delay, spawn.global_position])
 	_play_delayed_explosion(es, spawn.global_position, delay)
 
 

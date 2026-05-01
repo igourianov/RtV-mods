@@ -1,5 +1,6 @@
 extends Node
 
+const _PREFIX = "[likho-magdump]"
 const CompatTable = preload("res://mods/likhos-magdump/Scripts/CompatTable.gd")
 
 var _lib
@@ -11,7 +12,7 @@ func _ready() -> void:
 		_apply_for_weapon(weapon_path, CompatTable.COMPAT[weapon_path])
 
 	if !Engine.has_meta("RTVModLib"):
-		push_error("[likhos-magdump] RTVModLib not available; icon overlays disabled")
+		push_error(_PREFIX, "RTVModLib not available; icon overlays disabled")
 		return
 	_lib = Engine.get_meta("RTVModLib")
 	if _lib._is_ready:
@@ -21,26 +22,43 @@ func _ready() -> void:
 
 
 func _register_hooks() -> void:
-	# Initialize fires once per Item, often before our autoload registers hooks
-	# (e.g. during save load). UpdateAttachments runs from inside Initialize and
-	# on every nested change, so hooking it covers all cases.
-	_lib.hook("item-updateattachments-pre", _on_update_attachments_pre)
-	_lib.hook("interface-getmagazine", _on_get_magazine)
+	var hooks: Array[int] = [
+		_register_hook(_lib, "item-updateattachments-pre", _on_update_attachments_pre),
+		_register_hook(_lib, "interface-getmagazine", _on_get_magazine)
+	]
+
+	var registered = hooks.filter(func(id): return id > -1)
+	if registered.size() == hooks.size():
+		print(_PREFIX, "all hooks registered successfully")
+		return
+
+	push_warning(_PREFIX, "mod registration failed, rolling back")
+	for id in registered:
+		_lib.unhook(id)
+
+
+func _register_hook(lib, hookName: String, callback: Callable):
+	var id = lib.hook(hookName, callback)
+	if id != -1:
+		print(_PREFIX, "hook(%s):%s registered" % [hookName, id])
+	else:
+		push_warning(_PREFIX, "hook(%s) failed" % hookName)
+	return id
 
 
 func _apply_for_weapon(weapon_path: String, mag_entries: Dictionary) -> void:
 	var weapon = load(weapon_path)
 	if weapon == null:
-		push_warning("[likhos-magdump] weapon not found: %s" % weapon_path)
+		push_warning(_PREFIX, "weapon not found: %s" % weapon_path)
 		return
 	var entries: Array = []
 	for mag_path in mag_entries:
 		var mag = load(mag_path)
 		if mag == null:
-			push_warning("[likhos-magdump] magazine not found: %s" % mag_path)
+			push_warning(_PREFIX, "magazine not found: %s" % mag_path)
 			continue
 		if mag.subtype != "Magazine":
-			push_warning("[likhos-magdump] %s is not a Magazine (subtype=%s)" % [mag_path, mag.subtype])
+			push_warning(_PREFIX, "%s is not a Magazine (subtype=%s)" % [mag_path, mag.subtype])
 			continue
 		if !weapon.compatible.has(mag):
 			weapon.compatible.append(mag)

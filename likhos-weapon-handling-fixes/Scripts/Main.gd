@@ -1,5 +1,6 @@
 extends Node
 
+const _PREFIX = "[likho-vostac]"
 const _Handling = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Handling.gd")
 const _WeaponRig = preload("res://mods/likhos-weapon-handling-fixes/Scripts/WeaponRig.gd")
 const _Camera = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Camera.gd")
@@ -26,7 +27,7 @@ func _ready() -> void:
 	_config = _ModConfig.new()
 	var lib = Engine.get_meta("RTVModLib")
 	if lib == null:
-		push_error("[likho] RTVModLib meta not available")
+		push_error(_PREFIX, "RTVModLib meta not available")
 		return
 	if lib._is_ready:
 		_init_hooks(lib)
@@ -68,10 +69,10 @@ func _init_hooks(lib):
 
 	var registered = hooks.filter(func(id): return id > -1)
 	if registered.size() == hooks.size():
-		print("[likho] all hooks registered successfully")
+		print(_PREFIX, "all hooks registered successfully")
 		return
 
-	print("[likho] mod registration failed, rolling back")
+	push_warning(_PREFIX, "mod registration failed, rolling back")
 	for id in registered:
 		lib.unhook(id)
 
@@ -79,8 +80,8 @@ func _init_hooks(lib):
 func _register_hook(lib, hookName: String, callback: Callable):
 	var id = lib.hook(hookName, callback)
 	if id != -1:
-		print("[likho] hook(%s):%s registered" % [hookName, id])
+		print(_PREFIX, "hook(%s):%s registered" % [hookName, id])
 	else:
-		push_error("[likho] hook(%s) failed" % hookName)
+		push_warning(_PREFIX, "hook(%s) failed" % hookName)
 	return id
 	

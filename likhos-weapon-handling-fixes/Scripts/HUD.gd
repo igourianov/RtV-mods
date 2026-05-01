@@ -36,11 +36,6 @@ func on_ready_post() -> void:
 	_setup_attachment_tooltips(hud)
 	_attach_driver(hud)
 
-# Per-tick driver attached as a child Node of the HUD. Replaces the previous
-# hud-_physics_process-post hook so our updates run independently of HUD's
-# own _physics_process. Other mods may override HUD._physics_process without
-# calling super() (e.g. WeaponsAndEquipmentConditions), which would otherwise
-# break post-hook dispatch and freeze the crosshair / tooltips.
 func _attach_driver(hud) -> void:
 	if is_instance_valid(_driver) && _driver.get_parent() == hud:
 		return

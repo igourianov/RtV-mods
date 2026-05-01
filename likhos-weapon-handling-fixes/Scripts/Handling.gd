@@ -1,5 +1,6 @@
 extends RefCounted
 
+const _PREFIX = "[likho-vostac]"
 const _META_LASER_LATCH = "likho_laser_latch"
 const _LASER_SOUND_VOLUME_DB = -12.0
 const _LASER_IN_START = 0.0
@@ -29,7 +30,7 @@ func _init(lib, preferences: Preferences, config) -> void:
 	_config = config
 	_flashlight_stream = load(_FLASHLIGHT_WAV_PATH)
 	if _flashlight_stream == null:
-		push_warning("[likho] failed to load %s" % _FLASHLIGHT_WAV_PATH)
+		push_warning(_PREFIX, "failed to load %s" % _FLASHLIGHT_WAV_PATH)
 
 
 func on_weapon_handling(delta: float) -> void:
