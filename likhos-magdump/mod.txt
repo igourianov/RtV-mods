@@ -1,7 +1,10 @@
 [mod]
 name="Likho's Magdump"
 id="likhos-magdump"
-version="1.0.1"
+version="1.0.7"
+
+[hooks]
+"res://Scripts/Item.gd"="UpdateAttachments"
 
 [autoload]
 LikhosMagdump="res://mods/likhos-magdump/Scripts/Main.gd"
