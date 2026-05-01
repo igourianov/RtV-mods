@@ -20,7 +20,7 @@ Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 * Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in MCM)
 * Ability to toggle secondary optic out of aim with visual cue of the toggle
 * Rework of the inspect mode and associated bindings
-* Weapon handling speed now scales with wheight and aim stance (disable in MCM)
+* Weapon handling speed now scales with weight and aim stance (disable in MCM)
 
 ## Vanilla Fixes
 * Ammo check no longer forces weapon into raised position (prior stance preserved)
@@ -38,7 +38,7 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 - **Magnification dialed to real-world values:** prism sights 4x, LPVOs 1.1x/3x/6x
 - **Scope DOF reworked:** scales with magnification, near-DOF enabled for foreground/background softening
 - **PIP MSAA matches main viewport:** the optic's SubViewport now mirrors the antialiasing settings used by the rest of the game - vanilla left it disabled (disable in MCM if it causes performance issues)
-- **NVG-aware PIP blur:** when night vision is active and you aim a magnified optic, the PIP image will now blurs. Real scopes cannot work under NVG because of eye relief differences (disable in MCM)
+- **NVG-aware PIP blur:** when night vision is active and you aim a magnified optic, the PIP image will now blur. Real scopes cannot work under NVG because of eye relief differences (disable in MCM)
 
 ## Movement speed rework
 
