@@ -78,7 +78,7 @@ static func _inject_mags(lib, gun, mags: Array) -> void:
 		added += 1
 
 		if !gun.compatible.has(mag):
-			gun.compatible.insert(0, mag)
+			gun.compatible.insert(1, mag)
 
 		print(_PREFIX, "baked ", mag.file, " into ", gun.file)
 
