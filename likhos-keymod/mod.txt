@@ -1,0 +1,16 @@
+[mod]
+name="Likho's Keymod"
+id="likhos-keymod"
+version="1.0.8"
+
+[hooks]
+"res://Scripts/Trader.gd"="FillTraderBucket"
+
+[autoload]
+LikhosKeymod="res://mods/likhos-keymod/Scripts/Main.gd"
+
+[updates]
+modworkshop=0
+
+[registry]
+enabled=true
