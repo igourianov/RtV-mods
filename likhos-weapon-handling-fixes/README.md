@@ -79,5 +79,6 @@ These changes started out as separate mods. The catch is that Road to Vostok's s
 
 * [Likho's Eventuality](https://modworkshop.net/mod/56468) - fixes/enhancements to the dynamic events
 * [Likho's Magdump](https://modworkshop.net/mod/56489) - rifle magazine compatibility mod
+* [Likho's Second Hand](https://modworkshop.net/mod/56525) - resize mod for several weapons to fit them into secondary slot
 
 *Feedback and likes are welcome!*

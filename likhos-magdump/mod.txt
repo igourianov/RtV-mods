@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Magdump"
 id="likhos-magdump"
-version="1.1.38"
+version="1.1.39"
 
 [hooks]
 "res://Scripts/Interface.gd"="GetMagazine"
