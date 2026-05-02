@@ -80,7 +80,7 @@ function New-ModZip {
 	try {
 		Get-ChildItem -LiteralPath $sourceFull -Recurse -File | ForEach-Object {
 			$relative = $_.FullName.Substring($prefixLen).Replace('\', '/')
-			if ($relative -eq 'mod.txt' -or $relative -eq 'README.md') {
+			if ($relative -eq 'mod.txt' -or $relative -match '\.md$') {
 				$entry = $relative
 			} else {
 				$entry = "mods/$ModId/$relative"

@@ -7,12 +7,6 @@ Road to Vostok mod that improves dynamic event spawning so that they more closel
 * Heli crash site now plays a sound to let you know it has spawned
 * Fighter jet repeats
 
-## Check out my other mods
-* [Likho's VosTac](https://modworkshop.net/mod/56366) - comprehensive tactical realism and gun mechanics fixes mod
-* [Likho's Magdump](https://modworkshop.net/mod/56489) - rifle magazine compatibility mod
-
-*Feedback and likes are welcome!*
-
 ## Probability math
 
 Vanilla stacks probabilities, resulting much lower chances of individual event spawning than declared in the UI. 
@@ -55,35 +49,9 @@ Published all event probabilities as MCM config values. Note that probability do
 I *DO NOT RECOMMEND* changing them unless it is to trigger long wanted event (like Punisher) once and then revert. The probability stacking made it seem like vanilla events are way too rare. You may find that after this mod fix, events are quite common and might be annoying.
 
 
-## Compatibility
+# Check out my other mods
 
-This mod hooks vanilla methods through Metro Mod Loader:
+* [Likho's VosTac](https://modworkshop.net/mod/56366) - comprehensive tactical realism and gun mechanics fixes mod
+* [Likho's Magdump](https://modworkshop.net/mod/56489) - rifle magazine compatibility mod
 
-**Replace hooks** (other mods that also replace these will conflict, pick one):
-
-- `EventSystem.ActivateDynamicEvent`
-- `EventSystem.CrashSite`
-
-**Post hooks** (additive, run after vanilla, coexist with other mods cleanly):
-
-- `EventSystem.FighterJet`
-- `Police._ready`
-- `Police.States`
-
-## Install / Uninstall
-
-Drop `likhos-eventuality.vmz` into your game's `mods/` folder. On a default Steam install:
-
-```
-<Steam>\steamapps\common\Road to Vostok\mods\
-```
-
-Launch the game. The mod loader picks it up automatically.
-
-To uninstall simply delete `likhos-eventuality.vmz` from the `mods/` folder and relaunch the game.
-
-## Requirements
-
-- Road to Vostok 0.1.1.3 (Godot 4.6.2)
-- [Metro Mod Loader](https://modworkshop.net/mod/56483) v3.0.1 or later (separate install, not bundled with the game)
-- [Mod Configuration Menu](https://modworkshop.net/mod/53713)
+*Feedback and likes are welcome!*

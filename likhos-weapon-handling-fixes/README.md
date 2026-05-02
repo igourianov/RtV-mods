@@ -4,12 +4,6 @@ Road to Vostok mod that adds tactical realism features and fixes a whole host of
 
 Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 
-## Check out my other mods
-* [Likho's Eventuality](https://modworkshop.net/mod/56468) - fixes/enhancements to the dynamic events
-* [Likho's Magdump](https://modworkshop.net/mod/56489) - rifle magazine compatibility mod
-
-*Feedback and likes are welcome!*
-
 ## New Features
 * Major rework of the PIP scope mode for realism
 * Canted aim is now independent with optional laser auto-activation in hold mode (disable in MCM)
@@ -81,45 +75,9 @@ These changes started out as separate mods. The catch is that Road to Vostok's s
 
 - **Laser beam doesn't line up with the dot at very close range.** On targets right in front of you the visible beam diverges from the projected dot. This is a vanilla bug, not something the mod introduces. Vanilla simply hid it by having the gun model block the close portion of the beam; this mod's tweaked weapon pose moves the gun out of that path, exposing the misalignment.
 
-# Requirements
+# Check out my other mods
 
-- Road to Vostok 0.1.1.3 (Godot 4.6.2)
-- [Metro Mod Loader](https://modworkshop.net/mod/56483) v3.0.1 or later (separate install, not bundled with the game)
-- [Mod Configuration Menu](https://modworkshop.net/mod/53713)
+* [Likho's Eventuality](https://modworkshop.net/mod/56468) - fixes/enhancements to the dynamic events
+* [Likho's Magdump](https://modworkshop.net/mod/56489) - rifle magazine compatibility mod
 
-# Compatibility
-
-This mod hooks multiple vanilla methods through Metro Mod Loader:
-
-**Replace hooks** (other mods that also replace these will conflict, pick one):
-
-- `Handling.WeaponHandling`
-- `WeaponRig._input`
-- `Character.Stamina`
-
-**Pre + Post hooks** (additive, run before/after vanilla, coexist with other mods cleanly):
-
-- `WeaponRig.AmmoCheck` (pre and post)
-- `WeaponRig.ADS` (post)
-- `WeaponRig._physics_process` (pre)
-- `WeaponRig._ready` (post)
-- `Camera.ScopeDOF` (post)
-- `Controller.MovementStates` (pre and post)
-- `Noise._physics_process` (post)
-- `Tilt._physics_process` (pre)
-- `HUD._ready` (post)
-- `Recoil.ApplyRecoil` (post)
-- `Optic._physics_process` (pre)
-- `RigManager.UpdateRig` (post)
-
-# Install / Uninstall
-
-Drop `likhos-weapon-handling-fixes.vmz` into your game's `mods/` folder. On a default Steam install:
-
-```
-<Steam>\steamapps\common\Road to Vostok\mods\
-```
-
-Launch the game. The mod loader picks it up automatically. The first time you install or update a mod, the loader does a one-shot restart to finish wiring the hooks. After that, no more restarts.
-
-To uninstall simply delete `likhos-weapon-handling-fixes.vmz` from the `mods/` folder and relaunch the game.
+*Feedback and likes are welcome!*
