@@ -82,7 +82,7 @@ func _activate_delayed_event(es, delay, name):
 func on_fighter_jet_post() -> void:
 	var es = _lib._caller
 	_jetCounter -= 1
-	if es == null || _jetCounter <= 0:
+	if !is_instance_valid(es) || _jetCounter <= 0:
 		return
 	_schedule_fighter_jet(es)
 
