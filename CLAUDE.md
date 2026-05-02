@@ -6,6 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Mods for the Godot game **Road to Vostok** (`config/name="Road to Vostok"`, version 0.1.1.3, Godot 4.6.2). Each top-level directory at the repo root (e.g. `ammo-check-fix/`) is an individual mod.
 
+## Mods
+
+* `likhos-weapon-handling-fixes/` - tactical realism and weapon mechanics mod. Major game overhaul. Includes many features nd fixes. Also known as `VosTac`.
+* `likhos-magdump/` - small mod for magazine compatibility between different rifles
+* `likhos-eventuality/` - small mod affecting in-game dynamic events. Fxes event probability and provides small enhancements.
+
 ## `src/` is the decompiled game (reference only, gitignored)
 
 `src/` holds the extracted original project pulled from `RTV.pck` with GDRE Tools v2.5.0-beta.5 (see `src/gdre_export.log`). It is the authoritative reference for the game's scripts, scenes, resources and UIDs, but it is **not** part of this repo and must not be committed. Treat it as read-only when planning mod changes.
