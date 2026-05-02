@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Second Hand"
 id="likhos-second-hand"
-version="1.0.5"
+version="1.0.14"
 
 [autoload]
 LikhosSecondHand="res://mods/likhos-second-hand/Scripts/Main.gd"

@@ -19,12 +19,7 @@ extends RefCounted
 # calls made directly (e.g. from Interface.gd) without a preceding
 # UpdateAttachments.
 
-const TARGET_GUNS := {
-	"AKS_74U": null,
-	"VSS": null,
-	"Remington_870": null,
-	"KP_31": null,
-}
+const Patches = preload("res://mods/likhos-second-hand/Scripts/Patches.gd")
 
 const _META_KEY := "_likho_second_hand_tricked_magazine"
 
@@ -41,7 +36,7 @@ func on_update_sprite_pre() -> void:
 		return
 	if item.slotData == null || item.slotData.itemData == null:
 		return
-	if !TARGET_GUNS.has(item.slotData.itemData.file):
+	if !Patches.RESIZE.has(item.slotData.itemData.file):
 		return
 	if item.magazine || item.optic || item.suppressor:
 		return

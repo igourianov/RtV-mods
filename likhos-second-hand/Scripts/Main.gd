@@ -24,9 +24,6 @@ func _ready() -> void:
 
 func _register_hooks() -> void:
 	_hooks = Hooks.new(_lib)
-	# Literal hook names so the loader's auto-enrollment scanner picks up
-	# the wrap surface for Item.gd::UpdateSprite without needing a [hooks]
-	# block in mod.txt.
 	var pre_id: int = _lib.hook("item-updatesprite-pre", _hooks.on_update_sprite_pre)
 	var post_id: int = _lib.hook("item-updatesprite-post", _hooks.on_update_sprite_post)
 	if pre_id == -1:
