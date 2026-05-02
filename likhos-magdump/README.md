@@ -16,5 +16,6 @@ The actual gun in player's hands will still show its default magazine mesh, as i
 * [Likho's VosTac](https://modworkshop.net/mod/56366) - comprehensive tactical realism and gun mechanics fixes mod
 * [Likho's Eventuality](https://modworkshop.net/mod/56468) - fixes/enhancements to the dynamic events
 * [Likho's Second Hand](https://modworkshop.net/mod/56525) - resize mod for several weapons to fit them into secondary slot
+* [Likho's Keymod](https://modworkshop.net/mod/56537) - adds keys to traders
 
 *Feedback and likes are welcome!*

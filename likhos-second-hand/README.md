@@ -18,5 +18,6 @@ Mosin only resized.
 * [Likho's VosTac](https://modworkshop.net/mod/56366) - comprehensive tactical realism and gun mechanics fixes mod
 * [Likho's Magdump](https://modworkshop.net/mod/56489) - cross-compatible magazines for guns that share them in real life
 * [Likho's Eventuality](https://modworkshop.net/mod/56468) - fixes/enhancements to the dynamic events
+* [Likho's Keymod](https://modworkshop.net/mod/56537) - adds keys to traders
 
 *Feedback and likes are welcome!*

@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Keymod"
 id="likhos-keymod"
-version="1.0.8"
+version="1.0.9"
 
 [hooks]
 "res://Scripts/Trader.gd"="FillTraderBucket"
@@ -10,7 +10,7 @@ version="1.0.8"
 LikhosKeymod="res://mods/likhos-keymod/Scripts/Main.gd"
 
 [updates]
-modworkshop=0
+modworkshop=56537
 
 [registry]
 enabled=true

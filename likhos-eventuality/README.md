@@ -52,5 +52,6 @@ I *DO NOT RECOMMEND* changing them unless it is to trigger long wanted event (li
 * [Likho's VosTac](https://modworkshop.net/mod/56366) - comprehensive tactical realism and gun mechanics fixes mod
 * [Likho's Magdump](https://modworkshop.net/mod/56489) - rifle magazine compatibility mod
 * [Likho's Second Hand](https://modworkshop.net/mod/56525) - resize mod for several weapons to fit them into secondary slot
+* [Likho's Keymod](https://modworkshop.net/mod/56537) - adds keys to traders
 
 *Feedback and likes are welcome!*

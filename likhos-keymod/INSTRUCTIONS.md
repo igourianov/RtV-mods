@@ -8,7 +8,7 @@
 This mod uses the registry API and hooks vanilla methods through Metro Mod Loader:
 
 **Registry API** (patches item definitions):
-- Uses `lib.patch()` on gun items to inject foreign magazines into their tetris scenes and compatible attachments
+- Uses `lib.patch()`key itemsto attach them to traders
 
 
 # Install / Uninstall
