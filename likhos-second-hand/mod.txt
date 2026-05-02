@@ -1,0 +1,10 @@
+[mod]
+name="Likho's Second Hand"
+id="likhos-second-hand"
+version="1.0.1"
+
+[autoload]
+LikhosSecondHand="res://mods/likhos-second-hand/Scripts/Main.gd"
+
+[registry]
+enabled=true
