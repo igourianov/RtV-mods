@@ -1,10 +1,16 @@
 [mod]
 name="Likho's Second Hand"
 id="likhos-second-hand"
-version="1.0.14"
+version="1.0.37"
+
+[hooks]
+"res://Scripts/Item.gd"="UpdateSprite"
 
 [autoload]
 LikhosSecondHand="res://mods/likhos-second-hand/Scripts/Main.gd"
 
 [registry]
 enabled=true
+
+[updates]
+modworkshop=56525
