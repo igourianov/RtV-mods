@@ -11,7 +11,7 @@ Following guns can now use each other's magazines:
 
 The actual gun in player's hands will still show its default magazine mesh, as it is a part of the gun. To fix this would be way too much effort.
 
-# Check out my other mods
+## Check out my other mods
 
 * [Likho's VosTac](https://modworkshop.net/mod/56366) - comprehensive tactical realism and gun mechanics fixes mod
 * [Likho's Eventuality](https://modworkshop.net/mod/56468) - fixes/enhancements to the dynamic events
