@@ -12,6 +12,7 @@ Note that trader's supply is generated at random from a large pool of items, so 
 
 * [Likho's VosTac](https://modworkshop.net/mod/56366) - comprehensive tactical realism and gun mechanics fixes mod
 * [Likho's Eventuality](https://modworkshop.net/mod/56468) - fixes/enhancements to the dynamic events
+* [Likho's Magdump](https://modworkshop.net/mod/56489) - rifle magazine compatibility mod
 * [Likho's Second Hand](https://modworkshop.net/mod/56525) - resize mod for several weapons to fit them into secondary slot
 
 *Feedback and likes are welcome!*
