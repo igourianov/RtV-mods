@@ -74,6 +74,9 @@ func _activate_dynamic_event(es) -> void:
 
 func _activate_delayed_event(es, delay, name):
 	await es.get_tree().create_timer(delay, false).timeout
+	if !is_instance_valid(es):
+		print(_PREFIX, "EventSystem instance no longer valid, scheduled %s event aborted." % name)
+		return
 	Callable(es, name).call()
 
 func on_fighter_jet_post() -> void:
@@ -86,7 +89,7 @@ func on_fighter_jet_post() -> void:
 
 func _schedule_fighter_jet(es) -> void:
 	var delay = randi_range(60, 300)
-	print(_PREFIX, "FighterJet triggered | Nex one in: %02d:%02d" % [int(floor(delay / 60.0)), delay % 60])
+	print(_PREFIX, "FighterJet triggered | Next one in: %02d:%02d" % [int(floor(delay / 60.0)), delay % 60])
 	await es.get_tree().create_timer(delay, false).timeout
 	if !is_instance_valid(es):
 		return
