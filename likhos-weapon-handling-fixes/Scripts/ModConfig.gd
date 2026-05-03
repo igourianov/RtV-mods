@@ -23,6 +23,7 @@ var attachment_tooltips: bool
 var pip_anti_aliasing: bool
 var override_handling_speed: bool
 var handling_speed_weight_factor: float
+var eye_relief_offset: float
 
 const MOD_ID = "likhos-weapon-handling-fixes"
 const FILE_PATH = "user://MCM/likhos-weapon-handling-fixes"
@@ -45,6 +46,8 @@ const MULT_MIN = 0.1
 const MULT_MAX = 1.5
 const HANDLING_WEIGHT_FACTOR_MIN = 0.0
 const HANDLING_WEIGHT_FACTOR_MAX = 1.5
+const DEFAULT_EYE_RELIEF_OFFSET = 0.0
+
 
 func _init():
 	var config = _create_config_template()
@@ -91,6 +94,7 @@ func _apply_config(config: ConfigFile):
 	pip_anti_aliasing = config.get_value("Bool", "pipAntiAliasing", {}).get("value", DEFAULT_ENABLED)
 	override_handling_speed = config.get_value("Bool", "overrideHandlingSpeed", {}).get("value", DEFAULT_ENABLED)
 	handling_speed_weight_factor = config.get_value("Float", "handlingSpeedWeightFactor", {}).get("value", DEFAULT_HANDLING_SPEED_WEIGHT_FACTOR)
+	eye_relief_offset = config.get_value("Float", "eyeReliefOffset", {}).get("value", DEFAULT_EYE_RELIEF_OFFSET) / 100.0
 
 func _create_config_template():
 	var config := ConfigFile.new()
@@ -255,7 +259,16 @@ func _create_config_template():
 		"category": "Aim tweaks"
 	})
 
-
+	config.set_value("Float", "eyeReliefOffset", {
+		"name": "Eye relief offset for magnified optics (cm)",
+		"tooltip": "Adjust how close the scope is during zoom: negative value = closer",
+		"default": DEFAULT_EYE_RELIEF_OFFSET,
+		"value": DEFAULT_EYE_RELIEF_OFFSET,
+		"minRange": -1.0,
+		"maxRange": 5.0,
+		"menu_pos": next_pos.call(),
+		"category": "Aim tweaks"
+	})
 
 	config.set_value("Float", "crouchSpeed", {
 		"name": "Crouch Speed",

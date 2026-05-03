@@ -209,10 +209,10 @@ func _weapon_handling(h, delta: float) -> void:
 			h.targetPosition -= Vector3(0.0, 0.0, 0.1)
 	else:
 		if optic && gd.PIP && optic.attachmentData.scope && !gd.secondaryOptic:
-			var aim_z = _optic_lens_aim_z(optic) + _FIXED_SCOPE_AIM_OFFSET
+			var aim_z = _optic_lens_aim_z(optic) + _FIXED_SCOPE_AIM_OFFSET - _config.eye_relief_offset
 			h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z)
 		elif optic && gd.PIP && optic.attachmentData.variable && !gd.secondaryOptic:
-			var aim_z = _optic_lens_aim_z(optic) + _VARIABLE_SCOPE_AIM_OFFSET
+			var aim_z = _optic_lens_aim_z(optic) + _VARIABLE_SCOPE_AIM_OFFSET - _config.eye_relief_offset
 			h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z)
 		elif optic:
 			var y_offset: float = rig.aimOffset
