@@ -13,6 +13,7 @@ const _Recoil = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Recoil.
 const _Character = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Character.gd")
 const _Optic = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Optic.gd")
 
+var _lib
 var _handling
 var _weapon_rig
 var _camera
@@ -27,47 +28,47 @@ var _optic
 
 func _ready() -> void:
 	_config = _ModConfig.new()
-	var lib = Engine.get_meta("RTVModLib")
-	if lib == null:
+	_lib = Engine.get_meta("RTVModLib")
+	if _lib == null:
 		push_warning(_PREFIX, "RTVModLib meta not available")
 		return
-	if lib._is_ready:
-		_init_hooks(lib)
+	if _lib._is_ready:
+		_init_hooks()
 	else:
-		lib.frameworks_ready.connect(func(): _init_hooks(lib))
+		_lib.frameworks_ready.connect(func(): _init_hooks())
 
-func _init_hooks(lib):
+func _init_hooks():
 	var preferences = Preferences.Load()
 
-	_weapon_rig = _WeaponRig.new(lib, preferences, _config)
-	_handling = _Handling.new(lib, preferences, _config)
-	_camera = _Camera.new(lib, _weapon_rig, _config)
-	_controller = _Controller.new(lib, _weapon_rig, preferences, _config)
-	_noise = _Noise.new(lib, preferences)
-	_tilt = _Tilt.new(lib)
-	_hud = _HUD.new(lib, _config)
-	_recoil = _Recoil.new(lib)
-	_character = _Character.new(lib)
-	_optic = _Optic.new(lib, _weapon_rig, preferences, _config)
+	_weapon_rig = _WeaponRig.new(_lib, preferences, _config)
+	_handling = _Handling.new(_lib, preferences, _config)
+	_camera = _Camera.new(_lib, _weapon_rig, _config)
+	_controller = _Controller.new(_lib, _weapon_rig, preferences, _config)
+	_noise = _Noise.new(_lib, preferences)
+	_tilt = _Tilt.new(_lib)
+	_hud = _HUD.new(_lib, _config)
+	_recoil = _Recoil.new(_lib)
+	_character = _Character.new(_lib)
+	_optic = _Optic.new(_lib, _weapon_rig, preferences, _config)
 
 	var hooks: Array[int] = [
-		_register_hook(lib, "handling-weaponhandling", _handling.on_weapon_handling),
-		_register_hook(lib, "rigmanager-updaterig-post", _handling.on_rig_update_post),
-		_register_hook(lib, "weaponrig-ammocheck-pre", _weapon_rig.on_ammo_check_pre),
-		_register_hook(lib, "weaponrig-ammocheck-post", _weapon_rig.on_ammo_check_post),
-		_register_hook(lib, "weaponrig-ads-post", _weapon_rig.on_ads_post),
-		_register_hook(lib, "weaponrig-_input", _weapon_rig.on_input),
-		_register_hook(lib, "weaponrig-_physics_process-pre", _weapon_rig.on_physics_process_pre),
-		_register_hook(lib, "weaponrig-_ready-post", _weapon_rig.on_ready_post),
-		_register_hook(lib, "camera-scopedof-post", _camera.on_scope_dof_post),
-		_register_hook(lib, "controller-movementstates-pre", _controller.on_movement_states_pre),
-		_register_hook(lib, "controller-movementstates-post", _controller.on_movement_states_post),
-		_register_hook(lib, "noise-_physics_process-post", _noise.on_physics_process_post),
-		_register_hook(lib, "tilt-_physics_process-pre", _tilt.on_physics_process_pre),
-		_register_hook(lib, "hud-_ready-post", _hud.on_ready_post),
-		_register_hook(lib, "recoil-applyrecoil-post", _recoil.on_apply_recoil_post),
-		_register_hook(lib, "character-stamina", _character.on_stamina),
-		_register_hook(lib, "optic-_physics_process-pre", _optic.on_physics_process_pre)
+		_register_hook("handling-weaponhandling", _handling.on_weapon_handling),
+		_register_hook("rigmanager-updaterig-post", _handling.on_rig_update_post),
+		_register_hook("weaponrig-ammocheck-pre", _weapon_rig.on_ammo_check_pre),
+		_register_hook("weaponrig-ammocheck-post", _weapon_rig.on_ammo_check_post),
+		_register_hook("weaponrig-ads-post", _weapon_rig.on_ads_post),
+		_register_hook("weaponrig-_input", _weapon_rig.on_input),
+		_register_hook("weaponrig-_physics_process-pre", _weapon_rig.on_physics_process_pre),
+		_register_hook("weaponrig-_ready-post", _weapon_rig.on_ready_post),
+		_register_hook("camera-scopedof-post", _camera.on_scope_dof_post),
+		_register_hook("controller-movementstates-pre", _controller.on_movement_states_pre),
+		_register_hook("controller-movementstates-post", _controller.on_movement_states_post),
+		_register_hook("noise-_physics_process-post", _noise.on_physics_process_post),
+		_register_hook("tilt-_physics_process-pre", _tilt.on_physics_process_pre),
+		_register_hook("hud-_ready-post", _hud.on_ready_post),
+		_register_hook("recoil-applyrecoil-post", _recoil.on_apply_recoil_post),
+		_register_hook("character-stamina", _character.on_stamina),
+		_register_hook("optic-_physics_process-pre", _optic.on_physics_process_pre)
 	]
 
 	var registered = hooks.filter(func(id): return id > -1)
@@ -77,11 +78,11 @@ func _init_hooks(lib):
 
 	push_warning(_PREFIX, "mod registration failed, rolling back")
 	for id in registered:
-		lib.unhook(id)
+		_lib.unhook(id)
 
 
-func _register_hook(lib, hookName: String, callback: Callable):
-	var id = lib.hook(hookName, callback)
+func _register_hook(hookName: String, callback: Callable):
+	var id = _lib.hook(hookName, callback)
 	if id != -1:
 		print(_PREFIX, "hook(%s):%s registered" % [hookName, id])
 	else:
