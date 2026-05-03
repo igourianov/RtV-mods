@@ -1,5 +1,8 @@
 extends RefCounted
 
+const _FIXED_SCOPE_AIM_OFFSET = 0.015
+const _VARIABLE_SCOPE_AIM_OFFSET = 0.03
+
 var _lib
 var _preferences: Preferences
 var _config
@@ -174,7 +177,8 @@ func on_ads_post(delta: float) -> void:
 
 	if att.scope && !gd.secondaryOptic:
 		current_scope_mag = 4.0
-		optic.camera.fov = gd.baseFOV * lens_scale / current_scope_mag
+		var distance = distance_factor(_FIXED_SCOPE_AIM_OFFSET, _config.eye_relief_offset)
+		optic.camera.fov = distance * gd.baseFOV * lens_scale / current_scope_mag
 		return
 
 	if rig.slotData.zoom == 1:
@@ -188,4 +192,9 @@ func on_ads_post(delta: float) -> void:
 		current_scope_mag = 6.0
 		gd.scopeSensitivity = _preferences.scopeSensitivity * 0.5
 
-	optic.camera.fov = lerp(optic.camera.fov, gd.baseFOV * lens_scale / current_scope_mag, delta * 10.0)
+	var distance = distance_factor(_VARIABLE_SCOPE_AIM_OFFSET, _config.eye_relief_offset)
+	optic.camera.fov = lerp(optic.camera.fov, distance * gd.baseFOV * lens_scale / current_scope_mag, delta * 10.0)
+
+func distance_factor(base: float, distance: float) -> float:
+	var f: float = base / (base + distance)
+	return f

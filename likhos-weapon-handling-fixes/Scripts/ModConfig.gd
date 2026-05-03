@@ -263,10 +263,10 @@ func _create_config_template():
 
 	config.set_value("Float", "eyeReliefOffset", {
 		"name": "Eye relief offset for magnified optics (cm)",
-		"tooltip": "Adjust how close the scope is during zoom: negative value = closer",
+		"tooltip": "Adjust how close the scope is during zoom",
 		"default": DEFAULT_EYE_RELIEF_OFFSET,
 		"value": DEFAULT_EYE_RELIEF_OFFSET,
-		"minRange": -1.0,
+		"minRange": 0.0,
 		"maxRange": 5.0,
 		"menu_pos": next_pos.call(),
 		"category": "Aim tweaks"
