@@ -11,16 +11,8 @@ func _init(lib) -> void:
 
 func on_apply_recoil_post() -> void:
 	var recoil = _lib._caller
-	if recoil == null:
-		return
 	var rig = recoil.owner
-	if rig == null:
+	if !recoil || !rig:
 		return
-	var optic = rig.activeOptic
-	if optic == null:
-		return
-	var att = optic.attachmentData
-	if att == null:
-		return
-	if att.scope && !att.variable:
+	if rig.gameData.isScoped:
 		recoil.currentKick.z *= KICK_Z_MULTIPLIER
