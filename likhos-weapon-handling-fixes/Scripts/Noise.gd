@@ -2,10 +2,12 @@ extends RefCounted
 
 var _lib
 var _preferences: Preferences
+var _config
 
-func _init(lib, preferences: Preferences) -> void:
+func _init(lib, preferences: Preferences, config) -> void:
 	_lib = lib
 	_preferences = preferences
+	_config = config
 
 func on_physics_process_post(_delta: float) -> void:
 	var noise = _lib._caller

@@ -1,9 +1,11 @@
 extends RefCounted
 
 var _lib
+var _config
 
-func _init(lib) -> void:
+func _init(lib, config) -> void:
 	_lib = lib
+	_config = config
 
 func on_stamina(delta: float) -> void:
 	var c = _lib._caller

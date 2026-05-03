@@ -2,6 +2,8 @@
 
 var McmHelpers = preload("res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Helpers.tres")
 
+const PREFIX = "[likho-vostac]"
+
 var crosshair_style: String
 var crosshair_color: Color
 var cant_mode: String

@@ -1,6 +1,5 @@
 extends Node
 
-const _PREFIX = "[likho-vostac]"
 const _Handling = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Handling.gd")
 const _WeaponRig = preload("res://mods/likhos-weapon-handling-fixes/Scripts/WeaponRig.gd")
 const _Camera = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Camera.gd")
@@ -30,7 +29,7 @@ func _ready() -> void:
 	_config = _ModConfig.new()
 	_lib = Engine.get_meta("RTVModLib")
 	if _lib == null:
-		push_warning(_PREFIX, "RTVModLib meta not available")
+		push_warning(_config.PREFIX, "RTVModLib meta not available")
 		return
 	if _lib._is_ready:
 		_init_hooks()
@@ -44,11 +43,11 @@ func _init_hooks():
 	_handling = _Handling.new(_lib, preferences, _config)
 	_camera = _Camera.new(_lib, _weapon_rig, _config)
 	_controller = _Controller.new(_lib, _weapon_rig, preferences, _config)
-	_noise = _Noise.new(_lib, preferences)
-	_tilt = _Tilt.new(_lib)
+	_noise = _Noise.new(_lib, preferences, _config)
+	_tilt = _Tilt.new(_lib, _config)
 	_hud = _HUD.new(_lib, _config)
-	_recoil = _Recoil.new(_lib)
-	_character = _Character.new(_lib)
+	_recoil = _Recoil.new(_lib, _config)
+	_character = _Character.new(_lib, _config)
 	_optic = _Optic.new(_lib, _weapon_rig, preferences, _config)
 
 	var hooks: Array[int] = [
@@ -73,10 +72,10 @@ func _init_hooks():
 
 	var registered = hooks.filter(func(id): return id > -1)
 	if registered.size() == hooks.size():
-		print(_PREFIX, "all hooks registered successfully")
+		print(_config.PREFIX, "all hooks registered successfully")
 		return
 
-	push_warning(_PREFIX, "mod registration failed, rolling back")
+	push_warning(_config.PREFIX, "mod registration failed, rolling back")
 	for id in registered:
 		_lib.unhook(id)
 
@@ -84,8 +83,8 @@ func _init_hooks():
 func _register_hook(hookName: String, callback: Callable):
 	var id = _lib.hook(hookName, callback)
 	if id != -1:
-		print(_PREFIX, "hook(%s):%s registered" % [hookName, id])
+		print(_config.PREFIX, "hook(%s):%s registered" % [hookName, id])
 	else:
-		push_warning(_PREFIX, "hook(%s) failed" % hookName)
+		push_warning(_config.PREFIX, "hook(%s) failed" % hookName)
 	return id
 	

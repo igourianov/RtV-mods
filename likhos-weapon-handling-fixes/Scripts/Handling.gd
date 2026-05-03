@@ -1,6 +1,5 @@
 extends RefCounted
 
-const _PREFIX = "[likho-vostac]"
 const _META_LASER_LATCH = "likho_laser_latch"
 const _LASER_SOUND_VOLUME_DB = -12.0
 const _LASER_IN_START = 0.0
@@ -41,7 +40,7 @@ func _init(lib, preferences: Preferences, config) -> void:
 	_config = config
 	_flashlight_stream = load(_FLASHLIGHT_WAV_PATH)
 	if _flashlight_stream == null:
-		push_warning(_PREFIX, "failed to load %s" % _FLASHLIGHT_WAV_PATH)
+		push_warning(_config.PREFIX, "failed to load %s" % _FLASHLIGHT_WAV_PATH)
 
 
 func on_weapon_handling(delta: float) -> void:
@@ -254,7 +253,7 @@ func _total_weapon_weight(rig) -> float:
 	for nestedItem in rig.slotData.nested:
 		total += nestedItem.weight
 	rig.set_meta(_META_TOTAL_WEIGHT, total)
-	print(_PREFIX, "gun weight: %.1fkg" % total)
+	print(_config.PREFIX, "gun weight: %.1fkg" % total)
 	return total
 
 
