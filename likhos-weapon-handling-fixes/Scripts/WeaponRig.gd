@@ -145,28 +145,18 @@ func on_ready_post() -> void:
 
 func on_ads_post(delta: float) -> void:
 	var rig = _lib._caller
-	active_rig = rig
-
+	active_rig = rig # save for Controller
 	var gd = rig.gameData
-
-	# Vanilla leaves gameData.secondaryOptic set when the active optic changes outside
-	# the Inspect attach/detach path. The next optic's _physics_process then disables
-	# its PIP surface and never re-enables it.
-	if gd.secondaryOptic:
-		var current = rig.activeOptic
-		if current == null || !current.attachmentData.secondary || current.secondary == null:
-			gd.secondaryOptic = false
+	var optic = rig.activeOptic
+	var att = optic.attachmentData
 
 	if !gd.PIP || !gd.isAiming || gd.isColliding:
 		current_scope_mag = 0.0
 		return
 
-	var optic = rig.activeOptic
 	if optic == null:
 		current_scope_mag = 0.0
 		return
-
-	var att = optic.attachmentData
 
 	var lens_scale: float
 	if optic == _last_optic_for_scale:
@@ -176,33 +166,26 @@ func on_ads_post(delta: float) -> void:
 		_cached_lens_scale = lens_scale
 		_last_optic_for_scale = optic
 
-	var base_fov = gd.baseFOV
-
-	if att.scope && !gd.secondaryOptic:
-		optic.camera.fov = base_fov * lens_scale / 4.0
-		gd.aimFOV = base_fov
-		current_scope_mag = base_fov / max(optic.camera.fov, 1.0)
-		return
-
-	if !att.variable || rig.slotData == null:
+	if !att.variable && (!att.scope || gd.secondaryOptic):
 		current_scope_mag = 0.0
 		return
 
-	gd.aimFOV = base_fov
+	gd.aimFOV = gd.baseFOV # override vanilla behavior
 
-	match rig.slotData.zoom:
-		1:
-			gd.isScoped = true
-			optic.camera.fov = lerp(optic.camera.fov, base_fov * lens_scale / 1.1, delta * 10.0)
-			if _preferences != null:
-				gd.scopeSensitivity = _preferences.aimSensitivity
-		2:
-			optic.camera.fov = lerp(optic.camera.fov, base_fov * lens_scale / 3.0, delta * 10.0)
-			if _preferences != null:
-				gd.scopeSensitivity = _preferences.scopeSensitivity
-		3:
-			optic.camera.fov = lerp(optic.camera.fov, base_fov * lens_scale / 6.0, delta * 10.0)
-			if _preferences != null:
-				gd.scopeSensitivity = _preferences.scopeSensitivity * 0.5
+	if att.scope && !gd.secondaryOptic:
+		current_scope_mag = 4.0
+		optic.camera.fov = gd.baseFOV * lens_scale / current_scope_mag
+		return
 
-	current_scope_mag = base_fov / max(optic.camera.fov, 1.0)
+	if rig.slotData.zoom == 1:
+		gd.isScoped = true # override vanilla behavior
+		current_scope_mag = 1.1
+		gd.scopeSensitivity = _preferences.aimSensitivity
+	elif rig.slotData.zoom == 2:
+		current_scope_mag = 3.0
+		gd.scopeSensitivity = _preferences.scopeSensitivity
+	elif rig.slotData.zoom == 3:
+		current_scope_mag = 6.0
+		gd.scopeSensitivity = _preferences.scopeSensitivity * 0.5
+
+	optic.camera.fov = lerp(optic.camera.fov, gd.baseFOV * lens_scale / current_scope_mag, delta * 10.0)

@@ -236,6 +236,15 @@ func on_rig_update_post(_animate) -> void:
 	if rig != null:
 		rig.remove_meta(_META_TOTAL_WEIGHT)
 
+	# BUG FIX
+	# Vanilla forgets to reset secondaryOptic flag when equipping another optic 
+	# Causes other scopes to break in PIP mode
+	var gd  = rig.gameData
+	var optic = rig.activeOptic
+	if gd.secondaryOptic:
+		if optic == null || !optic.attachmentData.secondary || optic.secondary == null:
+			gd.secondaryOptic = false
+
 
 func _total_weapon_weight(rig) -> float:
 	var total: float = rig.get_meta(_META_TOTAL_WEIGHT, -1.0)
