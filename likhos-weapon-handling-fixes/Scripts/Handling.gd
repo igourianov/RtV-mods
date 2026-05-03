@@ -91,6 +91,9 @@ func _weapon_handling(h, delta: float) -> void:
 		h.targetPosition = data.collisionPosition
 		h.targetRotation = data.collisionRotation
 		_handlingMode = HandlingMode.Default
+		_laser_deactivate(h)
+		gd.isAiming = false
+		gd.isCanted = false		
 		return
 
 	if h.collision.is_colliding():
@@ -109,27 +112,34 @@ func _weapon_handling(h, delta: float) -> void:
 		h.targetPosition = lowPosition
 		h.targetRotation = lowRotation
 		_handlingMode = HandlingMode.Default
+		_laser_deactivate(h)
+		gd.isAiming = false
+		gd.isCanted = false
 		return
 
 	if gd.isInspecting:
 		h.targetPosition = data.inspectPosition
 		h.targetRotation = data.inspectRotation
 		_handlingMode = HandlingMode.Default
+		_laser_deactivate(h)
+		gd.isAiming = false
+		gd.isCanted = false
 		return
 
 	if gd.isInserting:
 		h.targetPosition = data.lowPosition 
 		h.targetRotation = data.lowRotation
+		_handlingMode = HandlingMode.Default
+		_laser_deactivate(h)
 		gd.isAiming = false
 		gd.isCanted = false
-		_handlingMode = HandlingMode.Default
 		return
 
 	if gd.isRunning || gd.isChecking || (gd.isReloading && data.weaponAction != "Manual"):
-		h.aimToggle = false
-		h.canted = false
 		gd.isAiming = false
-		gd.isCanted = false
+		if !gd.isRunning:
+			gd.isCanted = false
+			_laser_deactivate(h)
 		_restore_look_sensitivity(gd)
 		_handlingMode = HandlingMode.Default
 		if gd.weaponPosition == 2:
@@ -140,26 +150,22 @@ func _weapon_handling(h, delta: float) -> void:
 			h.targetRotation = lowRotation
 		return
 
-	match _config.cant_mode:
-		"hold":
-			h.canted = Input.is_action_pressed("canted")
-		"toggle":
-			if Input.is_action_just_pressed("canted"):
-				h.canted = !h.canted
-		_:
-			if gd.aimMode == 1:
-				h.canted = Input.is_action_pressed("canted")
-			elif gd.aimMode == 2 && Input.is_action_just_pressed("canted"):
-				h.canted = !h.canted
+	var cantToggle = false
+	if _config.cant_mode == "default":
+		cantToggle = gd.aimMode == 2
+	elif _config.cant_mode == "toggle":
+		cantToggle = true
 
-	if h.canted:
+	if !cantToggle:
+		gd.isCanted = Input.is_action_pressed("canted")
+	elif Input.is_action_just_pressed("canted"):
+		gd.isCanted = !gd.isCanted 
+
+	if gd.isCanted:
 		_handlingMode = HandlingMode.Cant
-		if gd.aimMode == 1 && _config.laser_auto_on:
+		if !cantToggle && _config.laser_auto_on:
 			_laser_activate(h)
-		gd.isCanted = true
-		gd.isAiming = false
-		if _preferences != null:
-			gd.lookSensitivity = _preferences.aimSensitivity
+		_restore_look_sensitivity(gd)
 		if _config.disable_canted_override:
 			h.targetPosition = data.cantedPosition
 			h.targetRotation = data.cantedRotation
@@ -169,16 +175,12 @@ func _weapon_handling(h, delta: float) -> void:
 		return
 
 	_laser_deactivate(h)
-	gd.isCanted = false
 	_restore_look_sensitivity(gd)
 
-	if gd.aimMode == 2 && Input.is_action_just_pressed("aim"):
-		h.aimToggle = !h.aimToggle
-
-	if gd.aimMode == 2:
-		gd.isAiming = h.aimToggle
-	else:
+	if gd.aimMode == 1: # hold
 		gd.isAiming = Input.is_action_pressed("aim")
+	elif Input.is_action_just_pressed("aim"):
+		gd.isAiming = !gd.isAiming
 
 	if !gd.isAiming:
 		if gd.weaponPosition == 2:
@@ -304,7 +306,7 @@ func _laser_activate(h) -> void:
 	if h.get_meta(_META_LASER_LATCH, false):
 		return
 	var node = _find_laser(h)
-	if node == null or node.active:
+	if node == null || node.active:
 		return
 	node.active = true
 	node.raycast.global_position = node.owner.raycast.global_position
@@ -314,7 +316,7 @@ func _laser_activate(h) -> void:
 
 
 func _laser_deactivate(h) -> void:
-	if not h.get_meta(_META_LASER_LATCH, false):
+	if !h.get_meta(_META_LASER_LATCH, false):
 		return
 	h.set_meta(_META_LASER_LATCH, false)
 	var node = _find_laser(h)
