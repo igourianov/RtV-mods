@@ -11,6 +11,7 @@ const _ModConfig = preload("res://mods/likhos-weapon-handling-fixes/Scripts/ModC
 const _Recoil = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Recoil.gd")
 const _Character = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Character.gd")
 const _Optic = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Optic.gd")
+const _Inputs = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Inputs.gd")
 
 var _lib
 var _handling
@@ -24,6 +25,7 @@ var _config
 var _recoil
 var _character
 var _optic
+var _inputs
 
 func _ready() -> void:
 	_config = _ModConfig.new()
@@ -49,6 +51,7 @@ func _init_hooks():
 	_recoil = _Recoil.new(_lib, _config)
 	_character = _Character.new(_lib, _config)
 	_optic = _Optic.new(_lib, _weapon_rig, preferences, _config)
+	_inputs = _Inputs.new(_lib, _config)
 
 	var hooks: Array[int] = [
 		_register_hook("handling-weaponhandling", _handling.on_weapon_handling),
@@ -67,7 +70,9 @@ func _init_hooks():
 		_register_hook("hud-_ready-post", _hud.on_ready_post),
 		_register_hook("recoil-applyrecoil-post", _recoil.on_apply_recoil_post),
 		_register_hook("character-stamina", _character.on_stamina),
-		_register_hook("optic-_physics_process-pre", _optic.on_physics_process_pre)
+		_register_hook("optic-_physics_process-pre", _optic.on_physics_process_pre),
+		_register_hook("inputs-createactions-post", _inputs.on_create_actions_post),
+		_register_hook("inputs-resetactions-post", _inputs.on_reset_actions_post)
 	]
 
 	var registered = hooks.filter(func(id): return id > -1)

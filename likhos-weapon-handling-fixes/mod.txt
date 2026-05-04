@@ -1,7 +1,7 @@
 [mod]
 name="Likho's VosTac"
 id="likhos-weapon-handling-fixes"
-version="1.10.522"
+version="1.10.546"
 
 [hooks]
 "res://Scripts/Handling.gd"="WeaponHandling"
@@ -15,6 +15,7 @@ version="1.10.522"
 "res://Scripts/Character.gd"="Stamina"
 "res://Scripts/Optic.gd"="_physics_process"
 "res://Scripts/RigManager.gd"="UpdateRig"
+"res://Scripts/Inputs.gd"="CreateActions"
 
 [autoload]
 LikhosWeaponHandlingFixes="res://mods/likhos-weapon-handling-fixes/Scripts/Main.gd"
