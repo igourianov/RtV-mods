@@ -60,7 +60,7 @@ func _use(caller, character, targetItem, targetGrid, extraData) -> void:
 
 func _input(ev):
 	if ev is InputEventKey && ev.pressed && ev.ctrl_pressed && ev.shift_pressed && ev.keycode == KEY_O:
-		print(_PREFIX, "hurt myself")
+		print(_PREFIX, "I hurt myself, today...")
 		var character = _lib._caller.get_node("../../Controller/Character")
 		var gameData = character.gameData
 		if character:
