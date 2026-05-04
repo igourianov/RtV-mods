@@ -28,6 +28,8 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `Recoil.ApplyRecoil` (post)
 - `Optic._physics_process` (pre)
 - `RigManager.UpdateRig` (post)
+- `Inputs.CreateActions` (post)
+- `Inputs.ResetActions` (post)
 
 # Install / Uninstall
 

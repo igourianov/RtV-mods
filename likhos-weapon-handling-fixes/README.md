@@ -15,6 +15,7 @@ Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 * Ability to toggle secondary optic out of aim with visual cue of the toggle
 * Rework of the inspect mode and associated bindings
 * Weapon handling speed now scales with weight and aim stance (disable in MCM)
+* Added explicit bindings to the base game settings for optic zoom in/out (it was hardcoded to mouse wheel)
 
 ### Vanilla Fixes
 * Ammo check no longer forces weapon into raised position (prior stance preserved)
