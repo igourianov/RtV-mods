@@ -4,7 +4,6 @@ const _PREFIX = "[likhos-tacmed]"
 
 const MEDICAL = {
 	"IFAK": {
-		"healRate": 2.0,
 		"healTime": 3.0
 	}
 }
@@ -45,11 +44,13 @@ func _use(caller, character, targetItem, targetGrid, extraData) -> void:
 
 	if caller.gameData.isDead: return
 
-	var heal = min(slotData.condition * extraData.healRate, 100.0 - caller.gameData.health)
-	slotData.condition -= round(heal / extraData.healRate)
+	var totalHeal = slotData.itemData.health
+	var healRate = totalHeal / 100.0
+	var heal = min(slotData.condition * healRate, 100.0 - caller.gameData.health)
+	slotData.condition -= round(heal / healRate)
 	slotData.itemData.health = heal
 	character.Consume(slotData.itemData)
-	slotData.itemData.health = 0.0
+	slotData.itemData.health = totalHeal
 	targetItem.UpdateDetails()
 
 	caller.gameData.isOccupied = false

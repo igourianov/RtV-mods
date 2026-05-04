@@ -19,7 +19,7 @@ func _ready() -> void:
 		#"healTime": 3.0,
 		"value": 1000,
 		"weight": 2.0,
-		"health": 0.0,
+		"health": 150.0,
 		"fracture": false,
 		"rupture": false,
 		"headshot": false,
