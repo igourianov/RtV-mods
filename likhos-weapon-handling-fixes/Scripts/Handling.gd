@@ -33,6 +33,7 @@ var _config
 var _flashlight_stream: AudioStream
 var _lens_min_z_cache := {}
 var _handlingMode = HandlingMode.Default
+var _laser
 
 func _init(lib, preferences: Preferences, config) -> void:
 	_lib = lib
@@ -163,7 +164,7 @@ func _weapon_handling(h, delta: float) -> void:
 
 	if gd.isCanted:
 		_handlingMode = HandlingMode.Cant
-		if !cantToggle && _config.laser_auto_on:
+		if _config.laser_auto_on:
 			_laser_activate(h)
 		_restore_look_sensitivity(gd)
 		if _config.disable_canted_override:
@@ -231,11 +232,18 @@ func _weapon_handling(h, delta: float) -> void:
 
 func on_rig_update_post(_animate) -> void:
 	var manager = _lib._caller
-	if manager == null or manager.get_child_count() == 0:
+	if manager == null || manager.get_child_count() == 0:
 		return
+	
 	var rig = manager.get_child(manager.get_child_count() - 1)
 	if rig != null:
 		rig.remove_meta(_META_TOTAL_WEIGHT)
+
+	# save laser module reference
+	_laser = null
+	for node in rig.attachments.get_children():
+		if node.visible && node.has_method("PlayLaser"):
+			_laser = node
 
 	# BUG FIX
 	# Vanilla forgets to reset secondaryOptic flag when equipping another optic 
@@ -289,29 +297,13 @@ func _restore_look_sensitivity(gd) -> void:
 		gd.lookSensitivity = _preferences.lookSensitivity
 
 
-func _find_laser(h) -> Node:
-	var rig = h.get_parent()
-	if rig == null:
-		return null
-	var atts = rig.get("attachments")
-	if atts == null:
-		return null
-	for child in atts.get_children():
-		if child.visible && child.has_method("PlayLaser"):
-			return child
-	return null
-
-
 func _laser_activate(h) -> void:
-	if h.get_meta(_META_LASER_LATCH, false):
+	if h.get_meta(_META_LASER_LATCH, false) || !_laser:
 		return
-	var node = _find_laser(h)
-	if node == null || node.active:
-		return
-	node.active = true
-	node.raycast.global_position = node.owner.raycast.global_position
-	node.laser.show()
-	_play_laser_sound(node, _LASER_IN_START, _LASER_IN_DURATION)
+	_laser.active = true
+	_laser.raycast.global_position = _laser.owner.raycast.global_position
+	_laser.laser.show()
+	_play_laser_sound(_laser, _LASER_IN_START, _LASER_IN_DURATION)
 	h.set_meta(_META_LASER_LATCH, true)
 
 
@@ -319,12 +311,11 @@ func _laser_deactivate(h) -> void:
 	if !h.get_meta(_META_LASER_LATCH, false):
 		return
 	h.set_meta(_META_LASER_LATCH, false)
-	var node = _find_laser(h)
-	if node == null:
+	if !_laser:
 		return
-	node.active = false
-	node.laser.hide()
-	_play_laser_sound(node, _LASER_OUT_START, _LASER_OUT_DURATION)
+	_laser.active = false
+	_laser.laser.hide()
+	_play_laser_sound(_laser, _LASER_OUT_START, _LASER_OUT_DURATION)
 
 
 func _play_laser_sound(node, start: float, duration: float) -> void:
