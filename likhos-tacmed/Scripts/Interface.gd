@@ -2,7 +2,12 @@ extends Node
 
 const _PREFIX = "[likhos-tacmed]"
 
-#@onready var character = $"/root/Map/Core/Controller/Character"
+const MEDICAL = {
+	"IFAK": {
+		"healRate": 2.0,
+		"healTime": 3.0
+	}
+}
 
 var _lib
 
@@ -13,10 +18,44 @@ func _init(lib) -> void:
 
 func on_use(targetItem, targetGrid) -> void:
 	var itemData = targetItem.slotData.itemData
-	if itemData.type == "Medical" && itemData.showCondition:
+	var extraData = MEDICAL[itemData.file]
+	if extraData:
 		print(_PREFIX, "custom heal logic")
+		_use(_lib._caller, _lib._caller.get_node("../../Controller/Character"), targetItem, targetGrid, extraData)
 		_lib.skip_super()
 		return
+
+func _use(caller, character, targetItem, targetGrid, extraData) -> void:
+	var slotData = targetItem.slotData
+	if !slotData.condition:
+		caller.PlayError()
+		return
+
+	caller.gameData.isOccupied = true
+	caller.PlayUse(slotData.itemData)
+
+	var newProgress = caller.progress.instantiate()
+	caller.add_child(newProgress)
+	newProgress.global_position = targetItem.global_position
+	newProgress.size = targetItem.size
+	newProgress.Use(extraData.healTime)
+
+	await newProgress.completed
+	newProgress.queue_free()
+
+	if caller.gameData.isDead: return
+
+	var heal = min(slotData.condition * extraData.healRate, 100.0 - caller.gameData.health)
+	slotData.condition -= round(heal / extraData.healRate)
+	slotData.itemData.health = heal
+	character.Consume(slotData.itemData)
+	slotData.itemData.health = 0.0
+	targetItem.UpdateDetails()
+
+	caller.gameData.isOccupied = false
+	caller.Reset()
+
+
 
 func _input(ev):
 	if ev is InputEventKey && ev.pressed && ev.ctrl_pressed && ev.shift_pressed && ev.keycode == KEY_O:
@@ -24,7 +63,7 @@ func _input(ev):
 		var character = _lib._caller.get_node("../../Controller/Character")
 		var gameData = character.gameData
 		if character:
-			character.Fracture(true)
+			#character.Fracture(true)
 			character.Bleeding(true)
 			gameData.impact = true
 			gameData.damage = true

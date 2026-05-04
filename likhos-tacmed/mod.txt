@@ -1,7 +1,7 @@
 [mod]
 name="Likho's TacMed"
 id="likhos-tacmed"
-version="1.0.30"
+version="1.0.53"
 
 [hooks]
 "res://Scripts/Interface.gd"="Use"
