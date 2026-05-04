@@ -26,6 +26,9 @@ func on_input(event) -> void:
 	_lib.skip_super()
 
 	var gd = rig.gameData
+	var optic = rig.activeOptic
+	var zoomIn = Input.is_action_pressed("optic_zoom_in")
+	var zoomOut = Input.is_action_pressed("optic_zoom_out")
 
 	if (gd.freeze
 		|| gd.isPlacing
@@ -73,40 +76,32 @@ func on_input(event) -> void:
 				rig.animator["parameters/conditions/Inspect_Back"] = false
 				gd.inspectPosition = 1
 
-		if event is InputEventMouseButton && event.is_pressed():
-			var optic = rig.activeOptic
-			if optic == null || !optic.railMovement:
-				return
-			if event.button_index == MOUSE_BUTTON_WHEEL_UP && optic.position.z < optic.maxPosition:
+		if (zoomIn || zoomOut) && optic && optic.railMovement:
+			if zoomIn && optic.position.z < optic.maxPosition:
 				optic.position.z += 0.01
 				rig.slotData.position += 0.01
 				rig.PlayRailMove()
-			elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN && optic.position.z > optic.minPosition:
+			elif zoomOut && optic.position.z > optic.minPosition:
 				optic.position.z -= 0.01
 				rig.slotData.position -= 0.01
 				rig.PlayRailMove()
 		return
 
 	if event.is_action_pressed("secondary_optic"):
-		var sec_optic = rig.activeOptic
-		if sec_optic != null && sec_optic.attachmentData.secondary && sec_optic.secondary != null:
+		if optic && optic.secondary && optic.attachmentData.secondary:
 			gd.secondaryOptic = !gd.secondaryOptic
 			rig.UpdateAimOffset()
 
-	if event is InputEventMouseButton && event.is_pressed():
-		var optic = rig.activeOptic
-		if optic == null || !optic.attachmentData.variable:
-			return
-		var zooming = (gd.isAiming
-			|| _config.lpvo_oof_zoom == "enabled"
-			|| (_config.lpvo_oof_zoom == "rail" && Input.is_action_pressed("rail_movement")))
-		if !zooming:
-			return
+	var zoomAllowed = (gd.isAiming
+		|| _config.lpvo_oof_zoom == "enabled"
+		|| (_config.lpvo_oof_zoom == "rail" && Input.is_action_pressed("rail_movement")))
+
+	if zoomAllowed && (zoomIn || zoomOut) && optic && optic.attachmentData.variable:
 		var slotData = rig.slotData
-		if event.button_index == MOUSE_BUTTON_WHEEL_UP && slotData.zoom != 3:
+		if zoomIn && slotData.zoom != 3:
 			slotData.zoom += 1
 			rig.PlayRailMove()
-		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN && slotData.zoom != 1:
+		elif zoomOut && slotData.zoom != 1:
 			slotData.zoom -= 1
 			rig.PlayRailMove()
 
