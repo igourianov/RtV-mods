@@ -1,0 +1,13 @@
+[mod]
+name="Likho's TacMed"
+id="likhos-tacmed"
+version="1.0.30"
+
+[hooks]
+"res://Scripts/Interface.gd"="Use"
+
+[autoload]
+LikhosTacMed="res://mods/likhos-tacmed/Scripts/Main.gd"
+
+[registry]
+enabled=true
