@@ -148,7 +148,7 @@ func _create_config_template():
 
 	config.set_value("Bool", "laserAutoOn", {
 		"name": "Laser Auto-On",
-		"tooltip": "Auto-activate the laser when entering canted aim in hold mode",
+		"tooltip": "Auto-activate the laser when entering canted aim",
 		"default": DEFAULT_ENABLED,
 		"value": DEFAULT_ENABLED,
 		"menu_pos": next_pos.call(),
