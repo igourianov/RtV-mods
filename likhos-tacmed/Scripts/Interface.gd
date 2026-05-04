@@ -26,7 +26,7 @@ func on_use(targetItem, targetGrid) -> void:
 
 func _use(caller, character, targetItem, targetGrid, extraData) -> void:
 	var slotData = targetItem.slotData
-	if !slotData.condition:
+	if !slotData.condition || caller.gameData.health >= 100:
 		caller.PlayError()
 		return
 
