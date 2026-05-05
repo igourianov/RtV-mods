@@ -15,6 +15,15 @@ Mods for the Godot game **Road to Vostok** (`config/name="Road to Vostok"`, vers
 * `likhos-keymod/` - micro mod that adds loot room keys to the traders
 * `likhos-tacmed/` - mod that overhauls functionality of the advanced medical items
 
+## Mods lib
+
+`mod-lib/` is a base library containing useful utilities and base classes. Distributed with every mod as `mods/<mod-id>/Lib/` (sibling of Scripts) by the build process.
+
+Contains:
+* `Main.gd` - base class for mod Main's
+* `Out.gd` - class for printing debug and warning statements in normalized way
+* `Inputs.gd` - class to control in-game action bindings
+
 ## `src/` is the decompiled game (reference only, gitignored)
 
 `src/` holds the extracted original project pulled from `RTV.pck` with GDRE Tools v2.5.0-beta.5 (see `src/gdre_export.log`). It is the authoritative reference for the game's scripts, scenes, resources and UIDs, but it is **not** part of this repo and must not be committed. Treat it as read-only when planning mod changes.
