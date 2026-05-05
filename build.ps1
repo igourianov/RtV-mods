@@ -87,6 +87,18 @@ function New-ModZip {
 			}
 			[System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $_.FullName, $entry, $level) | Out-Null
 		}
+
+		# Include mod-lib folder if it exists
+		$modLibPath = Join-Path $repoRoot 'mod-lib'
+		if (Test-Path -LiteralPath $modLibPath -PathType Container) {
+			$modLibFull = (Resolve-Path -LiteralPath $modLibPath).Path.TrimEnd('\')
+			$modLibPrefixLen = $modLibFull.Length + 1
+			Get-ChildItem -LiteralPath $modLibFull -Recurse -File | ForEach-Object {
+				$relative = $_.FullName.Substring($modLibPrefixLen).Replace('\', '/')
+				$entry = "mods/$ModId/Lib/$relative"
+				[System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $_.FullName, $entry, $level) | Out-Null
+			}
+		}
 	} finally {
 		$zip.Dispose()
 	}
