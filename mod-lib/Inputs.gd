@@ -1,21 +1,8 @@
 extends RefCounted
 
-const ModConfig = preload("./ModConfig.gd")
-
 var _lib
 
-var extraActions = [
-	{
-		"name": "optic_zoom_in",
-		"label": "Optic Zoom In",
-		"button_index": MOUSE_BUTTON_WHEEL_UP,
-	},
-	{
-		"name": "optic_zoom_out",
-		"label": "Optic Zoom Out",
-		"button_index": MOUSE_BUTTON_WHEEL_DOWN,
-	}
-]
+var extra_actions = []
 
 
 func _init(lib) -> void:
@@ -25,6 +12,7 @@ func _init(lib) -> void:
 func on_create_actions_post() -> void:
 	attach_extra_actions(_lib._caller, false)
 
+
 func on_reset_actions_post() -> void:
 	attach_extra_actions(_lib._caller, true)
 
@@ -32,20 +20,18 @@ func on_reset_actions_post() -> void:
 func attach_extra_actions(caller, reset: bool) -> void:
 	var savedEvents = caller.preferences.actionEvents if caller.preferences else null
 
-	for a in extraActions:
-		if !InputMap.has_action(a.name):
-			InputMap.add_action(a.name)
+	for a in extra_actions:
+		if !InputMap.has_action(a.action):
+			InputMap.add_action(a.action)
 		else:
-			InputMap.action_erase_events(a.name)
+			InputMap.action_erase_events(a.action)
 
-		var event = savedEvents[a.name] if savedEvents else null
+		var event = savedEvents[a.action] if savedEvents else null
 		if reset || !event:
-			event = InputEventMouseButton.new()
-			event.button_index = a.button_index
-			event.pressed = true
+			event = a.event
 
-		InputMap.action_add_event(a.name, event)
-		_create_input_button(caller, a.name, a.label, event)
+		InputMap.action_add_event(a.action, event)
+		_create_input_button(caller, a.action, a.label, event)
 
 
 func _create_input_button(caller, name, label, event) -> void:

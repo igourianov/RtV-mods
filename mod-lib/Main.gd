@@ -2,10 +2,13 @@ extends Node
 
 var McmHelpers = load("res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Helpers.tres")
 const Out = preload("./Out.gd")
+const Inputs = preload("./Inputs.gd")
 
 var _lib
 var _hooks: Array[int]
 var _menu_pos_auto: int = 0
+var _extra_actions = []
+var _inputs: Inputs
 
 var mod_id: String
 var mod_name: String
@@ -96,6 +99,16 @@ func next_menu_pos() -> int:
 	return _menu_pos_auto
 
 
+func register_action(action: String, label: String, event: InputEvent):
+	if !_inputs:
+		_inputs = Inputs.new(_lib)
+		register_hook("inputs-createactions-post", _inputs.on_create_actions_post)
+		register_hook("inputs-resetactions-post", _inputs.on_reset_actions_post)
+	_inputs.extra_actions.append({
+		"action": action,
+		"label": label,
+		"event": event
+	})
 
 
 func setup(lib):

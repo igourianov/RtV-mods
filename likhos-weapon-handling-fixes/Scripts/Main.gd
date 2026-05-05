@@ -11,7 +11,6 @@ const HUD = preload("./HUD.gd")
 const Recoil = preload("./Recoil.gd")
 const Character = preload("./Character.gd")
 const Optic = preload("./Optic.gd")
-const Inputs = preload("./Inputs.gd")
 
 
 var _handling
@@ -25,7 +24,6 @@ var _config
 var _recoil
 var _character
 var _optic
-var _inputs
 
 
 func setup(lib):
@@ -42,7 +40,6 @@ func setup(lib):
 	_recoil = Recoil.new(lib)
 	_character = Character.new(lib)
 	_optic = Optic.new(lib, _weapon_rig, preferences)
-	_inputs = Inputs.new(lib)
 
 	register_hook("handling-weaponhandling", _handling.on_weapon_handling)
 	register_hook("rigmanager-updaterig-post", _handling.on_rig_update_post)
@@ -61,8 +58,16 @@ func setup(lib):
 	register_hook("recoil-applyrecoil-post", _recoil.on_apply_recoil_post)
 	register_hook("character-stamina", _character.on_stamina)
 	register_hook("optic-_physics_process-pre", _optic.on_physics_process_pre)
-	register_hook("inputs-createactions-post", _inputs.on_create_actions_post)
-	register_hook("inputs-resetactions-post", _inputs.on_reset_actions_post)
+
+	var zoomIn = InputEventMouseButton.new()
+	zoomIn.button_index = MOUSE_BUTTON_WHEEL_UP
+	zoomIn.pressed = true
+	register_action("optic_zoom_in", "Optic Zoom In", zoomIn)
+
+	var zoomOut = InputEventMouseButton.new()
+	zoomOut.button_index = MOUSE_BUTTON_WHEEL_DOWN
+	zoomOut.pressed = true
+	register_action("optic_zoom_out", "Optic Zoom Out", zoomOut)
 
 
 func load_config(config: ConfigFile):
