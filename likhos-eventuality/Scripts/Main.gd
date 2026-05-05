@@ -1,53 +1,21 @@
-extends Node
+extends "../Lib/Main.gd"
 
-const _PREFIX = "[likho-evt]"
-const _EventSystem = preload("res://mods/likhos-eventuality/Scripts/EventSystem.gd")
-const _Police = preload("res://mods/likhos-eventuality/Scripts/Police.gd")
-const _ModConfig = preload("res://mods/likhos-eventuality/Scripts/ModConfig.gd")
+const EventSystem = preload("./EventSystem.gd")
+const Police = preload("./Police.gd")
+const ModConfig = preload("./ModConfig.gd")
 
 var _event_system
 var _police
 var _config
 
 
-func _ready() -> void:
-	_config = _ModConfig.new()
-	var lib = Engine.get_meta("RTVModLib")
-	if lib == null:
-		push_warning(_PREFIX, "RTVModLib not available")
-		return
-	if lib._is_ready:
-		_init_hooks(lib)
-	else:
-		lib.frameworks_ready.connect(func(): _init_hooks(lib))
+func setup(lib) -> void:
+	_config = ModConfig.new()
+	_event_system = EventSystem.new(lib, _config)
+	_police = Police.new(lib)
 
-
-func _init_hooks(lib):
-	_event_system = _EventSystem.new(lib, _config)
-	_police = _Police.new(lib)
-
-	var hooks: Array[int] = [
-		_register_hook(lib, "eventsystem-activatedynamicevent", _event_system.on_activate_dynamic_event),
-		_register_hook(lib, "eventsystem-fighterjet-post", _event_system.on_fighter_jet_post),
-		_register_hook(lib, "eventsystem-crashsite", _event_system.on_crash_site),
-		_register_hook(lib, "police-_ready-post", _police.on_ready_post),
-		_register_hook(lib, "police-states-post", _police.on_states_post)
-	]
-
-	var registered = hooks.filter(func(id): return id > -1)
-	if registered.size() == hooks.size():
-		print(_PREFIX, "all hooks registered successfully")
-		return
-
-	push_warning(_PREFIX, "mod registration failed, rolling back")
-	for id in registered:
-		lib.unhook(id)
-
-
-func _register_hook(lib, hookName: String, callback: Callable):
-	var id = lib.hook(hookName, callback)
-	if id != -1:
-		print(_PREFIX, "hook(%s):%s registered" % [hookName, id])
-	else:
-		push_warning(_PREFIX, "hook(%s) failed" % hookName)
-	return id
+	register_hook("eventsystem-activatedynamicevent", _event_system.on_activate_dynamic_event)
+	register_hook("eventsystem-fighterjet-post", _event_system.on_fighter_jet_post)
+	register_hook("eventsystem-crashsite", _event_system.on_crash_site)
+	register_hook("police-_ready-post", _police.on_ready_post)
+	register_hook("police-states-post", _police.on_states_post)

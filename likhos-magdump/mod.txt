@@ -1,7 +1,10 @@
 [mod]
 name="Likho's Magdump"
 id="likhos-magdump"
-version="1.1.40"
+version="1.1.43"
+prefix="[likho-magdump]"
+description="Likho's cross-compatibility mod for several rifle magazines"
+debug=false
 
 [hooks]
 "res://Scripts/Interface.gd"="GetMagazine"

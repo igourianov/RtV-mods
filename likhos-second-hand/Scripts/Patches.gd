@@ -1,6 +1,6 @@
 extends RefCounted
 
-const _PREFIX = "[likho-second-hand]"
+const Out = preload("../Lib/Out.gd")
 
 # Inventory footprint shrink. id -> new Vector2(width, height).
 const RESIZE := {
@@ -50,13 +50,13 @@ static func _apply_resize(lib) -> void:
 	for gun_id in RESIZE:
 		var gun = lib.get_entry(lib.Registry.ITEMS, gun_id)
 		if gun == null:
-			push_warning(_PREFIX, "could not find gun: ", gun_id)
+			Out.warning("could not find gun: %s" % gun_id)
 			continue
 
 		var new_size: Vector2 = RESIZE[gun_id]
 		var old_size: Vector2 = gun.size
 		if old_size.x <= 0 || old_size.y <= 0:
-			push_warning(_PREFIX, gun_id, " has non-positive vanilla size, skipping")
+			Out.warning("%s has non-positive vanilla size, skipping" % gun_id)
 			continue
 
 		var fx: float = float(new_size.x) / float(old_size.x)
@@ -71,10 +71,10 @@ static func _apply_resize(lib) -> void:
 			fields[f] = float(gun.get(f)) * fy
 
 		if !lib.patch(lib.Registry.ITEMS, gun_id, fields):
-			push_warning(_PREFIX, "resize patch failed for ", gun_id)
+			Out.warning("resize patch failed for %s" % gun_id)
 			continue
 
-		print(_PREFIX, "resized ", gun_id, " size=", new_size)
+		Out.debug("resized %s size=%s" % [gun_id, new_size])
 
 
 static func _apply_secondary(lib) -> void:
@@ -82,11 +82,11 @@ static func _apply_secondary(lib) -> void:
 	for gun_id in SECONDARY:
 		var gun = lib.get_entry(lib.Registry.ITEMS, gun_id)
 		if gun == null:
-			push_warning(_PREFIX, "could not find gun: ", gun_id)
+			Out.warning("could not find gun: %s" % gun_id)
 			continue
 
 		if !lib.patch(lib.Registry.ITEMS, gun_id, {"slots": slots}):
-			push_warning(_PREFIX, "secondary patch failed for ", gun_id)
+			Out.warning("secondary patch failed for %s" % gun_id)
 			continue
 
-		print(_PREFIX, "secondary slot enabled for ", gun_id)
+		Out.debug("secondary slot enabled for %s" % gun_id)

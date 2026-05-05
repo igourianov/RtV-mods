@@ -1,7 +1,10 @@
 [mod]
 name="Likho's Keymod"
 id="likhos-keymod"
-version="1.0.9"
+version="1.0.12"
+prefix="[likho-keymod]"
+description="Likho's micro mod adding loot room keys to traders"
+debug=false
 
 [hooks]
 "res://Scripts/Trader.gd"="FillTraderBucket"

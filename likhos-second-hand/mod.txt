@@ -1,7 +1,10 @@
 [mod]
 name="Likho's Second Hand"
 id="likhos-second-hand"
-version="1.0.37"
+version="1.0.40"
+prefix="[likho-sh]"
+description="Likho's mod resizing several guns to fit into secondary slot"
+debug=false
 
 [hooks]
 "res://Scripts/Item.gd"="UpdateSprite"

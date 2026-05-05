@@ -1,6 +1,6 @@
 extends RefCounted
 
-const _PREFIX = "[likho-evt]"
+const Out = preload("../Lib/Out.gd")
 
 var _lib
 var _config
@@ -32,8 +32,8 @@ func on_activate_dynamic_event() -> void:
 
 func _activate_dynamic_event(es) -> void:
 
-	print(_PREFIX, "available events: %s" % [es.dynamicEvents.map(func(el): return el.function)])
-	print(_PREFIX, "pending roll bonuses: %s" % [_rollBonus])
+	Out.debug("available events: %s" % [es.dynamicEvents.map(func(el): return el.function)])
+	Out.debug("pending roll bonuses: %s" % [_rollBonus])
 
 	if es.dynamicEvents.size() == 0:
 		return
@@ -51,7 +51,7 @@ func _activate_dynamic_event(es) -> void:
 		if blocker != null && activated.has(blocker):
 			bonus += basePossibility
 			_rollBonus.set(e.function, bonus)
-			print(_PREFIX, "event skipped: %s | Blocked by: %s | Next roll bonus: +%s" % [e.function, blocker, bonus])
+			Out.debug("event skipped: %s | Blocked by: %s | Next roll bonus: +%s" % [e.function, blocker, bonus])
 			continue
 
 		var threshold: float = basePossibility + bonus
@@ -59,23 +59,23 @@ func _activate_dynamic_event(es) -> void:
 		_rollBonus.set(e.function, 0.0)
 
 		if roll > threshold:
-			print(_PREFIX, "event missed: %s | Roll: %s/%s" % [e.function, roll, threshold])
+			Out.debug("event missed: %s | Roll: %s/%s" % [e.function, roll, threshold])
 			continue
 
 		activated[e.function] = true
 
 		if e.instant:
-			print(_PREFIX, "event activated: %s | Roll: %s/%s" % [e.function, roll, threshold])
+			Out.debug("event activated: %s | Roll: %s/%s" % [e.function, roll, threshold])
 			Callable(es, e.function).call()
 		else:
 			var delay = randi_range(30, 300)
-			print(_PREFIX, "event activated: %s | Roll: %s/%s | Delay: %02d:%02d" % [e.function, roll, threshold, int(floor(delay / 60.0)), delay % 60])
+			Out.debug("event activated: %s | Roll: %s/%s | Delay: %02d:%02d" % [e.function, roll, threshold, int(floor(delay / 60.0)), delay % 60])
 			_activate_delayed_event(es, delay, e.function) # no await on purpose
 
 func _activate_delayed_event(es, delay, name):
 	await es.get_tree().create_timer(delay, false).timeout
 	if !is_instance_valid(es):
-		print(_PREFIX, "EventSystem instance no longer valid, scheduled %s event aborted." % name)
+		Out.debug("EventSystem instance no longer valid, scheduled %s event aborted." % name)
 		return
 	Callable(es, name).call()
 
@@ -89,7 +89,7 @@ func on_fighter_jet_post() -> void:
 
 func _schedule_fighter_jet(es) -> void:
 	var delay = randi_range(60, 300)
-	print(_PREFIX, "FighterJet triggered | Next one in: %02d:%02d" % [int(floor(delay / 60.0)), delay % 60])
+	Out.debug("FighterJet triggered | Next one in: %02d:%02d" % [int(floor(delay / 60.0)), delay % 60])
 	await es.get_tree().create_timer(delay, false).timeout
 	if !is_instance_valid(es):
 		return
@@ -110,7 +110,7 @@ func on_crash_site() -> void:
 	crashSite.global_transform = spawn.global_transform
 
 	var delay = randi_range(5, 20)
-	print(_PREFIX, "CrashSite triggered | Boom in: %ss at %s" % [delay, spawn.global_position])
+	Out.debug("CrashSite triggered | Boom in: %ss at %s" % [delay, spawn.global_position])
 	_play_delayed_explosion(es, spawn.global_position, delay)
 
 

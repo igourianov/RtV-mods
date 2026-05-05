@@ -1,6 +1,6 @@
 extends RefCounted
 
-const _PREFIX = "[likho-magdump]"
+const Out = preload("../Lib/Out.gd")
 
 # gun_id -> [foreign_mag_id, ...]. Direction matters: a gun accepting another's
 # mag does not imply the reverse.
@@ -22,14 +22,14 @@ static func apply(lib) -> void:
 	for gun_id in COMPAT:
 		var gun = lib.get_entry(lib.Registry.ITEMS, gun_id)
 		if gun == null:
-			push_warning(_PREFIX, "could not find gun: ", gun_id)
+			Out.warning("could not find gun: %s" % gun_id)
 			continue
 
 		var mags: Array = []
 		for mag_id in COMPAT[gun_id]:
 			var mag = lib.get_entry(lib.Registry.ITEMS, mag_id)
 			if mag == null:
-				push_warning(_PREFIX, "could not find attachment: ", mag_id, " | for gun: ", gun_id)
+				Out.warning("could not find attachment: %s | for gun: %s" % [mag_id, gun_id])
 			else:
 				mags.append(mag)
 				
@@ -50,13 +50,13 @@ static func _inject_mags(lib, gun, mags: Array) -> void:
 			native_mag = c
 			break
 	if native_mag == null:
-		push_warning(_PREFIX, "no native mag in compatible for ", gun.file)
+		Out.warning("no native mag in compatible for %s" % gun.file)
 		return
 
 	var tree = gun.tetris.instantiate()
 	var native_sprite = tree.get_node_or_null(native_mag.file)
 	if native_sprite == null:
-		push_warning(_PREFIX, "native mag sprite '", native_mag.file, "' not found in tetris of ", gun.file)
+		Out.warning("native mag sprite '%s' not found in tetris of %s" % [native_mag.file, gun.file])
 		tree.queue_free()
 		return
 
@@ -80,7 +80,7 @@ static func _inject_mags(lib, gun, mags: Array) -> void:
 		if !gun.compatible.has(mag):
 			gun.compatible.insert(1, mag)
 
-		print(_PREFIX, "baked ", mag.file, " into ", gun.file)
+		Out.debug("baked %s into %s" % [mag.file, gun.file])
 
 	if added == 0:
 		tree.queue_free()
@@ -90,8 +90,8 @@ static func _inject_mags(lib, gun, mags: Array) -> void:
 	var err := repacked.pack(tree)
 	tree.queue_free()
 	if err != OK:
-		push_warning(_PREFIX, "failed to repack tetris for ", gun.file, " err=", err)
+		Out.warning("failed to repack tetris for %s err=%s" % [gun.file, err])
 		return
 
 	if !lib.patch(lib.Registry.ITEMS, gun.file, {"tetris": repacked}):
-		push_warning(_PREFIX, "patch failed for ", gun.file)
+		Out.warning("patch failed for %s" % gun.file)

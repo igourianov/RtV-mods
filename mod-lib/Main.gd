@@ -38,6 +38,7 @@ func _load_mod_info():
 	mod_name = config.get_value("mod", "name", "")
 	mod_desc = config.get_value("mod", "description", "")
 	Out.prefix = config.get_value("mod", "prefix", "[likho-lib]")
+	Out.debug_enabled = bool(config.get_value("mod", "debug", true))
 	config.queue_free()
 
 
