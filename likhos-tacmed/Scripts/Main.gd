@@ -21,12 +21,10 @@ func _ready() -> void:
 	else:
 		_lib.frameworks_ready.connect(func(): _register_hooks())
 
-	print(_PREFIX, "initialized")
-
 
 func _register_hooks() -> void:
 	_interface = Interface.new(_lib)
-	add_child(_interface)
+	add_child(_interface) # need to catch _input() callbacks
 
 	var hooks: Array[int] = [
 		_register_hook("interface-use", _interface.on_use),
@@ -63,7 +61,6 @@ func _patch_items():
 		_lib.get_entry(_lib.Registry.ITEMS, "Tourniquet"),
 		_lib.get_entry(_lib.Registry.ITEMS, "Tourniquet_Improvised")
 	]
-	print(_PREFIX, "compatible: ", compatible.map(func(i): return i.file))
 	_lib.patch(_lib.Registry.ITEMS, "IFAK", {
 		"showCondition": true,
 		"compatible": compatible,
