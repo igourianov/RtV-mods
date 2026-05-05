@@ -12,6 +12,8 @@ Mods for the Godot game **Road to Vostok** (`config/name="Road to Vostok"`, vers
 * `likhos-magdump/` - small mod for magazine compatibility between different rifles
 * `likhos-eventuality/` - small mod affecting in-game dynamic events. Fxes event probability and provides small enhancements.
 * `likhos-second-hand/` - small mod for enabling several guns tobe equipped as in the secondary slot, reduces their render scale 
+* `likhos-keymod/` - micro mod that adds loot room keys to the traders
+* `likhos-tacmed/` - mod that overhauls functionality of the advanced medical items
 
 ## `src/` is the decompiled game (reference only, gitignored)
 
