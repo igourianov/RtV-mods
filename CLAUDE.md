@@ -307,14 +307,16 @@ When a behavior is unclear, grep `vostok-mod-loader/src/` for the log string or 
 
 Target directory resolution, in order:
 1. `-ModsDir <path>` CLI argument.
-2. `build.config.json` at repo root, shape: `{ "modsDir": "..." }`.
+2. `build.config.json` at repo root, shape: `{ "game": { "dir": "..." } }`.
 3. Error out.
 
 Typical setup (create `build.config.json` once per machine; gitignored):
 
 ```json
 {
-  "modsDir": "D:\\SteamLibrary\\steamapps\\common\\Road to Vostok\\mods"
+  "game": {
+    "dir": "D:\\SteamLibrary\\steamapps\\common\\Road to Vostok"
+  }
 }
 ```
 

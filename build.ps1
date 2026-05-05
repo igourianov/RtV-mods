@@ -14,12 +14,12 @@ $configPath = Join-Path $repoRoot 'build.config.json'
 if (-not $ModsDir) {
 	if (Test-Path -LiteralPath $configPath) {
 		$config = Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json
-		$ModsDir = $config.modsDir
+		$ModsDir = Join-Path $config.game.dir 'mods'
 	}
 }
 
 if (-not $ModsDir) {
-	throw "ModsDir not specified. Pass -ModsDir <path> or create '$configPath' with:`n{`n  `"modsDir`": `"D:\\SteamLibrary\\steamapps\\common\\Road to Vostok\\mods`"`n}"
+	throw "ModsDir not specified. Pass -ModsDir <path> or create '$configPath' with:`n{`n  `"game`": { `"dir`": `"D:\\SteamLibrary\\steamapps\\common\\Road to Vostok`" }`n}"
 }
 
 if (-not (Test-Path -LiteralPath $ModsDir -PathType Container)) {
@@ -78,23 +78,19 @@ function New-ModZip {
 
 	$zip = [System.IO.Compression.ZipFile]::Open($ZipPath, [System.IO.Compression.ZipArchiveMode]::Create)
 	try {
-		$modTxtPath = $null
 		Get-ChildItem -LiteralPath $sourceFull -Recurse -File | ForEach-Object {
 			$relative = $_.FullName.Substring($prefixLen).Replace('\', '/')
-			if ($relative -eq 'mod.txt' -or $relative -match '\.md$') {
-				$entry = $relative
-				if ($relative -eq 'mod.txt') {
-					$modTxtPath = $_.FullName
-				}
-			} else {
-				$entry = "mods/$ModId/$relative"
-			}
-			[System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $_.FullName, $entry, $level) | Out-Null
-		}
 
-		# Duplicate mod.txt under the mod folder
-		if ($modTxtPath) {
-			[System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $modTxtPath, "mods/$ModId/mod.txt", $level) | Out-Null
+			# Add to archive root if mod.txt or .md file
+			if ($relative -eq 'mod.txt' -or $relative -match '\.md$') {
+				[System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $_.FullName, $relative, $level) | Out-Null
+			}
+
+			# Add to mods/<mod-id>/ if mod.txt or not a .md file
+			if ($relative -eq 'mod.txt' -or $relative -notmatch '\.md$') {
+				$entry = "mods/$ModId/$relative"
+				[System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $_.FullName, $entry, $level) | Out-Null
+			}
 		}
 
 		# Include mod-lib folder if it exists
