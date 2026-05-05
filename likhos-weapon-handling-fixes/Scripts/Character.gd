@@ -1,11 +1,13 @@
 extends RefCounted
 
-var _lib
-var _config
+const ModConfig = preload("./ModConfig.gd")
 
-func _init(lib, config) -> void:
+var _lib
+
+
+func _init(lib) -> void:
 	_lib = lib
-	_config = config
+
 
 func on_stamina(delta: float) -> void:
 	var c = _lib._caller

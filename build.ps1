@@ -78,14 +78,23 @@ function New-ModZip {
 
 	$zip = [System.IO.Compression.ZipFile]::Open($ZipPath, [System.IO.Compression.ZipArchiveMode]::Create)
 	try {
+		$modTxtPath = $null
 		Get-ChildItem -LiteralPath $sourceFull -Recurse -File | ForEach-Object {
 			$relative = $_.FullName.Substring($prefixLen).Replace('\', '/')
 			if ($relative -eq 'mod.txt' -or $relative -match '\.md$') {
 				$entry = $relative
+				if ($relative -eq 'mod.txt') {
+					$modTxtPath = $_.FullName
+				}
 			} else {
 				$entry = "mods/$ModId/$relative"
 			}
 			[System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $_.FullName, $entry, $level) | Out-Null
+		}
+
+		# Duplicate mod.txt under the mod folder
+		if ($modTxtPath) {
+			[System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $modTxtPath, "mods/$ModId/mod.txt", $level) | Out-Null
 		}
 
 		# Include mod-lib folder if it exists

@@ -1,5 +1,7 @@
 extends RefCounted
 
+const ModConfig = preload("./ModConfig.gd")
+
 const _META_LASER_LATCH = "likho_laser_latch"
 const _LASER_SOUND_VOLUME_DB = -12.0
 const _LASER_IN_START = 0.0
@@ -29,19 +31,17 @@ enum HandlingMode {
 
 var _lib
 var _preferences: Preferences
-var _config
 var _flashlight_stream: AudioStream
 var _lens_min_z_cache := {}
 var _handlingMode = HandlingMode.Default
 var _laser
 
-func _init(lib, preferences: Preferences, config) -> void:
+func _init(lib, preferences: Preferences) -> void:
 	_lib = lib
 	_preferences = preferences
-	_config = config
 	_flashlight_stream = load(_FLASHLIGHT_WAV_PATH)
 	if _flashlight_stream == null:
-		push_warning(_config.PREFIX, "failed to load %s" % _FLASHLIGHT_WAV_PATH)
+		push_warning(ModConfig.PREFIX, "failed to load %s" % _FLASHLIGHT_WAV_PATH)
 
 
 func on_weapon_handling(delta: float) -> void:
@@ -63,7 +63,7 @@ func _weapon_handling(h, delta: float) -> void:
 
 	var lowPosition: Vector3
 	var lowRotation: Vector3
-	if _config.disable_lowered_override:
+	if ModConfig.disable_lowered_override:
 		lowPosition = data.lowPosition
 		lowRotation = data.lowRotation
 	else:
@@ -80,8 +80,8 @@ func _weapon_handling(h, delta: float) -> void:
 			lowRotation = _PATROL_ROTATION
 	
 	var speed: float
-	if _config.override_handling_speed:
-		var weightFactor = _BASE_WEAPON_WEIGHT / lerp(_BASE_WEAPON_WEIGHT, _total_weapon_weight(rig), _config.handling_speed_weight_factor)
+	if ModConfig.override_handling_speed:
+		var weightFactor = _BASE_WEAPON_WEIGHT / lerp(_BASE_WEAPON_WEIGHT, _total_weapon_weight(rig), ModConfig.handling_speed_weight_factor)
 		speed = h.handlingSpeed * (_handlingMode / 100.0) * weightFactor
 	else:
 		speed = h.handlingSpeed
@@ -152,9 +152,9 @@ func _weapon_handling(h, delta: float) -> void:
 		return
 
 	var cantToggle = false
-	if _config.cant_mode == "default":
+	if ModConfig.cant_mode == "default":
 		cantToggle = gd.aimMode == 2
-	elif _config.cant_mode == "toggle":
+	elif ModConfig.cant_mode == "toggle":
 		cantToggle = true
 
 	if !cantToggle:
@@ -164,10 +164,10 @@ func _weapon_handling(h, delta: float) -> void:
 
 	if gd.isCanted:
 		_handlingMode = HandlingMode.Cant
-		if _config.laser_auto_on:
+		if ModConfig.laser_auto_on:
 			_laser_activate(h)
 		_restore_look_sensitivity(gd)
-		if _config.disable_canted_override:
+		if ModConfig.disable_canted_override:
 			h.targetPosition = data.cantedPosition
 			h.targetRotation = data.cantedRotation
 		else:
@@ -201,7 +201,7 @@ func _weapon_handling(h, delta: float) -> void:
 	else:
 		_handlingMode = HandlingMode.RDS
 
-	if _config.disable_optic_override:
+	if ModConfig.disable_optic_override:
 		if rig.activeOptic:
 			h.targetPosition = Vector3(0.0, -rig.aimOffset, data.aimPosition.z)
 		else:
@@ -211,10 +211,10 @@ func _weapon_handling(h, delta: float) -> void:
 			h.targetPosition -= Vector3(0.0, 0.0, 0.1)
 	else:
 		if optic && gd.PIP && optic.attachmentData.scope && !gd.secondaryOptic:
-			var aim_z = _optic_lens_aim_z(optic) + _FIXED_SCOPE_AIM_OFFSET - _config.eye_relief_offset
+			var aim_z = _optic_lens_aim_z(optic) + _FIXED_SCOPE_AIM_OFFSET - ModConfig.eye_relief_offset
 			h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z)
 		elif optic && gd.PIP && optic.attachmentData.variable && !gd.secondaryOptic:
-			var aim_z = _optic_lens_aim_z(optic) + _VARIABLE_SCOPE_AIM_OFFSET - _config.eye_relief_offset
+			var aim_z = _optic_lens_aim_z(optic) + _VARIABLE_SCOPE_AIM_OFFSET - ModConfig.eye_relief_offset
 			h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z)
 		elif optic:
 			var y_offset: float = rig.aimOffset
@@ -263,7 +263,7 @@ func _total_weapon_weight(rig) -> float:
 	for nestedItem in rig.slotData.nested:
 		total += nestedItem.weight
 	rig.set_meta(_META_TOTAL_WEIGHT, total)
-	print(_config.PREFIX, "gun weight: %.1fkg" % total)
+	print(ModConfig.PREFIX, "gun weight: %.1fkg" % total)
 	return total
 
 

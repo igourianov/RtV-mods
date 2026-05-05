@@ -1,7 +1,8 @@
 extends RefCounted
 
+const ModConfig = preload("./ModConfig.gd")
+
 var _lib
-var _config
 
 var extraActions = [
 	{
@@ -17,9 +18,8 @@ var extraActions = [
 ]
 
 
-func _init(lib, config) -> void:
+func _init(lib) -> void:
 	_lib = lib
-	_config = config
 
 
 func on_create_actions_post() -> void:
@@ -43,7 +43,6 @@ func attach_extra_actions(caller, reset: bool) -> void:
 			event = InputEventMouseButton.new()
 			event.button_index = a.button_index
 			event.pressed = true
-			#print(_config.PREFIX, "new event: ", event, " | as_text: ", event.as_text())
 
 		InputMap.action_add_event(a.name, event)
 		_create_input_button(caller, a.name, a.label, event)

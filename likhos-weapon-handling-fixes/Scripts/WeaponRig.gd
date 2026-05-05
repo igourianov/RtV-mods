@@ -2,10 +2,10 @@ extends RefCounted
 
 const _FIXED_SCOPE_AIM_OFFSET = 0.015
 const _VARIABLE_SCOPE_AIM_OFFSET = 0.03
+const ModConfig = preload("./ModConfig.gd")
 
 var _lib
 var _preferences: Preferences
-var _config
 var current_scope_mag: float = 0.0
 var active_rig: WeaponRig
 var _ammo_check_saved_position: int = 0
@@ -13,10 +13,9 @@ var _last_optic_for_scale = null
 var _cached_lens_scale: float = 1.0
 
 
-func _init(lib, preferences: Preferences, config) -> void:
+func _init(lib, preferences: Preferences) -> void:
 	_lib = lib
 	_preferences = preferences
-	_config = config
 
 
 func on_input(event) -> void:
@@ -93,8 +92,8 @@ func on_input(event) -> void:
 			rig.UpdateAimOffset()
 
 	var zoomAllowed = (gd.isAiming
-		|| _config.lpvo_oof_zoom == "enabled"
-		|| (_config.lpvo_oof_zoom == "rail" && Input.is_action_pressed("rail_movement")))
+		|| ModConfig.lpvo_oof_zoom == "enabled"
+		|| (ModConfig.lpvo_oof_zoom == "rail" && Input.is_action_pressed("rail_movement")))
 
 	if zoomAllowed && (zoomIn || zoomOut) && optic && optic.attachmentData.variable:
 		var slotData = rig.slotData
@@ -172,7 +171,7 @@ func on_ads_post(delta: float) -> void:
 
 	if att.scope && !gd.secondaryOptic:
 		current_scope_mag = 4.0
-		var distance = distance_factor(_FIXED_SCOPE_AIM_OFFSET, _config.eye_relief_offset)
+		var distance = distance_factor(_FIXED_SCOPE_AIM_OFFSET, ModConfig.eye_relief_offset)
 		optic.camera.fov = distance * gd.baseFOV * lens_scale / current_scope_mag
 		return
 
@@ -187,7 +186,7 @@ func on_ads_post(delta: float) -> void:
 		current_scope_mag = 6.0
 		gd.scopeSensitivity = _preferences.scopeSensitivity * 0.5
 
-	var distance = distance_factor(_VARIABLE_SCOPE_AIM_OFFSET, _config.eye_relief_offset)
+	var distance = distance_factor(_VARIABLE_SCOPE_AIM_OFFSET, ModConfig.eye_relief_offset)
 	optic.camera.fov = lerp(optic.camera.fov, distance * gd.baseFOV * lens_scale / current_scope_mag, delta * 10.0)
 
 func distance_factor(base: float, distance: float) -> float:

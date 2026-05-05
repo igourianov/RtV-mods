@@ -1,18 +1,18 @@
 extends "../Lib/Main.gd"
 
-const Printer = preload("../Lib/Printer.gd")
 const Handling = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Handling.gd")
 const WeaponRig = preload("res://mods/likhos-weapon-handling-fixes/Scripts/WeaponRig.gd")
 const Camera = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Camera.gd")
 const Controller = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Controller.gd")
-const Noise = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Noise.gd")
+const _Noise = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Noise.gd")
 const Tilt = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Tilt.gd")
 const HUD = preload("res://mods/likhos-weapon-handling-fixes/Scripts/HUD.gd")
-const ModConfig = preload("res://mods/likhos-weapon-handling-fixes/Scripts/ModConfig.gd")
 const Recoil = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Recoil.gd")
 const Character = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Character.gd")
 const Optic = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Optic.gd")
 const Inputs = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Inputs.gd")
+
+const ModConfig = preload("./ModConfig.gd")
 
 var _handling
 var _weapon_rig
@@ -27,24 +27,23 @@ var _character
 var _optic
 var _inputs
 
-func _init():
-	_printer = Printer.new("[likho-vostac]")
 
 func setup(lib):
+
+	ModConfig.PREFIX = "[%s]" % _modId
 	var preferences = Preferences.Load()
 	
-	_config = ModConfig.new()
-	_weapon_rig = WeaponRig.new(lib, preferences, _config)
-	_handling = Handling.new(lib, preferences, _config)
-	_camera = Camera.new(lib, _weapon_rig, _config)
-	_controller = Controller.new(lib, _weapon_rig, preferences, _config)
-	_noise = Noise.new(lib, preferences, _config)
-	_tilt = Tilt.new(lib, _config)
-	_hud = HUD.new(lib, _config)
-	_recoil = Recoil.new(lib, _config)
-	_character = Character.new(lib, _config)
-	_optic = Optic.new(lib, _weapon_rig, preferences, _config)
-	_inputs = Inputs.new(lib, _config)
+	_weapon_rig = WeaponRig.new(lib, preferences)
+	_handling = Handling.new(lib, preferences)
+	_camera = Camera.new(lib, _weapon_rig)
+	_controller = Controller.new(lib, _weapon_rig, preferences)
+	_noise = _Noise.new(lib, preferences)
+	_tilt = Tilt.new(lib)
+	_hud = HUD.new(lib)
+	_recoil = Recoil.new(lib)
+	_character = Character.new(lib)
+	_optic = Optic.new(lib, _weapon_rig, preferences)
+	_inputs = Inputs.new(lib)
 
 	register_hook("handling-weaponhandling", _handling.on_weapon_handling)
 	register_hook("rigmanager-updaterig-post", _handling.on_rig_update_post)
@@ -66,3 +65,10 @@ func setup(lib):
 	register_hook("inputs-createactions-post", _inputs.on_create_actions_post)
 	register_hook("inputs-resetactions-post", _inputs.on_reset_actions_post)
 
+
+func load_config(config: ConfigFile):
+	ModConfig.apply_config(config)
+
+
+func create_config(config: ConfigFile):
+	ModConfig.create_template(config)

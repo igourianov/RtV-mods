@@ -3,12 +3,10 @@ extends RefCounted
 const KICK_Z_MULTIPLIER := 0.2
 
 var _lib
-var _config
 
 
-func _init(lib, config) -> void:
+func _init(lib) -> void:
 	_lib = lib
-	_config = config
 
 
 func on_apply_recoil_post() -> void:

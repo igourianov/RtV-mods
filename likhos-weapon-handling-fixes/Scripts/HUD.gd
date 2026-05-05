@@ -1,7 +1,8 @@
 extends RefCounted
 
+const ModConfig = preload("./ModConfig.gd")
+
 var _lib
-var _config
 var _crosshair: Control
 var _driver: Node
 
@@ -24,9 +25,10 @@ var _att_last_text: Dictionary = {}
 var _camera: Camera3D
 var _rig_manager: Node3D
 
-func _init(lib, config) -> void:
+
+func _init(lib,) -> void:
 	_lib = lib
-	_config = config
+
 
 func on_ready_post() -> void:
 	var hud = _lib._caller
@@ -64,13 +66,13 @@ class _Driver extends Node:
 
 func _draw_crosshair(c: Control) -> void:
 	var center := c.size * 0.5
-	match _config.crosshair_style:
+	match ModConfig.crosshair_style:
 		"dot":
 			c.draw_circle(center + Vector2(1, 1), _DOT_RADIUS, _CROSSHAIR_SHADOW)
-			c.draw_circle(center, _DOT_RADIUS, _config.crosshair_color)
+			c.draw_circle(center, _DOT_RADIUS, ModConfig.crosshair_color)
 		"seg-cross":
 			_draw_arms(c, center + Vector2(1, 1), _CROSSHAIR_SHADOW)
-			_draw_arms(c, center, _config.crosshair_color)
+			_draw_arms(c, center, ModConfig.crosshair_color)
 		_:
 			pass
 
@@ -109,7 +111,7 @@ func _update_crosshair_visibility(hud) -> void:
 	var gd = hud.gameData
 	var aimingMode = gd.isAiming || gd.isCanted || gd.weaponPosition == 2
 	var aimBlocked = gd.menu || gd.isDead || gd.isInspecting || gd.transition || gd.isTransitioning
-	_crosshair.visible = !aimingMode && !aimBlocked && _config.crosshair_style != "off"
+	_crosshair.visible = !aimingMode && !aimBlocked && ModConfig.crosshair_style != "off"
 
 func _update_interaction_tooltip(hud) -> void:
 	var gd = hud.gameData
@@ -118,7 +120,7 @@ func _update_interaction_tooltip(hud) -> void:
 
 func _update_ammo_overlays(hud) -> void:
 	var gd = hud.gameData
-	if gd.isInspecting && _config.ammo_tooltips:
+	if gd.isInspecting && ModConfig.ammo_tooltips:
 		hud.magazine.visible = true
 		hud.chamber.visible = true
 
@@ -154,7 +156,7 @@ func _update_attachment_tooltips(hud) -> void:
 	if _att_tooltips.is_empty():
 		return
 	var gd = hud.gameData
-	if !_config.attachment_tooltips || !gd.isInspecting:
+	if !ModConfig.attachment_tooltips || !gd.isInspecting:
 		for tt in _att_tooltips.values():
 			tt.hide()
 		return

@@ -6,6 +6,7 @@ extends RefCounted
 const BLUR_RADIUS_BASE := 3.0
 
 const _NVG_PIP_SHADER := preload("res://mods/likhos-weapon-handling-fixes/Shaders/PIP_NVG.gdshader")
+const ModConfig = preload("./ModConfig.gd")
 
 # Vanilla scene defaults for the optic's SubViewport, applied when AA mirror is off.
 const _VANILLA_PIP_MSAA := 0
@@ -16,14 +17,12 @@ var _gameData = preload("res://Resources/GameData.tres")
 var _lib
 var _weapon_rig
 var _preferences: Preferences
-var _config
 
 
-func _init(lib, weapon_rig, preferences: Preferences, config) -> void:
+func _init(lib, weapon_rig, preferences: Preferences) -> void:
 	_lib = lib
 	_weapon_rig = weapon_rig
 	_preferences = preferences
-	_config = config
 
 
 func on_physics_process_pre(_delta: float) -> void:
@@ -37,7 +36,7 @@ func on_physics_process_pre(_delta: float) -> void:
 
 	var msaa: int
 	var ssaa: int
-	if _config.pip_anti_aliasing:
+	if ModConfig.pip_anti_aliasing:
 		msaa = _msaa_from_pref(_preferences.antialiasing)
 		ssaa = _ssaa_from_pref(_preferences.smaa)
 	else:
@@ -57,7 +56,7 @@ func on_physics_process_pre(_delta: float) -> void:
 		pip_mat.shader = _NVG_PIP_SHADER
 
 	var blur_active: bool = (
-		_config.nvg_pip_blur
+		ModConfig.nvg_pip_blur
 		&& _gameData.NVG
 		&& _gameData.isAiming
 		&& !_gameData.secondaryOptic

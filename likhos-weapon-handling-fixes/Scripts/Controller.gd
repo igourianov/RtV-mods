@@ -1,25 +1,26 @@
 extends RefCounted
 
+const ModConfig = preload("./ModConfig.gd")
+
 var _lib
 var _weapon_rig
 var _preferences: Preferences
-var _config
 
 
-func _init(lib, weapon_rig, preferences: Preferences, config) -> void:
+func _init(lib, weapon_rig, preferences: Preferences) -> void:
 	_lib = lib
 	_weapon_rig = weapon_rig
 	_preferences = preferences
-	_config = config
+
 
 func on_movement_states_pre(_delta: float) -> void:
 	var ctrl = _lib._caller
 	if ctrl == null:
 		return
 
-	ctrl.crouchSpeed = _config.crouch_speed
-	ctrl.walkSpeed = _config.walk_speed
-	ctrl.sprintSpeed = _config.sprint_speed
+	ctrl.crouchSpeed = ModConfig.crouch_speed
+	ctrl.walkSpeed = ModConfig.walk_speed
+	ctrl.sprintSpeed = ModConfig.sprint_speed
 
 
 
@@ -34,10 +35,10 @@ func on_movement_states_post(_delta: float) -> void:
 		var rig = _weapon_rig.active_rig if _weapon_rig != null else null
 		var optic = rig.activeOptic if rig != null else null
 		if optic != null && optic.attachmentData.variable && rig.slotData.zoom == 1:
-			ctrl.currentSpeed = ctrl.walkSpeed * _config.aim_speed_mult
+			ctrl.currentSpeed = ctrl.walkSpeed * ModConfig.aim_speed_mult
 		else:
-			ctrl.currentSpeed = ctrl.walkSpeed * _config.scope_speed_mult
+			ctrl.currentSpeed = ctrl.walkSpeed * ModConfig.scope_speed_mult
 	elif gd.isWalking && gd.isAiming:
-		ctrl.currentSpeed = ctrl.walkSpeed * _config.aim_speed_mult
+		ctrl.currentSpeed = ctrl.walkSpeed * ModConfig.aim_speed_mult
 	elif gd.isWalking && gd.isCanted:
-		ctrl.currentSpeed = ctrl.walkSpeed * _config.cant_speed_mult
+		ctrl.currentSpeed = ctrl.walkSpeed * ModConfig.cant_speed_mult

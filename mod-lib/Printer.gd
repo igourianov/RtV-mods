@@ -1,3 +1,4 @@
+extends RefCounted
 
 var _prefix: String = "[likho]"
 

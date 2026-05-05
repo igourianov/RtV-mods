@@ -1,35 +1,30 @@
-﻿extends RefCounted
+﻿
+static var crosshair_style: String
+static var crosshair_color: Color
+static var cant_mode: String
+static var lpvo_oof_zoom: String
+static var disable_zoom_dof: bool
+static var disable_optic_override: bool
+static var disable_canted_override: bool
+static var disable_lowered_override: bool
+static var nvg_pip_blur: bool
+static var ammo_tooltips: bool
+static var crouch_speed: float
+static var walk_speed: float
+static var sprint_speed: float
+static var aim_speed_mult: float
+static var cant_speed_mult: float
+static var scope_speed_mult: float
+static var laser_auto_on: bool
+static var attachment_tooltips: bool
+static var pip_anti_aliasing: bool
+static var override_handling_speed: bool
+static var handling_speed_weight_factor: float
+static var eye_relief_offset: float
 
-var McmHelpers = preload("res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Helpers.tres")
+static var PREFIX: String = ""
 
-const PREFIX = "[likho-vostac]"
-
-var crosshair_style: String
-var crosshair_color: Color
-var cant_mode: String
-var lpvo_oof_zoom: String
-var disable_zoom_dof: bool
-var disable_optic_override: bool
-var disable_canted_override: bool
-var disable_lowered_override: bool
-var nvg_pip_blur: bool
-var ammo_tooltips: bool
-var crouch_speed: float
-var walk_speed: float
-var sprint_speed: float
-var aim_speed_mult: float
-var cant_speed_mult: float
-var scope_speed_mult: float
-var laser_auto_on: bool
-var attachment_tooltips: bool
-var pip_anti_aliasing: bool
-var override_handling_speed: bool
-var handling_speed_weight_factor: float
-var eye_relief_offset: float
-
-const MOD_ID = "likhos-weapon-handling-fixes"
-const FILE_PATH = "user://MCM/likhos-weapon-handling-fixes"
-const FILE_NAME = "config.ini"
+static var _menu_pos_auto: int = 0
 
 const DEFAULT_CROSSHAIR_COLOR = Color(1.0, 0.4, 0.0, 0.65)
 const DEFAULT_CROSSHAIR = "2dot"
@@ -49,38 +44,14 @@ const MULT_MIN = 0.1
 const MULT_MAX = 1.5
 const DEFAULT_EYE_RELIEF_OFFSET = 0.0
 
-var _pos: int = 0
 
-func _init():
-	var config = _create_config_template()
-
-	var fullPath = FILE_PATH + "/" + FILE_NAME
-	if !FileAccess.file_exists(fullPath):
-		DirAccess.open("user://").make_dir(FILE_PATH)
-		config.save(fullPath)
-	else:
-		McmHelpers.CheckConfigurationHasUpdated(MOD_ID, config, fullPath)
-		config.load(fullPath)
-
-	_apply_config(config)
-
-	McmHelpers.RegisterConfiguration(
-		MOD_ID,
-		"Likho's VosTac",
-		FILE_PATH,
-		"Likho's collection of game fixes and realism improvements",
-		{
-			FILE_NAME: _apply_config
-		}
-	)
-
-func _get_config_value(config: ConfigFile, section: String, key: String, default_val):
+static func _get_config_value(config: ConfigFile, section: String, key: String, default_val):
 	var value = config.get_value(section, key, {}).get("value", default_val)
 	if section == "Dropdown":
 		value = value.substr(1)
 	return value
 
-func _apply_config(config: ConfigFile):
+static func apply_config(config: ConfigFile):
 	crosshair_style = _get_config_value(config, "Dropdown", "crosshair", DEFAULT_CROSSHAIR)
 	crosshair_color = _get_config_value(config, "Color", "crosshairColor", DEFAULT_CROSSHAIR_COLOR)
 	cant_mode = _get_config_value(config, "Dropdown", "cantMode", DEFAULT_CANT_MODE)
@@ -105,11 +76,11 @@ func _apply_config(config: ConfigFile):
 	eye_relief_offset = _get_config_value(config, "Float", "eyeReliefOffset", DEFAULT_EYE_RELIEF_OFFSET) / 100.0
 
 
-func _next_pos():
-	_pos += 1
-	return _pos
+static func _next_pos():
+	_menu_pos_auto += 1
+	return _menu_pos_auto
 
-func _set_config_entry(config: ConfigFile, section: String, category: String, key: String, name: String, tooltip: String, default_val, extra: Dictionary = {}) -> void:
+static func _set_config_entry(config: ConfigFile, section: String, category: String, key: String, name: String, tooltip: String, default_val, extra: Dictionary = {}) -> void:
 	var value = {
 		"name": name,
 		"tooltip": tooltip,
@@ -121,9 +92,7 @@ func _set_config_entry(config: ConfigFile, section: String, category: String, ke
 	value.merge(extra)
 	config.set_value(section, key, value)
 
-func _create_config_template():
-	var config := ConfigFile.new()
-
+static func create_template(config: ConfigFile):
 	config.set_value("Category", "Crosshair", { "menu_pos": 1 })
 	config.set_value("Category", "Canted mode", { "menu_pos": 2 })
 	config.set_value("Category", "Inspect", { "menu_pos": 3 })
@@ -216,5 +185,4 @@ func _create_config_template():
 		"maxRange": MULT_MAX
 	})
 
-	return config
 
