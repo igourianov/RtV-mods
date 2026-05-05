@@ -1,14 +1,14 @@
 extends Node
 
-const _PREFIX = "[likhos]"
 
 var _lib
 var _hooks: Array[int] 
+var _printer
 
 func _ready() -> void:
 	_lib = Engine.get_meta("RTVModLib")
 	if _lib == null:
-		push_warning(_PREFIX, "RTVModLib not available")
+		_printer.warning("RTVModLib not available")
 		return
 
 	await _lib.frameworks_ready
@@ -18,10 +18,10 @@ func _ready() -> void:
 
 	var registered = _hooks.filter(func(id): return id > -1)
 	if registered.size() == _hooks.size():
-		print(_PREFIX, "all hooks registered successfully")
+		_printer.debug("all hooks registered successfully")
 		return
 
-	push_warning(_PREFIX, "mod registration failed, rolling back")
+	_printer.warning("mod registration failed, rolling back")
 	for id in registered:
 		_lib.unhook(id)
 
@@ -31,7 +31,7 @@ func setup(lib):
 func register_hook(hookName: String, callback: Callable):
 	var id = _lib.hook(hookName, callback)
 	if id != -1:
-		print(_PREFIX, "hook(%s):%s registered" % [hookName, id])
+		_printer.debug("hook(%s):%s registered" % [hookName, id])
 	else:
-		push_warning(_PREFIX, "hook(%s) failed" % hookName)
+		_printer.warning("hook(%s) failed" % hookName)
 	return id

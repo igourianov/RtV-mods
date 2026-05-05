@@ -1,5 +1,6 @@
 extends "../Lib/Main.gd"
 
+const Printer = preload("../Lib/Printer.gd")
 const _Handling = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Handling.gd")
 const _WeaponRig = preload("res://mods/likhos-weapon-handling-fixes/Scripts/WeaponRig.gd")
 const _Camera = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Camera.gd")
@@ -26,6 +27,8 @@ var _character
 var _optic
 var _inputs
 
+func _init():
+	_printer = Printer.new("[likho-vostac]")
 
 func setup(lib):
 	var preferences = Preferences.Load()
@@ -62,5 +65,4 @@ func setup(lib):
 	register_hook("optic-_physics_process-pre", _optic.on_physics_process_pre)
 	register_hook("inputs-createactions-post", _inputs.on_create_actions_post)
 	register_hook("inputs-resetactions-post", _inputs.on_reset_actions_post)
-	
 
