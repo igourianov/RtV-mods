@@ -47,11 +47,6 @@ Published all event probabilities as MCM config values. Note that probability do
 I *DO NOT RECOMMEND* changing them unless it is to trigger long wanted event (like Punisher) once and then revert. The probability stacking made it seem like vanilla events are way too rare. You may find that after this mod fix, events are quite common and might be annoying.
 
 
-# Check out my other mods
-
-* [Likho's VosTac](https://modworkshop.net/mod/56366) - comprehensive tactical realism and gun mechanics fixes mod
-* [Likho's Magdump](https://modworkshop.net/mod/56489) - rifle magazine compatibility mod
-* [Likho's Second Hand](https://modworkshop.net/mod/56525) - resize mod for several weapons to fit them into secondary slot
-* [Likho's Keymod](https://modworkshop.net/mod/56537) - adds keys to traders
+## [Check out my other mods](https://modworkshop.net/search/mods?query=%22Likho%27s%22&sort=likes)
 
 *Feedback and likes are welcome!*

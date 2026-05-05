@@ -13,11 +13,6 @@ Each of these now fits in either the primary or secondary slot, with their inven
 KP-31 was already secondary-eligible in vanilla; this mod just shrinks its footprint.
 Mosin only resized.
 
-## Check out my other mods
-
-* [Likho's VosTac](https://modworkshop.net/mod/56366) - comprehensive tactical realism and gun mechanics fixes mod
-* [Likho's Magdump](https://modworkshop.net/mod/56489) - cross-compatible magazines for guns that share them in real life
-* [Likho's Eventuality](https://modworkshop.net/mod/56468) - fixes/enhancements to the dynamic events
-* [Likho's Keymod](https://modworkshop.net/mod/56537) - adds keys to traders
+## [Check out my other mods](https://modworkshop.net/search/mods?query=%22Likho%27s%22&sort=likes)
 
 *Feedback and likes are welcome!*

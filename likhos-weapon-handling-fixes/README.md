@@ -76,11 +76,6 @@ These changes started out as separate mods. The catch is that Road to Vostok's s
 
 - **Laser beam doesn't line up with the dot at very close range.** On targets right in front of you the visible beam diverges from the projected dot. This is a vanilla bug, not something the mod introduces. Vanilla simply hid it by having the gun model block the close portion of the beam; this mod's tweaked weapon pose moves the gun out of that path, exposing the misalignment.
 
-## Check out my other mods
-
-* [Likho's Eventuality](https://modworkshop.net/mod/56468) - fixes/enhancements to the dynamic events
-* [Likho's Magdump](https://modworkshop.net/mod/56489) - rifle magazine compatibility mod
-* [Likho's Second Hand](https://modworkshop.net/mod/56525) - resize mod for several weapons to fit them into secondary slot
-* [Likho's Keymod](https://modworkshop.net/mod/56537) - adds keys to traders
+## [Check out my other mods](https://modworkshop.net/search/mods?query=%22Likho%27s%22&sort=likes)
 
 *Feedback and likes are welcome!*

@@ -24,8 +24,6 @@ Coming soon. It will work a bit differently to keep things interesting.
 
 You can now hurt yourself in the Tutorial room by pressing `Ctrl+Shift+O`- in case you want to test out new healing items.
 
-## Check out my other mods
-
-* [Likho's mods](https://modworkshop.net/user/likho1eye) 
+## [Check out my other mods](https://modworkshop.net/user/likho1eye)
 
 *Feedback and likes are welcome!*
