@@ -1,6 +1,6 @@
 extends Node
 
-const _PREFIX = "[likhos-tacmed]"
+const Out = preload("../Lib/Out.gd")
 
 const MEDICAL = {
 	"IFAK": {
@@ -21,7 +21,7 @@ func on_use(targetItem, targetGrid) -> void:
 	var itemData = targetItem.slotData.itemData
 	var extraData = MEDICAL[itemData.file]
 	if extraData:
-		print(_PREFIX, "custom heal logic")
+		Out.debug("custom heal logic")
 		_use(_lib._caller, _lib._caller.get_node("../../Controller/Character"), targetItem, targetGrid, extraData)
 		_lib.skip_super()
 
@@ -78,7 +78,7 @@ func on_combine(targetItem):
 	var itemData = targetItem.slotData.itemData
 	var extraData = MEDICAL[itemData.file]
 	if extraData && caller.canCombine:
-		print(_PREFIX, "custom heal item reload")
+		Out.debug("custom heal item reload")
 		_combine(caller, targetItem, caller.itemDragged, extraData)
 		_lib.skip_super()
 
@@ -106,7 +106,8 @@ func _combine(caller, targetItem, sourceItem, extraData):
 
 func _input(ev):
 	if ev is InputEventKey && ev.pressed && ev.ctrl_pressed && ev.shift_pressed && ev.keycode == KEY_O:
-		print(_PREFIX, "I hurt myself, today...")
+		Out.debug("I hurt myself, today...")
+		Out.debug("To see if I still feel...")
 		var character = _lib._caller.get_node("../../Controller/Character")
 		var gameData = character.gameData
 		if character:
