@@ -1,10 +1,10 @@
 [mod]
 name="Likho's TacMed"
 id="likhos-tacmed"
-version="1.0.54"
+version="1.0.81"
 
 [hooks]
-"res://Scripts/Interface.gd"="Use"
+"res://Scripts/Interface.gd"="Use,Combine,Hover"
 
 [autoload]
 LikhosTacMed="res://mods/likhos-tacmed/Scripts/Main.gd"

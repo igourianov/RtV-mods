@@ -4,7 +4,9 @@ const _PREFIX = "[likhos-tacmed]"
 
 const MEDICAL = {
 	"IFAK": {
-		"healTime": 3.0
+		"healTime": 3.0,
+		"replenishTime": 1.0,
+		"replenishDefault": 10.0
 	}
 }
 
@@ -22,7 +24,7 @@ func on_use(targetItem, targetGrid) -> void:
 		print(_PREFIX, "custom heal logic")
 		_use(_lib._caller, _lib._caller.get_node("../../Controller/Character"), targetItem, targetGrid, extraData)
 		_lib.skip_super()
-		return
+
 
 func _use(caller, character, targetItem, targetGrid, extraData) -> void:
 	var slotData = targetItem.slotData
@@ -56,6 +58,50 @@ func _use(caller, character, targetItem, targetGrid, extraData) -> void:
 	caller.gameData.isOccupied = false
 	caller.Reset()
 
+
+func on_hover_post():
+	var caller = _lib._caller
+	if caller.itemDragged && caller.hoverItem:
+		_hover_post(caller, caller.hoverItem, caller.itemDragged)
+
+
+func _hover_post(caller, targetItem, sourceItem):
+	var targetItemData = targetItem.slotData.itemData
+	var sourceItemData = sourceItem.slotData.itemData
+	var extraData = MEDICAL[targetItemData.file]
+	if extraData && targetItemData.compatible.any(func(i): return i.file == sourceItemData.file):
+		caller.canCombine = true
+
+
+func on_combine(targetItem):
+	var caller = _lib._caller
+	var itemData = targetItem.slotData.itemData
+	var extraData = MEDICAL[itemData.file]
+	if extraData && caller.canCombine:
+		print(_PREFIX, "custom heal item reload")
+		_combine(caller, targetItem, caller.itemDragged, extraData)
+		_lib.skip_super()
+
+
+func _combine(caller, targetItem, sourceItem, extraData):
+	if targetItem.slotData.condition >= 100.0:
+		caller.Return(sourceItem)
+		caller.Reset()
+		caller.PlayError()
+		return
+
+	var replenish = sourceItem.slotData.itemData.health
+	if !replenish:
+		replenish = extraData.replenishDefault
+
+	targetItem.slotData.condition += replenish
+	targetItem.slotData.condition = min(targetItem.slotData.condition, 100.0)
+	targetItem.UpdateDetails()
+
+	sourceItem.queue_free()
+
+	#caller.PlayStack()
+	caller.Reset()
 
 
 func _input(ev):
