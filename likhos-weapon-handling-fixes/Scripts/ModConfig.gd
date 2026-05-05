@@ -22,8 +22,6 @@ static var override_handling_speed: bool
 static var handling_speed_weight_factor: float
 static var eye_relief_offset: float
 
-static var PREFIX: String = ""
-
 static var _menu_pos_auto: int = 0
 
 const DEFAULT_CROSSHAIR_COLOR = Color(1.0, 0.4, 0.0, 0.65)

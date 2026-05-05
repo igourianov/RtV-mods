@@ -1,18 +1,18 @@
 extends "../Lib/Main.gd"
 
-const Handling = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Handling.gd")
-const WeaponRig = preload("res://mods/likhos-weapon-handling-fixes/Scripts/WeaponRig.gd")
-const Camera = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Camera.gd")
-const Controller = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Controller.gd")
-const _Noise = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Noise.gd")
-const Tilt = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Tilt.gd")
-const HUD = preload("res://mods/likhos-weapon-handling-fixes/Scripts/HUD.gd")
-const Recoil = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Recoil.gd")
-const Character = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Character.gd")
-const Optic = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Optic.gd")
-const Inputs = preload("res://mods/likhos-weapon-handling-fixes/Scripts/Inputs.gd")
-
 const ModConfig = preload("./ModConfig.gd")
+const Handling = preload("./Handling.gd")
+const WeaponRig = preload("./WeaponRig.gd")
+const Camera = preload("./Camera.gd")
+const Controller = preload("./Controller.gd")
+const _Noise = preload("./Noise.gd")
+const Tilt = preload("./Tilt.gd")
+const HUD = preload("./HUD.gd")
+const Recoil = preload("./Recoil.gd")
+const Character = preload("./Character.gd")
+const Optic = preload("./Optic.gd")
+const Inputs = preload("./Inputs.gd")
+
 
 var _handling
 var _weapon_rig
@@ -30,7 +30,6 @@ var _inputs
 
 func setup(lib):
 
-	ModConfig.PREFIX = "[%s]" % _modId
 	var preferences = Preferences.Load()
 	
 	_weapon_rig = WeaponRig.new(lib, preferences)
