@@ -1,7 +1,7 @@
 [mod]
 name="Likho's TacMed"
 id="likhos-tacmed"
-version="1.0.81"
+version="1.0.82"
 
 [hooks]
 "res://Scripts/Interface.gd"="Use,Combine,Hover"
@@ -11,3 +11,6 @@ LikhosTacMed="res://mods/likhos-tacmed/Scripts/Main.gd"
 
 [registry]
 enabled=true
+
+[updates]
+modworkshop=56593
