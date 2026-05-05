@@ -118,7 +118,7 @@ func _play_delayed_explosion(es, pos: Vector3, initialDelay: float) -> void:
 	await es.get_tree().create_timer(initialDelay, false).timeout
 	if !is_instance_valid(es):
 		return
-	var audioEvent = _AUDIO_LIBRARY.grenadeExplosionOutdoorClose
+	var audioEvent = _AUDIO_LIBRARY.grenadeExplosionOutdoorFar
 	if audioEvent == null || audioEvent.audioClips.is_empty():
 		return
 	var count := randi_range(2, 4)
