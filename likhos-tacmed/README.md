@@ -2,6 +2,12 @@
 
 Road to Vostok mod that modifies medical consumables to be more useful. Keeps with realism. Lore friendly.
 
+## IFAK/AFAK keybind
+
+Added a new binding (default to `Z`) under vanilla settings to quick access your IFAK/AFAK without opening inventory. 
+
+The associated logic will intelligently pick item to use to minimize waste. 
+
 ## IFAK
 
 IFAK has been reworked from an excotic, safe queen to a healing workhorse.
