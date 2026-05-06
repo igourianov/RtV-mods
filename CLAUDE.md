@@ -97,11 +97,17 @@ Game autoloads (`Database`, `Loader`, `Simulation`) do module-scope `const Makar
 
 The working pattern uses the loader's **hook codegen**. At static init (before any game autoload runs), the loader mounts a generated "hook pack" that rewrites each opt-in vanilla method into a dispatch wrapper. The wrapper looks up registered callbacks on `Engine.get_meta("RTVModLib")` and routes to them. Preloaded scenes bind to the wrapped vanilla, so hook callbacks fire on every instance.
 
-#### Auto-enrollment is the primary path
+#### Both `[hooks]` and `lib.hook()` are required
 
-When your mod source contains a literal `lib.hook("stem-method[-suffix]", cb)` call, the loader source-scans your `.gd` files at load time, sees the call, and enrolls `res://Scripts/<Stem>.gd :: <method>` into the wrap surface automatically. **You do not need a `[hooks]` block in `mod.txt` for the common case.** The scanner is the 95% path.
+Hooks work in two stages:
 
-`mod.txt` (no `[hooks]` needed):
+**Stage 1: Static wrapping** — At static init (before any game autoload runs), the loader scans `[hooks]` in `mod.txt` and generates dispatch wrappers for each method. This happens before the game autolaoads.
+
+**Stage 2: Runtime registration** — When your mod's autoload runs, call `lib.hook()` to register the actual callback functions. The wrappers created in Stage 1 now have something to dispatch to.
+
+Both are needed: `[hooks]` creates the wrapper, `lib.hook()` installs the callback.
+
+`mod.txt`:
 
 ```
 [mod]
@@ -111,7 +117,14 @@ version="1.0.0"
 
 [autoload]
 MyMod="res://mods/my-mod-id/Scripts/Main.gd"
+
+[hooks]
+"res://Scripts/WeaponRig.gd"="AmmoCheck, _input"     ; specific methods to wrap
+"res://Scripts/Camera.gd"="*"                        ; wildcard, all methods
+"res://Scripts/Camera.gd"=""                         ; empty value also means all
 ```
+
+Method names are case-insensitive (the loader normalizes to lowercase).
 
 `Scripts/Main.gd`:
 
@@ -142,26 +155,14 @@ func _on_replace() -> void:
     _lib.skip_super()  # tell the wrapper not to run vanilla after our replace
 ```
 
-`frameworks_ready` is emitted once after every mod's autoload finished. Use it whenever your registration logic depends on other mods' overrides being applied (or when in doubt). Connecting via lambda matches the existing pattern in `likhos-weapon-handling-fixes`.
+`frameworks_ready` is emitted once after every mod's autoload finished. Use it to register runtime hook callbacks or when your registration logic depends on other mods' overrides being applied.
 
-#### `[hooks]` is the escape hatch
+#### When `[hooks]` isn't sufficient
 
-Declare `[hooks]` in `mod.txt` only when the scanner can't see your registration:
+Declare `[hooks]` for static methods you want wrapped. Use runtime `lib.hook()` registration when:
 
-- Hooks registered via callback indirection (e.g. `register_hook(lib, name, cb)` helper functions where the literal `name` is in a different mod or computed at runtime).
-- `ModLoader.add_hook(...)` from a non-`!` autoload — the compat shim runs after pack generation, too late to enroll.
-- A whole script you want wrapped without enumerating methods.
-
-Format. Quote both key and value (the path contains `/`/`:`/`.`, the value is a bare identifier that ConfigFile rejects unquoted):
-
-```
-[hooks]
-"res://Scripts/Interface.gd"="GetMagazine, _ready"   ; specific methods
-"res://Scripts/Camera.gd"="*"                        ; wildcard, all methods
-"res://Scripts/Camera.gd"=""                         ; empty value also means all
-```
-
-Method names are case-insensitive (the loader normalizes to lowercase).
+- Hooks are registered via callback indirection (e.g. `register_hook(lib, name, cb)` helper functions where the literal `name` is computed at runtime or in a different mod).
+- Dynamic hook registration based on runtime state or configuration.
 
 #### Hook variants and dispatch order
 
