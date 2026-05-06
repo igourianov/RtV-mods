@@ -59,7 +59,6 @@ func _init_config():
 		config.save(filePath)
 	elif McmHelpers:
 		McmHelpers.CheckConfigurationHasUpdated(mod_id, config, filePath)
-
 		config.load(filePath)
 
 	load_config(config)
@@ -78,7 +77,7 @@ func _init_setup():
 
 	var registered = _hooks.filter(func(id): return id > -1)
 	if registered.size() == _hooks.size():
-		#Out.debug("all hooks registered successfully")
+		Out.debug("all hooks registered successfully")
 		return
 
 	Out.warning("mod registration failed, rolling back")
@@ -89,7 +88,7 @@ func _init_setup():
 func register_hook(hookName: String, callback: Callable):
 	var id = _lib.hook(hookName, callback)
 	if id != -1:
-		#Out.debug("hook(%s):%s registered" % [hookName, id])
+		Out.debug("hook(%s):%s registered" % [hookName, id])
 	else:
 		Out.warning("hook(%s) failed" % hookName)
 	return id
