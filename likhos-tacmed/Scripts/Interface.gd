@@ -48,7 +48,6 @@ func _use(iface, character, targetItem, extraData) -> void:
 		iface.PlayError()
 		return
 
-	gameData.isOccupied = true
 	iface.PlayUse(slotData.itemData)
 
 	await _use_anim(iface, targetItem, extraData.healTime)
@@ -64,11 +63,11 @@ func _use(iface, character, targetItem, extraData) -> void:
 	slotData.itemData.health = totalHeal
 	targetItem.UpdateDetails()
 
-	gameData.isOccupied = false
 	iface.Reset()
 
 
 func _use_anim(caller, targetItem, timer: float):
+	gameData.isOccupied = true
 	var prog = caller.progress.instantiate()
 	caller.add_child(prog)
 
@@ -80,6 +79,7 @@ func _use_anim(caller, targetItem, timer: float):
 
 	await prog.completed
 	prog.queue_free()
+	gameData.isOccupied = false
 
 
 func on_hover_post():
@@ -113,8 +113,8 @@ func _combine(caller, targetItem, sourceItem, extraData):
 		caller.PlayError()
 		return
 
-	gameData.isOccupied = true
 	caller.PlayStack()
+	caller.Reset()
 
 	await _use_anim(caller, targetItem, extraData.replenishTime)
 
@@ -129,7 +129,6 @@ func _combine(caller, targetItem, sourceItem, extraData):
 	targetItem.UpdateDetails()
 
 	sourceItem.queue_free()
-	caller.Reset()
 
 
 func _input(ev):
