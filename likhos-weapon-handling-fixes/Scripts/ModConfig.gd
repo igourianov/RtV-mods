@@ -24,8 +24,8 @@ static var eye_relief_offset: float
 
 static var _menu_pos_auto: int = 0
 
-const DEFAULT_CROSSHAIR_COLOR = Color(1.0, 0.4, 0.0, 0.65)
-const DEFAULT_CROSSHAIR = "2dot"
+const DEFAULT_CROSSHAIR_COLOR = Color(0, 1, 0.04, 0.55)
+const DEFAULT_CROSSHAIR = "3seg-cross"
 const DEFAULT_CANT_MODE = "1default"
 const DEFAULT_LPVO_OOF_ZOOM = "1enabled"
 const DEFAULT_ENABLED = true
