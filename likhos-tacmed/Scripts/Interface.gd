@@ -35,14 +35,7 @@ func _use(caller, character, targetItem, targetGrid, extraData) -> void:
 	caller.gameData.isOccupied = true
 	caller.PlayUse(slotData.itemData)
 
-	var newProgress = caller.progress.instantiate()
-	caller.add_child(newProgress)
-	newProgress.global_position = targetItem.global_position
-	newProgress.size = targetItem.size
-	newProgress.Use(extraData.healTime)
-
-	await newProgress.completed
-	newProgress.queue_free()
+	await _use_anim(caller, targetItem, extraData.healTime)
 
 	if caller.gameData.isDead: return
 
@@ -57,6 +50,20 @@ func _use(caller, character, targetItem, targetGrid, extraData) -> void:
 
 	caller.gameData.isOccupied = false
 	caller.Reset()
+
+
+func _use_anim(caller, targetItem, timer: float):
+	var prog = caller.progress.instantiate()
+	caller.add_child(prog)
+
+	prog.global_position = targetItem.global_position
+	prog.size = targetItem.size
+	prog.audioCycle = 100000.0 # effectivelly disable AmmoLoad audio
+
+	prog.Use(timer) # start the timer
+
+	await prog.completed
+	prog.queue_free()
 
 
 func on_hover_post():
@@ -90,6 +97,13 @@ func _combine(caller, targetItem, sourceItem, extraData):
 		caller.PlayError()
 		return
 
+	caller.gameData.isOccupied = true
+	caller.PlayStack()
+
+	await _use_anim(caller, targetItem, extraData.replenishTime)
+
+	if caller.gameData.isDead: return
+
 	var replenish = sourceItem.slotData.itemData.health
 	if !replenish:
 		replenish = extraData.replenishDefault
@@ -99,8 +113,6 @@ func _combine(caller, targetItem, sourceItem, extraData):
 	targetItem.UpdateDetails()
 
 	sourceItem.queue_free()
-
-	#caller.PlayStack()
 	caller.Reset()
 
 
