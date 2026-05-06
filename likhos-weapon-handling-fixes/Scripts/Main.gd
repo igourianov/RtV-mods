@@ -33,7 +33,7 @@ func setup(lib):
 	_weapon_rig = WeaponRig.new(lib, preferences)
 	_handling = Handling.new(lib, preferences)
 	_camera = Camera.new(lib, _weapon_rig)
-	_controller = Controller.new(lib, _weapon_rig, preferences)
+	_controller = Controller.new(lib, _weapon_rig)
 	_noise = _Noise.new(lib, preferences)
 	_tilt = Tilt.new(lib)
 	_hud = HUD.new(lib)

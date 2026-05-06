@@ -4,13 +4,11 @@ const ModConfig = preload("./ModConfig.gd")
 
 var _lib
 var _weapon_rig
-var _preferences: Preferences
 
 
-func _init(lib, weapon_rig, preferences: Preferences) -> void:
+func _init(lib, weapon_rig) -> void:
 	_lib = lib
 	_weapon_rig = weapon_rig
-	_preferences = preferences
 
 
 func on_movement_states_pre(_delta: float) -> void:
