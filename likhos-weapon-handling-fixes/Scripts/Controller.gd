@@ -18,15 +18,16 @@ func on_movement_states_pre(_delta: float) -> void:
 	if ctrl == null:
 		return
 
-	ctrl.crouchSpeed = ModConfig.crouch_speed
-	ctrl.walkSpeed = ModConfig.walk_speed
-	ctrl.sprintSpeed = ModConfig.sprint_speed
+	if ModConfig.override_movement_speeds:
+		ctrl.crouchSpeed = ModConfig.crouch_speed
+		ctrl.walkSpeed = ModConfig.walk_speed
+		ctrl.sprintSpeed = ModConfig.sprint_speed
 
 
 
 func on_movement_states_post(_delta: float) -> void:
 	var ctrl = _lib._caller
-	if ctrl == null:
+	if ctrl == null || !ModConfig.override_movement_speeds:
 		return
 
 	var gd = ctrl.gameData

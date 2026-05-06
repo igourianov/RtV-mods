@@ -7,6 +7,7 @@ static var disable_zoom_dof: bool
 static var disable_optic_override: bool
 static var disable_canted_override: bool
 static var disable_lowered_override: bool
+static var override_movement_speeds: bool
 static var nvg_pip_blur: bool
 static var ammo_tooltips: bool
 static var crouch_speed: float
@@ -58,6 +59,7 @@ static func apply_config(config: ConfigFile):
 	disable_optic_override = !_get_config_value(config, "Bool", "enableOpticOverride", DEFAULT_ENABLED)
 	disable_canted_override = !_get_config_value(config, "Bool", "enableCantedOverride", DEFAULT_ENABLED)
 	disable_lowered_override = !_get_config_value(config, "Bool", "enableLoweredOverride", DEFAULT_ENABLED)
+	override_movement_speeds = _get_config_value(config, "Bool", "overrideMovementSpeeds", DEFAULT_ENABLED)
 	nvg_pip_blur = _get_config_value(config, "Bool", "nvgPipBlur", DEFAULT_ENABLED)
 	ammo_tooltips = _get_config_value(config, "Bool", "ammoTooltips", DEFAULT_ENABLED)
 	crouch_speed = _get_config_value(config, "Float", "crouchSpeed", DEFAULT_CROUCH_SPEED)
@@ -152,6 +154,8 @@ static func create_template(config: ConfigFile):
 		"minRange": 0.0,
 		"maxRange": 5.0
 	})
+
+	_set_config_entry(config, "Bool", "Movement speeds", "overrideMovementSpeeds", "Override movement speed (restart to disable)", "Apply the mod's movement speed math", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Float", "Movement speeds", "crouchSpeed", "Crouch Speed", "Movement speed while crouching", DEFAULT_CROUCH_SPEED, {
 		"minRange": SPEED_MIN,
