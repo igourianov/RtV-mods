@@ -24,9 +24,6 @@ const CONDITIONS = [
 	"headshot"
 ]
 
-const TACMED_ITEM_META: StringName = "tacmed-meta"
-
-
 var _lib
 var gameData = preload("res://Resources/GameData.tres")
 
@@ -40,20 +37,20 @@ func on_use(targetItem, targetGrid) -> void:
 	var extraData = TACMED[itemData.file]
 	if extraData:
 		Out.debug("custom heal logic")
-		_use(_lib._caller, _lib._caller.get_node("../../Controller/Character"), targetItem, targetGrid, extraData)
+		_use(_lib._caller, _lib._caller.get_node("../../Controller/Character"), targetItem, extraData)
 		_lib.skip_super()
 
 
-func _use(caller, character, targetItem, targetGrid, extraData) -> void:
+func _use(iface, character, targetItem, extraData) -> void:
 	var slotData = targetItem.slotData
 	if !slotData.condition || gameData.health >= 100:
-		caller.PlayError()
+		iface.PlayError()
 		return
 
 	gameData.isOccupied = true
-	caller.PlayUse(slotData.itemData)
+	iface.PlayUse(slotData.itemData)
 
-	await _use_anim(caller, targetItem, extraData.healTime)
+	await _use_anim(iface, targetItem, extraData.healTime)
 
 	if gameData.isDead: return
 
@@ -67,7 +64,7 @@ func _use(caller, character, targetItem, targetGrid, extraData) -> void:
 	targetItem.UpdateDetails()
 
 	gameData.isOccupied = false
-	caller.Reset()
+	iface.Reset()
 
 
 func _use_anim(caller, targetItem, timer: float):
@@ -137,7 +134,7 @@ func _combine(caller, targetItem, sourceItem, extraData):
 func _input(ev):
 	if ev.is_action_pressed("tacmed"):
 		Out.debug("action pressed: tacmed")
-		_tacmed_heal(_lib._caller.get_node("../Interface"))
+		_tacmed_heal(_lib._caller.get_node("../Interface"), _lib._caller.get_node("../../Controller/Character"))
 		return
 
 	if ev.is_action_pressed("hurt_myself"):
@@ -163,25 +160,17 @@ func _hurt_myself(caller, bleedOnly: bool):
 	gameData.health -= randf_range(10.0, 20.0)
 
 
-func _tacmed_heal(caller):
+func _tacmed_heal(iface, character):
 	if gameData.isOccupied:
 		return
 	
-	Out.debug("inventory:", caller.inventoryGrid.get_children())
-	var tacmedItems = caller.inventoryGrid.get_children().filter(func(i):
+	var tacmedItems = iface.inventoryGrid.get_children().filter(func(i):
 		return TACMED[i.slotData.itemData.file] && i.slotData.condition > 0
 	)
-	Out.debug("tacmed items:", tacmedItems.size())
+	Out.debug("usable tacmed items:", tacmedItems.size())
 	if !tacmedItems.size():
-		caller.PlayError()
+		iface.PlayError()
 		return
-
-	#gameData.isOccupied = true
-
-	Out.debug("avilable tacmed:", tacmedItems.map(func(i): return {
-		"file": i.slotData.itemData.file,
-		"condition": i.slotData.condition
-	}))
 
 	if tacmedItems.size() > 1:
 		var sortable = tacmedItems.map(func(i):
@@ -212,12 +201,13 @@ func _tacmed_heal(caller):
 		)
 		tacmedItems = sortable.map(func(i): return i.item)
 
-		Out.debug("sorted tacmed:", tacmedItems.map(func(i): return {
+		Out.debug("prioritized tacmed:", tacmedItems.map(func(i): return {
 			"file": i.slotData.itemData.file,
 			"condition": i.slotData.condition
 		}))
 	
 	var tacmedToUse = tacmedItems[0]
+	_use(iface, character, tacmedToUse, TACMED[tacmedToUse.slotData.itemData.file])
 
 
 func _cond_heal_count(item) -> int:
