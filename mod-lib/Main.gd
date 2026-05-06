@@ -99,7 +99,7 @@ func next_menu_pos() -> int:
 	return _menu_pos_auto
 
 
-func register_action(action: String, label: String, event: InputEvent):
+func register_action(action: String, label: String, event: InputEvent, hidden: bool = false):
 	if !_inputs:
 		_inputs = Inputs.new(_lib)
 		register_hook("inputs-createactions-post", _inputs.on_create_actions_post)
@@ -107,9 +107,12 @@ func register_action(action: String, label: String, event: InputEvent):
 	_inputs.extra_actions.append({
 		"action": action,
 		"label": label,
-		"event": event
+		"event": event,
+		"hidden": hidden
 	})
-
+	# register empty action right away to avoid errors from InputMap
+	if !InputMap.has_action(action):
+		InputMap.add_action(action)
 
 func setup(lib):
 	pass

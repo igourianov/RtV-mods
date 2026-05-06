@@ -2,7 +2,7 @@ extends Node
 
 const Out = preload("../Lib/Out.gd")
 
-const MEDICAL = {
+const TACMED = {
 	"IFAK": {
 		"healTime": 3.0,
 		"replenishTime": 1.0,
@@ -13,7 +13,22 @@ const MEDICAL = {
 	}
 }
 
+const CONDITIONS = [
+	"bleeding",
+	"fracture",
+	"burn",
+	"frostbite",
+	"insanity",
+	"poisoning",
+	"rupture",
+	"headshot"
+]
+
+const TACMED_ITEM_META: StringName = "tacmed-meta"
+
+
 var _lib
+var gameData = preload("res://Resources/GameData.tres")
 
 
 func _init(lib) -> void:
@@ -22,7 +37,7 @@ func _init(lib) -> void:
 
 func on_use(targetItem, targetGrid) -> void:
 	var itemData = targetItem.slotData.itemData
-	var extraData = MEDICAL[itemData.file]
+	var extraData = TACMED[itemData.file]
 	if extraData:
 		Out.debug("custom heal logic")
 		_use(_lib._caller, _lib._caller.get_node("../../Controller/Character"), targetItem, targetGrid, extraData)
@@ -31,27 +46,27 @@ func on_use(targetItem, targetGrid) -> void:
 
 func _use(caller, character, targetItem, targetGrid, extraData) -> void:
 	var slotData = targetItem.slotData
-	if !slotData.condition || caller.gameData.health >= 100:
+	if !slotData.condition || gameData.health >= 100:
 		caller.PlayError()
 		return
 
-	caller.gameData.isOccupied = true
+	gameData.isOccupied = true
 	caller.PlayUse(slotData.itemData)
 
 	await _use_anim(caller, targetItem, extraData.healTime)
 
-	if caller.gameData.isDead: return
+	if gameData.isDead: return
 
 	var totalHeal = slotData.itemData.health
 	var healRate = totalHeal / 100.0
-	var heal = min(slotData.condition * healRate, 100.0 - caller.gameData.health)
+	var heal = min(slotData.condition * healRate, 100.0 - gameData.health)
 	slotData.condition -= round(heal / healRate)
 	slotData.itemData.health = heal
 	character.Consume(slotData.itemData)
 	slotData.itemData.health = totalHeal
 	targetItem.UpdateDetails()
 
-	caller.gameData.isOccupied = false
+	gameData.isOccupied = false
 	caller.Reset()
 
 
@@ -78,7 +93,7 @@ func on_hover_post():
 func _hover_post(caller, targetItem, sourceItem):
 	var targetItemData = targetItem.slotData.itemData
 	var sourceItemData = sourceItem.slotData.itemData
-	var extraData = MEDICAL[targetItemData.file]
+	var extraData = TACMED[targetItemData.file]
 	if extraData && targetItemData.compatible.any(func(i): return i.file == sourceItemData.file):
 		caller.canCombine = true
 
@@ -86,7 +101,7 @@ func _hover_post(caller, targetItem, sourceItem):
 func on_combine(targetItem):
 	var caller = _lib._caller
 	var itemData = targetItem.slotData.itemData
-	var extraData = MEDICAL[itemData.file]
+	var extraData = TACMED[itemData.file]
 	if extraData && caller.canCombine:
 		Out.debug("custom heal item reload")
 		_combine(caller, targetItem, caller.itemDragged, extraData)
@@ -100,12 +115,12 @@ func _combine(caller, targetItem, sourceItem, extraData):
 		caller.PlayError()
 		return
 
-	caller.gameData.isOccupied = true
+	gameData.isOccupied = true
 	caller.PlayStack()
 
 	await _use_anim(caller, targetItem, extraData.replenishTime)
 
-	if caller.gameData.isDead: return
+	if gameData.isDead: return
 
 	var replenish = sourceItem.slotData.itemData.health
 	if !replenish:
@@ -120,29 +135,94 @@ func _combine(caller, targetItem, sourceItem, extraData):
 
 
 func _input(ev):
-	if ev is InputEventKey && ev.pressed && ev.ctrl_pressed && ev.shift_pressed:
-		var damage = false
-		var character = _lib._caller.get_node("../../Controller/Character")
-		var gameData = character.gameData
-		if !character:
-			return
+	if ev.is_action_pressed("tacmed"):
+		Out.debug("action pressed: tacmed")
+		_tacmed_heal(_lib._caller.get_node("../Interface"))
+		return
 
-		if ev.keycode == KEY_O:
-			Out.debug("I hurt myself, today...")
-			character.Bleeding(true)
-			damage = true
-		elif ev.keycode == KEY_P:
-			Out.debug("To see if I still feel...")
-			damage = true
-			match randi_range(1,4):
-				1: character.Fracture(true)
-				2: character.Rupture(true)
-				3: character.Burn(true)
-				4: character.Headshot(true)
+	if ev.is_action_pressed("hurt_myself"):
+		_hurt_myself(_lib._caller.get_node("../../Controller/Character"), true)
+	elif ev.is_action_pressed("hurt_myself_more"):
+		_hurt_myself(_lib._caller.get_node("../../Controller/Character"), false)
+		
 
-		if damage:
-			gameData.impact = true
-			gameData.damage = true
-			gameData.health -= randf_range(10.0, 20.0)
-		
-		
+func _hurt_myself(caller, bleedOnly: bool):
+	if bleedOnly:
+		Out.debug("I hurt myself, today...")
+		caller.Bleeding(true)
+	else:
+		Out.debug("To see if I still feel...")
+		match randi_range(1,4):
+			1: caller.Fracture(true)
+			2: caller.Rupture(true)
+			3: caller.Burn(true)
+			4: caller.Headshot(true)
+
+	gameData.impact = true
+	gameData.damage = true
+	gameData.health -= randf_range(10.0, 20.0)
+
+
+func _tacmed_heal(caller):
+	if gameData.isOccupied:
+		return
+	
+	Out.debug("inventory:", caller.inventoryGrid.get_children())
+	var tacmedItems = caller.inventoryGrid.get_children().filter(func(i):
+		return TACMED[i.slotData.itemData.file] && i.slotData.condition > 0
+	)
+	Out.debug("tacmed items:", tacmedItems.size())
+	if !tacmedItems.size():
+		caller.PlayError()
+		return
+
+	#gameData.isOccupied = true
+
+	Out.debug("avilable tacmed:", tacmedItems.map(func(i): return {
+		"file": i.slotData.itemData.file,
+		"condition": i.slotData.condition
+	}))
+
+	if tacmedItems.size() > 1:
+		var sortable = tacmedItems.map(func(i):
+			return {
+				"item": i, # original item ref
+				"conditions_remove": _cond_heal_count(i),
+				"waste": max(0.0, i.slotData.itemData.health * i.slotData.condition / 100.0 - (100.0 - gameData.health)),
+				"condition": i.slotData.condition,
+				"value": i.slotData.itemData.value * i.slotData.condition / 100.0
+			}
+		)
+	
+		# ORDER BY [number of conditions would be removed] DESC, [heal waste] ASC, [condition] ASC, [adjusted value] ASC
+		sortable.sort_custom(func(a, b):
+			if a.conditions_remove > b.conditions_remove:
+				return true
+			elif a.conditions_remove < b.conditions_remove:
+				return false
+			elif a.waste < b.waste:
+				return true
+			elif a.waste > b.waste:
+				return false
+			elif a.condition < b.condition:
+				return true
+			elif a.condition > b.condition:
+				return false
+			return a.value < b.value
+		)
+		tacmedItems = sortable.map(func(i): return i.item)
+
+		Out.debug("sorted tacmed:", tacmedItems.map(func(i): return {
+			"file": i.slotData.itemData.file,
+			"condition": i.slotData.condition
+		}))
+	
+	var tacmedToUse = tacmedItems[0]
+
+
+func _cond_heal_count(item) -> int:
+	var heal: int = 0
+	for cond in CONDITIONS:
+		if gameData[cond] && item.slotData.itemData[cond]:
+			heal += 1
+	return heal 

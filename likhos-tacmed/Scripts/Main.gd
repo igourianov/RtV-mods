@@ -18,6 +18,25 @@ func setup(lib) -> void:
 	register_hook("interface-combine", _interface.on_combine)
 	register_hook("interface-hover-post", _interface.on_hover_post)
 
+	var tacmedKey = InputEventKey.new()
+	tacmedKey.keycode = KEY_Z
+	tacmedKey.pressed = true
+	register_action("tacmed", "IFAK/AFAK", tacmedKey)
+
+	var hurtMyself = InputEventKey.new()
+	hurtMyself.keycode = KEY_O
+	hurtMyself.pressed = true
+	hurtMyself.ctrl_pressed = true
+	hurtMyself.shift_pressed = true
+	register_action("hurt_myself", "", hurtMyself, true)
+
+	hurtMyself = InputEventKey.new()
+	hurtMyself.keycode = KEY_P
+	hurtMyself.pressed = true
+	hurtMyself.ctrl_pressed = true
+	hurtMyself.shift_pressed = true
+	register_action("hurt_myself_more", "", hurtMyself, true)
+
 
 func _patch_items(lib) -> void:
 	var compatible: Array[ItemData] = [
