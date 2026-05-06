@@ -23,9 +23,11 @@ AFAK got similar treatment to IFAK. It is now effectivelly an advanced version o
 * Reusable, consumes condition on heal
 * Refilled by a new recipe under Medical section: Used AFAK + 2x Medkit => AFAK (100%)
 * 200 HP healing pool (vs 150 of 2 medkits)
+* Removed Energy/Hydration/Mental (why was it even doing that?)
 * Weight increase 1.2 -> 5.0kg
 * Price 2850 -> 5000€
 * Use speed 4.0 -> 3.0sec
+* Can now be sold by Doctor
 
 ## Testing
 
@@ -33,6 +35,6 @@ You can now hurt yourself in the Tutorial room by pressing:
 * `Ctrl+Shift+O`- a bit of damage and apply bleed
 * `Ctrl+Shift+P`- a bit of damage and one of [Fracture, Rupture, Burn, Headshot]
 
-## [Check out my other mods](https://modworkshop.net/user/likho1eye)
+## [Check out my other mods](https://modworkshop.net/search/mods?query=%22Likho%27s%22&sort=likes)
 
 *Feedback and likes are welcome!*
