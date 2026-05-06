@@ -28,6 +28,7 @@ var _lib
 var gameData = preload("res://Resources/GameData.tres")
 
 
+
 func _init(lib) -> void:
 	_lib = lib
 
@@ -37,7 +38,7 @@ func on_use(targetItem, targetGrid) -> void:
 	var extraData = TACMED[itemData.file]
 	if extraData:
 		Out.debug("custom heal logic")
-		_use(_lib._caller, _lib._caller.get_node("../../Controller/Character"), targetItem, extraData)
+		_use(_lib._caller, _lib._caller.get_node("/root/Map/Core/Controller/Character"), targetItem, extraData)
 		_lib.skip_super()
 
 
@@ -134,13 +135,13 @@ func _combine(caller, targetItem, sourceItem, extraData):
 func _input(ev):
 	if ev.is_action_pressed("tacmed"):
 		Out.debug("action pressed: tacmed")
-		_tacmed_heal(_lib._caller.get_node("../Interface"), _lib._caller.get_node("../../Controller/Character"))
+		_tacmed_heal(_lib._caller.get_node("/root/Map/Core/UI/Interface"), _lib._caller.get_node("/root/Map/Core/Controller/Character"))
 		return
 
 	if ev.is_action_pressed("hurt_myself"):
-		_hurt_myself(_lib._caller.get_node("../../Controller/Character"), true)
+		_hurt_myself(_lib._caller.get_node("/root/Map/Core/Controller/Character"), true)
 	elif ev.is_action_pressed("hurt_myself_more"):
-		_hurt_myself(_lib._caller.get_node("../../Controller/Character"), false)
+		_hurt_myself(_lib._caller.get_node("/root/Map/Core/Controller/Character"), false)
 		
 
 func _hurt_myself(caller, bleedOnly: bool):
