@@ -7,6 +7,9 @@ const MEDICAL = {
 		"healTime": 3.0,
 		"replenishTime": 1.0,
 		"replenishDefault": 10.0
+	},
+	"AFAK": {
+		"healTime": 5.0
 	}
 }
 
@@ -117,17 +120,29 @@ func _combine(caller, targetItem, sourceItem, extraData):
 
 
 func _input(ev):
-	if ev is InputEventKey && ev.pressed && ev.ctrl_pressed && ev.shift_pressed && ev.keycode == KEY_O:
-		Out.debug("I hurt myself, today...")
-		Out.debug("To see if I still feel...")
+	if ev is InputEventKey && ev.pressed && ev.ctrl_pressed && ev.shift_pressed:
+		var damage = false
 		var character = _lib._caller.get_node("../../Controller/Character")
 		var gameData = character.gameData
-		if character:
-			#character.Fracture(true)
+		if !character:
+			return
+
+		if ev.keycode == KEY_O:
+			Out.debug("I hurt myself, today...")
 			character.Bleeding(true)
+			damage = true
+		elif ev.keycode == KEY_P:
+			Out.debug("To see if I still feel...")
+			damage = true
+			match randi_range(1,4):
+				1: character.Fracture(true)
+				2: character.Rupture(true)
+				3: character.Burn(true)
+				4: character.Headshot(true)
+
+		if damage:
 			gameData.impact = true
 			gameData.damage = true
-			gameData.health -= 20.0
-			
+			gameData.health -= randf_range(10.0, 20.0)
 		
 		

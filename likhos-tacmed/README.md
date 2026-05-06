@@ -7,8 +7,8 @@ Road to Vostok mod that modifies medical consumables to be more useful. Keeps wi
 IFAK has been reworked from an excotic, safe queen to a healing workhorse.
 
 * IFAK is now **NOT CONSUMED** on use, but instead loses condition.
-* Heals for the exact value, no overflow. Can heal up to 150 HP without replenishment.
-* Replenished by basic healing items like bandages - see compatible list.
+* Heals for the exact value, no overflow - 150 healing pool.
+* Refilled by basic healing items like bandages - see compatible list.
 * It is slightly faster to use than basic bandage (3sec vs 4sec default).
 * It now only removes bleeding and burning conditions.
 * Increased in weight from 0.5kg to 2kg.
@@ -18,11 +18,20 @@ Replenishment works 1:1 - consumed item's healing value vs IFAK condition. Tourn
 
 ## AFAK
 
-Coming soon. It will work a bit differently to keep things interesting.
+AFAK got similar treatment to IFAK. It is now effectivelly an advanced version of a Medkit.
 
-## Bonus
+* Reusable, consumes condition on heal
+* Refilled by a new recipe under Medical section: Used AFAK + 2x Medkit => AFAK (100%)
+* 200 HP healing pool (vs 150 of 2 medkits)
+* Weight increase 1.2 -> 5.0kg
+* Price 2850 -> 5000€
+* Use speed 4.0 -> 3.0sec
 
-You can now hurt yourself in the Tutorial room by pressing `Ctrl+Shift+O`- in case you want to test out new healing items.
+## Testing
+
+You can now hurt yourself in the Tutorial room by pressing:
+* `Ctrl+Shift+O`- a bit of damage and apply bleed
+* `Ctrl+Shift+P`- a bit of damage and one of [Fracture, Rupture, Burn, Headshot]
 
 ## [Check out my other mods](https://modworkshop.net/user/likho1eye)
 

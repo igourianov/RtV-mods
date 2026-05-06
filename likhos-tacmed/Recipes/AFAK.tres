@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RecipeData" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://Scripts/RecipeData.gd" id="1"]
+[ext_resource type="Resource" path="res://Audio/Crafting/Craft_Fabric.tres" id="2"]
+[ext_resource type="Resource" path="res://Items/Medical/AFAK/AFAK.tres" id="3"]
+[ext_resource type="Resource" path="res://Items/Medical/Medkit/Medkit.tres" id="4"]
+
+
+[resource]
+script = ExtResource("1")
+name = "AFAK Refil"
+time = 5.0
+repair = true
+audio = ExtResource("2")
+input = [ExtResource("3"), ExtResource("4"), ExtResource("4")]
+output = [ExtResource("3")]
