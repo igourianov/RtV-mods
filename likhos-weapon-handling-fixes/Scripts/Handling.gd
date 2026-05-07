@@ -234,24 +234,24 @@ func _weapon_handling(h, delta: float) -> void:
 
 func on_rig_update_post(_animate) -> void:
 	var manager = _lib._caller
-	if manager == null || manager.get_child_count() == 0:
+	if manager == null:
 		return
-	
+	var rig = manager.get_child(manager.get_child_count() - 1) if manager.get_child_count() else null
+
 	# save weapon weight for the handling speed calc
-	var rig = manager.get_child(manager.get_child_count() - 1)
-	var item = rig.weaponSlot.get_children()[0] if rig && rig.weaponSlot else null
-	_weapon_weight = item.Weight() if item else 0.0
+	var weapon = rig.weaponSlot.get_children()[0] if rig && rig.weaponSlot else null
+	_weapon_weight = weapon.Weight() if weapon else 0.0
 
 	# save laser module reference
 	_laser = null
-	for node in rig.attachments.get_children():
+	for node in (rig.attachments.get_children() if rig else []):
 		if node.visible && node.has_method("PlayLaser"):
 			_laser = node
 
 	# BUG FIX
 	# Vanilla forgets to reset secondaryOptic flag when equipping another optic 
 	# Causes other scopes to break in PIP mode
-	var optic = rig.activeOptic
+	var optic = rig.activeOptic if rig else null
 	if gameData.secondaryOptic:
 		if optic == null || !optic.attachmentData.secondary || optic.secondary == null:
 			gameData.secondaryOptic = false
