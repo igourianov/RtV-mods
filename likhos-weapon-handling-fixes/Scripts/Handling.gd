@@ -2,7 +2,6 @@ extends RefCounted
 
 const ModConfig = preload("./ModConfig.gd")
 const Out = preload("../Lib/Out.gd")
-var gameData = preload("res://Resources/GameData.tres")
 
 const _META_LASER_LATCH = "likho_laser_latch"
 const _LASER_SOUND_VOLUME_DB = -12.0
@@ -12,7 +11,6 @@ const _LASER_OUT_START = 0.120
 const _LASER_OUT_DURATION = 0.0
 const _FIXED_SCOPE_AIM_OFFSET = -0.035
 const _VARIABLE_SCOPE_AIM_OFFSET = -0.05
-const _FLASHLIGHT_WAV_PATH = "res://Audio/Interaction/Files/Flashlight.wav"
 const _PATROL_POSITION = Vector3(0.06, -0.18, -0.25)
 const _PATROL_ROTATION = Vector3(25, 50, -20)
 const _PATROL_WEAPON_TYPES = {"Rifle": null, "SMG": null, "Bolt": null, "Shotgun": null}
@@ -32,19 +30,19 @@ enum HandlingMode {
 
 var _lib
 var _preferences: Preferences
-var _flashlight_stream: AudioStream
+var _flashlight_stream: AudioStream = load("res://Audio/Interaction/Files/Flashlight.wav")
 var _lens_min_z_cache := {}
 var _handlingMode = HandlingMode.Default
 var _laser
 var _weapon_weight: float = 0.0
+var gameData = preload("res://Resources/GameData.tres")
 
 
 func _init(lib, preferences: Preferences) -> void:
 	_lib = lib
 	_preferences = preferences
-	_flashlight_stream = load(_FLASHLIGHT_WAV_PATH)
 	if _flashlight_stream == null:
-		Out.warning("failed to load %s" % _FLASHLIGHT_WAV_PATH)
+		Out.warning("failed to load flashlight audio")
 
 
 func on_weapon_handling(delta: float) -> void:
@@ -52,12 +50,11 @@ func on_weapon_handling(delta: float) -> void:
 	if h == null:
 		return
 	_lib.skip_super()
-	_weapon_handling(h, delta)
+	_weapon_handling(h, h.get_parent(), delta)
 
 
-func _weapon_handling(h, delta: float) -> void:
+func _weapon_handling(h, rig, delta: float) -> void:
 	var data = h.data
-	var rig = h.get_parent()
 	var optic = rig.activeOptic
 
 	if gameData.freeze:
