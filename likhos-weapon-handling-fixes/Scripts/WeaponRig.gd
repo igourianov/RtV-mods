@@ -6,8 +6,6 @@ const ModConfig = preload("./ModConfig.gd")
 
 var _lib
 var _preferences: Preferences
-var current_scope_mag: float = 0.0
-var active_rig: WeaponRig
 var _ammo_check_saved_position: int = 0
 var _last_optic_for_scale = null
 var _cached_lens_scale: float = 1.0
@@ -142,17 +140,20 @@ func on_ready_post() -> void:
 
 func on_ads_post(delta: float) -> void:
 	var rig = _lib._caller
-	active_rig = rig # save for Controller
 	var gd = rig.gameData
 	var optic = rig.activeOptic
 	var att = optic.attachmentData
 
-	if !gd.PIP || !gd.isAiming || gd.isColliding:
-		current_scope_mag = 0.0
-		return
+	ModConfig.current_scope_mag = 1.0
+	if rig.slotData.zoom == 1:
+		gd.isScoped = gd.PIP # override vanilla behavior
+		ModConfig.current_scope_mag = 1.1
+	elif rig.slotData.zoom == 2:
+		ModConfig.current_scope_mag = 3.0
+	elif rig.slotData.zoom == 3:
+		ModConfig.current_scope_mag = 6.0
 
-	if optic == null:
-		current_scope_mag = 0.0
+	if !gd.PIP || !gd.isAiming || gd.isColliding || optic == null:
 		return
 
 	var lens_scale: float
@@ -164,30 +165,18 @@ func on_ads_post(delta: float) -> void:
 		_last_optic_for_scale = optic
 
 	if !att.variable && (!att.scope || gd.secondaryOptic):
-		current_scope_mag = 0.0
 		return
 
 	gd.aimFOV = gd.baseFOV # override vanilla behavior
 
 	if att.scope && !gd.secondaryOptic:
-		current_scope_mag = 4.0
+		ModConfig.current_scope_mag = 4.0
 		var distance = distance_factor(_FIXED_SCOPE_AIM_OFFSET, ModConfig.eye_relief_offset)
-		optic.camera.fov = distance * gd.baseFOV * lens_scale / current_scope_mag
+		optic.camera.fov = distance * gd.baseFOV * lens_scale / ModConfig.current_scope_mag
 		return
 
-	if rig.slotData.zoom == 1:
-		gd.isScoped = true # override vanilla behavior
-		current_scope_mag = 1.1
-		gd.scopeSensitivity = _preferences.aimSensitivity
-	elif rig.slotData.zoom == 2:
-		current_scope_mag = 3.0
-		gd.scopeSensitivity = _preferences.scopeSensitivity
-	elif rig.slotData.zoom == 3:
-		current_scope_mag = 6.0
-		gd.scopeSensitivity = _preferences.scopeSensitivity * 0.5
-
 	var distance = distance_factor(_VARIABLE_SCOPE_AIM_OFFSET, ModConfig.eye_relief_offset)
-	optic.camera.fov = lerp(optic.camera.fov, distance * gd.baseFOV * lens_scale / current_scope_mag, delta * 10.0)
+	optic.camera.fov = lerp(optic.camera.fov, distance * gd.baseFOV * lens_scale / ModConfig.current_scope_mag, delta * 10.0)
 
 func distance_factor(base: float, distance: float) -> float:
 	var f: float = base / (base + distance)

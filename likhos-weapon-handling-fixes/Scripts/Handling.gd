@@ -2,8 +2,8 @@ extends RefCounted
 
 const ModConfig = preload("./ModConfig.gd")
 const Out = preload("../Lib/Out.gd")
+var gameData = preload("res://Resources/GameData.tres")
 
-const _META_LASER_LATCH = "likho_laser_latch"
 const _LASER_SOUND_VOLUME_DB = -12.0
 const _LASER_IN_START = 0.0
 const _LASER_IN_DURATION = 0.015
@@ -35,7 +35,6 @@ var _lens_min_z_cache := {}
 var _handlingMode = HandlingMode.Default
 var _laser
 var _weapon_weight: float = 0.0
-var gameData = preload("res://Resources/GameData.tres")
 
 
 func _init(lib, preferences: Preferences) -> void:
@@ -50,7 +49,14 @@ func on_weapon_handling(delta: float) -> void:
 	if h == null:
 		return
 	_lib.skip_super()
+
 	_weapon_handling(h, h.get_parent(), delta)
+
+	if !gameData.isCanted:
+		_laser_deactivate(h)
+	elif ModConfig.laser_auto_on:
+		_laser_activate(h)
+
 	_apply_target(h, delta)
 
 
@@ -65,7 +71,6 @@ func _weapon_handling(h, rig, delta: float) -> void:
 		h.targetPosition = data.collisionPosition
 		h.targetRotation = data.collisionRotation
 		_handlingMode = HandlingMode.Default
-		_laser_deactivate(h)
 		gameData.isAiming = false
 		gameData.isCanted = false		
 		return
@@ -85,7 +90,6 @@ func _weapon_handling(h, rig, delta: float) -> void:
 		gameData.weaponPosition = 1
 		_set_target_idle(h)
 		_handlingMode = HandlingMode.Default
-		_laser_deactivate(h)
 		gameData.isAiming = false
 		gameData.isCanted = false
 		return
@@ -94,7 +98,6 @@ func _weapon_handling(h, rig, delta: float) -> void:
 		h.targetPosition = data.inspectPosition
 		h.targetRotation = data.inspectRotation
 		_handlingMode = HandlingMode.Default
-		_laser_deactivate(h)
 		gameData.isAiming = false
 		gameData.isCanted = false
 		return
@@ -102,7 +105,6 @@ func _weapon_handling(h, rig, delta: float) -> void:
 	if gameData.isInserting:
 		_set_target_idle(h)
 		_handlingMode = HandlingMode.Default
-		_laser_deactivate(h)
 		gameData.isAiming = false
 		gameData.isCanted = false
 		return
@@ -111,8 +113,6 @@ func _weapon_handling(h, rig, delta: float) -> void:
 		gameData.isAiming = false
 		if !gameData.isRunning:
 			gameData.isCanted = false
-			_laser_deactivate(h)
-		_restore_look_sensitivity(gameData)
 		_handlingMode = HandlingMode.Default
 		_set_target_idle(h)
 		return
@@ -130,9 +130,6 @@ func _weapon_handling(h, rig, delta: float) -> void:
 
 	if gameData.isCanted:
 		_handlingMode = HandlingMode.Cant
-		if ModConfig.laser_auto_on:
-			_laser_activate(h)
-		_restore_look_sensitivity(gameData)
 		if ModConfig.disable_canted_override:
 			h.targetPosition = data.cantedPosition
 			h.targetRotation = data.cantedRotation
@@ -140,9 +137,6 @@ func _weapon_handling(h, rig, delta: float) -> void:
 			h.targetPosition = data.cantedPosition + Vector3(0.0, -0.05, 0.0)
 			h.targetRotation = data.cantedRotation + Vector3(0.0, 0.0, -20.0)
 		return
-
-	_laser_deactivate(h)
-	_restore_look_sensitivity(gameData)
 
 	if gameData.aimMode == 1: # hold
 		gameData.isAiming = Input.is_action_pressed("aim")
@@ -279,25 +273,20 @@ func _optic_lens_local_min_z(optic) -> float:
 	return min_z
 
 
-func _restore_look_sensitivity(gameData) -> void:
-	if _preferences != null:
-		gameData.lookSensitivity = _preferences.lookSensitivity
-
-
 func _laser_activate(h) -> void:
-	if h.get_meta(_META_LASER_LATCH, false) || !_laser:
+	if !_laser || ModConfig.laser_latch:
 		return
 	_laser.active = true
 	_laser.raycast.global_position = _laser.owner.raycast.global_position
 	_laser.laser.show()
 	_play_laser_sound(_laser, _LASER_IN_START, _LASER_IN_DURATION)
-	h.set_meta(_META_LASER_LATCH, true)
+	ModConfig.laser_latch = true
 
 
 func _laser_deactivate(h) -> void:
-	if !h.get_meta(_META_LASER_LATCH, false):
+	if !ModConfig.laser_latch:
 		return
-	h.set_meta(_META_LASER_LATCH, false)
+	ModConfig.laser_latch = false
 	if !_laser:
 		return
 	_laser.active = false

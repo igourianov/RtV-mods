@@ -1,4 +1,9 @@
 ﻿
+# dynamic state vars
+static var current_scope_mag: float = 1.0
+static var laser_latch: bool = false
+
+# config vars
 static var crosshair_style: String
 static var crosshair_color: Color
 static var cant_mode: String
@@ -13,9 +18,9 @@ static var ammo_tooltips: bool
 static var crouch_speed: float
 static var walk_speed: float
 static var sprint_speed: float
-static var aim_speed_mult: float
-static var cant_speed_mult: float
-static var scope_speed_mult: float
+static var walk_aim_mult: float
+static var walk_cant_mult: float
+static var walk_scope_mult: float
 static var laser_auto_on: bool
 static var attachment_tooltips: bool
 static var pip_anti_aliasing: bool
@@ -65,9 +70,9 @@ static func apply_config(config: ConfigFile):
 	crouch_speed = _get_config_value(config, "Float", "crouchSpeed", DEFAULT_CROUCH_SPEED)
 	walk_speed = _get_config_value(config, "Float", "walkSpeed", DEFAULT_WALK_SPEED)
 	sprint_speed = _get_config_value(config, "Float", "sprintSpeed", DEFAULT_SPRINT_SPEED)
-	aim_speed_mult = _get_config_value(config, "Float", "aimSpeedMult", DEFAULT_AIM_SPEED_MULT)
-	cant_speed_mult = _get_config_value(config, "Float", "cantSpeedMult", DEFAULT_CANT_SPEED_MULT)
-	scope_speed_mult = _get_config_value(config, "Float", "scopeSpeedMult", DEFAULT_SCOPE_SPEED_MULT)
+	walk_aim_mult = _get_config_value(config, "Float", "aimSpeedMult", DEFAULT_AIM_SPEED_MULT)
+	walk_cant_mult = _get_config_value(config, "Float", "cantSpeedMult", DEFAULT_CANT_SPEED_MULT)
+	walk_scope_mult = _get_config_value(config, "Float", "scopeSpeedMult", DEFAULT_SCOPE_SPEED_MULT)
 	laser_auto_on = _get_config_value(config, "Bool", "laserAutoOn", DEFAULT_ENABLED)
 	attachment_tooltips = _get_config_value(config, "Bool", "attachmentTooltips", DEFAULT_ENABLED)
 	pip_anti_aliasing = _get_config_value(config, "Bool", "pipAntiAliasing", DEFAULT_ENABLED)
@@ -155,7 +160,7 @@ static func create_template(config: ConfigFile):
 		"maxRange": 5.0
 	})
 
-	_set_config_entry(config, "Bool", "Movement speeds", "overrideMovementSpeeds", "Override movement speed (restart to disable)", "Apply the mod's movement speed math", DEFAULT_ENABLED)
+	_set_config_entry(config, "Bool", "Movement speeds", "overrideMovementSpeeds", "Override movement speed (restart to disable)", "Change default walk/crouch/spring speeds", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Float", "Movement speeds", "crouchSpeed", "Crouch Speed", "Movement speed while crouching", DEFAULT_CROUCH_SPEED, {
 		"minRange": SPEED_MIN,

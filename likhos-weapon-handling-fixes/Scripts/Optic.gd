@@ -7,21 +7,20 @@ const BLUR_RADIUS_BASE := 3.0
 
 const _NVG_PIP_SHADER := preload("res://mods/likhos-weapon-handling-fixes/Shaders/PIP_NVG.gdshader")
 const ModConfig = preload("./ModConfig.gd")
+var gameData = preload("res://Resources/GameData.tres")
 
 # Vanilla scene defaults for the optic's SubViewport, applied when AA mirror is off.
 const _VANILLA_PIP_MSAA := 0
 const _VANILLA_PIP_SSAA := 1
 
-var _gameData = preload("res://Resources/GameData.tres")
+
 
 var _lib
-var _weapon_rig
 var _preferences: Preferences
 
 
-func _init(lib, weapon_rig, preferences: Preferences) -> void:
+func _init(lib, preferences: Preferences) -> void:
 	_lib = lib
-	_weapon_rig = weapon_rig
 	_preferences = preferences
 
 
@@ -57,13 +56,13 @@ func on_physics_process_pre(_delta: float) -> void:
 
 	var blur_active: bool = (
 		ModConfig.nvg_pip_blur
-		&& _gameData.NVG
-		&& _gameData.isAiming
-		&& !_gameData.secondaryOptic
+		&& gameData.NVG
+		&& gameData.isAiming
+		&& !gameData.secondaryOptic
 	)
 	var radius: float = 0.0
 	if blur_active:
-		var mag: float = max(1.0, _weapon_rig.current_scope_mag)
+		var mag: float = max(1.0, ModConfig.current_scope_mag)
 		radius = BLUR_RADIUS_BASE * mag
 	pip_mat.set_shader_parameter("blur_radius", radius)
 
