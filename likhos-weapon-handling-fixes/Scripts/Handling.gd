@@ -51,6 +51,7 @@ func on_weapon_handling(delta: float) -> void:
 		return
 	_lib.skip_super()
 	_weapon_handling(h, h.get_parent(), delta)
+	_apply_target(h, delta)
 
 
 func _weapon_handling(h, rig, delta: float) -> void:
@@ -59,33 +60,6 @@ func _weapon_handling(h, rig, delta: float) -> void:
 
 	if gameData.freeze:
 		return
-
-	var lowPosition: Vector3
-	var lowRotation: Vector3
-	if ModConfig.disable_lowered_override:
-		lowPosition = data.lowPosition
-		lowRotation = data.lowRotation
-	else:
-		lowPosition = _PATROL_POSITION if _PATROL_WEAPON_TYPES.has(data.weaponType) else data.lowPosition
-		if !_PATROL_WEAPON_TYPES.has(data.weaponType):
-			lowRotation = data.lowRotation
-		elif gameData.secondaryOptic:
-			lowRotation = _PATROL_ROTATION + _SECONDARY_OPTIC_LOW_ROTATION_OFFSET
-		elif data.file == "Mosin":
-			lowRotation = _PATROL_ROTATION + _MOSIN_LOW_ROTATION_OFFSET
-		elif data.file == "Remington_870":
-			lowRotation = _PATROL_ROTATION + _REMINGTON_870_LOW_ROTATION_OFFSET
-		else:
-			lowRotation = _PATROL_ROTATION
-	
-	var speed: float
-	if ModConfig.override_handling_speed:
-		var weightFactor = _BASE_WEAPON_WEIGHT / lerp(_BASE_WEAPON_WEIGHT, _weapon_weight, ModConfig.handling_speed_weight_factor)
-		speed = h.handlingSpeed * (_handlingMode / 100.0) * weightFactor
-	else:
-		speed = h.handlingSpeed
-	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), delta * speed)
-	h.rotation_degrees = lerp(h.rotation_degrees, h.targetRotation, delta * speed)
 
 	if gameData.isClearing:
 		h.targetPosition = data.collisionPosition
@@ -109,8 +83,7 @@ func _weapon_handling(h, rig, delta: float) -> void:
 
 	if gameData.isPlacing:
 		gameData.weaponPosition = 1
-		h.targetPosition = lowPosition
-		h.targetRotation = lowRotation
+		_set_target_idle(h)
 		_handlingMode = HandlingMode.Default
 		_laser_deactivate(h)
 		gameData.isAiming = false
@@ -127,8 +100,7 @@ func _weapon_handling(h, rig, delta: float) -> void:
 		return
 
 	if gameData.isInserting:
-		h.targetPosition = data.lowPosition 
-		h.targetRotation = data.lowRotation
+		_set_target_idle(h)
 		_handlingMode = HandlingMode.Default
 		_laser_deactivate(h)
 		gameData.isAiming = false
@@ -142,12 +114,7 @@ func _weapon_handling(h, rig, delta: float) -> void:
 			_laser_deactivate(h)
 		_restore_look_sensitivity(gameData)
 		_handlingMode = HandlingMode.Default
-		if gameData.weaponPosition == 2:
-			h.targetPosition = data.highPosition
-			h.targetRotation = data.highRotation
-		else:
-			h.targetPosition = lowPosition
-			h.targetRotation = lowRotation
+		_set_target_idle(h)
 		return
 
 	var cantToggle = false
@@ -183,12 +150,7 @@ func _weapon_handling(h, rig, delta: float) -> void:
 		gameData.isAiming = !gameData.isAiming
 
 	if !gameData.isAiming:
-		if gameData.weaponPosition == 2:
-			h.targetPosition = data.highPosition
-			h.targetRotation = data.highRotation
-		else:
-			h.targetPosition = lowPosition
-			h.targetRotation = lowRotation
+		_set_target_idle(h)
 		return
 
 	if optic == null:
@@ -227,6 +189,44 @@ func _weapon_handling(h, rig, delta: float) -> void:
 		else:
 			h.targetPosition = data.aimPosition
 		h.targetRotation = data.aimRotation
+
+
+func _set_target_idle(h):
+	var data = h.data
+
+	if gameData.weaponPosition == 2:
+		h.targetPosition = data.highPosition
+		h.targetRotation = data.highRotation
+		return
+
+	if ModConfig.disable_lowered_override:
+		h.targetPosition = data.lowPosition
+		h.targetRotation = data.lowRotation
+		return
+
+	h.targetPosition = _PATROL_POSITION if _PATROL_WEAPON_TYPES.has(data.weaponType) else data.lowPosition
+
+	if !_PATROL_WEAPON_TYPES.has(data.weaponType):
+		h.lowRotation = data.lowRotation
+	elif gameData.secondaryOptic:
+		h.targetRotation = _PATROL_ROTATION + _SECONDARY_OPTIC_LOW_ROTATION_OFFSET
+	elif data.file == "Mosin":
+		h.targetRotation = _PATROL_ROTATION + _MOSIN_LOW_ROTATION_OFFSET
+	elif data.file == "Remington_870":
+		h.targetRotation = _PATROL_ROTATION + _REMINGTON_870_LOW_ROTATION_OFFSET
+	else:
+		h.targetRotation = _PATROL_ROTATION
+
+
+func _apply_target(h, delta: float):
+	var speed: float
+	if ModConfig.override_handling_speed:
+		var weightFactor = _BASE_WEAPON_WEIGHT / lerp(_BASE_WEAPON_WEIGHT, _weapon_weight, ModConfig.handling_speed_weight_factor)
+		speed = h.handlingSpeed * (_handlingMode / 100.0) * weightFactor
+	else:
+		speed = h.handlingSpeed
+	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), delta * speed)
+	h.rotation_degrees = lerp(h.rotation_degrees, h.targetRotation, delta * speed)
 
 
 func on_rig_update_post(_animate) -> void:
