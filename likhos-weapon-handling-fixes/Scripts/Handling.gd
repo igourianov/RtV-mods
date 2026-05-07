@@ -19,7 +19,6 @@ const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-10.0, 0.0, 0.0)
 const _MOSIN_LOW_ROTATION_OFFSET = Vector3(-15.0, 15.0, 0.0)
 const _REMINGTON_870_LOW_ROTATION_OFFSET = Vector3(-20.0, 10.0, 0.0)
 const _BASE_WEAPON_WEIGHT = 4.0
-const _META_TOTAL_WEIGHT = "likho_total_weight"
 
 # the handling speed modifier - read as % of base
 enum HandlingMode {
@@ -36,6 +35,7 @@ var _flashlight_stream: AudioStream
 var _lens_min_z_cache := {}
 var _handlingMode = HandlingMode.Default
 var _laser
+var _weapon_weight: float = 0.0
 
 func _init(lib, preferences: Preferences) -> void:
 	_lib = lib
@@ -82,7 +82,7 @@ func _weapon_handling(h, delta: float) -> void:
 	
 	var speed: float
 	if ModConfig.override_handling_speed:
-		var weightFactor = _BASE_WEAPON_WEIGHT / lerp(_BASE_WEAPON_WEIGHT, _total_weapon_weight(rig), ModConfig.handling_speed_weight_factor)
+		var weightFactor = _BASE_WEAPON_WEIGHT / lerp(_BASE_WEAPON_WEIGHT, _weapon_weight, ModConfig.handling_speed_weight_factor)
 		speed = h.handlingSpeed * (_handlingMode / 100.0) * weightFactor
 	else:
 		speed = h.handlingSpeed
@@ -236,9 +236,10 @@ func on_rig_update_post(_animate) -> void:
 	if manager == null || manager.get_child_count() == 0:
 		return
 	
+	# save weapon weight for the handling speed calc
 	var rig = manager.get_child(manager.get_child_count() - 1)
-	if rig != null:
-		rig.remove_meta(_META_TOTAL_WEIGHT)
+	var item = rig.weaponSlot.get_children()[0] if rig && rig.weaponSlot else null
+	_weapon_weight = item.Weight() if item else 0.0
 
 	# save laser module reference
 	_laser = null
@@ -254,17 +255,6 @@ func on_rig_update_post(_animate) -> void:
 	if gd.secondaryOptic:
 		if optic == null || !optic.attachmentData.secondary || optic.secondary == null:
 			gd.secondaryOptic = false
-
-
-func _total_weapon_weight(rig) -> float:
-	var total: float = rig.get_meta(_META_TOTAL_WEIGHT, -1.0)
-	if total >= 0.0:
-		return total
-	total = rig.slotData.itemData.weight
-	for nestedItem in rig.slotData.nested:
-		total += nestedItem.weight
-	rig.set_meta(_META_TOTAL_WEIGHT, total)
-	return total
 
 
 func _optic_lens_aim_z(optic) -> float:
