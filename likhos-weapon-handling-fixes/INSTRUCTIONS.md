@@ -12,6 +12,8 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 
 - `Handling.WeaponHandling`
 - `WeaponRig._input`
+- `WeaponRig.UpdateAimOffset`
+- `Controller._input`
 - `Character.Stamina`
 
 **Pre + Post hooks** (additive, run before/after vanilla, coexist with other mods cleanly):
@@ -19,7 +21,6 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `WeaponRig.AmmoCheck` (pre and post)
 - `WeaponRig.ADS` (post)
 - `WeaponRig._physics_process` (pre)
-- `WeaponRig._ready` (post)
 - `Camera.ScopeDOF` (post)
 - `Controller.MovementStates` (pre and post)
 - `Noise._physics_process` (post)

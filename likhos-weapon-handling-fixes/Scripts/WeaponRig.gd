@@ -126,17 +126,30 @@ func on_ammo_check_post() -> void:
 	rig.gameData.weaponPosition = _ammo_check_saved_position
 
 
-func on_ready_post() -> void:
+func on_update_aim_offset() -> void:
 	var rig = _lib._caller
 	if rig == null:
 		return
-	# Vanilla M4A1_Rig.tscn sets backSightIndex but never sets frontSightIndex,
-	# leaving it at the export default 0. With foldSights = true, UpdateAimOffset
-	# writes a fold rotation to bone 0 (M4A1_Body, the root) every call, which
-	# the AnimationTree reverts on the next physics tick — visible as a flicker.
-	# Alias frontSightIndex to backSightIndex so the redundant write is harmless.
-	if rig.data != null && rig.data.foldSights && rig.backSightIndex > 0 && rig.frontSightIndex == 0:
-		rig.frontSightIndex = rig.backSightIndex
+	_lib.skip_super()
+
+	var data = rig.data
+	var optic = rig.activeOptic
+
+	if optic && rig.gameData.secondaryOptic && optic.secondary:
+		# BUGFIX HAMR secondary position fix for various guns
+		var primary_in_rig: Vector3 = rig.to_local(optic.global_position)
+		var secondary_in_rig: Vector3 = rig.to_local(optic.secondary.global_position)
+		rig.aimOffset = optic.position.y + (secondary_in_rig.y - primary_in_rig.y)
+	elif optic:
+		rig.aimOffset = optic.position.y
+	else:
+		rig.aimOffset = 0.0
+
+	if data.foldSights:
+		var rot = Quaternion.from_euler(Vector3(data.foldSightsRotation if optic else 0.0, 0, 0))
+		rig.skeleton.set_bone_pose_rotation(rig.backSightIndex, rot)
+		if rig.frontSightIndex: # BUGFIX - frontSightIndex is not set on M4A1 - causes flickering if not skipped
+			rig.skeleton.set_bone_pose_rotation(rig.frontSightIndex, rot)
 
 
 func on_ads_post(delta: float) -> void:

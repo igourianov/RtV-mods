@@ -48,7 +48,6 @@ func on_input(evt) -> void:
 		_mouse_input(ctrl, evt)
 		return
 
-var _sens: float = 0.0
 
 func _mouse_input(ctrl, evt) -> void:
 	if gameData.freeze || gameData.isCaching:
@@ -65,10 +64,6 @@ func _mouse_input(ctrl, evt) -> void:
 		sensitivity = gameData.scopeSensitivity * 0.5
 	else:
 		sensitivity = gameData.scopeSensitivity
-
-	if _sens != sensitivity:
-		Out.debug("sensitivity:", sensitivity)
-		_sens = sensitivity
 
 	var factor = deg_to_rad(clampf(sensitivity, 0.1, 2.0) / 10.0)
 	var y_sign = 1.0 if gameData.mouseMode == 2 else -1.0

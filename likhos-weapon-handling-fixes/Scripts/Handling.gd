@@ -146,32 +146,21 @@ func _weapon_handling(h, rig, delta: float) -> bool:
 
 	# vanilla logic
 	if ModConfig.disable_optic_override:
-		if rig.activeOptic:
-			h.targetPosition = Vector3(0.0, -rig.aimOffset, data.aimPosition.z)
-		else:
-			h.targetPosition = data.aimPosition
+		h.targetPosition = Vector3(0.0, -rig.aimOffset, data.aimPosition.z) if optic else data.aimPosition
 		h.targetRotation = data.aimRotation
 		if gameData.isScoped && !gameData.PIP:
 			h.targetPosition -= Vector3(0.0, 0.0, 0.1)
 		return true
 
-	if optic && gameData.PIP && optic.attachmentData.scope && !gameData.secondaryOptic:
-		var aim_z = _optic_lens_aim_z(optic) + _FIXED_SCOPE_AIM_OFFSET - ModConfig.eye_relief_offset
-		h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z)
-	elif optic && gameData.PIP && optic.attachmentData.variable && !gameData.secondaryOptic:
-		var aim_z = _optic_lens_aim_z(optic) + _VARIABLE_SCOPE_AIM_OFFSET - ModConfig.eye_relief_offset
-		h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z)
-	elif optic:
-		var y_offset: float = rig.aimOffset
-		if gameData.secondaryOptic && optic.secondary != null:
-			var primary_in_rig: Vector3 = rig.to_local(optic.global_position)
-			var secondary_in_rig: Vector3 = rig.to_local(optic.secondary.global_position)
-			y_offset = optic.position.y + (secondary_in_rig.y - primary_in_rig.y)
-		h.targetPosition = Vector3(0.0, -y_offset, data.aimPosition.z)
-	else:
-		h.targetPosition = data.aimPosition
-	h.targetRotation = data.aimRotation
+	var aim_z = data.aimPosition.z
+	if optic && gameData.PIP && !gameData.secondaryOptic:
+		if optic.attachmentData.scope:
+			aim_z = _optic_lens_aim_z(optic) + _FIXED_SCOPE_AIM_OFFSET - ModConfig.eye_relief_offset
+		elif optic.attachmentData.variable:
+			aim_z = _optic_lens_aim_z(optic) + _VARIABLE_SCOPE_AIM_OFFSET - ModConfig.eye_relief_offset
 
+	h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z) if optic else data.aimPosition
+	h.targetRotation = data.aimRotation
 	return true
 
 
@@ -222,6 +211,7 @@ func on_rig_update_post(_animate) -> void:
 	# save weapon weight for the handling speed calc
 	var weapon = rig.weaponSlot.get_children()[0] if rig && rig.weaponSlot else null
 	_weapon_weight = weapon.Weight() if weapon else 0.0
+	Out.debug("weapon weight: %.1fkg" % _weapon_weight)
 
 	# save laser module reference
 	_laser = null
@@ -229,7 +219,7 @@ func on_rig_update_post(_animate) -> void:
 		if node.visible && node.has_method("PlayLaser"):
 			_laser = node
 
-	# BUG FIX
+	# BUGFIX
 	# Vanilla forgets to reset secondaryOptic flag when equipping another optic 
 	# Causes other scopes to break in PIP mode
 	var optic = rig.activeOptic if rig else null
