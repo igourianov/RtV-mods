@@ -50,83 +50,77 @@ func on_weapon_handling(delta: float) -> void:
 		return
 	_lib.skip_super()
 
-	_weapon_handling(h, h.get_parent(), delta)
+	if gameData.freeze:
+		return
+
+	_handle_input(h)
 
 	if !gameData.isCanted:
 		_laser_deactivate(h)
 	elif ModConfig.laser_auto_on:
 		_laser_activate(h)
 
+	if _override_handling(h):
+		_handlingMode = HandlingMode.Default
+		gameData.isAiming = false
+		gameData.isCanted = false
+	elif !_weapon_handling(h, h.get_parent(), delta):
+		_set_target_idle(h)
+
 	_apply_target(h, delta)
 
 
-func _weapon_handling(h, rig, delta: float) -> void:
-	var data = h.data
-	var optic = rig.activeOptic
-
-	if gameData.freeze:
-		return
-
-	if gameData.isClearing:
-		h.targetPosition = data.collisionPosition
-		h.targetRotation = data.collisionRotation
-		_handlingMode = HandlingMode.Default
-		gameData.isAiming = false
-		gameData.isCanted = false		
-		return
-
-	if h.collision.is_colliding():
-		h.targetPosition = data.collisionPosition
-		h.targetRotation = data.collisionRotation
-		gameData.isColliding = true
-		gameData.isAiming = false
-		gameData.isCanted = false
-		_handlingMode = HandlingMode.Default
-		return
-
-	gameData.isColliding = false
-
-	if gameData.isPlacing:
-		gameData.weaponPosition = 1
-		_set_target_idle(h)
-		_handlingMode = HandlingMode.Default
-		gameData.isAiming = false
-		gameData.isCanted = false
-		return
-
-	if gameData.isInspecting:
-		h.targetPosition = data.inspectPosition
-		h.targetRotation = data.inspectRotation
-		_handlingMode = HandlingMode.Default
-		gameData.isAiming = false
-		gameData.isCanted = false
-		return
-
-	if gameData.isInserting:
-		_set_target_idle(h)
-		_handlingMode = HandlingMode.Default
-		gameData.isAiming = false
-		gameData.isCanted = false
-		return
-
-	if gameData.isRunning || gameData.isChecking || (gameData.isReloading && data.weaponAction != "Manual"):
-		gameData.isAiming = false
-		if !gameData.isRunning:
-			gameData.isCanted = false
-		_handlingMode = HandlingMode.Default
-		_set_target_idle(h)
-		return
-
+func _handle_input(h):
+	var aimToggle = gameData.aimMode == 2
 	var cantToggle = false
+
 	if ModConfig.cant_mode == "default":
-		cantToggle = gameData.aimMode == 2
+		cantToggle = aimToggle
 	elif ModConfig.cant_mode == "toggle":
 		cantToggle = true
-
+			
 	if !cantToggle:
 		gameData.isCanted = Input.is_action_pressed("canted")
 	elif Input.is_action_just_pressed("canted"):
 		gameData.isCanted = !gameData.isCanted 
+
+	if !aimToggle:
+		gameData.isAiming = Input.is_action_pressed("aim")
+	elif Input.is_action_just_pressed("aim"):
+		gameData.isAiming = !gameData.isAiming
+
+	gameData.isColliding = h.collision.is_colliding()
+
+
+func _override_handling(h) -> bool:
+	var data = h.data
+
+	if gameData.isClearing || gameData.isColliding:
+		h.targetPosition = data.collisionPosition
+		h.targetRotation = data.collisionRotation
+		return true
+
+	if gameData.isPlacing || gameData.isInserting:
+		gameData.weaponPosition = 1
+		_set_target_idle(h)
+		return true
+
+	if gameData.isInspecting:
+		gameData.weaponPosition = 1
+		h.targetPosition = data.inspectPosition
+		h.targetRotation = data.inspectRotation
+		return true
+
+	if gameData.isRunning || gameData.isChecking || (gameData.isReloading && data.weaponAction != "Manual"):
+		_set_target_idle(h)
+		return true
+
+	return false
+
+
+func _weapon_handling(h, rig, delta: float) -> bool:
+	var data = h.data
+	var optic = rig.activeOptic
 
 	if gameData.isCanted:
 		_handlingMode = HandlingMode.Cant
@@ -136,16 +130,10 @@ func _weapon_handling(h, rig, delta: float) -> void:
 		else:
 			h.targetPosition = data.cantedPosition + Vector3(0.0, -0.05, 0.0)
 			h.targetRotation = data.cantedRotation + Vector3(0.0, 0.0, -20.0)
-		return
-
-	if gameData.aimMode == 1: # hold
-		gameData.isAiming = Input.is_action_pressed("aim")
-	elif Input.is_action_just_pressed("aim"):
-		gameData.isAiming = !gameData.isAiming
+		return true
 
 	if !gameData.isAiming:
-		_set_target_idle(h)
-		return
+		return false
 
 	if optic == null:
 		_handlingMode = HandlingMode.Default
@@ -156,6 +144,7 @@ func _weapon_handling(h, rig, delta: float) -> void:
 	else:
 		_handlingMode = HandlingMode.RDS
 
+	# vanilla logic
 	if ModConfig.disable_optic_override:
 		if rig.activeOptic:
 			h.targetPosition = Vector3(0.0, -rig.aimOffset, data.aimPosition.z)
@@ -164,25 +153,26 @@ func _weapon_handling(h, rig, delta: float) -> void:
 		h.targetRotation = data.aimRotation
 		if gameData.isScoped && !gameData.PIP:
 			h.targetPosition -= Vector3(0.0, 0.0, 0.1)
+		return true
+
+	if optic && gameData.PIP && optic.attachmentData.scope && !gameData.secondaryOptic:
+		var aim_z = _optic_lens_aim_z(optic) + _FIXED_SCOPE_AIM_OFFSET - ModConfig.eye_relief_offset
+		h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z)
+	elif optic && gameData.PIP && optic.attachmentData.variable && !gameData.secondaryOptic:
+		var aim_z = _optic_lens_aim_z(optic) + _VARIABLE_SCOPE_AIM_OFFSET - ModConfig.eye_relief_offset
+		h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z)
+	elif optic:
+		var y_offset: float = rig.aimOffset
+		if gameData.secondaryOptic && optic.secondary != null:
+			var primary_in_rig: Vector3 = rig.to_local(optic.global_position)
+			var secondary_in_rig: Vector3 = rig.to_local(optic.secondary.global_position)
+			y_offset = optic.position.y + (secondary_in_rig.y - primary_in_rig.y)
+		h.targetPosition = Vector3(0.0, -y_offset, data.aimPosition.z)
 	else:
-		if optic && gameData.PIP && optic.attachmentData.scope && !gameData.secondaryOptic:
-			var aim_z = _optic_lens_aim_z(optic) + _FIXED_SCOPE_AIM_OFFSET - ModConfig.eye_relief_offset
-			h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z)
-		elif optic && gameData.PIP && optic.attachmentData.variable && !gameData.secondaryOptic:
-			var aim_z = _optic_lens_aim_z(optic) + _VARIABLE_SCOPE_AIM_OFFSET - ModConfig.eye_relief_offset
-			h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z)
-		elif optic:
-			var y_offset: float = rig.aimOffset
-			if gameData.secondaryOptic && optic.secondary != null:
-				var primary_in_rig: Vector3 = rig.to_local(optic.global_position)
-				var secondary_in_rig: Vector3 = rig.to_local(optic.secondary.global_position)
-				y_offset = optic.position.y + (secondary_in_rig.y - primary_in_rig.y)
-			h.targetPosition = Vector3(0.0, -y_offset, data.aimPosition.z)
-			if gameData.isScoped:
-				h.targetPosition += Vector3(0.0, 0.0, -0.1)
-		else:
-			h.targetPosition = data.aimPosition
-		h.targetRotation = data.aimRotation
+		h.targetPosition = data.aimPosition
+	h.targetRotation = data.aimRotation
+
+	return true
 
 
 func _set_target_idle(h):
@@ -243,9 +233,9 @@ func on_rig_update_post(_animate) -> void:
 	# Vanilla forgets to reset secondaryOptic flag when equipping another optic 
 	# Causes other scopes to break in PIP mode
 	var optic = rig.activeOptic if rig else null
-	if gameData.secondaryOptic:
-		if optic == null || !optic.attachmentData.secondary || optic.secondary == null:
-			gameData.secondaryOptic = false
+	if gameData.secondaryOptic && !(optic && optic.secondary):
+		gameData.secondaryOptic = false
+
 
 
 func _optic_lens_aim_z(optic) -> float:

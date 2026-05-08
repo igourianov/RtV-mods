@@ -3,6 +3,7 @@ extends RefCounted
 const _FIXED_SCOPE_AIM_OFFSET = 0.015
 const _VARIABLE_SCOPE_AIM_OFFSET = 0.03
 const ModConfig = preload("./ModConfig.gd")
+const Out = preload("../Lib/Out.gd")
 
 var _lib
 var _preferences: Preferences
