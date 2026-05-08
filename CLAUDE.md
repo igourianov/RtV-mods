@@ -24,6 +24,8 @@ Contains:
 * `Out.gd` - class for printing debug and warning statements in normalized way
 * `Inputs.gd` - class to control in-game action bindings
 
+mod-lib has it's own set of hooks and dependencies, that should be included with every mod.
+
 ## `src/` is the decompiled game (reference only, gitignored)
 
 `src/` holds the extracted original project pulled from `RTV.pck` with GDRE Tools v2.5.0-beta.5 (see `src/gdre_export.log`). It is the authoritative reference for the game's scripts, scenes, resources and UIDs, but it is **not** part of this repo and must not be committed. Treat it as read-only when planning mod changes.
@@ -66,7 +68,8 @@ Each mod folder is the zippable tree. Source layout in this repo:
 ```
 <mod-id>/                       ← repo root folder
 ├── mod.txt                     ← shipped at archive root
-├── README.md                   ← optional, shipped at archive root
+├── README.md                   ← optional, shipped at archive root (user friendly description of what mod does)
+├── INSTRUCTIONS.md             ← optional, shipped at archive root (more technical description - covers prerequisites and compatibility, including hooks)
 └── Scripts/                    ← namespaced mod scripts
     ├── Main.gd                 ← autoload entry point (registers overrides)
     └── <OverrideScript>.gd     ← extends "res://Scripts/<Original>.gd"
