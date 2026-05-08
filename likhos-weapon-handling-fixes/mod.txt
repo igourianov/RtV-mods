@@ -8,7 +8,7 @@ debug=true
 
 [hooks]
 "res://Scripts/Handling.gd"="WeaponHandling"
-"res://Scripts/WeaponRig.gd"="AmmoCheck, ADS, UpdateAimOffset, _input, _physics_process, Insert"
+"res://Scripts/WeaponRig.gd"="AmmoCheck, ADS, UpdateAimOffset, _input, Insert"
 "res://Scripts/Camera.gd"="ScopeDOF"
 "res://Scripts/Controller.gd"="MovementStates, _input"
 "res://Scripts/Noise.gd"="_physics_process"
@@ -18,7 +18,7 @@ debug=true
 "res://Scripts/Character.gd"="Stamina"
 "res://Scripts/Optic.gd"="_physics_process"
 "res://Scripts/RigManager.gd"="UpdateRig"
-"res://Scripts/Inputs.gd"="CreateActions"
+"res://Scripts/Inputs.gd"="CreateActions,ResetActions"
 
 [autoload]
 LikhosWeaponHandlingFixes="res://mods/likhos-weapon-handling-fixes/Scripts/Main.gd"

@@ -20,7 +20,6 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 
 - `WeaponRig.AmmoCheck` (pre and post)
 - `WeaponRig.ADS` (post)
-- `WeaponRig._physics_process` (pre)
 - `Camera.ScopeDOF` (post)
 - `Controller.MovementStates` (pre and post)
 - `Noise._physics_process` (post)
