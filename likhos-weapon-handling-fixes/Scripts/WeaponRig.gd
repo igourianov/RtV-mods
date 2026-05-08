@@ -5,6 +5,8 @@ const _VARIABLE_SCOPE_AIM_OFFSET = 0.03
 const ModConfig = preload("./ModConfig.gd")
 const Out = preload("../Lib/Out.gd")
 
+var gameData = preload("res://Resources/GameData.tres")
+
 var _lib
 var _preferences: Preferences
 var _ammo_check_saved_position: int = 0
@@ -195,3 +197,15 @@ func on_ads_post(delta: float) -> void:
 func distance_factor(base: float, distance: float) -> float:
 	var f: float = base / (base + distance)
 	return f
+
+
+func on_insert_post() -> void:
+	var rig = _lib._caller
+	if rig == null:
+		return
+
+	# BUGFIX chamber should always be cleared when opening bolt
+	if gameData.isInserting && rig.data.weaponType == "Bolt" && Input.is_action_just_pressed("prepare"):
+		rig.slotData.chamber = false
+		rig.slotData.casing = false
+		Out.debug("clear chamber")

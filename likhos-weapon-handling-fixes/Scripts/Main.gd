@@ -49,6 +49,7 @@ func setup(lib):
 	register_hook("weaponrig-_input", _weapon_rig.on_input)
 	register_hook("weaponrig-_physics_process-pre", _weapon_rig.on_physics_process_pre)
 	register_hook("weaponrig-updateaimoffset", _weapon_rig.on_update_aim_offset)
+	register_hook("weaponrig-insert-post", _weapon_rig.on_insert_post)
 	register_hook("camera-scopedof-post", _camera.on_scope_dof_post)
 	register_hook("controller-movementstates-pre", _controller.on_movement_states_pre)
 	register_hook("controller-movementstates-post", _controller.on_movement_states_post)
