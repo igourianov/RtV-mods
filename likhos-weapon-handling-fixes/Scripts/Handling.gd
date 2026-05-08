@@ -219,12 +219,12 @@ func on_rig_update_post(_animate) -> void:
 		if node.visible && node.has_method("PlayLaser"):
 			_laser = node
 
-	# BUGFIX
 	# Vanilla forgets to reset secondaryOptic flag when equipping another optic 
 	# Causes other scopes to break in PIP mode
 	var optic = rig.activeOptic if rig else null
 	if gameData.secondaryOptic && !(optic && optic.secondary):
 		gameData.secondaryOptic = false
+		Out.bugfix("reset gameData.secondaryOptic flag")
 
 
 

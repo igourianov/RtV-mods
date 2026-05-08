@@ -117,7 +117,9 @@ func on_ammo_check_post() -> void:
 	var rig = _lib._caller
 	if rig == null:
 		return
-	rig.gameData.weaponPosition = _ammo_check_saved_position
+	if rig.gameData.weaponPosition != _ammo_check_saved_position:
+		rig.gameData.weaponPosition = _ammo_check_saved_position
+		Out.bugfix("reset weapon position to original after ammo check")
 
 
 func on_update_aim_offset() -> void:
@@ -130,10 +132,11 @@ func on_update_aim_offset() -> void:
 	var optic = rig.activeOptic
 
 	if optic && rig.gameData.secondaryOptic && optic.secondary:
-		# BUGFIX HAMR secondary position fix for various guns
+		# HAMR secondary position fix for Russian guns
 		var primary_in_rig: Vector3 = rig.to_local(optic.global_position)
 		var secondary_in_rig: Vector3 = rig.to_local(optic.secondary.global_position)
 		rig.aimOffset = optic.position.y + (secondary_in_rig.y - primary_in_rig.y)
+		Out.bugfix("recalc secondary optic Y offset")
 	elif optic:
 		rig.aimOffset = optic.position.y
 	else:
@@ -142,8 +145,10 @@ func on_update_aim_offset() -> void:
 	if data.foldSights:
 		var rot = Quaternion.from_euler(Vector3(data.foldSightsRotation if optic else 0.0, 0, 0))
 		rig.skeleton.set_bone_pose_rotation(rig.backSightIndex, rot)
-		if rig.frontSightIndex: # BUGFIX - frontSightIndex is not set on M4A1 - causes flickering if not skipped
+		if rig.frontSightIndex: # frontSightIndex is not set on M4A1
 			rig.skeleton.set_bone_pose_rotation(rig.frontSightIndex, rot)
+		else:
+			Out.bugfix("do not attempt to rotate fron sight on M4A1 (flicker)")
 
 
 func on_ads_post(delta: float) -> void:
@@ -186,6 +191,7 @@ func on_ads_post(delta: float) -> void:
 	var distance = distance_factor(_VARIABLE_SCOPE_AIM_OFFSET, ModConfig.eye_relief_offset)
 	optic.camera.fov = lerp(optic.camera.fov, distance * gd.baseFOV * lens_scale / ModConfig.current_scope_mag, delta * 10.0)
 
+
 func distance_factor(base: float, distance: float) -> float:
 	var f: float = base / (base + distance)
 	return f
@@ -196,8 +202,8 @@ func on_insert_post() -> void:
 	if rig == null:
 		return
 
-	# BUGFIX chamber should always be cleared when opening bolt
+	# chamber should always be cleared when opening bolt
 	if gameData.isInserting && rig.data.weaponType == "Bolt" && Input.is_action_just_pressed("prepare"):
 		rig.slotData.chamber = false
 		rig.slotData.casing = false
-		Out.debug("clear chamber")
+		Out.bugfix("always clear chamber when opening bolt")

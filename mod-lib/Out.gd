@@ -8,3 +8,6 @@ static func debug(...args):
 
 static func warning(...args):
 	push_warning(prefix, " [WARNING] ", " ".join(args.map(str)))
+
+static func bugfix(...args):
+	print(prefix, " [BUGFIX] ", " ".join(args.map(str)))
