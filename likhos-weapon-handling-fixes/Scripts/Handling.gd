@@ -180,7 +180,7 @@ func _set_target_idle(h):
 	h.targetPosition = _PATROL_POSITION if _PATROL_WEAPON_TYPES.has(data.weaponType) else data.lowPosition
 
 	if !_PATROL_WEAPON_TYPES.has(data.weaponType):
-		h.lowRotation = data.lowRotation
+		h.targetRotation = data.lowRotation
 	elif gameData.secondaryOptic:
 		h.targetRotation = _PATROL_ROTATION + _SECONDARY_OPTIC_LOW_ROTATION_OFFSET
 	elif data.file == "Mosin":
