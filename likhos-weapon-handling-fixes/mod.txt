@@ -1,14 +1,14 @@
 [mod]
 name="Likho's VosTac"
 id="likhos-weapon-handling-fixes"
-version="1.13.658"
+version="1.13.666"
 prefix="[likho-vostac]"
 description="Likho's collection of game fixes and realism improvements"
 debug=true
 
 [hooks]
 "res://Scripts/Handling.gd"="WeaponHandling"
-"res://Scripts/WeaponRig.gd"="AmmoCheck, ADS, UpdateAimOffset, _input, _physics_process"
+"res://Scripts/WeaponRig.gd"="AmmoCheck, ADS, UpdateAimOffset, _input, _physics_process, Insert"
 "res://Scripts/Camera.gd"="ScopeDOF"
 "res://Scripts/Controller.gd"="MovementStates, _input"
 "res://Scripts/Noise.gd"="_physics_process"

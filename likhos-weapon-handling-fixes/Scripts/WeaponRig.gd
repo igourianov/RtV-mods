@@ -106,14 +106,6 @@ func on_input(event) -> void:
 			rig.PlayRailMove()
 
 
-func on_physics_process_pre(_delta: float) -> void:
-	var rig = _lib._caller
-	if rig == null:
-		return
-	if rig.gameData.isInspecting:
-		_lib.skip_super()
-
-
 func on_ammo_check_pre() -> void:
 	var rig = _lib._caller
 	if rig == null:

@@ -29,7 +29,7 @@ var _optic
 func setup(lib):
 
 	var preferences = Preferences.Load()
-	
+
 	_weapon_rig = WeaponRig.new(lib, preferences)
 	_handling = Handling.new(lib, preferences)
 	_camera = Camera.new(lib)
@@ -47,7 +47,6 @@ func setup(lib):
 	register_hook("weaponrig-ammocheck-post", _weapon_rig.on_ammo_check_post)
 	register_hook("weaponrig-ads-post", _weapon_rig.on_ads_post)
 	register_hook("weaponrig-_input", _weapon_rig.on_input)
-	register_hook("weaponrig-_physics_process-pre", _weapon_rig.on_physics_process_pre)
 	register_hook("weaponrig-updateaimoffset", _weapon_rig.on_update_aim_offset)
 	register_hook("weaponrig-insert-post", _weapon_rig.on_insert_post)
 	register_hook("camera-scopedof-post", _camera.on_scope_dof_post)
