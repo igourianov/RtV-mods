@@ -1,6 +1,7 @@
 extends RefCounted
 
 const ModConfig = preload("./ModConfig.gd")
+var gameData = preload("res://Resources/GameData.tres")
 
 var _lib
 var _crosshair: Control
@@ -108,19 +109,17 @@ func _setup_crosshair(hud) -> void:
 func _update_crosshair_visibility(hud) -> void:
 	if !is_instance_valid(_crosshair):
 		return
-	var gd = hud.gameData
-	var aimingMode = gd.isAiming || gd.isCanted || gd.weaponPosition == 2
-	var aimBlocked = gd.menu || gd.isDead || gd.isInspecting || gd.transition || gd.isTransitioning
+	var aimingMode = gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2
+	var aimBlocked = gameData.menu || gameData.isDead || gameData.isInspecting || gameData.transition || gameData.isTransitioning
 	_crosshair.visible = !aimingMode && !aimBlocked && ModConfig.crosshair_style != "off"
 
 func _update_interaction_tooltip(hud) -> void:
-	var gd = hud.gameData
-	var aimingMode = gd.isAiming || gd.isCanted || gd.weaponPosition == 2
-	hud.tooltip.visible = gd.interaction && !gd.transition && !aimingMode
+	var aimingMode = gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2
+	hud.label.text = str(gameData.tooltip)
+	hud.tooltip.visible = gameData.interaction && !gameData.transition && !aimingMode
 
 func _update_ammo_overlays(hud) -> void:
-	var gd = hud.gameData
-	if gd.isInspecting && ModConfig.ammo_tooltips:
+	if gameData.isInspecting && ModConfig.ammo_tooltips:
 		hud.magazine.visible = true
 		hud.chamber.visible = true
 
@@ -155,8 +154,8 @@ func _create_attachment_tooltips(hud) -> void:
 func _update_attachment_tooltips(hud) -> void:
 	if _att_tooltips.is_empty():
 		return
-	var gd = hud.gameData
-	if !ModConfig.attachment_tooltips || !gd.isInspecting:
+
+	if !ModConfig.attachment_tooltips || !gameData.isInspecting:
 		for tt in _att_tooltips.values():
 			tt.hide()
 		return
