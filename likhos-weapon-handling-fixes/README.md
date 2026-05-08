@@ -19,10 +19,11 @@ Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 
 ### Vanilla Fixes
 * Ammo check no longer forces weapon into raised position (prior stance preserved)
-* Canted aim toggle no longer blocked by interactables
+* Canted aim activation no longer blocked by interactables
+* Interactable tooltip no longer blocks vision when aiming around doorways
 * Manual reload (Mosin, 870) clipping issues fixed (weapon moves to default low position)
 * Number of HAMR fixes
-* Interactable tooltip no longer blocks vision when aiming around doorways
+* Fixed Mosin ending up in weird state (mag + 0) after closing the bolt. Now both live round and spent casing are always ejected when opening bolt.
 
 ### PIP scope mode: realism
 
