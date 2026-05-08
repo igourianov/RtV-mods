@@ -76,7 +76,7 @@ func _patch_items(lib) -> void:
 
 
 func _register_recipes(lib):
-	lib.register(lib.Registry.RECIPES, "AFAK", {
+	lib.register(lib.Registry.RECIPES, "tacmed_AFAK", {
 		"recipe": AFAK,
 		"category": "medical",
 	})
