@@ -1,0 +1,11 @@
+- rework hand stamina (base on weapon weight)
+- rework leg stamina (base on inventory weight)
+- check pip scope being very dark at night
+- implement canted/aim overriding each other
+- holding R key to check ammo
+- integrate with Rig and Belt Storage mod
+- integrate with xp and skills mod
+- food and sleep rework
+- AFAK recipe conflict with Crafting Expansion mod
+- MP7 clipping in canted mode - will not fix (missing texture on the gun)
+- laser dot-ray misaligned
