@@ -11,6 +11,7 @@ const HUD = preload("./HUD.gd")
 const Recoil = preload("./Recoil.gd")
 const Character = preload("./Character.gd")
 const Optic = preload("./Optic.gd")
+const Laser = preload("./Laser.gd")
 
 
 var _handling
@@ -24,6 +25,7 @@ var _config
 var _recoil
 var _character
 var _optic
+var _laser
 
 
 func setup(lib):
@@ -40,6 +42,7 @@ func setup(lib):
 	_recoil = Recoil.new(lib)
 	_character = Character.new(lib)
 	_optic = Optic.new(lib, preferences)
+	_laser = Laser.new(lib)
 
 	register_hook("handling-weaponhandling", _handling.on_weapon_handling)
 	register_hook("rigmanager-updaterig-post", _handling.on_rig_update_post)
@@ -58,6 +61,7 @@ func setup(lib):
 	register_hook("recoil-applyrecoil-post", _recoil.on_apply_recoil_post)
 	register_hook("character-stamina", _character.on_stamina)
 	register_hook("optic-_physics_process-pre", _optic.on_physics_process_pre)
+	register_hook("laser-_input", _laser.on_input)
 
 	var zoomIn = InputEventMouseButton.new()
 	zoomIn.button_index = MOUSE_BUTTON_WHEEL_UP

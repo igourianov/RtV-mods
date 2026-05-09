@@ -25,6 +25,7 @@ Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 * Manual reload (Mosin, 870) clipping issues fixed (weapon moves to default low position)
 * Number of HAMR fixes
 * Fixed Mosin ending up in weird state (mag + 0) after closing the bolt. Now both live round and spent casing are always ejected when opening bolt.
+* Fixed laser ray misaligned with collision dot. You may notice that bullet holes are now very slightly offset from the laser dot - that's how real lasers work.
 
 ### PIP scope mode: realism
 
@@ -85,10 +86,6 @@ HAMR in vanilla is bugged to hell and back. This mod introduces fixes and usabil
 ## Why this is one mod and not several
 
 These changes started out as separate mods. The catch is that Road to Vostok's scripts have a handful of "god" methods that fold a lot of unrelated behavior into a single function and mix state mutation with rendering side effects in the same call. Hooking a method through the mod loader is all-or-nothing, you can't override only part of a function. So as soon as one fix needed to touch, say, `Handling.WeaponHandling`, every other tweak that also lives in that method had to ship in the same mod or get clobbered by it. That's how the ammo-check, canted, laser and PIP changes ended up bundled together.
-
-## Known issues
-
-- **Laser beam doesn't line up with the dot at very close range.** On targets right in front of you the visible beam diverges from the projected dot. This is a vanilla bug, not something the mod introduces. Vanilla simply hid it by having the gun model block the close portion of the beam; this mod's tweaked weapon pose moves the gun out of that path, exposing the misalignment.
 
 ## [Check out my other mods](https://modworkshop.net/search/mods?query=%22Likho%27s%22&sort=likes)
 

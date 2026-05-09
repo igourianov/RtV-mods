@@ -13,6 +13,7 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `Handling.WeaponHandling`
 - `WeaponRig._input`
 - `WeaponRig.UpdateAimOffset`
+- `Laser._input`
 - `Controller.MovementStates`
 - `Controller._input`
 - `Character.Stamina`

@@ -2,7 +2,6 @@
 - food and sleep rework
 - implement canted/aim overriding each other
 - holding R key to check ammo
-- laser dot-ray misaligned
 - split canted rotation on with/without optic
 
 # Closed
@@ -12,4 +11,5 @@
 - integrate with xp and skills mod - wont work; it doesn't publish maxHP var
 - AFAK recipe conflict with Crafting Expansion mod - fixed
 - rework hand stamina (base on weapon weight) - done
-- rework leg stamina (base on inventory weight) - done, not inv weight factor, instead overweight blocks sprint
+- rework leg stamina (base on inventory weight) - done
+- laser dot-ray misaligned - fixed

@@ -250,7 +250,7 @@ func _laser_activate(h) -> void:
 	if !_laser || ModConfig.laser_latch:
 		return
 	_laser.active = true
-	_laser.raycast.global_position = _laser.owner.raycast.global_position
+	#_laser.raycast.global_position = _laser.owner.raycast.global_position
 	_laser.laser.show()
 	_play_laser_sound(_laser, _LASER_IN_START, _LASER_IN_DURATION)
 	ModConfig.laser_latch = true
