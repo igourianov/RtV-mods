@@ -17,7 +17,6 @@ const _PATROL_WEAPON_TYPES = {"Rifle": null, "SMG": null, "Bolt": null, "Shotgun
 const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-10.0, 0.0, 0.0)
 const _MOSIN_LOW_ROTATION_OFFSET = Vector3(-15.0, 15.0, 0.0)
 const _REMINGTON_870_LOW_ROTATION_OFFSET = Vector3(-20.0, 10.0, 0.0)
-const _BASE_WEAPON_WEIGHT = 4.0
 
 # the handling speed modifier - read as % of base
 enum HandlingMode {
@@ -34,7 +33,6 @@ var _flashlight_stream: AudioStream = load("res://Audio/Interaction/Files/Flashl
 var _lens_min_z_cache := {}
 var _handlingMode = HandlingMode.Default
 var _laser
-var _weapon_weight: float = 0.0
 
 
 func _init(lib, preferences: Preferences) -> void:
@@ -78,11 +76,11 @@ func _handle_input(h):
 		cantToggle = aimToggle
 	elif ModConfig.cant_mode == "toggle":
 		cantToggle = true
-			
+
 	if !cantToggle:
 		gameData.isCanted = Input.is_action_pressed("canted")
 	elif Input.is_action_just_pressed("canted"):
-		gameData.isCanted = !gameData.isCanted 
+		gameData.isCanted = !gameData.isCanted
 
 	if !aimToggle:
 		gameData.isAiming = Input.is_action_pressed("aim")
@@ -194,7 +192,7 @@ func _set_target_idle(h):
 func _apply_target(h, delta: float):
 	var speed: float
 	if ModConfig.override_handling_speed:
-		var weightFactor = _BASE_WEAPON_WEIGHT / lerp(_BASE_WEAPON_WEIGHT, _weapon_weight, ModConfig.handling_speed_weight_factor)
+		var weightFactor = ModConfig.BASE_WEAPON_WEIGHT / lerp(ModConfig.BASE_WEAPON_WEIGHT, ModConfig.current_weapon_weight, ModConfig.handling_speed_weight_factor)
 		speed = h.handlingSpeed * (_handlingMode / 100.0) * weightFactor
 	else:
 		speed = h.handlingSpeed
@@ -210,8 +208,8 @@ func on_rig_update_post(_animate) -> void:
 
 	# save weapon weight for the handling speed calc
 	var weapon = rig.weaponSlot.get_children()[0] if rig && rig.weaponSlot else null
-	_weapon_weight = weapon.Weight() if weapon else 0.0
-	Out.debug("weapon weight: %.1fkg" % _weapon_weight)
+	ModConfig.current_weapon_weight = weapon.Weight() if weapon else 0.0
+	Out.debug("weapon weight: %.1fkg" % ModConfig.current_weapon_weight)
 
 	# save laser module reference
 	_laser = null
@@ -219,7 +217,7 @@ func on_rig_update_post(_animate) -> void:
 		if node.visible && node.has_method("PlayLaser"):
 			_laser = node
 
-	# Vanilla forgets to reset secondaryOptic flag when equipping another optic 
+	# Vanilla forgets to reset secondaryOptic flag when equipping another optic
 	# Causes other scopes to break in PIP mode
 	var optic = rig.activeOptic if rig else null
 	if gameData.secondaryOptic && !(optic && optic.secondary):

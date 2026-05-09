@@ -1,6 +1,7 @@
-﻿
+
 # dynamic state vars
 static var current_scope_mag: float = 1.0
+static var current_weapon_weight: float = 0.0
 static var laser_latch: bool = false
 
 # config vars
@@ -47,6 +48,7 @@ const SPEED_MAX = 20.0
 const MULT_MIN = 0.1
 const MULT_MAX = 1.5
 const DEFAULT_EYE_RELIEF_OFFSET = 0.0
+const BASE_WEAPON_WEIGHT: float = 4.0
 
 
 static func _get_config_value(config: ConfigFile, section: String, key: String, default_val):
