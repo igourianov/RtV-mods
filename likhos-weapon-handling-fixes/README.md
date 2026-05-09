@@ -6,7 +6,7 @@ Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 
 ### New Features
 * Major rework of the PIP scope mode for realism
-* Reowrked arm and leg stamina mechanics
+* Reworked arm and leg stamina mechanics
 * Canted aim is now independent with optional laser auto-activation in hold mode (disable in MCM)
 * Mouse sensitivity scales with zoom and stance (canted uses Aim, LPVO 1× uses Aim, mid/high use Scope/Scope×0.5)
 * Movement speeds rescaled and added new breakpoints (see MCM settings)
@@ -40,7 +40,7 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 
 ### Stamina and movement
 
-Both stamina bars now dynamic and much more realistic. There is also now a dynamic delay for beginning recovery after use.
+Both stamina bars are now dynamic and much more realistic. There is also now a dynamic delay for beginning recovery after use.
 
 * Arm stamina drain scales with the weight of the gun held and position it is held in (canted=slower; aim zoomed=faster)
 * Arm stamina recovery and recovery delay scales with the Energy stat
