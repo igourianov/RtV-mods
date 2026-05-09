@@ -39,15 +39,14 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 
 ### Stamina and movement
 
-Both stamina bars now dynamic and much more realistic. There is also now a 2sec delay for beginning recovery after use.
+Both stamina bars now dynamic and much more realistic. There is also now a dynamic delay for beginning recovery after use.
 
-* Arm stamina drain and recovery scale with Energy stat. More energy = faster recovery, slower drain.
-* Arm stamina drain also scales with weapon weight
-* Arm stamina drains faster at high magnification and slower in canted mode
-* Leg stamina drain and recovery scale with Hydration stat, similar to arm stamina.
-* Overweight, Fracture and Stamina=0 now block sprinting
-
-Bonus: Sprint now overrides crouch, so you can panic GTFO when discovered sneaking about.
+* Arm stamina drain scales with the weight of the gun held and position it is held in (canted=slower; aim zoomed=faster)
+* Arm stamina recovery and recovery delay scales with the Energy stat
+* Leg stamina drain scales with inventory weight
+* Leg stamina recovery and recovery delay scales with the Hydration stat
+* Overweight, Fracture and Stamina=0 now block sprinting completely
+* Sprint now overrides crouch, so you can panic GTFO when discovered sneaking about
 
 ### Movement speed rework
 
