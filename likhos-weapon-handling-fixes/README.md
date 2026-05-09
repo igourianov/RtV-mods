@@ -43,10 +43,21 @@ Both stamina bars now dynamic and much more realistic. There is also now a dynam
 
 * Arm stamina drain scales with the weight of the gun held and position it is held in (canted=slower; aim zoomed=faster)
 * Arm stamina recovery and recovery delay scales with the Energy stat
-* Leg stamina drain scales with inventory weight
+* Crouch halves aim stamina drain
+* Leg stamina drain scales with the inventory weight
 * Leg stamina recovery and recovery delay scales with the Hydration stat
-* Overweight, Fracture and Stamina=0 now block sprinting completely
+* Overweight, Fracture and Leg Stamina=0 now block sprinting completely
 * Sprint now overrides crouch, so you can panic GTFO when discovered sneaking about
+
+### Handling speed 
+
+This mod changes weapon handling speed (how fast you transition into desired state) based on stance and optic equipped:
+
+* Default = 100% (vanilla)
+* Aim into a red dot = 115%
+* Canted aim = 130%
+* LPVO at 1x = 105%
+* Magnified scope = 80%
 
 ### Movement speed rework
 
@@ -70,16 +81,6 @@ HAMR in vanilla is bugged to hell and back. This mod introduces fixes and usabil
 * Fixed HAMR's secondary optic switch permanently killing PIP plane on other scopes (state wasn't being properly reset)
 * Fixed HAMR's secondary optic vertical offset on all AK rifles (not RK), SVD and Vintorez (missing rotation calc)
 * Fixed HAMR causing major flickering when toggling secondary on M4A1 (bug with foldable iron sights)
-
-### Dynamic weapon handling speed
-
-This is how fast it takes to transition from one pose to another. Vanilla has it static.
-
-This mod makes handling speed dependent on two factors:
-* Stance: Default=100%, Red dot=115%, Canted aim=130%, LPVO at 1x=105%, Magnified scope=80%
-* Weapon weight (with attachments). Base=4kg, Heavier=slower, Lighter=faster. Weight factor in MCM: 0=no effect on speed, 1.0=actual weight difference from base
-
-You can disable this function completely in MCM.
 
 ## Why this is one mod and not several
 
