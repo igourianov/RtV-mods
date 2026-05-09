@@ -9,16 +9,19 @@ func _init(lib) -> void:
 
 
 func on_input(event: InputEvent) -> void:
+	_lib.skip_super()
 	__input(_lib._caller, event)
+	
 
-func __input(parent, event: InputEvent):
-	if Input.is_action_just_pressed("laser") && parent.visible:
-		parent.active = !parent.active
+func __input(caller, event: InputEvent):
+	if Input.is_action_just_pressed("laser") && caller.visible:
+		caller.active = !caller.active
 
-		if parent.active:
+		if caller.active:
 			Out.bugfix("do not reset laser raycast to owner raycast - they're not supposed to align")
 			#raycast.global_position = owner.raycast.global_position
-			parent.laser.show()
+			caller.laser.show()
 		else:
-			parent.laser.hide()
-		parent.PlayLaser()
+			caller.laser.hide()
+		caller.PlayLaser()
+
