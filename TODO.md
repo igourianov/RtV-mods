@@ -1,8 +1,6 @@
 # TODO
 - food and sleep rework
-- implement canted/aim overriding each other
 - holding R key to check ammo
-- split canted rotation on with/without optic
 
 # Closed
 - MP7 clipping in canted mode - will not fix (missing texture on the gun)
@@ -13,3 +11,5 @@
 - rework hand stamina (base on weapon weight) - done
 - rework leg stamina (base on inventory weight) - done
 - laser dot-ray misaligned - fixed
+- split canted rotation on with/without optic - done
+- implement canted/aim overriding each other - done

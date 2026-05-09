@@ -33,6 +33,8 @@ var _flashlight_stream: AudioStream = load("res://Audio/Interaction/Files/Flashl
 var _lens_min_z_cache := {}
 var _handlingMode = HandlingMode.Default
 var _laser
+var _canted_elapsed: float = 0
+var _aim_elapsed: float = 0
 
 
 func _init(lib, preferences: Preferences) -> void:
@@ -51,7 +53,7 @@ func on_weapon_handling(delta: float) -> void:
 	if gameData.freeze:
 		return
 
-	_handle_input(h)
+	_handle_input(h, delta)
 
 	if !gameData.isCanted:
 		_laser_deactivate(h)
@@ -68,7 +70,7 @@ func on_weapon_handling(delta: float) -> void:
 	_apply_target(h, delta)
 
 
-func _handle_input(h):
+func _handle_input(h, delta: float):
 	var aimToggle = gameData.aimMode == 2
 	var cantToggle = false
 
@@ -86,6 +88,16 @@ func _handle_input(h):
 		gameData.isAiming = Input.is_action_pressed("aim")
 	elif Input.is_action_just_pressed("aim"):
 		gameData.isAiming = !gameData.isAiming
+
+	_aim_elapsed = _aim_elapsed + delta if gameData.isAiming else 0.0
+	_canted_elapsed = _canted_elapsed + delta if gameData.isCanted else 0.0
+
+	if gameData.isAiming && gameData.isCanted:
+		# resolve action conflict - last one wins
+		if _aim_elapsed > _canted_elapsed:
+			gameData.isAiming = false
+		else:
+			gameData.isCanted = false
 
 	gameData.isColliding = h.collision.is_colliding()
 
