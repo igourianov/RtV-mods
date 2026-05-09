@@ -126,8 +126,11 @@ func _weapon_handling(h, rig, delta: float) -> bool:
 			h.targetPosition = data.cantedPosition
 			h.targetRotation = data.cantedRotation
 		else:
-			h.targetPosition = data.cantedPosition + Vector3(0.0, -0.05, 0.0)
-			h.targetRotation = data.cantedRotation + Vector3(0.0, 0.0, -20.0)
+			h.targetPosition = data.cantedPosition + Vector3(0.0, -0.03, 0.0)
+			if optic && (optic.attachmentData.variable || optic.attachmentData.scope):
+				h.targetRotation = data.cantedRotation + Vector3(0.0, 0.0, -20.0)
+			else:
+				h.targetRotation = data.cantedRotation + Vector3(0.0, 0.0, 10.0)
 		return true
 
 	if !gameData.isAiming:
