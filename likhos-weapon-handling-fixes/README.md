@@ -6,6 +6,7 @@ Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 
 ### New Features
 * Major rework of the PIP scope mode for realism
+* Reowrked arm and leg stamina mechanics
 * Canted aim is now independent with optional laser auto-activation in hold mode (disable in MCM)
 * Mouse sensitivity scales with zoom and stance (canted uses Aim, LPVO 1× uses Aim, mid/high use Scope/Scope×0.5)
 * Movement speeds rescaled and added new breakpoints (see MCM settings)
@@ -35,6 +36,18 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 - **Scope DOF reworked:** scales with magnification, near-DOF enabled for foreground/background softening
 - **PIP MSAA matches main viewport:** the optic's SubViewport now mirrors the antialiasing settings used by the rest of the game - vanilla left it disabled (disable in MCM if it causes performance issues)
 - **NVG-aware PIP blur:** when night vision is active and you aim a magnified optic, the PIP image will now blur. Real scopes cannot work under NVG because of eye relief differences (disable in MCM)
+
+### Stamina and movement
+
+Both stamina bars now dynamic and much more realistic. There is also now a 2sec delay for beginning recovery after use.
+
+* Arm stamina drain and recovery scale with Energy stat. More energy = faster recovery, slower drain.
+* Arm stamina drain also scales with weapon weight
+* Arm stamina drains faster at high magnification and slower in canted mode
+* Leg stamina drain and recovery scale with Hydration stat, similar to arm stamina.
+* Overweight, Fracture and Stamina=0 now block sprinting
+
+Bonus: Sprint now overrides crouch, so you can panic GTFO when discovered sneaking about.
 
 ### Movement speed rework
 
