@@ -2,12 +2,12 @@ extends RefCounted
 
 const ModConfig = preload("./ModConfig.gd")
 
-const STAMINA_VITAL_BREAKPOINT: float = 75.0
+const STAMINA_VITAL_BREAKPOINT: float = 50.0
 const STAMINA_RECOVERY: float = 30.0
 const STAMINA_RECOVERY_DELAY: float = 2
 
-const BODY_STAMINA_RUN: float = -15.0
-const BODY_STAMINA_SWIM: float = -30.0
+const BODY_STAMINA_RUN: float = -20.0
+const BODY_STAMINA_SWIM: float = -35.0
 
 const ARM_STAMINA_AIM: float = -20.0
 const ARM_STAMINA_AIM_ZOOM: float = -30.0

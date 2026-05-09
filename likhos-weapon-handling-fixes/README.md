@@ -53,7 +53,7 @@ Bonus: Sprint now overrides crouch, so you can panic GTFO when discovered sneaki
 
 Rescaled movement speeds and added new break points. You can edit all these values in MCM.
 - **Vanilla:** crouch/walk/sprint = 1 / 2.5 / 5
-- **Updated:** crouch/walk/sprint = 0.7 / 3 / 6
+- **Updated:** crouch/walk/sprint = 0.7 / 3 / 7
 - **New:** walk-canted/walk-aiming-1x/walk-scoped = 2.25 / 1.8 / 0.9 (defined in MCM as multipliers of walk speed)
 
 ### Inspect mode rework
