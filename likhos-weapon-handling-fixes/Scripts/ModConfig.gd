@@ -38,7 +38,7 @@ const DEFAULT_LPVO_OOF_ZOOM = "1enabled"
 const DEFAULT_ENABLED = true
 const DEFAULT_CROUCH_SPEED = 0.7
 const DEFAULT_WALK_SPEED = 3.0
-const DEFAULT_SPRINT_SPEED = 6.0
+const DEFAULT_SPRINT_SPEED = 7.0
 const DEFAULT_AIM_SPEED_MULT = 0.6
 const DEFAULT_CANT_SPEED_MULT = 0.75
 const DEFAULT_SCOPE_SPEED_MULT = 0.3
@@ -71,7 +71,7 @@ static func apply_config(config: ConfigFile):
 	ammo_tooltips = _get_config_value(config, "Bool", "ammoTooltips", DEFAULT_ENABLED)
 	crouch_speed = _get_config_value(config, "Float", "crouchSpeed", DEFAULT_CROUCH_SPEED)
 	walk_speed = _get_config_value(config, "Float", "walkSpeed", DEFAULT_WALK_SPEED)
-	sprint_speed = _get_config_value(config, "Float", "sprintSpeed", DEFAULT_SPRINT_SPEED)
+	sprint_speed = _get_config_value(config, "Float", "sprintSpeed2", DEFAULT_SPRINT_SPEED)
 	walk_aim_mult = _get_config_value(config, "Float", "aimSpeedMult", DEFAULT_AIM_SPEED_MULT)
 	walk_cant_mult = _get_config_value(config, "Float", "cantSpeedMult", DEFAULT_CANT_SPEED_MULT)
 	walk_scope_mult = _get_config_value(config, "Float", "scopeSpeedMult", DEFAULT_SCOPE_SPEED_MULT)
@@ -162,7 +162,7 @@ static func create_template(config: ConfigFile):
 		"maxRange": 5.0
 	})
 
-	_set_config_entry(config, "Bool", "Movement speeds", "overrideMovementSpeeds", "Override movement speed (restart to disable)", "Change default walk/crouch/spring speeds", DEFAULT_ENABLED)
+	_set_config_entry(config, "Bool", "Movement speeds", "overrideMovementSpeeds", "Override movement speed", "Change default walk/crouch/spring speeds", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Float", "Movement speeds", "crouchSpeed", "Crouch Speed", "Movement speed while crouching", DEFAULT_CROUCH_SPEED, {
 		"minRange": SPEED_MIN,
@@ -174,7 +174,7 @@ static func create_template(config: ConfigFile):
 		"maxRange": SPEED_MAX
 	})
 
-	_set_config_entry(config, "Float", "Movement speeds", "sprintSpeed", "Sprint Speed", "Movement speed while sprinting", DEFAULT_SPRINT_SPEED, {
+	_set_config_entry(config, "Float", "Movement speeds", "sprintSpeed2", "Sprint Speed", "Movement speed while sprinting", DEFAULT_SPRINT_SPEED, {
 		"minRange": SPEED_MIN,
 		"maxRange": SPEED_MAX
 	})
