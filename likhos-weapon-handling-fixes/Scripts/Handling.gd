@@ -190,11 +190,7 @@ func _set_target_idle(h):
 
 
 func _apply_target(h, delta: float):
-	var speed: float
-	if ModConfig.override_handling_speed:
-		speed = h.handlingSpeed * (_handlingMode / 100.0)
-	else:
-		speed = h.handlingSpeed
+	var speed: float = h.handlingSpeed * (_handlingMode / 100.0)
 	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), delta * speed)
 	h.rotation_degrees = lerp(h.rotation_degrees, h.targetRotation, delta * speed)
 

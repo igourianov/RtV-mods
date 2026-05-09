@@ -25,8 +25,6 @@ static var walk_scope_mult: float
 static var laser_auto_on: bool
 static var attachment_tooltips: bool
 static var pip_anti_aliasing: bool
-static var override_handling_speed: bool
-static var handling_speed_weight_factor: float
 static var eye_relief_offset: float
 
 static var _menu_pos_auto: int = 0
@@ -42,7 +40,6 @@ const DEFAULT_SPRINT_SPEED = 7.0
 const DEFAULT_AIM_SPEED_MULT = 0.6
 const DEFAULT_CANT_SPEED_MULT = 0.75
 const DEFAULT_SCOPE_SPEED_MULT = 0.3
-const DEFAULT_HANDLING_SPEED_WEIGHT_FACTOR = 0.5
 const SPEED_MIN = 0.0
 const SPEED_MAX = 20.0
 const MULT_MIN = 0.1
@@ -78,8 +75,6 @@ static func apply_config(config: ConfigFile):
 	laser_auto_on = _get_config_value(config, "Bool", "laserAutoOn", DEFAULT_ENABLED)
 	attachment_tooltips = _get_config_value(config, "Bool", "attachmentTooltips", DEFAULT_ENABLED)
 	pip_anti_aliasing = _get_config_value(config, "Bool", "pipAntiAliasing", DEFAULT_ENABLED)
-	override_handling_speed = _get_config_value(config, "Bool", "overrideHandlingSpeed", DEFAULT_ENABLED)
-	handling_speed_weight_factor = _get_config_value(config, "Float", "handlingSpeedWeightFactor", DEFAULT_HANDLING_SPEED_WEIGHT_FACTOR)
 	eye_relief_offset = _get_config_value(config, "Float", "eyeReliefOffset", DEFAULT_EYE_RELIEF_OFFSET) / 100.0
 
 
@@ -149,13 +144,6 @@ static func create_template(config: ConfigFile):
 	_set_config_entry(config, "Bool", "Aim tweaks", "enableCantedOverride", "Override canted position", "Apply the mod's Y offset and roll tweak when canted. Disable to use vanilla canted position and rotation.", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Bool", "Aim tweaks", "enableLoweredOverride", "Override lowered position", "Apply the mod's patrol-mode replacement. Disable to use vanilla low position and rotation.", DEFAULT_ENABLED)
-
-	_set_config_entry(config, "Bool", "Aim tweaks", "overrideHandlingSpeed", "Override handling speed", "Apply the mod's handling speed math (mode-specific multiplier and weapon weight scaling). Disable to use vanilla handling speed.", DEFAULT_ENABLED)
-
-	_set_config_entry(config, "Float", "Aim tweaks", "handlingSpeedWeightFactor", "Handling speed weight factor", "How strongly total weapon weight (base + attachments) slows handling. 0 = no influence, 1 = full influence.", DEFAULT_HANDLING_SPEED_WEIGHT_FACTOR, {
-		"minRange": 0.0,
-		"maxRange": 1.5
-	})
 
 	_set_config_entry(config, "Float", "Aim tweaks", "eyeReliefOffset", "Eye relief offset for magnified optics (cm)", "Adjust how close the scope is during zoom", DEFAULT_EYE_RELIEF_OFFSET, {
 		"minRange": 0.0,
