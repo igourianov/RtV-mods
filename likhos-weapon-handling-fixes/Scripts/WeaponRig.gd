@@ -131,12 +131,10 @@ func on_update_aim_offset() -> void:
 	var data = rig.data
 	var optic = rig.activeOptic
 
-	if optic && rig.gameData.secondaryOptic && optic.secondary:
+	if optic && optic.secondary && rig.gameData.secondaryOptic:
 		# HAMR secondary position fix for Russian guns
-		var primary_in_rig: Vector3 = rig.to_local(optic.global_position)
-		var secondary_in_rig: Vector3 = rig.to_local(optic.secondary.global_position)
-		rig.aimOffset = optic.position.y + (secondary_in_rig.y - primary_in_rig.y)
 		Out.bugfix("recalc secondary optic Y offset")
+		rig.aimOffset = optic.position.y + optic.secondary.position.y * optic.scale.y
 	elif optic:
 		rig.aimOffset = optic.position.y
 	else:
