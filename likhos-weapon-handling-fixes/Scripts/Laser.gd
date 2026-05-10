@@ -15,6 +15,7 @@ func on_input(event: InputEvent) -> void:
 
 func __input(caller, event: InputEvent):
 	if Input.is_action_just_pressed("laser") && caller.visible:
+		Out.debug("laser active:", caller.active)
 		caller.active = !caller.active
 
 		if caller.active:

@@ -53,12 +53,15 @@ func on_weapon_handling(delta: float) -> void:
 	if gameData.freeze:
 		return
 
+	var oldCanted: bool = gameData.isCanted
+
 	_handle_input(h, delta)
 
-	if !gameData.isCanted:
-		_laser_deactivate(h)
-	elif ModConfig.laser_auto_on:
-		_laser_activate(h)
+	if oldCanted != gameData.isCanted: # only apply laser logic on switch
+		if !gameData.isCanted:
+			_laser_deactivate(h)
+		elif ModConfig.laser_auto_on:
+			_laser_activate(h)
 
 	if _override_handling(h):
 		_handlingMode = HandlingMode.Default
@@ -262,7 +265,7 @@ func _optic_lens_local_min_z(optic) -> float:
 
 
 func _laser_activate(h) -> void:
-	if !_laser || ModConfig.laser_latch:
+	if ModConfig.laser_latch || !_laser || _laser.active:
 		return
 	_laser.active = true
 	#_laser.raycast.global_position = _laser.owner.raycast.global_position
@@ -275,7 +278,7 @@ func _laser_deactivate(h) -> void:
 	if !ModConfig.laser_latch:
 		return
 	ModConfig.laser_latch = false
-	if !_laser:
+	if !_laser || !_laser.active:
 		return
 	_laser.active = false
 	_laser.laser.hide()
@@ -283,18 +286,15 @@ func _laser_deactivate(h) -> void:
 
 
 func _play_laser_sound(node, start: float, duration: float) -> void:
+	if !_flashlight_stream:
+		return
 	var audio = node.audioInstance2D.instantiate()
 	node.add_child(audio)
-	if _flashlight_stream != null:
-		audio.stream = _flashlight_stream
-		audio.volume_db = _LASER_SOUND_VOLUME_DB
-		audio.play(start)
-		if duration > 0.0:
-			var timer = node.get_tree().create_timer(duration, false)
-			timer.timeout.connect(func() -> void:
-				if is_instance_valid(audio):
-					audio.stop()
-			)
-	else:
-		audio.PlayInstance(node.audioLibrary.UIClick)
-		audio.volume_db += _LASER_SOUND_VOLUME_DB
+	audio.stream = _flashlight_stream
+	audio.volume_db = _LASER_SOUND_VOLUME_DB
+	audio.play(start)
+	if duration > 0.0:
+		await node.get_tree().create_timer(duration, false).timeout
+		if is_instance_valid(audio):
+			audio.stop()
+
