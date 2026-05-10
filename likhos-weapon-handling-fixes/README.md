@@ -27,6 +27,7 @@ Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 * Number of HAMR fixes
 * Fixed Mosin ending up in weird state (mag + 0) after closing the bolt. Now both live round and spent casing are always ejected when opening bolt.
 * Fixed laser ray misaligned with collision dot. You may notice that bullet holes are now very slightly offset from the laser dot - that's how real lasers work.
+* Fixed flashlight draining battery while the game world is frozen (when opening containers)
 
 ### PIP scope mode: realism
 

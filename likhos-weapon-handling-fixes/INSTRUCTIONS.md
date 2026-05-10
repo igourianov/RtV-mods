@@ -2,7 +2,7 @@
 
 - Road to Vostok 0.1.1.3 (Godot 4.6.2)
 - [Metro Mod Loader](https://modworkshop.net/mod/56483) v3.0.1 or later (separate install, not bundled with the game)
-- [Mod Configuration Menu](https://modworkshop.net/mod/53713)
+- [Mod Configuration Menu](https://modworkshop.net/mod/53713) (optional)
 
 # Compatibility
 
@@ -14,6 +14,7 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `WeaponRig._input`
 - `WeaponRig.UpdateAimOffset`
 - `Laser._input`
+- `Flashlight._physics_process`
 - `Controller.MovementStates`
 - `Controller._input`
 - `Character.Stamina`
