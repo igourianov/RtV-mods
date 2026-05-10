@@ -108,7 +108,7 @@ func _handle_input(h, delta: float):
 func _override_handling(h) -> bool:
 	var data = h.data
 
-	if gameData.isClearing || gameData.isColliding:
+	if gameData.isClearing:
 		h.targetPosition = data.collisionPosition
 		h.targetRotation = data.collisionRotation
 		return true
@@ -134,6 +134,11 @@ func _override_handling(h) -> bool:
 func _weapon_handling(h, rig, delta: float) -> bool:
 	var data = h.data
 	var optic = rig.activeOptic
+
+	if gameData.isColliding:
+		h.targetPosition = data.collisionPosition
+		h.targetRotation = data.collisionRotation
+		return true
 
 	if gameData.isCanted:
 		_handlingMode = HandlingMode.Cant
