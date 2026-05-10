@@ -17,6 +17,7 @@ Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 * Rework of the inspect mode and associated bindings
 * Weapon handling speed now scales with weight and aim stance (disable in MCM)
 * Added explicit bindings to the base game settings for optic zoom in/out (it was hardcoded to mouse wheel)
+* Flashlight now supports both toggle and hold actions on the same binding!
 
 ### Vanilla Fixes
 * Ammo check no longer forces weapon into raised position (prior stance preserved)
