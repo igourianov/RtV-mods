@@ -6,17 +6,16 @@ const _HOLD_THRESHOLD = 0.25
 const _AMMO_CHECK_INTRO_TIME_DEFAULT = 1.0
 const _AMMO_CHECK_OUTRO_TIME = 0.5
 const _HOLD_TIMER_NAME = "LikhoReloadHoldTimer"
-const _AMMO_CHECK_STATE_NAME = "Ammo_Check"
 
 const ModConfig = preload("./ModConfig.gd")
 const Out = preload("../Lib/Out.gd")
 
 enum AmmoCheckState {
-	IDLE,
-	PENDING,
-	CHECK_INTRO,
-	CHECK_PAUSED,
-	CHECK_OUTRO,
+	IDLE = 1,
+	PENDING = 2,
+	CHECK_INTRO = 3,
+	CHECK_PAUSED = 4,
+	CHECK_OUTRO = 5,
 }
 
 const AMMO_CHECK_INTRO_TIMES = {
@@ -148,17 +147,12 @@ func on_input(event) -> void:
 			gd.secondaryOptic = !gd.secondaryOptic
 			rig.UpdateAimOffset()
 
-	var zoomAllowed = (gd.isAiming
-		|| ModConfig.lpvo_oof_zoom == "enabled"
-		|| (ModConfig.lpvo_oof_zoom == "rail" && Input.is_action_pressed("rail_movement")))
-
-	if zoomAllowed && (zoomIn || zoomOut) && optic && optic.attachmentData.variable:
-		var slotData = rig.slotData
-		if zoomIn && slotData.zoom != 3:
-			slotData.zoom += 1
+	if (gd.isAiming || ModConfig.lpvo_oof_zoom == "enabled") && (zoomIn || zoomOut) && optic && optic.attachmentData.variable:
+		if zoomIn && rig.slotData.zoom != 3:
+			rig.slotData.zoom += 1
 			rig.PlayRailMove()
-		elif zoomOut && slotData.zoom != 1:
-			slotData.zoom -= 1
+		elif zoomOut && rig.slotData.zoom != 1:
+			rig.slotData.zoom -= 1
 			rig.PlayRailMove()
 
 
@@ -237,6 +231,10 @@ func _can_ammo_check(rig) -> bool:
 	return true
 
 
+func _play_animation(rig, state_name: String) -> void:
+	rig.animator["parameters/playback"].start(state_name)
+
+
 func _do_ammo_check(rig) -> void:
 	_seq += 1
 	var my_seq = _seq
@@ -244,37 +242,74 @@ func _do_ammo_check(rig) -> void:
 	rig.gameData.isFiring = false
 	rig.UpdateBullets()
 	rig.UpdateHUD()
-	rig.PlayAmmoCheck()
+
+	var audio = _start_ammo_check_audio(rig)
+
 	rig.gameData.isChecking = true
-	var playback = rig.animator["parameters/playback"]
-	playback.start(_AMMO_CHECK_STATE_NAME)
+	_play_animation(rig, "Ammo_Check")
 
 	var intro_time: float = AMMO_CHECK_INTRO_TIMES.get(rig.data.file, _AMMO_CHECK_INTRO_TIME_DEFAULT)
 	await rig.get_tree().create_timer(intro_time * 0.7, false).timeout
 	if !_seq_valid(rig, my_seq):
+		_free_audio(audio)
 		return
-	
+
 	ModConfig.ammo_check_delayed = true
 	await rig.get_tree().create_timer(intro_time * 0.3, false).timeout
 	if !_seq_valid(rig, my_seq):
+		_free_audio(audio)
 		return
 
-	if _state == AmmoCheckState.CHECK_INTRO:
-		rig.animator.process_mode = Node.PROCESS_MODE_DISABLED
-		_state = AmmoCheckState.CHECK_PAUSED
-		while _state == AmmoCheckState.CHECK_PAUSED:
-			await rig.get_tree().process_frame
-			if !_seq_valid(rig, my_seq):
-				return
-		rig.animator.process_mode = Node.PROCESS_MODE_INHERIT
-
-	await rig.get_tree().create_timer(_AMMO_CHECK_OUTRO_TIME, false).timeout
-	if !_seq_valid(rig, my_seq):
+	if _state != AmmoCheckState.CHECK_INTRO:
+		# released during intro, no pause happened, skip outro wait
+		rig.gameData.isChecking = false
+		ModConfig.ammo_check_delayed = false
+		_state = AmmoCheckState.IDLE
 		return
+
+	# held past intro: pause animator and wait for release
+	rig.animator.process_mode = Node.PROCESS_MODE_DISABLED
+	if audio && is_instance_valid(audio):
+		audio.stream_paused = true
+	_state = AmmoCheckState.CHECK_PAUSED
+	while _state == AmmoCheckState.CHECK_PAUSED:
+		await rig.get_tree().process_frame
+		if !_seq_valid(rig, my_seq):
+			_free_audio(audio)
+			return
+
+	rig.animator.process_mode = Node.PROCESS_MODE_INHERIT
+	if audio && is_instance_valid(audio):
+		audio.stream_paused = false
+
+	# outro wait covers animator return-to-idle from the resumed state
+	#await rig.get_tree().create_timer(_AMMO_CHECK_OUTRO_TIME, false).timeout
+	#if !_seq_valid(rig, my_seq):
+	#	_free_audio(audio)
+	#	return
 
 	rig.gameData.isChecking = false
 	ModConfig.ammo_check_delayed = false
 	_state = AmmoCheckState.IDLE
+
+
+func _start_ammo_check_audio(rig) -> AudioStreamPlayer:
+	var event = rig.data.ammoCheck
+	if event == null || event.audioClips.is_empty():
+		return null
+	var audio = AudioStreamPlayer.new()
+	rig.add_child(audio)
+	audio.stream = event.audioClips.pick_random()
+	audio.volume_db = event.volume
+	audio.finished.connect(audio.queue_free)
+	audio.play()
+	return audio
+
+
+func _free_audio(audio) -> void:
+	if audio && is_instance_valid(audio):
+		audio.stop()
+		audio.queue_free()
 
 
 func _seq_valid(rig, my_seq: int) -> bool:
@@ -355,9 +390,7 @@ func _do_reload(rig) -> void:
 func _play_reload_anim(rig, condition: String, play_sound: Callable) -> void:
 	rig.gameData.isReloading = true
 	play_sound.call()
-	rig.animator["parameters/conditions/" + condition] = true
-	await rig.get_tree().create_timer(0.1, false).timeout
-	rig.animator["parameters/conditions/" + condition] = false
+	_play_animation(rig, condition)
 
 
 func on_update_aim_offset() -> void:
