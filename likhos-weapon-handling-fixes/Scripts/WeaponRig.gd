@@ -4,7 +4,7 @@ const _FIXED_SCOPE_AIM_OFFSET = 0.015
 const _VARIABLE_SCOPE_AIM_OFFSET = 0.03
 const _HOLD_THRESHOLD = 0.25
 const _AMMO_CHECK_INTRO_TIME_DEFAULT = 1.0
-const _AMMO_CHECK_OUTRO_TIME = 0.5
+#const _AMMO_CHECK_OUTRO_TIME = 0.5
 const _HOLD_TIMER_NAME = "LikhoReloadHoldTimer"
 
 const ModConfig = preload("./ModConfig.gd")
@@ -19,31 +19,31 @@ enum AmmoCheckState {
 }
 
 const AMMO_CHECK_INTRO_TIMES = {
-	"AKM": 1.65, #
-	"AK_12": 1.45, #
-	"AKS_74U": 1.40, #
-	"RK_62": 1.35, #
-	"RK_62M": 1.35, #
-	"RK_95": 1.35, #
-	"M4A1": 1.15, #
-	"MK18": 1.2, #
-	"HK416": 1.2, #
-	"KAR_21_223": 1.05, #
-	"KAR_21_308": 1.05, #
-	"M78": 1.25, #
-	"MP5": 1.0, #
-	"MP5K": 1.0, #
-	"MP5SD": 1.0, #
-	"MP7": 1.3, #
-	"KP_31": 1.2, #
-	"VSS": 1.45, #
-	"SVD": 2.0, #
+	"AKM": 1.65,
+	"AK_12": 1.45,
+	"AKS_74U": 1.40,
+	"RK_62": 1.35,
+	"RK_62M": 1.35,
+	"RK_95": 1.35,
+	"M4A1": 1.15,
+	"MK18": 1.2,
+	"HK416": 1.2,
+	"KAR_21_223": 1.05,
+	"KAR_21_308": 1.05,
+	"M78": 1.25,
+	"MP5": 1.0,
+	"MP5K": 1.0,
+	"MP5SD": 1.0,
+	"MP7": 1.3,
+	"KP_31": 1.2,
+	"VSS": 1.45,
+	"SVD": 2.0,
 	"Mosin": 1.5,
-	"Remington_870": 1.2, #
-	"Makarov": 1.75, #
-	"P320": 1.15, #
-	"Glock_17": 1.15, #
-	"Colt_1911": 1.15, #
+	"Remington_870": 1.2,
+	"Makarov": 1.75,
+	"P320": 1.15,
+	"Glock_17": 1.15,
+	"Colt_1911": 1.15,
 }
 
 var gameData = preload("res://Resources/GameData.tres")
@@ -53,7 +53,6 @@ var _preferences: Preferences
 var _last_optic_for_scale = null
 var _cached_lens_scale: float = 1.0
 var _state: AmmoCheckState = AmmoCheckState.IDLE
-var _seq: int = 0
 
 
 func _init(lib, preferences: Preferences) -> void:
@@ -184,13 +183,7 @@ func _on_reload_release(rig) -> void:
 func _on_hold_timeout(rig) -> void:
 	if _state != AmmoCheckState.PENDING:
 		return
-	if !is_instance_valid(rig):
-		_state = AmmoCheckState.IDLE
-		return
-	if _is_busy(rig):
-		_state = AmmoCheckState.IDLE
-		return
-	if !_can_ammo_check(rig):
+	if !is_instance_valid(rig) || _is_busy(rig) || !_can_ammo_check(rig):
 		_state = AmmoCheckState.IDLE
 		return
 	_state = AmmoCheckState.CHECK_INTRO
@@ -236,9 +229,6 @@ func _play_animation(rig, state_name: String) -> void:
 
 
 func _do_ammo_check(rig) -> void:
-	_seq += 1
-	var my_seq = _seq
-
 	rig.gameData.isFiring = false
 	rig.UpdateBullets()
 	rig.UpdateHUD()
@@ -250,13 +240,13 @@ func _do_ammo_check(rig) -> void:
 
 	var intro_time: float = AMMO_CHECK_INTRO_TIMES.get(rig.data.file, _AMMO_CHECK_INTRO_TIME_DEFAULT)
 	await rig.get_tree().create_timer(intro_time * 0.7, false).timeout
-	if !_seq_valid(rig, my_seq):
+	if !is_instance_valid(rig):
 		_free_audio(audio)
 		return
 
 	ModConfig.ammo_check_delayed = true
 	await rig.get_tree().create_timer(intro_time * 0.3, false).timeout
-	if !_seq_valid(rig, my_seq):
+	if !is_instance_valid(rig):
 		_free_audio(audio)
 		return
 
@@ -274,19 +264,13 @@ func _do_ammo_check(rig) -> void:
 	_state = AmmoCheckState.CHECK_PAUSED
 	while _state == AmmoCheckState.CHECK_PAUSED:
 		await rig.get_tree().process_frame
-		if !_seq_valid(rig, my_seq):
+		if !is_instance_valid(rig):
 			_free_audio(audio)
 			return
 
 	rig.animator.process_mode = Node.PROCESS_MODE_INHERIT
 	if audio && is_instance_valid(audio):
 		audio.stream_paused = false
-
-	# outro wait covers animator return-to-idle from the resumed state
-	#await rig.get_tree().create_timer(_AMMO_CHECK_OUTRO_TIME, false).timeout
-	#if !_seq_valid(rig, my_seq):
-	#	_free_audio(audio)
-	#	return
 
 	rig.gameData.isChecking = false
 	ModConfig.ammo_check_delayed = false
@@ -310,14 +294,6 @@ func _free_audio(audio) -> void:
 	if audio && is_instance_valid(audio):
 		audio.stop()
 		audio.queue_free()
-
-
-func _seq_valid(rig, my_seq: int) -> bool:
-	if my_seq != _seq:
-		return false
-	if !is_instance_valid(rig):
-		return false
-	return true
 
 
 func _do_reload(rig) -> void:
