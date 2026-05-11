@@ -13,6 +13,7 @@ const Character = preload("./Character.gd")
 const Optic = preload("./Optic.gd")
 const Laser = preload("./Laser.gd")
 const Flashlight = preload("./Flashlight.gd")
+const _Item = preload("./Item.gd")
 
 
 var _handling
@@ -28,6 +29,7 @@ var _character
 var _optic
 var _laser
 var _flashlight
+var _item
 
 
 func setup(lib):
@@ -46,6 +48,7 @@ func setup(lib):
 	_optic = Optic.new(lib, preferences)
 	_laser = Laser.new(lib)
 	_flashlight = Flashlight.new(lib)
+	_item = _Item.new(lib)
 
 	register_hook("handling-weaponhandling", _handling.on_weapon_handling)
 	register_hook("rigmanager-updaterig-post", _handling.on_rig_update_post)
@@ -66,6 +69,7 @@ func setup(lib):
 	register_hook("optic-_physics_process-pre", _optic.on_physics_process_pre)
 	register_hook("laser-_input", _laser.on_input)
 	register_hook("flashlight-_physics_process", _flashlight.on_physics_process)
+	register_hook("item-updatedetails-post", _item.on_update_details_post)
 
 	register_action("optic_zoom_in", "Optic Zoom In", _create_mouse_input(MOUSE_BUTTON_WHEEL_UP))
 	register_action("optic_zoom_out", "Optic Zoom Out", _create_mouse_input(MOUSE_BUTTON_WHEEL_DOWN))
