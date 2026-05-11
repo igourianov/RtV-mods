@@ -18,6 +18,7 @@ Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 * Weapon handling speed now scales with weight and aim stance (disable in MCM)
 * Added explicit bindings to the base game settings for optic zoom in/out (it was hardcoded to mouse wheel)
 * Flashlight now supports both toggle and hold actions on the same binding! Recommended for use with [LootLight mod](https://modworkshop.net/mod/56422), which I like very much.
+* Reworked ammo check functionality
 
 ### Vanilla Fixes
 * Ammo check no longer forces weapon into raised position (prior stance preserved)
@@ -84,6 +85,13 @@ HAMR in vanilla is bugged to hell and back. This mod introduces fixes and usabil
 * Fixed HAMR's secondary optic switch permanently killing PIP plane on other scopes (state wasn't being properly reset)
 * Fixed HAMR's secondary optic vertical offset on all AK rifles (not RK), SVD and Vintorez (missing rotation calc)
 * Fixed HAMR causing major flickering when toggling secondary on M4A1 (bug with foldable iron sights)
+
+### Ammo check
+
+Ammo check receives much needed love. 
+* Reload binding (default R) will now perform ammo check when held down for longer than 250ms. Old ammo check binding removed.
+* Ammo check is now interruptable. It will show ammo as long as you hold it, and you can execute reload right from it (the animation will be a bit iffy)
+* Weapons with equipped magazines will always show "? + chamber" for ammmo count. Either use ammo check function or remove the mag to see the amount of ammo it has.
 
 ## Why this is one mod and not several
 

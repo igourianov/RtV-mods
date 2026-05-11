@@ -13,6 +13,7 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `Handling.WeaponHandling`
 - `WeaponRig._input`
 - `WeaponRig.UpdateAimOffset`
+- `WeaponRig.Reload`
 - `Laser._input`
 - `Flashlight._physics_process`
 - `Controller.MovementStates`
@@ -33,6 +34,7 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `RigManager.UpdateRig` (post)
 - `Inputs.CreateActions` (post)
 - `Inputs.ResetActions` (post)
+- `Item.UpdateDetails` (post)
 
 # Install / Uninstall
 
