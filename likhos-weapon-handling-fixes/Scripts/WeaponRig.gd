@@ -4,7 +4,7 @@ const _FIXED_SCOPE_AIM_OFFSET = 0.015
 const _VARIABLE_SCOPE_AIM_OFFSET = 0.03
 const _HOLD_THRESHOLD = 0.25
 const _AMMO_CHECK_INTRO_TIME_DEFAULT = 1.0
-const _AMMO_CHECK_OUTRO_TIME = 1.0
+const _AMMO_CHECK_OUTRO_TIME = 0.5
 const _HOLD_TIMER_NAME = "LikhoReloadHoldTimer"
 const _AMMO_CHECK_STATE_NAME = "Ammo_Check"
 
@@ -250,7 +250,12 @@ func _do_ammo_check(rig) -> void:
 	playback.start(_AMMO_CHECK_STATE_NAME)
 
 	var intro_time: float = AMMO_CHECK_INTRO_TIMES.get(rig.data.file, _AMMO_CHECK_INTRO_TIME_DEFAULT)
-	await rig.get_tree().create_timer(intro_time, false).timeout
+	await rig.get_tree().create_timer(intro_time * 0.7, false).timeout
+	if !_seq_valid(rig, my_seq):
+		return
+	
+	ModConfig.ammo_check_delayed = true
+	await rig.get_tree().create_timer(intro_time * 0.3, false).timeout
 	if !_seq_valid(rig, my_seq):
 		return
 
@@ -268,6 +273,7 @@ func _do_ammo_check(rig) -> void:
 		return
 
 	rig.gameData.isChecking = false
+	ModConfig.ammo_check_delayed = false
 	_state = AmmoCheckState.IDLE
 
 

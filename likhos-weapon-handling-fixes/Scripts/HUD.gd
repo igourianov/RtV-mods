@@ -122,6 +122,9 @@ func _update_ammo_overlays(hud) -> void:
 	if gameData.isInspecting && ModConfig.ammo_tooltips:
 		hud.magazine.visible = true
 		hud.chamber.visible = true
+	elif gameData.isChecking:
+		hud.magazine.visible = ModConfig.ammo_check_delayed
+		hud.chamber.visible = ModConfig.ammo_check_delayed
 
 func _setup_attachment_tooltips(hud) -> void:
 	var stale := _att_tooltips.is_empty()

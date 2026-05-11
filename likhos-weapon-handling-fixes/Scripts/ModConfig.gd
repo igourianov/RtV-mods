@@ -3,6 +3,7 @@
 static var current_scope_mag: float = 1.0
 static var current_weapon_weight: float = 0.0
 static var laser_latch: bool = false
+static var ammo_check_delayed := false
 
 # config vars
 static var crosshair_style: String

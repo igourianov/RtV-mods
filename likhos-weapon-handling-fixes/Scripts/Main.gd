@@ -67,15 +67,17 @@ func setup(lib):
 	register_hook("laser-_input", _laser.on_input)
 	register_hook("flashlight-_physics_process", _flashlight.on_physics_process)
 
-	var zoomIn = InputEventMouseButton.new()
-	zoomIn.button_index = MOUSE_BUTTON_WHEEL_UP
-	zoomIn.pressed = true
-	register_action("optic_zoom_in", "Optic Zoom In", zoomIn)
+	register_action("optic_zoom_in", "Optic Zoom In", _create_mouse_input(MOUSE_BUTTON_WHEEL_UP))
+	register_action("optic_zoom_out", "Optic Zoom Out", _create_mouse_input(MOUSE_BUTTON_WHEEL_DOWN))
+	remove_action("ammo_check")
+	remove_action("rail_movement")
 
-	var zoomOut = InputEventMouseButton.new()
-	zoomOut.button_index = MOUSE_BUTTON_WHEEL_DOWN
-	zoomOut.pressed = true
-	register_action("optic_zoom_out", "Optic Zoom Out", zoomOut)
+
+func _create_mouse_input(button: int) -> InputEventMouseButton:
+	var input = InputEventMouseButton.new()
+	input.button_index = button
+	input.pressed = true
+	return input
 
 
 func load_config(config: ConfigFile):

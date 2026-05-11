@@ -3,11 +3,17 @@ extends RefCounted
 var _lib
 
 var extra_actions = []
+var remove_actions = []
 
 
 func _init(lib) -> void:
 	_lib = lib
 
+
+func on_create_actions_pre():
+	for a in remove_actions:
+		_lib._caller.inputs.erase(a)
+		
 
 func on_create_actions_post() -> void:
 	attach_extra_actions(_lib._caller, false)

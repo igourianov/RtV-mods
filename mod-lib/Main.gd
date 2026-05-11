@@ -7,7 +7,6 @@ const Inputs = preload("./Inputs.gd")
 var _lib
 var _hooks: Array[int]
 var _menu_pos_auto: int = 0
-var _extra_actions = []
 var _inputs: Inputs
 
 var mod_id: String
@@ -100,10 +99,7 @@ func next_menu_pos() -> int:
 
 
 func register_action(action: String, label: String, event: InputEvent, hidden: bool = false):
-	if !_inputs:
-		_inputs = Inputs.new(_lib)
-		register_hook("inputs-createactions-post", _inputs.on_create_actions_post)
-		register_hook("inputs-resetactions-post", _inputs.on_reset_actions_post)
+	_init_inputs_hooks()
 	_inputs.extra_actions.append({
 		"action": action,
 		"label": label,
@@ -113,6 +109,19 @@ func register_action(action: String, label: String, event: InputEvent, hidden: b
 	# register empty action right away to avoid errors from InputMap
 	if !InputMap.has_action(action):
 		InputMap.add_action(action)
+
+
+func remove_action(action: String):
+	_init_inputs_hooks()
+	_inputs.remove_actions.append(action)
+
+
+func _init_inputs_hooks():
+	if !_inputs:
+		_inputs = Inputs.new(_lib)
+		register_hook("inputs-createactions-pre", _inputs.on_create_actions_pre)
+		register_hook("inputs-createactions-post", _inputs.on_create_actions_post)
+		register_hook("inputs-resetactions-post", _inputs.on_reset_actions_post)
 
 func setup(lib):
 	pass
