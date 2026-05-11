@@ -17,6 +17,8 @@ const _PATROL_WEAPON_TYPES = {"Rifle": null, "SMG": null, "Bolt": null, "Shotgun
 const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-10.0, 0.0, 0.0)
 const _MOSIN_LOW_ROTATION_OFFSET = Vector3(-15.0, 15.0, 0.0)
 const _REMINGTON_870_LOW_ROTATION_OFFSET = Vector3(-20.0, 10.0, 0.0)
+const _AMMO_CHECK_HIGH = {"SVD": true, "KAR_21_223": true, "KAR_21_308": true}
+const _AMMO_CHECK_HIGH_TYPE = {"Pistol": true, "SMG": true}
 
 # the handling speed modifier - read as % of base
 enum HandlingMode {
@@ -63,7 +65,7 @@ func on_weapon_handling(delta: float) -> void:
 		elif ModConfig.laser_auto_on:
 			_laser_activate(h)
 
-	if _override_handling(h):
+	if _override_handling(h, h.get_parent()):
 		_handlingMode = HandlingMode.Default
 		gameData.isAiming = false
 		gameData.isCanted = false
@@ -105,7 +107,7 @@ func _handle_input(h, delta: float):
 	gameData.isColliding = h.collision.is_colliding()
 
 
-func _override_handling(h) -> bool:
+func _override_handling(h, rig) -> bool:
 	var data = h.data
 
 	if gameData.isClearing:
@@ -124,7 +126,16 @@ func _override_handling(h) -> bool:
 		h.targetRotation = data.inspectRotation
 		return true
 
-	if gameData.isRunning || gameData.isChecking || (gameData.isReloading && data.weaponAction != "Manual"):
+	if gameData.isChecking:
+		#if _AMMO_CHECK_HIGH_TYPE.has(rig.data.weaponType) || _AMMO_CHECK_HIGH.has(rig.data.file):
+		h.targetPosition = data.highPosition
+		h.targetRotation = data.highRotation
+		#else:
+		#	h.targetPosition = data.lowPosition
+		#	h.targetRotation = data.lowRotation
+		return true
+
+	if gameData.isRunning || (gameData.isReloading && data.weaponAction != "Manual"):
 		_set_target_idle(h)
 		return true
 

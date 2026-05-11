@@ -49,8 +49,8 @@ func setup(lib):
 
 	register_hook("handling-weaponhandling", _handling.on_weapon_handling)
 	register_hook("rigmanager-updaterig-post", _handling.on_rig_update_post)
-	register_hook("weaponrig-ammocheck-pre", _weapon_rig.on_ammo_check_pre)
-	register_hook("weaponrig-ammocheck-post", _weapon_rig.on_ammo_check_post)
+	register_hook("weaponrig-ammocheck", _weapon_rig.on_ammo_check_replace)
+	register_hook("weaponrig-reload", _weapon_rig.on_reload_replace)
 	register_hook("weaponrig-ads-post", _weapon_rig.on_ads_post)
 	register_hook("weaponrig-_input", _weapon_rig.on_input)
 	register_hook("weaponrig-updateaimoffset", _weapon_rig.on_update_aim_offset)
