@@ -1,6 +1,7 @@
 # TODO
 - food and sleep rework
-- holding R key to check ammo
+- redo mod control flow: pipe all input through InputBus.gd, create comain specific handlers, called from the bus, relegate existing scripts to be hooks/overrides only
+
 
 # Closed
 - MP7 clipping in canted mode - will not fix (missing texture on the gun)
@@ -13,3 +14,5 @@
 - laser dot-ray misaligned - fixed
 - split canted rotation on with/without optic - done
 - implement canted/aim overriding each other - done
+- holding R key to check ammo - done
+
