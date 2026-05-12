@@ -9,7 +9,7 @@ static var ammo_check_delayed := false
 static var crosshair_style: String
 static var crosshair_color: Color
 static var cant_mode: String
-static var lpvo_oof_zoom: String
+static var lpvo_ooa_zoom: bool
 static var disable_zoom_dof: bool
 static var disable_optic_override: bool
 static var disable_canted_override: bool
@@ -59,7 +59,7 @@ static func apply_config(config: ConfigFile):
 	crosshair_style = _get_config_value(config, "Dropdown", "crosshair", DEFAULT_CROSSHAIR)
 	crosshair_color = _get_config_value(config, "Color", "crosshairColor", DEFAULT_CROSSHAIR_COLOR)
 	cant_mode = _get_config_value(config, "Dropdown", "cantMode", DEFAULT_CANT_MODE)
-	lpvo_oof_zoom = _get_config_value(config, "Dropdown", "lpvoOofZoom", DEFAULT_LPVO_OOF_ZOOM)
+	lpvo_ooa_zoom = _get_config_value(config, "Bool", "lpvoOofZoom2", DEFAULT_ENABLED)
 	disable_zoom_dof = !_get_config_value(config, "Bool", "enableZoomDof", DEFAULT_ENABLED)
 	disable_optic_override = !_get_config_value(config, "Bool", "enableOpticOverride", DEFAULT_ENABLED)
 	disable_canted_override = !_get_config_value(config, "Bool", "enableCantedOverride", DEFAULT_ENABLED)
@@ -83,6 +83,7 @@ static func _next_pos():
 	_menu_pos_auto += 1
 	return _menu_pos_auto
 
+
 static func _set_config_entry(config: ConfigFile, section: String, category: String, key: String, name: String, tooltip: String, default_val, extra: Dictionary = {}) -> void:
 	var value = {
 		"name": name,
@@ -94,6 +95,7 @@ static func _set_config_entry(config: ConfigFile, section: String, category: Str
 	}
 	value.merge(extra)
 	config.set_value(section, key, value)
+
 
 static func create_template(config: ConfigFile):
 	config.set_value("Category", "Crosshair", { "menu_pos": 1 })
@@ -126,13 +128,7 @@ static func create_template(config: ConfigFile):
 
 	_set_config_entry(config, "Bool", "Inspect", "attachmentTooltips", "Show attachment cards", "Show attachment names (optic, muzzle, laser) over the weapon while inspecting", DEFAULT_ENABLED)
 
-	_set_config_entry(config, "Dropdown", "Aim tweaks", "lpvoOofZoom", "LPVO out-of-aim zoom", "Allow changing LPVO zoom level when not aiming. Rail movement: require Rail Movement binding held as a modifier.", DEFAULT_LPVO_OOF_ZOOM, {
-		"options": {
-			"1enabled": "Enabled",
-			"2disabled": "Disabled",
-			"3rail": "Rail movement"
-		}
-	})
+	_set_config_entry(config, "Bool", "Aim tweaks", "lpvoOofZoom2", "LPVO out-of-aim zoom", "Allow changing LPVO zoom level when not aiming.", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Bool", "Aim tweaks", "nvgPipBlur", "Blur scope PIP under NVG", "Blur the magnified optic's picture-in-picture image while aiming with night vision active", DEFAULT_ENABLED)
 
@@ -182,5 +178,4 @@ static func create_template(config: ConfigFile):
 		"minRange": MULT_MIN,
 		"maxRange": MULT_MAX
 	})
-
 

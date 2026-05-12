@@ -106,7 +106,7 @@ func on_input(event) -> void:
 			gameData.secondaryOptic = !gameData.secondaryOptic
 			rig.UpdateAimOffset()
 
-	if (gameData.isAiming || ModConfig.lpvo_oof_zoom == "enabled") && (zoomIn || zoomOut) && optic && optic.attachmentData.variable:
+	if (gameData.isAiming || ModConfig.lpvo_ooa_zoom) && (zoomIn || zoomOut) && optic && optic.attachmentData.variable:
 		if zoomIn && rig.slotData.zoom != 3:
 			rig.slotData.zoom += 1
 			rig.PlayRailMove()
