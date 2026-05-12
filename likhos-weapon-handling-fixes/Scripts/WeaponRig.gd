@@ -190,7 +190,7 @@ func _on_reload_release(rig) -> void:
 func _on_hold_timeout(rig) -> void:
 	if _state != AmmoCheckState.PENDING:
 		return
-	if !is_instance_valid(rig) || _is_busy(rig) || !_can_ammo_check(rig):
+	if !is_instance_valid(rig) || _is_busy(rig) || (rig.data.weaponAction != "Manual" && rig.data.weaponAction != "Single" && !rig.magazine.visible):
 		_state = AmmoCheckState.IDLE
 		return
 	_state = AmmoCheckState.CHECK_INTRO
@@ -222,13 +222,6 @@ func _is_busy(rig) -> bool:
 		|| gameData.isOccupied
 		|| gameData.isClearing
 		|| gameData.isInspecting)
-
-
-func _can_ammo_check(rig) -> bool:
-	if rig.data.weaponAction != "Manual" && rig.data.weaponAction != "Single":
-		if !rig.magazine.visible:
-			return false
-	return true
 
 
 func _do_ammo_check(rig) -> void:
@@ -298,7 +291,7 @@ func _do_reload(rig) -> void:
 
 	if data.weaponAction == "Manual" && !gameData.isInserting:
 		if slotData.amount != 0 && !slotData.chamber:
-			await _play_reload(rig, "Reload", data.reload)
+			_play_reload(rig, "Reload", data.reload)
 			slotData.chamber = true
 			slotData.amount -= 1
 			rig.UpdateBullets()
@@ -308,18 +301,18 @@ func _do_reload(rig) -> void:
 		if rig.interface.GetAmmo(data):
 			if !slotData.chamber && !slotData.casing:
 				rig.cartridge.show()
-				await _play_reload(rig, "Reload_Empty", data.reloadEmpty)
+				_play_reload(rig, "Reload_Empty", data.reloadEmpty)
 				slotData.chamber = true
 			elif !slotData.chamber && slotData.casing:
 				rig.cartridge.show()
-				await _play_reload(rig, "Reload_Tactical", data.reloadTactical)
+				_play_reload(rig, "Reload_Tactical", data.reloadTactical)
 				slotData.casing = false
 				slotData.chamber = true
 		return
 
 	if !rig.magazine.visible && !slotData.chamber:
 		if rig.interface.GetMagazine(data, rig.weaponSlot, false):
-			await _play_reload(rig, "Magazine_Attach_Empty", data.magazineAttachEmpty)
+			_play_reload(rig, "Magazine_Attach_Empty", data.magazineAttachEmpty)
 			slotData.chamber = true
 			rig.magazine.show()
 			rig.UpdateBullets()
@@ -327,20 +320,20 @@ func _do_reload(rig) -> void:
 
 	if !rig.magazine.visible && slotData.chamber:
 		if rig.interface.GetMagazine(data, rig.weaponSlot, false):
-			await _play_reload(rig, "Magazine_Attach_Tactical", data.magazineAttachTactical)
+			_play_reload(rig, "Magazine_Attach_Tactical", data.magazineAttachTactical)
 			rig.magazine.show()
 			rig.UpdateBullets()
 		return
 
 	if rig.magazine.visible && !slotData.chamber:
 		if rig.interface.GetMagazine(data, rig.weaponSlot, true):
-			await _play_reload(rig, "Reload_Empty", data.reloadEmpty)
+			_play_reload(rig, "Reload_Empty", data.reloadEmpty)
 			slotData.chamber = true
 		return
 
 	if rig.magazine.visible && slotData.chamber:
 		if rig.interface.GetMagazine(data, rig.weaponSlot, true):
-			await _play_reload(rig, "Reload_Tactical", data.reloadTactical)
+			_play_reload(rig, "Reload_Tactical", data.reloadTactical)
 		return
 
 
@@ -348,6 +341,8 @@ func _play_reload(rig, state_name: String, event) -> void:
 	gameData.isReloading = true
 	_play_animation(rig, state_name)
 	_play_audio(rig, event)
+	await rig.get_tree().create_timer(1.5, false).timeout # wait before unlocking reload flag
+	gameData.isReloading = false
 
 
 func _play_animation(rig, state_name: String) -> void:
