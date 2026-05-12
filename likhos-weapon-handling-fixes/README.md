@@ -1,10 +1,11 @@
 # Likho's VosTac
 
-Road to Vostok mod that adds tactical realism features and fixes a whole host of vanilla bugs related to weapon handling.
+Comprehensive RtV overhaul that modifies weapon positions, handling mechanics, optics and stamina. Fixes a number of vanilla weapon bugs.
 
-Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
+Formerly `Likho's Weapon Handling Fixes`.
 
 ### New Features
+
 * Major rework of the PIP scope mode for realism
 * Reworked arm and leg stamina mechanics
 * Canted aim is now independent with optional laser auto-activation in hold mode (disable in MCM)
@@ -21,6 +22,7 @@ Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 * Reworked ammo check functionality
 
 ### Vanilla Fixes
+
 * Ammo check no longer forces weapon into raised position (prior stance preserved)
 * Canted aim activation no longer blocked by interactables
 * Interactable tooltip no longer blocks vision when aiming around doorways
@@ -31,7 +33,7 @@ Formerly `Likho's Weapon Handling Fixes`. It grew into a major game overhaul.
 * Fixed flashlight draining battery while the game world is frozen (when opening containers)
 
 ### PIP scope mode: realism
-
+!!!
 Vanilla PIP is completely unusable - every scope feels like a "scout" scope. This mod addresses that:
 - **Realistic eye relief:** camera parked at proper distance behind rear lens (LPVOs 5cm, fixed scopes 3.5cm)
 - **Main camera FOV no longer narrows when scoped** — only the inside of the optic magnifies
@@ -40,9 +42,9 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 - **Scope DOF reworked:** scales with magnification, near-DOF enabled for foreground/background softening
 - **PIP MSAA matches main viewport:** the optic's SubViewport now mirrors the antialiasing settings used by the rest of the game - vanilla left it disabled (disable in MCM if it causes performance issues)
 - **NVG-aware PIP blur:** when night vision is active and you aim a magnified optic, the PIP image will now blur. Real scopes cannot work under NVG because of eye relief differences (disable in MCM)
-
+!!!
 ### Stamina and movement
-
+!!!
 Both stamina bars are now dynamic and much more realistic. There is also now a dynamic delay for beginning recovery after use.
 
 * Arm stamina drain scales with the weight of the gun held and position it is held in (canted=slower; aim zoomed=faster)
@@ -52,9 +54,9 @@ Both stamina bars are now dynamic and much more realistic. There is also now a d
 * Leg stamina recovery and recovery delay scales with the Hydration stat
 * Overweight, Fracture and Leg Stamina=0 now block sprinting completely
 * Sprint now overrides crouch, so you can panic GTFO when discovered sneaking about
-
+!!!
 ### Handling speed 
-
+!!!
 This mod changes weapon handling speed (how fast you transition into desired state) based on stance and optic equipped:
 
 * Default = 100% (vanilla)
@@ -62,37 +64,37 @@ This mod changes weapon handling speed (how fast you transition into desired sta
 * Canted aim = 130%
 * LPVO at 1x = 105%
 * Magnified scope = 80%
-
+!!!
 ### Movement speed rework
-
+!!!
 Rescaled movement speeds and added new break points. You can edit all these values in MCM.
 - **Vanilla:** crouch/walk/sprint = 1 / 2.5 / 5
 - **Updated:** crouch/walk/sprint = 0.7 / 3 / 7
 - **New:** walk-canted/walk-aiming-1x/walk-scoped = 2.25 / 1.8 / 0.9 (defined in MCM as multipliers of walk speed)
-
+!!!
 ### Inspect mode rework
-
+!!!
 * Fixed and rewrote several overlapping and dangling key bindings and states.
 * Rail movement now works only in inspect mode. Rail movement binding is now unused.
 * Weapon rotation in inspect mode is now done with the Canted aim binding.
 * Stamina drain removed
 * Added ammo and attachment cards to the inspect mode (disable via MCM menu)
-
+!!!
 ### HAMR love
-
+!!!
 HAMR in vanilla is bugged to hell and back. This mod introduces fixes and usability changes for secondary optic mode:
 * HAMR's secondary can now be activated from outside aim mode, and it gives the user a visual cue as to current state
 * Fixed HAMR's secondary optic switch permanently killing PIP plane on other scopes (state wasn't being properly reset)
 * Fixed HAMR's secondary optic vertical offset on all AK rifles (not RK), SVD and Vintorez (missing rotation calc)
 * Fixed HAMR causing major flickering when toggling secondary on M4A1 (bug with foldable iron sights)
-
+!!!
 ### Ammo check
-
+!!!
 Ammo check receives much needed love. 
 * Reload binding (default R) will now perform ammo check when held down for longer than 250ms. Old ammo check binding removed.
 * Ammo check is now interruptable. It will show ammo as long as you hold it, and you can execute reload right from it (the animation will be a bit iffy)
 * Weapons with equipped magazines will always show "? + chamber" for ammmo count. Either use ammo check function or remove the mag to see the amount of ammo it has.
-
+!!!
 ## Why this is one mod and not several
 
 These changes started out as separate mods. The catch is that Road to Vostok's scripts have a handful of "god" methods that fold a lot of unrelated behavior into a single function and mix state mutation with rendering side effects in the same call. Hooking a method through the mod loader is all-or-nothing, you can't override only part of a function. So as soon as one fix needed to touch, say, `Handling.WeaponHandling`, every other tweak that also lives in that method had to ship in the same mod or get clobbered by it. That's how the ammo-check, canted, laser and PIP changes ended up bundled together.
