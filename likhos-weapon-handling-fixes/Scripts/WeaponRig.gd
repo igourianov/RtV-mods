@@ -4,8 +4,8 @@ const _FIXED_SCOPE_AIM_OFFSET = 0.015
 const _VARIABLE_SCOPE_AIM_OFFSET = 0.03
 const _HOLD_THRESHOLD = 0.25
 const _AMMO_CHECK_INTRO_TIME_DEFAULT = 1.0
-#const _AMMO_CHECK_OUTRO_TIME = 0.5
 const _HOLD_TIMER_NAME = "LikhoReloadHoldTimer"
+const _AUDIO_PLAYER_NAME = "LikhoAmmoAudioPlayer"
 
 const ModConfig = preload("./ModConfig.gd")
 const Out = preload("../Lib/Out.gd")
@@ -224,30 +224,23 @@ func _can_ammo_check(rig) -> bool:
 	return true
 
 
-func _play_animation(rig, state_name: String) -> void:
-	rig.animator["parameters/playback"].start(state_name)
-
-
 func _do_ammo_check(rig) -> void:
 	rig.gameData.isFiring = false
 	rig.UpdateBullets()
 	rig.UpdateHUD()
 
-	var audio = _start_ammo_check_audio(rig)
-
 	rig.gameData.isChecking = true
 	_play_animation(rig, "Ammo_Check")
+	var audio = _play_audio(rig, rig.data.ammoCheck)
 
 	var intro_time: float = AMMO_CHECK_INTRO_TIMES.get(rig.data.file, _AMMO_CHECK_INTRO_TIME_DEFAULT)
 	await rig.get_tree().create_timer(intro_time * 0.7, false).timeout
 	if !is_instance_valid(rig):
-		_free_audio(audio)
 		return
 
 	ModConfig.ammo_check_delayed = true
 	await rig.get_tree().create_timer(intro_time * 0.3, false).timeout
 	if !is_instance_valid(rig):
-		_free_audio(audio)
 		return
 
 	if _state != AmmoCheckState.CHECK_INTRO:
@@ -261,11 +254,11 @@ func _do_ammo_check(rig) -> void:
 	rig.animator.process_mode = Node.PROCESS_MODE_DISABLED
 	if audio && is_instance_valid(audio):
 		audio.stream_paused = true
+
 	_state = AmmoCheckState.CHECK_PAUSED
 	while _state == AmmoCheckState.CHECK_PAUSED:
 		await rig.get_tree().process_frame
 		if !is_instance_valid(rig):
-			_free_audio(audio)
 			return
 
 	rig.animator.process_mode = Node.PROCESS_MODE_INHERIT
@@ -275,25 +268,6 @@ func _do_ammo_check(rig) -> void:
 	rig.gameData.isChecking = false
 	ModConfig.ammo_check_delayed = false
 	_state = AmmoCheckState.IDLE
-
-
-func _start_ammo_check_audio(rig) -> AudioStreamPlayer:
-	var event = rig.data.ammoCheck
-	if event == null || event.audioClips.is_empty():
-		return null
-	var audio = AudioStreamPlayer.new()
-	rig.add_child(audio)
-	audio.stream = event.audioClips.pick_random()
-	audio.volume_db = event.volume
-	audio.finished.connect(audio.queue_free)
-	audio.play()
-	return audio
-
-
-func _free_audio(audio) -> void:
-	if audio && is_instance_valid(audio):
-		audio.stop()
-		audio.queue_free()
 
 
 func _do_reload(rig) -> void:
@@ -309,7 +283,7 @@ func _do_reload(rig) -> void:
 	if slotData.state == "Jammed":
 		if !gd.isClearing:
 			gd.isClearing = true
-			rig.PlayMalfunctionClear()
+			_play_audio(rig, rig.audioLibrary.malfunctionClearRifle)
 			await rig.get_tree().create_timer(2.0, false).timeout
 			gd.isClearing = false
 			slotData.state = ""
@@ -317,7 +291,7 @@ func _do_reload(rig) -> void:
 
 	if data.weaponAction == "Manual" && !gd.isInserting:
 		if slotData.amount != 0 && !slotData.chamber:
-			await _play_reload_anim(rig, "Reload", rig.PlayReload)
+			await _play_reload(rig, "Reload", data.reload)
 			slotData.chamber = true
 			slotData.amount -= 1
 			rig.UpdateBullets()
@@ -327,18 +301,18 @@ func _do_reload(rig) -> void:
 		if rig.interface.GetAmmo(data):
 			if !slotData.chamber && !slotData.casing:
 				rig.cartridge.show()
-				await _play_reload_anim(rig, "Reload_Empty", rig.PlayReloadEmpty)
+				await _play_reload(rig, "Reload_Empty", data.reloadEmpty)
 				slotData.chamber = true
 			elif !slotData.chamber && slotData.casing:
 				rig.cartridge.show()
-				await _play_reload_anim(rig, "Reload_Tactical", rig.PlayReloadTactical)
+				await _play_reload(rig, "Reload_Tactical", data.reloadTactical)
 				slotData.casing = false
 				slotData.chamber = true
 		return
 
 	if !rig.magazine.visible && !slotData.chamber:
 		if rig.interface.GetMagazine(data, rig.weaponSlot, false):
-			await _play_reload_anim(rig, "Magazine_Attach_Empty", rig.PlayMagazineAttachEmpty)
+			await _play_reload(rig, "Magazine_Attach_Empty", data.magazineAttachEmpty)
 			slotData.chamber = true
 			rig.magazine.show()
 			rig.UpdateBullets()
@@ -346,27 +320,48 @@ func _do_reload(rig) -> void:
 
 	if !rig.magazine.visible && slotData.chamber:
 		if rig.interface.GetMagazine(data, rig.weaponSlot, false):
-			await _play_reload_anim(rig, "Magazine_Attach_Tactical", rig.PlayMagazineAttachTactical)
+			await _play_reload(rig, "Magazine_Attach_Tactical", data.magazineAttachTactical)
 			rig.magazine.show()
 			rig.UpdateBullets()
 		return
 
 	if rig.magazine.visible && !slotData.chamber:
 		if rig.interface.GetMagazine(data, rig.weaponSlot, true):
-			await _play_reload_anim(rig, "Reload_Empty", rig.PlayReloadEmpty)
+			await _play_reload(rig, "Reload_Empty", data.reloadEmpty)
 			slotData.chamber = true
 		return
 
 	if rig.magazine.visible && slotData.chamber:
 		if rig.interface.GetMagazine(data, rig.weaponSlot, true):
-			await _play_reload_anim(rig, "Reload_Tactical", rig.PlayReloadTactical)
+			await _play_reload(rig, "Reload_Tactical", data.reloadTactical)
 		return
 
 
-func _play_reload_anim(rig, condition: String, play_sound: Callable) -> void:
+func _play_reload(rig, state_name: String, event) -> void:
 	rig.gameData.isReloading = true
-	play_sound.call()
-	_play_animation(rig, condition)
+	_play_animation(rig, state_name)
+	_play_audio(rig, event)
+
+
+func _play_animation(rig, state_name: String) -> void:
+	rig.animator["parameters/playback"].start(state_name)
+
+
+func _play_audio(rig, event) -> AudioStreamPlayer:
+	if event == null || event.audioClips.is_empty():
+		return null
+	var audio = rig.get_node_or_null(_AUDIO_PLAYER_NAME)
+	if audio == null:
+		audio = AudioStreamPlayer.new()
+		audio.name = _AUDIO_PLAYER_NAME
+		rig.add_child(audio)
+	else:
+		audio.stop()
+		audio.stream_paused = false
+	audio.stream = event.audioClips.pick_random()
+	audio.volume_db = event.volume
+	audio.play()
+	return audio
 
 
 func on_update_aim_offset() -> void:
