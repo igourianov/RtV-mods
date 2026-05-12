@@ -17,8 +17,7 @@ const _PATROL_WEAPON_TYPES = {"Rifle": null, "SMG": null, "Bolt": null, "Shotgun
 const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-10.0, 0.0, 0.0)
 const _MOSIN_LOW_ROTATION_OFFSET = Vector3(-15.0, 15.0, 0.0)
 const _REMINGTON_870_LOW_ROTATION_OFFSET = Vector3(-20.0, 10.0, 0.0)
-const _AMMO_CHECK_HIGH = {"SVD": true, "KAR_21_223": true, "KAR_21_308": true}
-const _AMMO_CHECK_HIGH_TYPE = {"Pistol": true, "SMG": true}
+
 
 # the handling speed modifier - read as % of base
 enum HandlingMode {
@@ -127,12 +126,8 @@ func _override_handling(h, rig) -> bool:
 		return true
 
 	if gameData.isChecking:
-		#if _AMMO_CHECK_HIGH_TYPE.has(rig.data.weaponType) || _AMMO_CHECK_HIGH.has(rig.data.file):
 		h.targetPosition = data.highPosition
 		h.targetRotation = data.highRotation
-		#else:
-		#	h.targetPosition = data.lowPosition
-		#	h.targetRotation = data.lowRotation
 		return true
 
 	if gameData.isRunning || (gameData.isReloading && data.weaponAction != "Manual"):
