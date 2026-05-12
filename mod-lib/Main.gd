@@ -1,6 +1,6 @@
 extends Node
 
-var McmHelpers = load("res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Helpers.tres")
+const MCM_PATH := "res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Helpers.tres"
 const Out = preload("./Out.gd")
 const Inputs = preload("./Inputs.gd")
 
@@ -52,18 +52,19 @@ func _init_config():
 
 	var configDir = "user://MCM/" + mod_id
 	var filePath = configDir + "/config.ini"
+	var helper = load(MCM_PATH) if ResourceLoader.exists(MCM_PATH) else null
 
 	if !FileAccess.file_exists(filePath):
 		DirAccess.open("user://").make_dir(configDir)
 		config.save(filePath)
-	elif McmHelpers:
-		McmHelpers.CheckConfigurationHasUpdated(mod_id, config, filePath)
+	elif helper:
+		helper.CheckConfigurationHasUpdated(mod_id, config, filePath)
 		config.load(filePath)
 
 	load_config(config)
 
-	if McmHelpers:
-		McmHelpers.RegisterConfiguration(mod_id, mod_name, configDir, mod_desc, {
+	if helper:
+		helper.RegisterConfiguration(mod_id, mod_name, configDir, mod_desc, {
 			"config.ini": load_config
 		})
 
