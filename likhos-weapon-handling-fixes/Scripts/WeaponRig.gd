@@ -74,7 +74,6 @@ func on_input(event) -> void:
 		return
 	_lib.skip_super()
 
-	var gd = rig.gameData
 	var optic = rig.activeOptic
 	var zoomIn = Input.is_action_pressed("optic_zoom_in")
 	var zoomOut = Input.is_action_pressed("optic_zoom_out")
@@ -84,51 +83,51 @@ func on_input(event) -> void:
 	elif event.is_action_released("reload"):
 		_on_reload_release(rig)
 
-	if (gd.freeze
-		|| gd.isPlacing
-		|| gd.isReloading
-		|| gd.isInserting
-		|| gd.isChecking
-		|| gd.isCaching
-		|| gd.isTransitioning
-		|| gd.isFiring):
+	if (gameData.freeze
+		|| gameData.isPlacing
+		|| gameData.isReloading
+		|| gameData.isInserting
+		|| gameData.isChecking
+		|| gameData.isCaching
+		|| gameData.isTransitioning
+		|| gameData.isFiring):
 		return
 
 	if event.is_action_pressed("inspect"):
-		gd.isInspecting = !gd.isInspecting
-		gd.isFiring = false
+		gameData.isInspecting = !gameData.isInspecting
+		gameData.isFiring = false
 
-		if gd.isInspecting:
-			gd.inspectPosition = 1
+		if gameData.isInspecting:
+			gameData.inspectPosition = 1
 			rig.PlayInspectStart()
 			rig.animator["parameters/conditions/Inspect_Front"] = true
 			rig.animator["parameters/conditions/Inspect_Idle"] = false
 			rig.UpdateBullets()
 			rig.UpdateHUD()
 		else:
-			if gd.inspectPosition == 1:
+			if gameData.inspectPosition == 1:
 				rig.PlayInspectEnd()
 				rig.animator["parameters/conditions/Inspect_Front"] = false
 				rig.animator["parameters/conditions/Inspect_Idle"] = true
-			elif gd.inspectPosition == 2:
+			elif gameData.inspectPosition == 2:
 				rig.PlayInspectEnd()
 				rig.animator["parameters/conditions/Inspect_Back"] = false
 				rig.animator["parameters/conditions/Inspect_Idle"] = true
-				gd.inspectPosition = 1
+				gameData.inspectPosition = 1
 		return
 
-	if gd.isInspecting:
+	if gameData.isInspecting:
 		if event.is_action_pressed("canted"):
-			if gd.inspectPosition == 1:
+			if gameData.inspectPosition == 1:
 				rig.PlayInspectRotate()
 				rig.animator["parameters/conditions/Inspect_Front"] = false
 				rig.animator["parameters/conditions/Inspect_Back"] = true
-				gd.inspectPosition = 2
-			elif gd.inspectPosition == 2:
+				gameData.inspectPosition = 2
+			elif gameData.inspectPosition == 2:
 				rig.PlayInspectRotate()
 				rig.animator["parameters/conditions/Inspect_Front"] = true
 				rig.animator["parameters/conditions/Inspect_Back"] = false
-				gd.inspectPosition = 1
+				gameData.inspectPosition = 1
 
 		if (zoomIn || zoomOut) && optic && optic.railMovement:
 			if zoomIn && optic.position.z < optic.maxPosition:
@@ -143,10 +142,10 @@ func on_input(event) -> void:
 
 	if event.is_action_pressed("secondary_optic"):
 		if optic && optic.secondary && optic.attachmentData.secondary:
-			gd.secondaryOptic = !gd.secondaryOptic
+			gameData.secondaryOptic = !gameData.secondaryOptic
 			rig.UpdateAimOffset()
 
-	if (gd.isAiming || ModConfig.lpvo_oof_zoom == "enabled") && (zoomIn || zoomOut) && optic && optic.attachmentData.variable:
+	if (gameData.isAiming || ModConfig.lpvo_oof_zoom == "enabled") && (zoomIn || zoomOut) && optic && optic.attachmentData.variable:
 		if zoomIn && rig.slotData.zoom != 3:
 			rig.slotData.zoom += 1
 			rig.PlayRailMove()
@@ -203,18 +202,18 @@ func _get_or_create_timer(rig) -> Timer:
 
 
 func _is_busy(rig) -> bool:
-	var gd = rig.gameData
-	return (gd.freeze
-		|| gd.isPlacing
-		|| gd.isReloading
-		|| gd.isInserting
-		|| gd.isChecking
-		|| gd.isCaching
-		|| gd.isTransitioning
-		|| gd.isFiring
-		|| gd.isOccupied
-		|| gd.isClearing
-		|| gd.isInspecting)
+	var gd = gameData
+	return (gameData.freeze
+		|| gameData.isPlacing
+		|| gameData.isReloading
+		|| gameData.isInserting
+		|| gameData.isChecking
+		|| gameData.isCaching
+		|| gameData.isTransitioning
+		|| gameData.isFiring
+		|| gameData.isOccupied
+		|| gameData.isClearing
+		|| gameData.isInspecting)
 
 
 func _can_ammo_check(rig) -> bool:
@@ -225,11 +224,11 @@ func _can_ammo_check(rig) -> bool:
 
 
 func _do_ammo_check(rig) -> void:
-	rig.gameData.isFiring = false
+	gameData.isFiring = false
 	rig.UpdateBullets()
 	rig.UpdateHUD()
 
-	rig.gameData.isChecking = true
+	gameData.isChecking = true
 	_play_animation(rig, "Ammo_Check")
 	var audio = _play_audio(rig, rig.data.ammoCheck)
 
@@ -245,7 +244,7 @@ func _do_ammo_check(rig) -> void:
 
 	if _state != AmmoCheckState.CHECK_INTRO:
 		# released during intro, no pause happened, skip outro wait
-		rig.gameData.isChecking = false
+		gameData.isChecking = false
 		ModConfig.ammo_check_delayed = false
 		_state = AmmoCheckState.IDLE
 		return
@@ -265,31 +264,31 @@ func _do_ammo_check(rig) -> void:
 	if audio && is_instance_valid(audio):
 		audio.stream_paused = false
 
-	rig.gameData.isChecking = false
+	gameData.isChecking = false
 	ModConfig.ammo_check_delayed = false
 	_state = AmmoCheckState.IDLE
 
 
 func _do_reload(rig) -> void:
-	var gd = rig.gameData
+	var gd = gameData
 	var data = rig.data
 	var slotData = rig.slotData
 
-	if gd.isOccupied:
+	if gameData.isOccupied:
 		return
 
-	gd.isFiring = false
+	gameData.isFiring = false
 
 	if slotData.state == "Jammed":
-		if !gd.isClearing:
-			gd.isClearing = true
+		if !gameData.isClearing:
+			gameData.isClearing = true
 			_play_audio(rig, rig.audioLibrary.malfunctionClearRifle)
 			await rig.get_tree().create_timer(2.0, false).timeout
-			gd.isClearing = false
+			gameData.isClearing = false
 			slotData.state = ""
 		return
 
-	if data.weaponAction == "Manual" && !gd.isInserting:
+	if data.weaponAction == "Manual" && !gameData.isInserting:
 		if slotData.amount != 0 && !slotData.chamber:
 			await _play_reload(rig, "Reload", data.reload)
 			slotData.chamber = true
@@ -297,7 +296,7 @@ func _do_reload(rig) -> void:
 			rig.UpdateBullets()
 		return
 
-	if data.weaponAction == "Single" && !gd.isInserting:
+	if data.weaponAction == "Single" && !gameData.isInserting:
 		if rig.interface.GetAmmo(data):
 			if !slotData.chamber && !slotData.casing:
 				rig.cartridge.show()
@@ -338,7 +337,7 @@ func _do_reload(rig) -> void:
 
 
 func _play_reload(rig, state_name: String, event) -> void:
-	rig.gameData.isReloading = true
+	gameData.isReloading = true
 	_play_animation(rig, state_name)
 	_play_audio(rig, event)
 
@@ -373,7 +372,7 @@ func on_update_aim_offset() -> void:
 	var data = rig.data
 	var optic = rig.activeOptic
 
-	if optic && optic.secondary && rig.gameData.secondaryOptic:
+	if optic && optic.secondary && gameData.secondaryOptic:
 		# HAMR secondary position fix for Russian guns
 		Out.bugfix("recalc secondary optic Y offset")
 		rig.aimOffset = optic.position.y + optic.secondary.position.y * optic.scale.y
@@ -393,20 +392,20 @@ func on_update_aim_offset() -> void:
 
 func on_ads_post(delta: float) -> void:
 	var rig = _lib._caller
-	var gd = rig.gameData
+	var gd = gameData
 	var optic = rig.activeOptic
 	var att = optic.attachmentData
 
 	ModConfig.current_scope_mag = 1.0
 	if rig.slotData.zoom == 1:
-		gd.isScoped = gd.PIP # override vanilla behavior
+		gameData.isScoped = gameData.PIP # override vanilla behavior
 		ModConfig.current_scope_mag = 1.1
 	elif rig.slotData.zoom == 2:
 		ModConfig.current_scope_mag = 3.0
 	elif rig.slotData.zoom == 3:
 		ModConfig.current_scope_mag = 6.0
 
-	if !gd.PIP || !gd.isAiming || gd.isColliding || optic == null:
+	if !gameData.PIP || !gameData.isAiming || gameData.isColliding || optic == null:
 		return
 
 	var lens_scale: float
@@ -417,19 +416,19 @@ func on_ads_post(delta: float) -> void:
 		_cached_lens_scale = lens_scale
 		_last_optic_for_scale = optic
 
-	if !att.variable && (!att.scope || gd.secondaryOptic):
+	if !att.variable && (!att.scope || gameData.secondaryOptic):
 		return
 
-	gd.aimFOV = gd.baseFOV # override vanilla behavior
+	gameData.aimFOV = gameData.baseFOV # override vanilla behavior
 
-	if att.scope && !gd.secondaryOptic:
+	if att.scope && !gameData.secondaryOptic:
 		ModConfig.current_scope_mag = 4.0
 		var distance = distance_factor(_FIXED_SCOPE_AIM_OFFSET, ModConfig.eye_relief_offset)
-		optic.camera.fov = distance * gd.baseFOV * lens_scale / ModConfig.current_scope_mag
+		optic.camera.fov = distance * gameData.baseFOV * lens_scale / ModConfig.current_scope_mag
 		return
 
 	var distance = distance_factor(_VARIABLE_SCOPE_AIM_OFFSET, ModConfig.eye_relief_offset)
-	optic.camera.fov = lerp(optic.camera.fov, distance * gd.baseFOV * lens_scale / ModConfig.current_scope_mag, delta * 10.0)
+	optic.camera.fov = lerp(optic.camera.fov, distance * gameData.baseFOV * lens_scale / ModConfig.current_scope_mag, delta * 10.0)
 
 
 func distance_factor(base: float, distance: float) -> float:
