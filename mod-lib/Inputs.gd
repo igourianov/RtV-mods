@@ -51,3 +51,11 @@ func _create_input_button(caller, name, label, event) -> void:
 
 	var inputLabel = button.find_child("LabelInput")
 	inputLabel.text = event.as_text().trim_suffix("- Physical") if event else "[unbound]"
+
+
+static func get_binding(action: StringName) -> String:
+	var events = InputMap.action_get_events(action)
+	if !events || events.is_empty():
+		return "[unbound]"
+	return events[0].as_text().trim_suffix("- Physical")
+

@@ -9,6 +9,7 @@ const _AUDIO_PLAYER_NAME = "LikhoAmmoAudioPlayer"
 
 const ModConfig = preload("./ModConfig.gd")
 const Out = preload("../Lib/Out.gd")
+const Inputs = preload("../Lib/Inputs.gd")
 
 enum AmmoCheckState {
 	IDLE = 1,
@@ -126,6 +127,11 @@ func _inspect_toggle(rig):
 		rig.animator["parameters/conditions/Inspect_Idle"] = false
 		rig.UpdateBullets()
 		rig.UpdateHUD()
+		Out.protip("inspect-rotate", "Press [%s] to rotate or [%s] / [%s] to move optic" % [
+			Inputs.get_binding("canted"),
+			Inputs.get_binding("optic_zoom_in"),
+			Inputs.get_binding("optic_zoom_out")
+		])
 	elif gameData.inspectPosition == 1:
 		rig.PlayInspectEnd()
 		rig.animator["parameters/conditions/Inspect_Front"] = false
