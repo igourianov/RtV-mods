@@ -75,8 +75,8 @@ func on_input(event) -> void:
 	_lib.skip_super()
 
 	var optic = rig.activeOptic
-	var zoomIn = Input.is_action_pressed("optic_zoom_in")
-	var zoomOut = Input.is_action_pressed("optic_zoom_out")
+	var zoomIn = event.is_action_pressed("optic_zoom_in", true)
+	var zoomOut = event.is_action_pressed("optic_zoom_out", true)
 
 	if event.is_action_pressed("reload"):
 		_on_reload_press(rig)
@@ -94,50 +94,11 @@ func on_input(event) -> void:
 		return
 
 	if event.is_action_pressed("inspect"):
-		gameData.isInspecting = !gameData.isInspecting
-		gameData.isFiring = false
-
-		if gameData.isInspecting:
-			gameData.inspectPosition = 1
-			rig.PlayInspectStart()
-			rig.animator["parameters/conditions/Inspect_Front"] = true
-			rig.animator["parameters/conditions/Inspect_Idle"] = false
-			rig.UpdateBullets()
-			rig.UpdateHUD()
-		else:
-			if gameData.inspectPosition == 1:
-				rig.PlayInspectEnd()
-				rig.animator["parameters/conditions/Inspect_Front"] = false
-				rig.animator["parameters/conditions/Inspect_Idle"] = true
-			elif gameData.inspectPosition == 2:
-				rig.PlayInspectEnd()
-				rig.animator["parameters/conditions/Inspect_Back"] = false
-				rig.animator["parameters/conditions/Inspect_Idle"] = true
-				gameData.inspectPosition = 1
+		_inspect_toggle(rig)
 		return
 
 	if gameData.isInspecting:
-		if event.is_action_pressed("canted"):
-			if gameData.inspectPosition == 1:
-				rig.PlayInspectRotate()
-				rig.animator["parameters/conditions/Inspect_Front"] = false
-				rig.animator["parameters/conditions/Inspect_Back"] = true
-				gameData.inspectPosition = 2
-			elif gameData.inspectPosition == 2:
-				rig.PlayInspectRotate()
-				rig.animator["parameters/conditions/Inspect_Front"] = true
-				rig.animator["parameters/conditions/Inspect_Back"] = false
-				gameData.inspectPosition = 1
-
-		if (zoomIn || zoomOut) && optic && optic.railMovement:
-			if zoomIn && optic.position.z < optic.maxPosition:
-				optic.position.z += 0.01
-				rig.slotData.position += 0.01
-				rig.PlayRailMove()
-			elif zoomOut && optic.position.z > optic.minPosition:
-				optic.position.z -= 0.01
-				rig.slotData.position -= 0.01
-				rig.PlayRailMove()
+		_inspect_action(rig, event.is_action_pressed("canted"), zoomIn, zoomOut)
 		return
 
 	if event.is_action_pressed("secondary_optic"):
@@ -151,6 +112,53 @@ func on_input(event) -> void:
 			rig.PlayRailMove()
 		elif zoomOut && rig.slotData.zoom != 1:
 			rig.slotData.zoom -= 1
+			rig.PlayRailMove()
+
+
+func _inspect_toggle(rig):
+	gameData.isInspecting = !gameData.isInspecting
+	gameData.isFiring = false
+
+	if gameData.isInspecting:
+		gameData.inspectPosition = 1
+		rig.PlayInspectStart()
+		rig.animator["parameters/conditions/Inspect_Front"] = true
+		rig.animator["parameters/conditions/Inspect_Idle"] = false
+		rig.UpdateBullets()
+		rig.UpdateHUD()
+	elif gameData.inspectPosition == 1:
+		rig.PlayInspectEnd()
+		rig.animator["parameters/conditions/Inspect_Front"] = false
+		rig.animator["parameters/conditions/Inspect_Idle"] = true
+	elif gameData.inspectPosition == 2:
+		rig.PlayInspectEnd()
+		rig.animator["parameters/conditions/Inspect_Back"] = false
+		rig.animator["parameters/conditions/Inspect_Idle"] = true
+		gameData.inspectPosition = 1
+
+
+func _inspect_action(rig, canted, zoomIn, zoomOut):
+	if canted:
+		if gameData.inspectPosition == 1:
+			rig.PlayInspectRotate()
+			rig.animator["parameters/conditions/Inspect_Front"] = false
+			rig.animator["parameters/conditions/Inspect_Back"] = true
+			gameData.inspectPosition = 2
+		elif gameData.inspectPosition == 2:
+			rig.PlayInspectRotate()
+			rig.animator["parameters/conditions/Inspect_Front"] = true
+			rig.animator["parameters/conditions/Inspect_Back"] = false
+			gameData.inspectPosition = 1
+
+	var optic = rig.activeOptic
+	if (zoomIn || zoomOut) && optic && optic.railMovement:
+		if zoomIn && optic.position.z < optic.maxPosition:
+			optic.position.z += 0.01
+			rig.slotData.position += 0.01
+			rig.PlayRailMove()
+		elif zoomOut && optic.position.z > optic.minPosition:
+			optic.position.z -= 0.01
+			rig.slotData.position -= 0.01
 			rig.PlayRailMove()
 
 
