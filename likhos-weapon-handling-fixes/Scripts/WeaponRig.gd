@@ -20,6 +20,13 @@ enum AmmoCheckState {
 	REINSERTING = 5,
 }
 
+enum AmmoInsertState {
+	NONE,
+	OPEN,
+	IDLE,
+	INSERT,
+}
+
 const AMMO_CHECK_INTRO_TIMES = {
 	"AKM": 1.65,
 	"AK_12": 1.45,
@@ -54,9 +61,9 @@ var _lib
 var _preferences: Preferences
 var _last_optic_for_scale = null
 var _cached_lens_scale: float = 1.0
-var _state: AmmoCheckState = AmmoCheckState.NONE
-var _load_cartridge := false
-var _is_reloading : = false
+var _ammo_check_state: AmmoCheckState = AmmoCheckState.NONE
+var _is_reloading := false
+var _ammo_insert_state := AmmoInsertState.NONE
 
 
 func _init(lib, preferences: Preferences) -> void:
@@ -87,7 +94,7 @@ func on_input(event) -> void:
 	if _is_busy():
 		return
 
-	if _handle_ammo(rig, event) || _handle_inspecting(rig, event) || _handle_optic(rig, event):
+	if _handle_manual_reload(rig, event) || _handle_ammo(rig, event) || _handle_inspecting(rig, event) || _handle_optic(rig, event):
 		return
 
 
@@ -182,34 +189,24 @@ func _inspect_toggle(rig):
 
 func _handle_ammo(rig, event):
 
-	if gameData.isInserting:
-		if event.is_action_pressed("fire"):
-			_load_cartridge = true
-		elif event.is_action_pressed("reload"):
-			gameData.isInserting = false
-		return true
-
-	if _state == AmmoCheckState.NONE && event.is_action_pressed("reload"):
-		_state = AmmoCheckState.PENDING
+	if _ammo_check_state == AmmoCheckState.NONE && event.is_action_pressed("reload") && !gameData.isReloading:
+		_ammo_check_state = AmmoCheckState.PENDING
 		_await_ammo_check(rig)
 		return true
 
-	if _state != AmmoCheckState.NONE && event.is_action_released("reload"):
-		if _state == AmmoCheckState.PENDING:
-			_state = AmmoCheckState.NONE
+	if _ammo_check_state != AmmoCheckState.NONE && event.is_action_released("reload"):
+		if _ammo_check_state == AmmoCheckState.PENDING:
+			_ammo_check_state = AmmoCheckState.NONE
 			_do_reload(rig)
-		elif _state == AmmoCheckState.PULLING:
-			_state = AmmoCheckState.REINSERTING
-		elif _state == AmmoCheckState.PAUSED:
-			_state = AmmoCheckState.REINSERTING
+		elif _ammo_check_state == AmmoCheckState.PULLING:
+			_ammo_check_state = AmmoCheckState.REINSERTING
+		elif _ammo_check_state == AmmoCheckState.PAUSED:
+			_ammo_check_state = AmmoCheckState.REINSERTING
 		return true
 
-	if _state == AmmoCheckState.PAUSED && event.is_action_pressed("fire"):
-		_state = AmmoCheckState.NONE
-		if rig.data.weaponAction == "Manual":
-			_do_insert(rig)
-		else:
-			_do_reload(rig, true)
+	if _ammo_check_state == AmmoCheckState.PAUSED && event.is_action_pressed("fire") && rig.data.weaponAction != "Manual":
+		_ammo_check_state = AmmoCheckState.NONE
+		_do_reload(rig, true)
 		return true
 
 	return false
@@ -217,7 +214,7 @@ func _handle_ammo(rig, event):
 
 func _await_ammo_check(rig):
 	await rig.get_tree().create_timer(_HOLD_THRESHOLD, false).timeout
-	if _state == AmmoCheckState.PENDING && is_instance_valid(rig) && !_is_busy() && (rig.data.weaponAction == "Manual" || rig.magazine.visible):
+	if _ammo_check_state == AmmoCheckState.PENDING && is_instance_valid(rig) && !_is_busy() && (rig.data.weaponAction == "Manual" || rig.magazine.visible):
 		_do_ammo_check(rig)
 
 
@@ -232,7 +229,7 @@ func _is_busy() -> bool:
 
 
 func _do_ammo_check(rig) -> void:
-	_state = AmmoCheckState.PULLING
+	_ammo_check_state = AmmoCheckState.PULLING
 	ModConfig.ammo_check_view = false
 
 	gameData.isFiring = false
@@ -254,24 +251,22 @@ func _do_ammo_check(rig) -> void:
 	if !is_instance_valid(rig):
 		return
 
-	if _state != AmmoCheckState.PULLING:
+	if _ammo_check_state != AmmoCheckState.PULLING:
 		# released during intro, no pause happened, skip outro wait
 		gameData.isChecking = false
 		ModConfig.ammo_check_view = false
-		_state = AmmoCheckState.NONE
+		_ammo_check_state = AmmoCheckState.NONE
 		return
 
 	# held past intro: pause animator and wait for release
 	rig.animator.process_mode = Node.PROCESS_MODE_DISABLED
 	audio.stream_paused = true
 
-	if rig.data.weaponAction == "Manual":
-		Out.protip("ammo-check-insert", "Press [%s] to start reloading" % Inputs.get_binding("fire"))
-	else:
+	if rig.data.weaponAction != "Manual":
 		Out.protip("ammo-check-reload", "Press [%s] to reload" % Inputs.get_binding("fire"))
 
-	_state = AmmoCheckState.PAUSED
-	while _state == AmmoCheckState.PAUSED:
+	_ammo_check_state = AmmoCheckState.PAUSED
+	while _ammo_check_state == AmmoCheckState.PAUSED:
 		await rig.get_tree().process_frame
 		if !is_instance_valid(rig):
 			return
@@ -283,7 +278,7 @@ func _do_ammo_check(rig) -> void:
 
 	ModConfig.ammo_check_view = false
 	gameData.isChecking = false
-	_state = AmmoCheckState.NONE
+	_ammo_check_state = AmmoCheckState.NONE
 
 
 func _do_reload(rig, ammoCheck: bool = false) -> void:
@@ -342,35 +337,57 @@ func _do_reload(rig, ammoCheck: bool = false) -> void:
 		return
 
 
-func _do_insert(rig):
-	if gameData.isInserting:
-		return
+func _handle_manual_reload(rig, event) -> bool:
 
-	_load_cartridge = false
+	if rig.data.weaponAction != "Manual":
+		return false
+
+	if _ammo_insert_state == AmmoInsertState.NONE && event.is_action_pressed("prepare"):
+		
+		_do_insert(rig)
+	elif _ammo_insert_state == AmmoInsertState.IDLE && event.is_action_pressed("fire"):
+		_ammo_insert_state = AmmoInsertState.INSERT
+	elif _ammo_insert_state == AmmoInsertState.IDLE && event.is_action_pressed("prepare"):
+		_ammo_insert_state = AmmoInsertState.NONE
+	else:
+		return false
+	
+	return true
+
+
+func _do_insert(rig):
+	
 	gameData.isInserting = true
+
+	_ammo_insert_state = AmmoInsertState.OPEN
 	_play_audio(rig, rig.data.insertStart)
 	_play_animation(rig, "Insert_Start")
+	await _await_animation(rig, "Insert_Idle")
+	_ammo_insert_state = AmmoInsertState.IDLE
+
 	rig.slotData.chamber = false
 	rig.slotData.casing = false
 
-	while true:
-		if !gameData.isInserting:
-			_play_audio(rig, rig.data.insertEnd)
-			_play_animation(rig, "Insert_End")
-			if rig.data.weaponType == "Bolt" && rig.slotData.amount:
-				rig.slotData.chamber = true
-				rig.slotData.amount -= 1
-			return
+	Out.protip("ammo-check-insert", "Press [%s] to start reloading" % Inputs.get_binding("fire"))
 
-		elif _load_cartridge && rig.slotData.amount < rig.data.maxAmount && rig.interface.GetAmmo(rig.data):
+	while _ammo_insert_state != AmmoInsertState.NONE:
+		if _ammo_insert_state == AmmoInsertState.INSERT && rig.slotData.amount < rig.data.maxAmount && rig.interface.GetAmmo(rig.data):
 			_play_audio(rig, rig.data.insert)
 			_play_animation(rig, "Insert")
-			#await rig.get_tree().create_timer(0.5, false).timeout
 			await _await_animation(rig, "Insert_Idle")
 			rig.slotData.amount += 1
-
-		_load_cartridge = false
+		_ammo_insert_state = AmmoInsertState.IDLE
 		await rig.get_tree().process_frame
+
+	_play_audio(rig, rig.data.insertEnd)
+	_play_animation(rig, "Insert_End")
+	await _await_animation(rig, "Idle")
+
+	if rig.data.weaponType == "Bolt" && rig.slotData.amount:
+		rig.slotData.chamber = true
+		rig.slotData.amount -= 1
+
+	gameData.isInserting = false
 
 
 func _play_reload(rig, state_name: String, event) -> void:
@@ -394,9 +411,11 @@ func _play_animation(rig, state_name: String) -> void:
 func _await_animation(rig, target_state: String = "Idle"):
 	await rig.get_tree().create_timer(0.1, false).timeout # allow animation to transition out of Idle
 	var playback = rig.animator.get("parameters/playback")
+	Out.debug("animation waiting for:", target_state)
 	while target_state != playback.get_current_node():
-		#Out.debug("animation still playing")
+		#Out.debug("animation waiting for:", target_state, "| current:", playback.get_current_node())
 		await rig.get_tree().process_frame
+	Out.debug("animation ended")
 
 
 func _play_audio(rig, event) -> AudioStreamPlayer:
