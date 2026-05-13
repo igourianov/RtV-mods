@@ -125,9 +125,9 @@ func _override_handling(h, rig) -> bool:
 		h.targetRotation = data.inspectRotation
 		return true
 
-	if gameData.isChecking:
-		h.targetPosition = data.highPosition
-		h.targetRotation = data.highRotation
+	if gameData.isChecking && ModConfig.ammo_check_view:
+		h.targetPosition = data.highPosition if !gameData.isReloading else data.lowPosition
+		h.targetRotation = data.highPosition if !gameData.isReloading else data.lowRotation
 		return true
 
 	if gameData.isRunning || (gameData.isReloading && data.weaponAction != "Manual"):

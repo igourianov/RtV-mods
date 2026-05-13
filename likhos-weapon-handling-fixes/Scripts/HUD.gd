@@ -110,7 +110,7 @@ func _update_crosshair_visibility(hud) -> void:
 	if !is_instance_valid(_crosshair):
 		return
 	var aimingMode = gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2
-	var aimBlocked = gameData.menu || gameData.isDead || gameData.isInspecting || gameData.transition || gameData.isTransitioning
+	var aimBlocked = gameData.menu || gameData.isDead || gameData.isInspecting || gameData.transition || gameData.isTransitioning || gameData.isChecking
 	_crosshair.visible = !aimingMode && !aimBlocked && ModConfig.crosshair_style != "off"
 
 func _update_interaction_tooltip(hud) -> void:
@@ -123,8 +123,8 @@ func _update_ammo_overlays(hud) -> void:
 		hud.magazine.visible = true
 		hud.chamber.visible = true
 	elif gameData.isChecking:
-		hud.magazine.visible = ModConfig.ammo_check_delayed
-		hud.chamber.visible = ModConfig.ammo_check_delayed
+		hud.magazine.visible = ModConfig.ammo_check_view
+		hud.chamber.visible = ModConfig.ammo_check_view
 
 func _setup_attachment_tooltips(hud) -> void:
 	var stale := _att_tooltips.is_empty()
