@@ -110,8 +110,8 @@ func _update_crosshair_visibility(hud) -> void:
 	if !is_instance_valid(_crosshair):
 		return
 	var aimingMode = gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2
-	var aimBlocked = gameData.menu || gameData.isDead || gameData.isInspecting || gameData.transition || gameData.isTransitioning || gameData.isChecking
-	_crosshair.visible = !aimingMode && !aimBlocked && ModConfig.crosshair_style != "off"
+	var interactionBlocked = gameData.menu || gameData.isDead || gameData.isInspecting || gameData.isTransitioning || gameData.isChecking || gameData.isInserting
+	_crosshair.visible = !aimingMode && !interactionBlocked && ModConfig.crosshair_style != "off"
 
 func _update_interaction_tooltip(hud) -> void:
 	var aimingMode = gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2

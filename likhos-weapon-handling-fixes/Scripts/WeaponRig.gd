@@ -55,7 +55,8 @@ var _preferences: Preferences
 var _last_optic_for_scale = null
 var _cached_lens_scale: float = 1.0
 var _state: AmmoCheckState = AmmoCheckState.NONE
-var _lastState = null
+var _load_cartridge := false
+var _is_reloading : = false
 
 
 func _init(lib, preferences: Preferences) -> void:
@@ -63,12 +64,18 @@ func _init(lib, preferences: Preferences) -> void:
 	_preferences = preferences
 
 
-func on_ammo_check_replace() -> void:
+func on_physics_process(delta:float):
+	var rig = _lib._caller
+	if rig == null:
+		return
 	_lib.skip_super()
 
+	if _is_busy() || gameData.isReloading || gameData.isClearing || gameData.isInserting || gameData.isInspecting:
+		return
 
-func on_reload_replace() -> void:
-	_lib.skip_super()
+	rig.FireInput()
+	rig.FireTimer(delta)
+	rig.FireImpulse(delta)
 
 
 func on_input(event) -> void:
@@ -77,34 +84,17 @@ func on_input(event) -> void:
 		return
 	_lib.skip_super()
 
+	if _is_busy():
+		return
+
+	if _handle_ammo(rig, event) || _handle_inspecting(rig, event) || _handle_optic(rig, event):
+		return
+
+
+func _handle_optic(rig, event: InputEvent) -> bool:
 	var optic = rig.activeOptic
 	var zoomIn = event.is_action_pressed("optic_zoom_in", true)
 	var zoomOut = event.is_action_pressed("optic_zoom_out", true)
-
-	_handle_reload(rig, event)
-
-	if (gameData.freeze
-		|| gameData.isPlacing
-		|| gameData.isReloading
-		|| gameData.isInserting
-		|| gameData.isChecking
-		|| gameData.isCaching
-		|| gameData.isTransitioning
-		|| gameData.isFiring):
-		return
-
-	if event.is_action_pressed("inspect"):
-		_inspect_toggle(rig)
-		return
-
-	if gameData.isInspecting:
-		_inspect_action(rig, event.is_action_pressed("canted"), zoomIn, zoomOut)
-		return
-
-	if event.is_action_pressed("secondary_optic"):
-		if optic && optic.secondary && optic.attachmentData.secondary:
-			gameData.secondaryOptic = !gameData.secondaryOptic
-			rig.UpdateAimOffset()
 
 	if (gameData.isAiming || ModConfig.lpvo_ooa_zoom) && (zoomIn || zoomOut) && optic && optic.attachmentData.variable:
 		if zoomIn && rig.slotData.zoom != 3:
@@ -113,7 +103,55 @@ func on_input(event) -> void:
 		elif zoomOut && rig.slotData.zoom != 1:
 			rig.slotData.zoom -= 1
 			rig.PlayRailMove()
+		return true
 
+	if event.is_action_pressed("secondary_optic") && optic && optic.secondary && optic.attachmentData.secondary:
+		gameData.secondaryOptic = !gameData.secondaryOptic
+		rig.UpdateAimOffset()
+		return true
+
+	return false
+
+
+func _handle_inspecting(rig, event: InputEvent) -> bool:
+
+	if event.is_action_pressed("inspect"):
+		_inspect_toggle(rig)
+		return true
+
+	if !gameData.isInspecting:
+		return false
+
+	if event.is_action_pressed("canted"):
+		if gameData.inspectPosition == 1:
+			rig.PlayInspectRotate()
+			rig.animator["parameters/conditions/Inspect_Front"] = false
+			rig.animator["parameters/conditions/Inspect_Back"] = true
+			gameData.inspectPosition = 2
+		elif gameData.inspectPosition == 2:
+			rig.PlayInspectRotate()
+			rig.animator["parameters/conditions/Inspect_Front"] = true
+			rig.animator["parameters/conditions/Inspect_Back"] = false
+			gameData.inspectPosition = 1
+		return true
+
+	var optic = rig.activeOptic
+	var zoomIn = event.is_action_pressed("optic_zoom_in", true)
+	var zoomOut = event.is_action_pressed("optic_zoom_out", true)
+
+	if (zoomIn || zoomOut) && optic && optic.railMovement:
+		if zoomIn && optic.position.z < optic.maxPosition:
+			optic.position.z += 0.01
+			rig.slotData.position += 0.01
+			rig.PlayRailMove()
+		elif zoomOut && optic.position.z > optic.minPosition:
+			optic.position.z -= 0.01
+			rig.slotData.position -= 0.01
+			rig.PlayRailMove()
+		return true
+
+	return false
+	
 
 func _inspect_toggle(rig):
 	gameData.isInspecting = !gameData.isInspecting
@@ -142,39 +180,21 @@ func _inspect_toggle(rig):
 		gameData.inspectPosition = 1
 
 
-func _inspect_action(rig, canted, zoomIn, zoomOut):
-	if canted:
-		if gameData.inspectPosition == 1:
-			rig.PlayInspectRotate()
-			rig.animator["parameters/conditions/Inspect_Front"] = false
-			rig.animator["parameters/conditions/Inspect_Back"] = true
-			gameData.inspectPosition = 2
-		elif gameData.inspectPosition == 2:
-			rig.PlayInspectRotate()
-			rig.animator["parameters/conditions/Inspect_Front"] = true
-			rig.animator["parameters/conditions/Inspect_Back"] = false
-			gameData.inspectPosition = 1
+func _handle_ammo(rig, event):
 
-	var optic = rig.activeOptic
-	if (zoomIn || zoomOut) && optic && optic.railMovement:
-		if zoomIn && optic.position.z < optic.maxPosition:
-			optic.position.z += 0.01
-			rig.slotData.position += 0.01
-			rig.PlayRailMove()
-		elif zoomOut && optic.position.z > optic.minPosition:
-			optic.position.z -= 0.01
-			rig.slotData.position -= 0.01
-			rig.PlayRailMove()
+	if gameData.isInserting:
+		if event.is_action_pressed("fire"):
+			_load_cartridge = true
+		elif event.is_action_pressed("reload"):
+			gameData.isInserting = false
+		return true
 
-
-func _handle_reload(rig, event):
-	if !_is_busy(rig) && _state == AmmoCheckState.NONE && event.is_action_pressed("reload"):
+	if _state == AmmoCheckState.NONE && event.is_action_pressed("reload"):
 		_state = AmmoCheckState.PENDING
-		await rig.get_tree().create_timer(_HOLD_THRESHOLD, false).timeout
-		if _state == AmmoCheckState.PENDING && is_instance_valid(rig) && !_is_busy(rig) && _has_magazine(rig):
-			_do_ammo_check(rig)
+		_await_ammo_check(rig)
+		return true
 
-	elif event.is_action_released("reload"):
+	if _state != AmmoCheckState.NONE && event.is_action_released("reload"):
 		if _state == AmmoCheckState.PENDING:
 			_state = AmmoCheckState.NONE
 			_do_reload(rig)
@@ -182,31 +202,34 @@ func _handle_reload(rig, event):
 			_state = AmmoCheckState.REINSERTING
 		elif _state == AmmoCheckState.PAUSED:
 			_state = AmmoCheckState.REINSERTING
+		return true
 
-	elif _state == AmmoCheckState.PAUSED && event.is_action_pressed("fire"):
+	if _state == AmmoCheckState.PAUSED && event.is_action_pressed("fire"):
 		_state = AmmoCheckState.NONE
-		_do_reload(rig, true)
+		if rig.data.weaponAction == "Manual":
+			_do_insert(rig)
+		else:
+			_do_reload(rig, true)
+		return true
+
+	return false
 
 
-func _is_busy(rig) -> bool:
-	var gd = gameData
+func _await_ammo_check(rig):
+	await rig.get_tree().create_timer(_HOLD_THRESHOLD, false).timeout
+	if _state == AmmoCheckState.PENDING && is_instance_valid(rig) && !_is_busy() && (rig.data.weaponAction == "Manual" || rig.magazine.visible):
+		_do_ammo_check(rig)
+
+
+func _is_busy() -> bool:
 	return (gameData.freeze
+		|| gameData.isDead
 		|| gameData.isPlacing
-		|| gameData.isReloading
-		|| gameData.isInserting
-		|| gameData.isChecking
+		|| gameData.isDrawing
 		|| gameData.isCaching
 		|| gameData.isTransitioning
-		|| gameData.isFiring
-		|| gameData.isOccupied
-		|| gameData.isClearing
-		|| gameData.isInspecting)
+		|| gameData.isOccupied)
 
-
-
-func _has_magazine(rig) -> bool:
-	var action = rig.data.weaponAction
-	return action == "Manual" || action == "Single" || rig.magazine.visible
 
 func _do_ammo_check(rig) -> void:
 	_state = AmmoCheckState.PULLING
@@ -242,7 +265,10 @@ func _do_ammo_check(rig) -> void:
 	rig.animator.process_mode = Node.PROCESS_MODE_DISABLED
 	audio.stream_paused = true
 
-	Out.protip("ammo-check-reload", "Press [%s] to reload" % Inputs.get_binding("fire"))
+	if rig.data.weaponAction == "Manual":
+		Out.protip("ammo-check-insert", "Press [%s] to start reloading" % Inputs.get_binding("fire"))
+	else:
+		Out.protip("ammo-check-reload", "Press [%s] to reload" % Inputs.get_binding("fire"))
 
 	_state = AmmoCheckState.PAUSED
 	while _state == AmmoCheckState.PAUSED:
@@ -256,20 +282,16 @@ func _do_ammo_check(rig) -> void:
 	await rig.get_tree().create_timer((1.5 if gameData.isReloading else 0.5), false).timeout
 
 	ModConfig.ammo_check_view = false
-
-	await _await_animation(rig)
-
 	gameData.isChecking = false
 	_state = AmmoCheckState.NONE
 
 
 func _do_reload(rig, ammoCheck: bool = false) -> void:
-	var gd = gameData
 	var data = rig.data
 	var slotData = rig.slotData
 	var magAttach = ammoCheck || !rig.magazine.visible
 
-	if gameData.isOccupied:
+	if gameData.isOccupied || gameData.isReloading || gameData.isClearing:
 		return
 
 	gameData.isFiring = false
@@ -284,29 +306,18 @@ func _do_reload(rig, ammoCheck: bool = false) -> void:
 		return
 
 	if data.weaponAction == "Manual" && !gameData.isInserting:
-		if slotData.amount != 0 && !slotData.chamber:
-			_play_reload(rig, "Reload", data.reload)
+		await _play_reload(rig, "Reload", data.reload)
+		slotData.casing = false
+		slotData.chamber = false
+		if slotData.amount:
 			slotData.chamber = true
 			slotData.amount -= 1
-			rig.UpdateBullets()
-		return
-
-	if data.weaponAction == "Single" && !gameData.isInserting:
-		if rig.interface.GetAmmo(data):
-			if !slotData.chamber && !slotData.casing:
-				rig.cartridge.show()
-				_play_reload(rig, "Reload_Empty", data.reloadEmpty)
-				slotData.chamber = true
-			elif !slotData.chamber && slotData.casing:
-				rig.cartridge.show()
-				_play_reload(rig, "Reload_Tactical", data.reloadTactical)
-				slotData.casing = false
-				slotData.chamber = true
+		rig.UpdateBullets()
 		return
 
 	if magAttach && !slotData.chamber:
 		if rig.interface.GetMagazine(data, rig.weaponSlot, magAttach):
-			_play_reload(rig, "Magazine_Attach_Empty", data.magazineAttachEmpty)
+			await _play_reload(rig, "Magazine_Attach_Empty", data.magazineAttachEmpty)
 			slotData.chamber = true
 			rig.magazine.show()
 			rig.UpdateBullets()
@@ -314,21 +325,52 @@ func _do_reload(rig, ammoCheck: bool = false) -> void:
 
 	if magAttach && slotData.chamber:
 		if rig.interface.GetMagazine(data, rig.weaponSlot, magAttach):
-			_play_reload(rig, "Magazine_Attach_Tactical", data.magazineAttachTactical)
+			await _play_reload(rig, "Magazine_Attach_Tactical", data.magazineAttachTactical)
 			rig.magazine.show()
 			rig.UpdateBullets()
 		return
 
 	if rig.magazine.visible && !slotData.chamber:
 		if rig.interface.GetMagazine(data, rig.weaponSlot, true):
-			_play_reload(rig, "Reload_Empty", data.reloadEmpty)
+			await _play_reload(rig, "Reload_Empty", data.reloadEmpty)
 			slotData.chamber = true
 		return
 
 	if rig.magazine.visible && slotData.chamber:
 		if rig.interface.GetMagazine(data, rig.weaponSlot, true):
-			_play_reload(rig, "Reload_Tactical", data.reloadTactical)
+			await _play_reload(rig, "Reload_Tactical", data.reloadTactical)
 		return
+
+
+func _do_insert(rig):
+	if gameData.isInserting:
+		return
+
+	_load_cartridge = false
+	gameData.isInserting = true
+	_play_audio(rig, rig.data.insertStart)
+	_play_animation(rig, "Insert_Start")
+	rig.slotData.chamber = false
+	rig.slotData.casing = false
+
+	while true:
+		if !gameData.isInserting:
+			_play_audio(rig, rig.data.insertEnd)
+			_play_animation(rig, "Insert_End")
+			if rig.data.weaponType == "Bolt" && rig.slotData.amount:
+				rig.slotData.chamber = true
+				rig.slotData.amount -= 1
+			return
+
+		elif _load_cartridge && rig.slotData.amount < rig.data.maxAmount && rig.interface.GetAmmo(rig.data):
+			_play_audio(rig, rig.data.insert)
+			_play_animation(rig, "Insert")
+			#await rig.get_tree().create_timer(0.5, false).timeout
+			await _await_animation(rig, "Insert_Idle")
+			rig.slotData.amount += 1
+
+		_load_cartridge = false
+		await rig.get_tree().process_frame
 
 
 func _play_reload(rig, state_name: String, event) -> void:
@@ -337,15 +379,23 @@ func _play_reload(rig, state_name: String, event) -> void:
 	_play_animation(rig, state_name)
 	_play_audio(rig, event)
 	await _await_animation(rig)
+	#if rig.data.weaponAction == "Manual":
+	#	await _await_animation(rig)
+	#else:
+	#	await rig.get_tree().create_timer(2.0, false).timeout
 	gameData.isReloading = false
+	Out.debug("_play_reload done")
 
 
 func _play_animation(rig, state_name: String) -> void:
 	rig.animator["parameters/playback"].start(state_name)
 
 
-func _await_animation(rig):
-	while "Idle" != rig.animator.get("parameters/playback").get_current_node():
+func _await_animation(rig, target_state: String = "Idle"):
+	await rig.get_tree().create_timer(0.1, false).timeout # allow animation to transition out of Idle
+	var playback = rig.animator.get("parameters/playback")
+	while target_state != playback.get_current_node():
+		#Out.debug("animation still playing")
 		await rig.get_tree().process_frame
 
 
@@ -395,7 +445,6 @@ func on_update_aim_offset() -> void:
 
 func on_ads_post(delta: float) -> void:
 	var rig = _lib._caller
-	var gd = gameData
 	var optic = rig.activeOptic
 	var att = optic.attachmentData
 

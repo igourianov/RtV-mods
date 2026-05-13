@@ -29,6 +29,6 @@ static func protip(id: StringName, message: String) -> bool:
 	protip_timers.set(id, now)
 	if last && (now - last) < PROTIP_DELAY:
 		return false
-	loader.Message("Likho's protip: " + message, PROTIP_COLOR)
+	loader.Message("Likho's pro-tip: " + message, PROTIP_COLOR)
 	return true
 
