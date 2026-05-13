@@ -25,6 +25,7 @@ enum AmmoInsertState {
 	OPEN,
 	IDLE,
 	INSERT,
+	CLOSE,
 }
 
 const AMMO_CHECK_INTRO_TIMES = {
@@ -343,12 +344,11 @@ func _handle_manual_reload(rig, event) -> bool:
 		return false
 
 	if _ammo_insert_state == AmmoInsertState.NONE && event.is_action_pressed("prepare"):
-		
 		_do_insert(rig)
 	elif _ammo_insert_state == AmmoInsertState.IDLE && event.is_action_pressed("fire"):
 		_ammo_insert_state = AmmoInsertState.INSERT
 	elif _ammo_insert_state == AmmoInsertState.IDLE && event.is_action_pressed("prepare"):
-		_ammo_insert_state = AmmoInsertState.NONE
+		_ammo_insert_state = AmmoInsertState.CLOSE
 	else:
 		return false
 	
@@ -368,20 +368,24 @@ func _do_insert(rig):
 	rig.slotData.chamber = false
 	rig.slotData.casing = false
 
-	Out.protip("ammo-check-insert", "Press [%s] to start reloading" % Inputs.get_binding("fire"))
+	Out.protip("ammo-manual-insert", "Press [%s] to start reloading" % Inputs.get_binding("fire"))
 
-	while _ammo_insert_state != AmmoInsertState.NONE:
-		if _ammo_insert_state == AmmoInsertState.INSERT && rig.slotData.amount < rig.data.maxAmount && rig.interface.GetAmmo(rig.data):
-			_play_audio(rig, rig.data.insert)
-			_play_animation(rig, "Insert")
-			await _await_animation(rig, "Insert_Idle")
-			rig.slotData.amount += 1
-		_ammo_insert_state = AmmoInsertState.IDLE
+	while _ammo_insert_state != AmmoInsertState.CLOSE:
+		if _ammo_insert_state == AmmoInsertState.INSERT:
+			if rig.slotData.amount < rig.data.maxAmount && rig.interface.GetAmmo(rig.data):
+				_play_audio(rig, rig.data.insert)
+				_play_animation(rig, "Insert")
+				await _await_animation(rig, "Insert_Idle")
+				_ammo_insert_state = AmmoInsertState.IDLE
+				rig.slotData.amount += 1
+			else:
+				_play_audio(rig, rig.audioLibrary.UIError)
 		await rig.get_tree().process_frame
 
 	_play_audio(rig, rig.data.insertEnd)
 	_play_animation(rig, "Insert_End")
 	await _await_animation(rig, "Idle")
+	_ammo_insert_state = AmmoInsertState.NONE
 
 	if rig.data.weaponType == "Bolt" && rig.slotData.amount:
 		rig.slotData.chamber = true

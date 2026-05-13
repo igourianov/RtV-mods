@@ -1,4 +1,4 @@
-const PROTIP_COLOR: Color = Color(0.11, 0.66, 0.95)
+const PROTIP_COLOR: Color = Color(0.3, 0.7, 1.0)
 const PROTIP_DELAY: int = 10 * 60 * 1000 # 10 minutes
 static var protip_timers: Dictionary[StringName,int] = {}
 
