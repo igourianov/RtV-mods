@@ -20,7 +20,7 @@ enum AmmoCheckState {
 	REINSERTING = 5,
 }
 
-enum AmmoInsertState {
+enum ManualLoadState {
 	NONE,
 	OPEN,
 	IDLE,
@@ -64,7 +64,7 @@ var _last_optic_for_scale = null
 var _cached_lens_scale: float = 1.0
 var _ammo_check_state: AmmoCheckState = AmmoCheckState.NONE
 var _is_reloading := false
-var _ammo_insert_state := AmmoInsertState.NONE
+var _manual_load_state := ManualLoadState.NONE
 
 
 func _init(lib, preferences: Preferences) -> void:
@@ -343,12 +343,12 @@ func _handle_manual_reload(rig, event) -> bool:
 	if rig.data.weaponAction != "Manual":
 		return false
 
-	if _ammo_insert_state == AmmoInsertState.NONE && event.is_action_pressed("prepare"):
+	if _manual_load_state == ManualLoadState.NONE && event.is_action_pressed("prepare"):
 		_do_insert(rig)
-	elif _ammo_insert_state == AmmoInsertState.IDLE && event.is_action_pressed("fire"):
-		_ammo_insert_state = AmmoInsertState.INSERT
-	elif _ammo_insert_state == AmmoInsertState.IDLE && event.is_action_pressed("prepare"):
-		_ammo_insert_state = AmmoInsertState.CLOSE
+	elif _manual_load_state == ManualLoadState.IDLE && event.is_action_pressed("fire"):
+		_manual_load_state = ManualLoadState.INSERT
+	elif _manual_load_state == ManualLoadState.IDLE && event.is_action_pressed("prepare"):
+		_manual_load_state = ManualLoadState.CLOSE
 	else:
 		return false
 	
@@ -359,24 +359,24 @@ func _do_insert(rig):
 	
 	gameData.isInserting = true
 
-	_ammo_insert_state = AmmoInsertState.OPEN
+	_manual_load_state = ManualLoadState.OPEN
 	_play_audio(rig, rig.data.insertStart)
 	_play_animation(rig, "Insert_Start")
 	await _await_animation(rig, "Insert_Idle")
-	_ammo_insert_state = AmmoInsertState.IDLE
+	_manual_load_state = ManualLoadState.IDLE
 
 	rig.slotData.chamber = false
 	rig.slotData.casing = false
 
 	Out.protip("ammo-manual-insert", "Press [%s] to start reloading" % Inputs.get_binding("fire"))
 
-	while _ammo_insert_state != AmmoInsertState.CLOSE:
-		if _ammo_insert_state == AmmoInsertState.INSERT:
+	while _manual_load_state != ManualLoadState.CLOSE:
+		if _manual_load_state == ManualLoadState.INSERT:
 			if rig.slotData.amount < rig.data.maxAmount && rig.interface.GetAmmo(rig.data):
 				_play_audio(rig, rig.data.insert)
 				_play_animation(rig, "Insert")
 				await _await_animation(rig, "Insert_Idle")
-				_ammo_insert_state = AmmoInsertState.IDLE
+				_manual_load_state = ManualLoadState.IDLE
 				rig.slotData.amount += 1
 			else:
 				_play_audio(rig, rig.audioLibrary.UIError)
@@ -385,7 +385,7 @@ func _do_insert(rig):
 	_play_audio(rig, rig.data.insertEnd)
 	_play_animation(rig, "Insert_End")
 	await _await_animation(rig, "Idle")
-	_ammo_insert_state = AmmoInsertState.NONE
+	_manual_load_state = ManualLoadState.NONE
 
 	if rig.data.weaponType == "Bolt" && rig.slotData.amount:
 		rig.slotData.chamber = true
