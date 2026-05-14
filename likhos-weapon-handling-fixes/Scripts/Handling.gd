@@ -9,8 +9,6 @@ const _LASER_IN_START = 0.0
 const _LASER_IN_DURATION = 0.015
 const _LASER_OUT_START = 0.120
 const _LASER_OUT_DURATION = 0.0
-const _FIXED_SCOPE_AIM_OFFSET = -0.035
-const _VARIABLE_SCOPE_AIM_OFFSET = -0.05
 const _PATROL_POSITION = Vector3(0.06, -0.18, -0.25)
 const _PATROL_ROTATION = Vector3(25, 50, -20)
 const _PATROL_WEAPON_TYPES = {"Rifle": null, "SMG": null, "Bolt": null, "Shotgun": null}
@@ -193,9 +191,9 @@ func _weapon_handling(h, rig, delta: float) -> bool:
 	var aim_z = data.aimPosition.z
 	if optic && gameData.PIP && !gameData.secondaryOptic:
 		if optic.attachmentData.scope:
-			aim_z = _optic_lens_aim_z(optic) + _FIXED_SCOPE_AIM_OFFSET - ModConfig.eye_relief_offset
+			aim_z = _optic_lens_aim_z(optic) - ModConfig.FIXED_SCOPE_AIM_OFFSET - ModConfig.eye_relief_offset
 		elif optic.attachmentData.variable:
-			aim_z = _optic_lens_aim_z(optic) + _VARIABLE_SCOPE_AIM_OFFSET - ModConfig.eye_relief_offset
+			aim_z = _optic_lens_aim_z(optic) - ModConfig.VARIABLE_SCOPE_AIM_OFFSET - ModConfig.eye_relief_offset
 
 	h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z) if optic else data.aimPosition
 	h.targetRotation = data.aimRotation

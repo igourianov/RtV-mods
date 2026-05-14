@@ -47,6 +47,8 @@ const MULT_MIN = 0.1
 const MULT_MAX = 1.5
 const DEFAULT_EYE_RELIEF_OFFSET = 0.0
 const BASE_WEAPON_WEIGHT: float = 4.0
+const FIXED_SCOPE_AIM_OFFSET: float = 0.035
+const VARIABLE_SCOPE_AIM_OFFSET: float = 0.05
 
 
 static func _get_config_value(config: ConfigFile, section: String, key: String, default_val):

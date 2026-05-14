@@ -2,11 +2,17 @@ extends "./WeaponRig_Base.gd"
 
 const ModConfig = preload("./ModConfig.gd")
 
-const _FIXED_SCOPE_AIM_OFFSET = 0.015
-const _VARIABLE_SCOPE_AIM_OFFSET = 0.03
-
-var _last_optic_for_scale = null
-var _cached_lens_scale: float = 1.0
+# Lens radius in meters, keyed by optic node name. Populated from mesh on first
+# miss; pre-seed entries here to skip the one-shot extraction.
+var _lens_radius_cache := {
+	"Vudu": 0.020,
+	"ACOG": 0.0117,
+	"Leopard": 0.0185,
+	"HMR": 0.017,
+	"PU": 0.0115,
+	"POSP": 0.012
+}
+var _old_fov: float = 0.0
 
 
 func _input(event) -> void:
@@ -32,7 +38,6 @@ func _input(event) -> void:
 
 	if event.is_action_pressed("secondary_optic") && optic && optic.secondary && optic.attachmentData.secondary:
 		gameData.secondaryOptic = !gameData.secondaryOptic
-		#rig.UpdateAimOffset()
 		_apply_aim_offset()
 		return
 
@@ -59,46 +64,68 @@ func _apply_aim_offset() -> void:
 			Out.bugfix("do not attempt to rotate front sight on M4A1 (flicker)")
 
 
-func on_ads_post(delta: float) -> void:
+func on_ads_post(_delta: float) -> void:
 	var rig = owner
 	var optic = rig.activeOptic
 	var att = optic.attachmentData
 
 	ModConfig.current_scope_mag = 1.0
-	if rig.slotData.zoom == 1:
-		gameData.isScoped = gameData.PIP
-		ModConfig.current_scope_mag = 1.1
-	elif rig.slotData.zoom == 2:
-		ModConfig.current_scope_mag = 3.0
-	elif rig.slotData.zoom == 3:
-		ModConfig.current_scope_mag = 6.0
-
-	if !gameData.PIP || !gameData.isAiming || gameData.isColliding || optic == null:
-		return
-
-	var lens_scale: float
-	if optic == _last_optic_for_scale:
-		lens_scale = _cached_lens_scale
-	else:
-		lens_scale = optic.transform.basis.get_scale().y
-		_cached_lens_scale = lens_scale
-		_last_optic_for_scale = optic
-
-	if !att.variable && (!att.scope || gameData.secondaryOptic):
-		return
-
-	gameData.aimFOV = gameData.baseFOV
-
 	if att.scope && !gameData.secondaryOptic:
 		ModConfig.current_scope_mag = 4.0
-		var distance = _distance_factor(_FIXED_SCOPE_AIM_OFFSET, ModConfig.eye_relief_offset)
-		optic.camera.fov = distance * gameData.baseFOV * lens_scale / ModConfig.current_scope_mag
+	elif att.variable && rig.slotData.zoom == 1:
+		gameData.isScoped = gameData.PIP # force isScoped on 1x in PIP mode
+		ModConfig.current_scope_mag = 1.1
+	elif att.variable && rig.slotData.zoom == 2:
+		ModConfig.current_scope_mag = 3.0
+	elif att.variable && rig.slotData.zoom == 3:
+		ModConfig.current_scope_mag = 6.0
+
+	if !gameData.PIP || !gameData.isAiming || !gameData.isScoped || gameData.isColliding || !optic:
 		return
 
-	var distance = _distance_factor(_VARIABLE_SCOPE_AIM_OFFSET, ModConfig.eye_relief_offset)
-	optic.camera.fov = lerp(optic.camera.fov, distance * gameData.baseFOV * lens_scale / ModConfig.current_scope_mag, delta * 10.0)
+	gameData.aimFOV = gameData.baseFOV # force FOV back into 1x (your eyes don't have zoom)
+
+	var lens_radius: float = _get_lens_radius(optic)
+	if lens_radius <= 0.0:
+		return
+
+	var distance: float = (ModConfig.FIXED_SCOPE_AIM_OFFSET if att.scope else ModConfig.VARIABLE_SCOPE_AIM_OFFSET) + ModConfig.eye_relief_offset
+	var target_fov: float = rad_to_deg(2.0 * atan(lens_radius / distance) / ModConfig.current_scope_mag)
+
+	optic.camera.fov = target_fov
 
 
-func _distance_factor(base: float, distance: float) -> float:
-	var f: float = base / (base + distance)
-	return f
+func _get_lens_radius(optic) -> float:
+	var key = String(optic.name)
+	var cached = _lens_radius_cache.get(key, -1.0)
+	if cached >= 0.0:
+		return cached
+	var radius: float = _extract_lens_radius(optic)
+	_lens_radius_cache[key] = radius
+	Out.debug("extracted lens radius for", key, ":", radius)
+	return radius
+
+
+func _extract_lens_radius(optic) -> float:
+	if optic.mesh == null || optic.mesh.mesh == null:
+		return 0.0
+	var arrays = optic.mesh.mesh.surface_get_arrays(optic.maskIndex)
+	if arrays.is_empty():
+		return 0.0
+	var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	if verts.is_empty():
+		return 0.0
+	var t = optic.mesh.transform
+	var centroid: Vector3 = Vector3.ZERO
+	for v in verts:
+		centroid += t * v
+	centroid /= verts.size()
+	var max_r_sq: float = 0.0
+	for v in verts:
+		var p = t * v
+		var dx: float = p.x - centroid.x
+		var dy: float = p.y - centroid.y
+		var r_sq: float = dx * dx + dy * dy
+		if r_sq > max_r_sq:
+			max_r_sq = r_sq
+	return sqrt(max_r_sq)
