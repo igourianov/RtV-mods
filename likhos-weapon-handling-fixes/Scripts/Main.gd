@@ -36,7 +36,7 @@ func setup(lib):
 
 	var preferences = Preferences.Load()
 
-	_weapon_rig = WeaponRig.new(lib, preferences)
+	_weapon_rig = WeaponRig.new(lib)
 	_handling = Handling.new(lib, preferences)
 	_camera = Camera.new(lib)
 	_controller = Controller.new(lib)
@@ -52,11 +52,10 @@ func setup(lib):
 
 	register_hook("handling-weaponhandling", _handling.on_weapon_handling)
 	register_hook("rigmanager-updaterig-post", _handling.on_rig_update_post)
+	register_hook("weaponrig-_ready-post", _weapon_rig.on_ready_post)
 	register_hook("weaponrig-ads-post", _weapon_rig.on_ads_post)
 	register_hook("weaponrig-_physics_process", _weapon_rig.on_physics_process)
 	register_hook("weaponrig-_input", _weapon_rig.on_input)
-	register_hook("weaponrig-updateaimoffset", _weapon_rig.on_update_aim_offset)
-	register_hook("weaponrig-insert-post", _weapon_rig.on_insert_post)
 	register_hook("camera-scopedof-post", _camera.on_scope_dof_post)
 	register_hook("controller-movementstates", _controller.on_movement_states)
 	register_hook("controller-_input", _controller.on_input)
@@ -90,4 +89,3 @@ func load_config(config: ConfigFile):
 
 func create_config(config: ConfigFile):
 	ModConfig.create_template(config)
-

@@ -1,0 +1,62 @@
+extends Node
+
+const Out = preload("../Lib/Out.gd")
+const Inputs = preload("../Lib/Inputs.gd")
+
+const _AUDIO_PLAYER_NAME = "LikhoAudioPlayer"
+
+var gameData = preload("res://Resources/GameData.tres")
+
+
+func is_engine_busy() -> bool:
+	return (gameData.freeze
+		|| gameData.isDead
+		|| gameData.isPlacing
+		|| gameData.isDrawing
+		|| gameData.isCaching
+		|| gameData.isTransitioning
+		|| gameData.isOccupied)
+
+
+func play(animation_state: String, audio_event, wait_offset: float = -0.5) -> void:
+	Out.debug("play:", animation_state)
+	start_audio(audio_event)
+	var playback = start_animation(animation_state)
+	await await_animation(wait_offset, playback)
+	Out.debug("play done")
+
+
+func await_animation(wait_offset: float = 0.0, playback = null):
+	if !playback:
+		playback = owner.animator.get("parameters/playback")
+	await get_tree().create_timer(0.1, false).timeout
+	if !is_instance_valid(self):
+		return
+	var wait_time: float = playback.get_current_length() - playback.get_current_play_position() + wait_offset
+	if wait_time > 0.0:
+		Out.debug("awaiting animation:", wait_time)
+		await get_tree().create_timer(wait_time, false).timeout
+
+
+func start_animation(state_name: String):
+	Out.debug("start_animation:", state_name)
+	var playback = owner.animator.get("parameters/playback")
+	playback.start(state_name)
+	return playback
+
+
+func start_audio(event) -> AudioStreamPlayer:
+	if event == null || event.audioClips.is_empty():
+		return null
+	var audio = get_node_or_null(_AUDIO_PLAYER_NAME)
+	if audio == null:
+		audio = AudioStreamPlayer.new()
+		audio.name = _AUDIO_PLAYER_NAME
+		add_child(audio)
+	else:
+		audio.stop()
+		audio.stream_paused = false
+	audio.stream = event.audioClips.pick_random()
+	audio.volume_db = event.volume
+	audio.play()
+	return audio

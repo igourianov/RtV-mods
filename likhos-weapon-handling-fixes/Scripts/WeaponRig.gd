@@ -1,78 +1,48 @@
 extends RefCounted
 
-const _FIXED_SCOPE_AIM_OFFSET = 0.015
-const _VARIABLE_SCOPE_AIM_OFFSET = 0.03
-
-const _HOLD_THRESHOLD = 300
-const _AMMO_CHECK_INTRO_TIME_DEFAULT = 1.0
-const _HOLD_TIMER_NAME = "LikhoReloadHoldTimer"
-const _AUDIO_PLAYER_NAME = "LikhoAmmoAudioPlayer"
-
-const ModConfig = preload("./ModConfig.gd")
 const Out = preload("../Lib/Out.gd")
-const Inputs = preload("../Lib/Inputs.gd")
-
-enum AmmoCheckState {
-	NONE,
-	PENDING,
-	PULL,
-	PAUSED,
-	RETURN,
-	RELOAD,
-}
-
-enum ManualLoadState {
-	NONE,
-	OPEN,
-	IDLE,
-	INSERT,
-	CLOSE,
-}
-
-const AMMO_CHECK_INTRO_TIMES = {
-	"AKM": 1.65,
-	"AK_12": 1.45,
-	"AKS_74U": 1.40,
-	"RK_62": 1.35,
-	"RK_62M": 1.35,
-	"RK_95": 1.35,
-	"M4A1": 1.15,
-	"MK18": 1.2,
-	"HK416": 1.2,
-	"KAR_21_223": 1.05,
-	"KAR_21_308": 1.05,
-	"M78": 1.25,
-	"MP5": 1.0,
-	"MP5K": 1.0,
-	"MP5SD": 1.0,
-	"MP7": 1.3,
-	"KP_31": 1.2,
-	"VSS": 1.45,
-	"SVD": 2.0,
-	"Mosin": 1.5,
-	"Remington_870": 1.2,
-	"Makarov": 1.75,
-	"P320": 1.15,
-	"Glock_17": 1.15,
-	"Colt_1911": 1.15,
-}
+const WeaponRig_Reload = preload("./WeaponRig_Reload.gd")
+const WeaponRig_ManualReload = preload("./WeaponRig_ManualReload.gd")
+const WeaponRig_Optic = preload("./WeaponRig_Optic.gd")
+const WeaponRig_Inspect = preload("./WeaponRig_Inspect.gd")
 
 var gameData = preload("res://Resources/GameData.tres")
 
 var _lib
-var _preferences: Preferences
-var _last_optic_for_scale = null
-var _cached_lens_scale: float = 1.0
-var _ammo_check_state: AmmoCheckState = AmmoCheckState.NONE
-var _manual_load_state := ManualLoadState.NONE
 
 
-func _init(lib, preferences: Preferences) -> void:
+func _init(lib) -> void:
 	_lib = lib
-	_preferences = preferences
 
 
-func on_physics_process(delta:float):
+func on_ready_post() -> void:
+	var rig = _lib._caller
+	if rig == null:
+		return
+	Out.debug("WeaponRig: injecting handlers")
+	_inject_handler(rig, WeaponRig_Reload, "Likho_WeaponRig_Reload")
+	_inject_handler(rig, WeaponRig_ManualReload, "Likho_WeaponRig_ManualReload")
+	_inject_handler(rig, WeaponRig_Optic, "Likho_WeaponRig_Optic")
+	_inject_handler(rig, WeaponRig_Inspect, "Likho_WeaponRig_Inspect")
+
+
+func _inject_handler(rig, klass, node_name: String) -> void:
+	var h = klass.new()
+	h.name = node_name
+	rig.add_child(h)
+	h.owner = rig
+	h.set_process_input(true)
+	h.set_process(true)
+
+
+func on_input(_event) -> void:
+	var rig = _lib._caller
+	if rig == null:
+		return
+	_lib.skip_super()
+
+
+func on_physics_process(delta: float) -> void:
 	var rig = _lib._caller
 	if rig == null:
 		return
@@ -86,17 +56,13 @@ func on_physics_process(delta:float):
 	rig.FireImpulse(delta)
 
 
-func on_input(event) -> void:
+func on_ads_post(delta: float) -> void:
 	var rig = _lib._caller
 	if rig == null:
 		return
-	_lib.skip_super()
-
-	if _is_busy():
-		return
-
-	if _handle_manual_reload(rig, event) || _handle_ammo(rig, event) || _handle_inspecting(rig, event) || _handle_optic(rig, event):
-		return
+	var h = rig.get_node_or_null("Likho_WeaponRig_Optic")
+	if h:
+		h.on_ads_post(delta)
 
 
 func _is_busy() -> bool:
@@ -107,413 +73,3 @@ func _is_busy() -> bool:
 		|| gameData.isCaching
 		|| gameData.isTransitioning
 		|| gameData.isOccupied)
-
-
-func _handle_optic(rig, event: InputEvent) -> bool:
-	var optic = rig.activeOptic
-	var zoomIn = event.is_action_pressed("optic_zoom_in", true)
-	var zoomOut = event.is_action_pressed("optic_zoom_out", true)
-
-	if (gameData.isAiming || ModConfig.lpvo_ooa_zoom) && (zoomIn || zoomOut) && optic && optic.attachmentData.variable:
-		if zoomIn && rig.slotData.zoom != 3:
-			rig.slotData.zoom += 1
-			rig.PlayRailMove()
-		elif zoomOut && rig.slotData.zoom != 1:
-			rig.slotData.zoom -= 1
-			rig.PlayRailMove()
-		return true
-
-	if event.is_action_pressed("secondary_optic") && optic && optic.secondary && optic.attachmentData.secondary:
-		gameData.secondaryOptic = !gameData.secondaryOptic
-		rig.UpdateAimOffset()
-		return true
-
-	return false
-
-
-func _handle_inspecting(rig, event: InputEvent) -> bool:
-
-	if event.is_action_pressed("inspect"):
-		_inspect_toggle(rig)
-		return true
-
-	if !gameData.isInspecting:
-		return false
-
-	if event.is_action_pressed("canted"):
-		if gameData.inspectPosition == 1:
-			rig.PlayInspectRotate()
-			rig.animator["parameters/conditions/Inspect_Front"] = false
-			rig.animator["parameters/conditions/Inspect_Back"] = true
-			gameData.inspectPosition = 2
-		elif gameData.inspectPosition == 2:
-			rig.PlayInspectRotate()
-			rig.animator["parameters/conditions/Inspect_Front"] = true
-			rig.animator["parameters/conditions/Inspect_Back"] = false
-			gameData.inspectPosition = 1
-		return true
-
-	var optic = rig.activeOptic
-	var zoomIn = event.is_action_pressed("optic_zoom_in", true)
-	var zoomOut = event.is_action_pressed("optic_zoom_out", true)
-
-	if (zoomIn || zoomOut) && optic && optic.railMovement:
-		if zoomIn && optic.position.z < optic.maxPosition:
-			optic.position.z += 0.01
-			rig.slotData.position += 0.01
-			rig.PlayRailMove()
-		elif zoomOut && optic.position.z > optic.minPosition:
-			optic.position.z -= 0.01
-			rig.slotData.position -= 0.01
-			rig.PlayRailMove()
-		return true
-
-	return false
-	
-
-func _inspect_toggle(rig):
-	gameData.isInspecting = !gameData.isInspecting
-	gameData.isFiring = false
-
-	if gameData.isInspecting:
-		gameData.inspectPosition = 1
-		rig.PlayInspectStart()
-		rig.animator["parameters/conditions/Inspect_Front"] = true
-		rig.animator["parameters/conditions/Inspect_Idle"] = false
-		rig.UpdateBullets()
-		rig.UpdateHUD()
-		Out.protip("inspect-rotate", "Press [%s] to rotate or [%s] / [%s] to move optic" % [
-			Inputs.get_binding("canted"),
-			Inputs.get_binding("optic_zoom_in"),
-			Inputs.get_binding("optic_zoom_out")
-		])
-	elif gameData.inspectPosition == 1:
-		rig.PlayInspectEnd()
-		rig.animator["parameters/conditions/Inspect_Front"] = false
-		rig.animator["parameters/conditions/Inspect_Idle"] = true
-	elif gameData.inspectPosition == 2:
-		rig.PlayInspectEnd()
-		rig.animator["parameters/conditions/Inspect_Back"] = false
-		rig.animator["parameters/conditions/Inspect_Idle"] = true
-		gameData.inspectPosition = 1
-
-
-func _handle_ammo(rig, event):
-
-	if _ammo_check_state == AmmoCheckState.NONE && event.is_action_pressed("reload"):
-		_ammo_check_state = AmmoCheckState.PENDING
-		if (rig.magazine.visible || rig.data.weaponAction == "Manual"):
-			_do_ammo_check(rig)
-	elif _ammo_check_state == AmmoCheckState.PENDING && event.is_action_released("reload"):
-		_ammo_check_state = AmmoCheckState.NONE
-		_do_reload(rig)
-	elif _ammo_check_state in [AmmoCheckState.PULL, AmmoCheckState.PAUSED] && event.is_action_released("reload"):
-		_ammo_check_state = AmmoCheckState.RETURN
-	elif _ammo_check_state == AmmoCheckState.PAUSED && event.is_action_pressed("fire") && rig.data.weaponAction != "Manual":
-		_ammo_check_state = AmmoCheckState.RELOAD
-	else:
-		return false
-	return true
-
-
-# wrapper to cleanup multiple exists
-func _do_ammo_check(rig) -> void:
-	await _do_ammo_check_inner(rig)
-	gameData.isChecking = false
-	ModConfig.ammo_check_view = false
-	_ammo_check_state = AmmoCheckState.NONE
-
-
-func _do_ammo_check_inner(rig) -> void:
-
-	gameData.isFiring = false
-
-	var hold_start := Time.get_ticks_msec()
-	while Time.get_ticks_msec() - hold_start < _HOLD_THRESHOLD:
-		if _ammo_check_state != AmmoCheckState.PENDING || !is_instance_valid(rig):
-			return
-		await rig.get_tree().process_frame
-
-	_ammo_check_state = AmmoCheckState.PULL
-	gameData.isChecking = true
-	ModConfig.ammo_check_view = false
-
-	rig.UpdateBullets()
-	rig.UpdateHUD()
-	
-	_start_animation(rig, "Ammo_Check")
-	var audio = _start_audio(rig, rig.data.ammoCheck)
-
-	var pull_time: float = AMMO_CHECK_INTRO_TIMES.get(rig.data.file, _AMMO_CHECK_INTRO_TIME_DEFAULT)
-	await rig.get_tree().create_timer(pull_time * 0.6, false).timeout
-	if !is_instance_valid(rig):
-		return
-
-	ModConfig.ammo_check_view = true
-	await rig.get_tree().create_timer(pull_time * 0.4, false).timeout
-	if !is_instance_valid(rig):
-		return
-
-	# held past intro: pause animator and wait for release
-	if _ammo_check_state == AmmoCheckState.PULL:
-		_ammo_check_state = AmmoCheckState.PAUSED
-		rig.animator.process_mode = Node.PROCESS_MODE_DISABLED
-		audio.stream_paused = true
-		if rig.data.weaponAction != "Manual":
-			Out.protip("ammo-check-reload", "Press [%s] to reload" % Inputs.get_binding("fire"))
-
-	while _ammo_check_state == AmmoCheckState.PAUSED:
-		await rig.get_tree().process_frame
-		if !is_instance_valid(rig):
-			return
-
-	rig.animator.process_mode = Node.PROCESS_MODE_INHERIT
-	audio.stream_paused = false
-	
-	await rig.get_tree().create_timer(0.5, false).timeout
-	if !is_instance_valid(rig):
-		return
-	ModConfig.ammo_check_view = false
-	
-	if _ammo_check_state == AmmoCheckState.RETURN:
-		await _await_animation(rig, -0.5)
-	elif _ammo_check_state == AmmoCheckState.RELOAD:
-		await _do_reload(rig, true)
-
-
-func _do_reload(rig, ammoCheck: bool = false) -> void:
-	var data = rig.data
-	var slotData = rig.slotData
-	var magAttach = ammoCheck || !rig.magazine.visible
-
-	if _is_busy() || gameData.isReloading || gameData.isClearing:
-		return
-
-	gameData.isFiring = false
-
-	if slotData.state == "Jammed":
-		if !gameData.isClearing:
-			gameData.isClearing = true
-			_start_audio(rig, rig.audioLibrary.malfunctionClearRifle)
-			await rig.get_tree().create_timer(2.0, false).timeout
-			gameData.isClearing = false
-			slotData.state = ""
-		return
-
-	if data.weaponAction == "Manual" && !gameData.isInserting:
-		await _play_reload(rig, "Reload", data.reload, -0.1)
-		slotData.casing = false
-		slotData.chamber = false
-		if slotData.amount:
-			slotData.chamber = true
-			slotData.amount -= 1
-		rig.UpdateBullets()
-		return
-
-	if magAttach && !slotData.chamber:
-		if rig.interface.GetMagazine(data, rig.weaponSlot, magAttach):
-			await _play_reload(rig, "Magazine_Attach_Empty", data.magazineAttachEmpty)
-			slotData.chamber = true
-			rig.magazine.show()
-			rig.UpdateBullets()
-		return
-
-	if magAttach && slotData.chamber:
-		if rig.interface.GetMagazine(data, rig.weaponSlot, magAttach):
-			await _play_reload(rig, "Magazine_Attach_Tactical", data.magazineAttachTactical)
-			rig.magazine.show()
-			rig.UpdateBullets()
-		return
-
-	if rig.magazine.visible && !slotData.chamber:
-		if rig.interface.GetMagazine(data, rig.weaponSlot, true):
-			await _play_reload(rig, "Reload_Empty", data.reloadEmpty)
-			slotData.chamber = true
-		return
-
-	if rig.magazine.visible && slotData.chamber:
-		if rig.interface.GetMagazine(data, rig.weaponSlot, true):
-			await _play_reload(rig, "Reload_Tactical", data.reloadTactical)
-		return
-
-
-func _handle_manual_reload(rig, event) -> bool:
-
-	if rig.data.weaponAction != "Manual":
-		return false
-
-	if _manual_load_state == ManualLoadState.NONE && event.is_action_pressed("prepare"):
-		_do_insert(rig)
-	elif _manual_load_state == ManualLoadState.IDLE && event.is_action_pressed("fire"):
-		_manual_load_state = ManualLoadState.INSERT
-	elif _manual_load_state == ManualLoadState.IDLE && event.is_action_pressed("prepare"):
-		_manual_load_state = ManualLoadState.CLOSE
-	else:
-		return false
-	
-	return true
-
-
-func _do_insert(rig):
-	
-	gameData.isInserting = true
-
-	_manual_load_state = ManualLoadState.OPEN
-	await _play(rig, "Insert_Start", rig.data.insertStart)
-	_manual_load_state = ManualLoadState.IDLE
-
-	rig.slotData.chamber = false
-	rig.slotData.casing = false
-
-	Out.protip("ammo-manual-insert", "Press [%s] to start reloading" % Inputs.get_binding("fire"))
-
-	while _manual_load_state != ManualLoadState.CLOSE:
-		if _manual_load_state == ManualLoadState.INSERT:
-			if rig.slotData.amount < rig.data.maxAmount && rig.interface.GetAmmo(rig.data):
-				await _play(rig, "Insert", rig.data.insert, -0.1)
-				_manual_load_state = ManualLoadState.IDLE
-				rig.slotData.amount += 1
-			else:
-				_start_audio(rig, rig.audioLibrary.UIError)
-		await rig.get_tree().process_frame
-
-	await _play(rig, "Insert_End", rig.data.insertEnd)
-	_manual_load_state = ManualLoadState.NONE
-
-	if rig.data.weaponType == "Bolt" && rig.slotData.amount:
-		rig.slotData.chamber = true
-		rig.slotData.amount -= 1
-
-	gameData.isInserting = false
-
-
-func _play_reload(rig, animation_state: String, audio_event, wait_offset: float = -0.5) -> void:
-	gameData.isReloading = true
-	await _play(rig, animation_state, audio_event, wait_offset)
-	gameData.isReloading = false
-
-
-func _play(rig, animation_state: String, audio_event, wait_offset: float = -0.5) -> void:
-	Out.debug("_play:", animation_state)
-	_start_audio(rig, audio_event)
-	var playback = _start_animation(rig, animation_state)
-	await _await_animation(rig, wait_offset, playback)
-	Out.debug("_play done")
-
-
-func _await_animation(rig, wait_offset: float = 0.0, playback = null):
-	if !playback:
-		playback = rig.animator.get("parameters/playback")
-	await rig.get_tree().create_timer(0.1, false).timeout # wait for animation to actually start before reading current length/position
-	var wait_time: float = playback.get_current_length() - playback.get_current_play_position() + wait_offset
-	if wait_time > 0.0:
-		Out.debug("awaitng animation:", wait_time)
-		await rig.get_tree().create_timer(wait_time, false).timeout
-
-
-func _start_animation(rig, state_name: String):
-	Out.debug("_play:", state_name)
-	var playback = rig.animator.get("parameters/playback")
-	playback.start(state_name)
-	return playback
-
-
-func _start_audio(rig, event) -> AudioStreamPlayer:
-	if event == null || event.audioClips.is_empty():
-		return null
-	var audio = rig.get_node_or_null(_AUDIO_PLAYER_NAME)
-	if audio == null:
-		audio = AudioStreamPlayer.new()
-		audio.name = _AUDIO_PLAYER_NAME
-		rig.add_child(audio)
-	else:
-		audio.stop()
-		audio.stream_paused = false
-	audio.stream = event.audioClips.pick_random()
-	audio.volume_db = event.volume
-	audio.play()
-	return audio
-
-
-func on_update_aim_offset() -> void:
-	var rig = _lib._caller
-	if rig == null:
-		return
-	_lib.skip_super()
-
-	var data = rig.data
-	var optic = rig.activeOptic
-
-	if optic && optic.secondary && gameData.secondaryOptic:
-		# HAMR secondary position fix for Russian guns
-		Out.bugfix("recalc secondary optic Y offset")
-		rig.aimOffset = optic.position.y + optic.secondary.position.y * optic.scale.y
-	elif optic:
-		rig.aimOffset = optic.position.y
-	else:
-		rig.aimOffset = 0.0
-
-	if data.foldSights:
-		var rot = Quaternion.from_euler(Vector3(data.foldSightsRotation if optic else 0.0, 0, 0))
-		rig.skeleton.set_bone_pose_rotation(rig.backSightIndex, rot)
-		if rig.frontSightIndex: # frontSightIndex is not set on M4A1
-			rig.skeleton.set_bone_pose_rotation(rig.frontSightIndex, rot)
-		else:
-			Out.bugfix("do not attempt to rotate fron sight on M4A1 (flicker)")
-
-
-func on_ads_post(delta: float) -> void:
-	var rig = _lib._caller
-	var optic = rig.activeOptic
-	var att = optic.attachmentData
-
-	ModConfig.current_scope_mag = 1.0
-	if rig.slotData.zoom == 1:
-		gameData.isScoped = gameData.PIP # override vanilla behavior
-		ModConfig.current_scope_mag = 1.1
-	elif rig.slotData.zoom == 2:
-		ModConfig.current_scope_mag = 3.0
-	elif rig.slotData.zoom == 3:
-		ModConfig.current_scope_mag = 6.0
-
-	if !gameData.PIP || !gameData.isAiming || gameData.isColliding || optic == null:
-		return
-
-	var lens_scale: float
-	if optic == _last_optic_for_scale:
-		lens_scale = _cached_lens_scale
-	else:
-		lens_scale = optic.transform.basis.get_scale().y
-		_cached_lens_scale = lens_scale
-		_last_optic_for_scale = optic
-
-	if !att.variable && (!att.scope || gameData.secondaryOptic):
-		return
-
-	gameData.aimFOV = gameData.baseFOV # override vanilla behavior
-
-	if att.scope && !gameData.secondaryOptic:
-		ModConfig.current_scope_mag = 4.0
-		var distance = distance_factor(_FIXED_SCOPE_AIM_OFFSET, ModConfig.eye_relief_offset)
-		optic.camera.fov = distance * gameData.baseFOV * lens_scale / ModConfig.current_scope_mag
-		return
-
-	var distance = distance_factor(_VARIABLE_SCOPE_AIM_OFFSET, ModConfig.eye_relief_offset)
-	optic.camera.fov = lerp(optic.camera.fov, distance * gameData.baseFOV * lens_scale / ModConfig.current_scope_mag, delta * 10.0)
-
-
-func distance_factor(base: float, distance: float) -> float:
-	var f: float = base / (base + distance)
-	return f
-
-
-func on_insert_post() -> void:
-	var rig = _lib._caller
-	if rig == null:
-		return
-
-	# chamber should always be cleared when opening bolt
-	if gameData.isInserting && rig.data.weaponType == "Bolt" && Input.is_action_just_pressed("prepare"):
-		rig.slotData.chamber = false
-		rig.slotData.casing = false
-		Out.bugfix("always clear chamber when opening bolt")
