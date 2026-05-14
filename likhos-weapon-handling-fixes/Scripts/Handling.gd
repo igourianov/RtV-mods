@@ -114,9 +114,15 @@ func _override_handling(h, rig) -> bool:
 		h.targetRotation = data.collisionRotation
 		return true
 
-	if gameData.isPlacing || gameData.isInserting:
+	if gameData.isPlacing:
 		gameData.weaponPosition = 1
 		_set_target_idle(h)
+		return true
+
+	if gameData.isInserting:
+		gameData.weaponPosition = 1
+		h.targetPosition = data.lowPosition
+		h.targetRotation = data.lowRotation
 		return true
 
 	if gameData.isInspecting:
@@ -126,8 +132,13 @@ func _override_handling(h, rig) -> bool:
 		return true
 
 	if gameData.isChecking && ModConfig.ammo_check_view:
-		h.targetPosition = data.highPosition if !gameData.isReloading else data.lowPosition
-		h.targetRotation = data.highPosition if !gameData.isReloading else data.lowRotation
+		h.targetPosition = data.highPosition
+		h.targetRotation = data.highPosition
+		return true
+
+	if gameData.isChecking && gameData.isReloading:
+		h.targetPosition = data.lowPosition
+		h.targetRotation = data.lowRotation
 		return true
 
 	if gameData.isRunning || (gameData.isReloading && data.weaponAction != "Manual"):
