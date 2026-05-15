@@ -8,7 +8,7 @@
 
 This mod hooks multiple vanilla methods through Metro Mod Loader:
 
-- `WeaponRig` and `Handling` objects - basically rewritten. Will conflict with pretty much anything that toouches them.
+- `WeaponRig` and `Handling` objects - basically rewritten. Will conflict with pretty much anything that touches them.
 
 **Replace hooks** (other mods that also replace these will conflict, pick one):
 

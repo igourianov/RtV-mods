@@ -1,7 +1,7 @@
 # TODO
 - food and sleep rework
-- redo mod control flow: pipe all input through InputBus.gd, create comain specific handlers, called from the bus, relegate existing scripts to be hooks/overrides only
-- play click when attempting to shoot on empty chamber (add cocked status to rig)
+- Leupold - to SFP
+- crosshair MCM options - show when running/aiming/etc + fadein
 
 # Closed
 - MP7 clipping in canted mode - will not fix (missing texture on the gun)
@@ -16,4 +16,4 @@
 - implement canted/aim overriding each other - done
 - holding R key to check ammo - done
 - show ammo count after ammo check or reload; hide again on firing - pass; offloaded to another mod
-
+- dry fire - done

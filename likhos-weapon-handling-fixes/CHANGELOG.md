@@ -1,3 +1,5 @@
+
+# 2.0.1109
 * major refactoring of the WeaponRig code
 * Mosin and 870 can now work the bolt like real guns do, both when empty and full
 * All guns now have `cocked` state - you will hear a click with attempting to fire empty, but cocked gun (vanilla does nothing)
