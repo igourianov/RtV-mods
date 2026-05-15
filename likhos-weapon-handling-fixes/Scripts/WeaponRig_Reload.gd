@@ -48,7 +48,7 @@ var _ammo_check_state: AmmoCheckState = AmmoCheckState.NONE
 func _input(event) -> void:
 	if is_engine_busy() || gameData.isInspecting || gameData.isInserting || gameData.isClearing || gameData.isReloading:
 		return
-		
+
 	var rig = owner
 	if rig == null:
 		return
@@ -152,12 +152,13 @@ func _do_reload(ammoCheck: bool = false) -> void:
 		return
 
 	if data.weaponAction == "Manual" && !gameData.isInserting:
-		await _play_reload("Reload", data.reload, -0.1)
+		await _play_reload("Reload", data.reload, -0.2)
 		slotData.casing = false
 		slotData.chamber = false
 		if slotData.amount:
 			slotData.chamber = true
 			slotData.amount -= 1
+		slotData.set_meta("cocked", true)
 		rig.UpdateBullets()
 		return
 
@@ -165,6 +166,7 @@ func _do_reload(ammoCheck: bool = false) -> void:
 		if rig.interface.GetMagazine(data, rig.weaponSlot, magAttach):
 			await _play_reload("Magazine_Attach_Empty", data.magazineAttachEmpty)
 			slotData.chamber = true
+			slotData.set_meta("cocked", true)
 			rig.magazine.show()
 			rig.UpdateBullets()
 		return
@@ -172,6 +174,7 @@ func _do_reload(ammoCheck: bool = false) -> void:
 	if magAttach && slotData.chamber:
 		if rig.interface.GetMagazine(data, rig.weaponSlot, magAttach):
 			await _play_reload("Magazine_Attach_Tactical", data.magazineAttachTactical)
+			slotData.set_meta("cocked", true)
 			rig.magazine.show()
 			rig.UpdateBullets()
 		return
@@ -180,11 +183,13 @@ func _do_reload(ammoCheck: bool = false) -> void:
 		if rig.interface.GetMagazine(data, rig.weaponSlot, true):
 			await _play_reload("Reload_Empty", data.reloadEmpty)
 			slotData.chamber = true
+			slotData.set_meta("cocked", true)
 		return
 
 	if rig.magazine.visible && slotData.chamber:
 		if rig.interface.GetMagazine(data, rig.weaponSlot, true):
 			await _play_reload("Reload_Tactical", data.reloadTactical)
+			slotData.set_meta("cocked", true)
 		return
 
 

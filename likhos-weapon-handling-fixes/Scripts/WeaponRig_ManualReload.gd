@@ -62,8 +62,10 @@ func _do_insert():
 		return
 	_manual_load_state = ManualLoadState.NONE
 
-	if rig.data.weaponType == "Bolt" && rig.slotData.amount:
-		rig.slotData.chamber = true
-		rig.slotData.amount -= 1
+	if rig.data.weaponType == "Bolt":
+		if rig.slotData.amount:
+			rig.slotData.chamber = true
+			rig.slotData.amount -= 1
+		rig.slotData.set_meta("cocked", true)
 
 	gameData.isInserting = false

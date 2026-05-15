@@ -266,6 +266,10 @@ func on_rig_update_post(_animate) -> void:
 		else:
 			Out.bugfix("do not attempt to rotate front sight on M4A1 (flicker)")
 
+	# true up cocked state if mag was loaded from inventory
+	if rig && rig.slotData:
+		rig.slotData.set_meta("cocked", rig.slotData.chamber)
+		
 
 
 func _optic_lens_aim_z(optic) -> float:
