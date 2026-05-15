@@ -53,9 +53,9 @@ func setup(lib):
 	register_hook("handling-weaponhandling", _handling.on_weapon_handling)
 	register_hook("rigmanager-updaterig-post", _handling.on_rig_update_post)
 	register_hook("weaponrig-_ready-post", _weapon_rig.on_ready_post)
-	register_hook("weaponrig-ads-post", _weapon_rig.on_ads_post)
+	register_hook("weaponrig-ads", _noop)
 	register_hook("weaponrig-_physics_process", _weapon_rig.on_physics_process)
-	register_hook("weaponrig-_input", _weapon_rig.on_input)
+	register_hook("weaponrig-_input", _noop)
 	register_hook("camera-scopedof-post", _camera.on_scope_dof_post)
 	register_hook("controller-movementstates", _controller.on_movement_states)
 	register_hook("controller-_input", _controller.on_input)
@@ -74,6 +74,10 @@ func setup(lib):
 	remove_action("ammo_check")
 	remove_action("rail_movement")
 	remove_action("insert")
+
+
+func _noop(_arg = null) -> void:
+	_lib.skip_super()
 
 
 func _create_mouse_input(button: int) -> InputEventMouseButton:

@@ -2,8 +2,8 @@ extends "./WeaponRig_Base.gd"
 
 const ModConfig = preload("./ModConfig.gd")
 
-# Lens radius in meters, keyed by optic node name. Populated from mesh on first
-# miss; pre-seed entries here to skip the one-shot extraction.
+# Lens radius in meters, keyed by optic node name. Populated from mesh on first miss
+# pre-seeded with existing optics
 var _lens_radius_cache := {
 	"Vudu": 0.020,
 	"ACOG": 0.0117,
@@ -12,7 +12,6 @@ var _lens_radius_cache := {
 	"PU": 0.0115,
 	"POSP": 0.012
 }
-var _old_fov: float = 0.0
 
 
 func _input(event) -> void:
@@ -65,35 +64,69 @@ func _handle_secondary_optic(event, optic) -> bool:
 	return true
 
 
-func on_ads_post(_delta: float) -> void:
+func _process(delta: float) -> void:
+	if owner == null:
+		return
+	_handle_ads(delta)
+
+
+func _handle_ads(delta: float) -> void:
 	var rig = owner
 	var optic = rig.activeOptic
+	ModConfig.current_scope_mag = 1.0
+	gameData.aimFOV = gameData.baseFOV
+	gameData.isScoped = false
+
+	if !optic:
+		return
+
 	var att = optic.attachmentData
 
-	ModConfig.current_scope_mag = 1.0
+	if !gameData.isAiming || gameData.isColliding:
+		rig.ocularOpacity = move_toward(rig.ocularOpacity, 0.0 if (att.scope || att.variable) else 1.0, delta * 5.0)
+		_update_reticle(rig, optic)
+		return
+
+	rig.ocularOpacity = move_toward(rig.ocularOpacity, 0.0 if (att.scope && gameData.secondaryOptic) else 1.0, delta * 5.0)
+
+	var sizes = att.reticleSizeP if gameData.PIP else att.reticleSize
 	if att.scope && !gameData.secondaryOptic:
 		ModConfig.current_scope_mag = 4.0
-	elif att.variable && rig.slotData.zoom == 1:
-		gameData.isScoped = gameData.PIP # force isScoped on 1x in PIP mode
-		ModConfig.current_scope_mag = 1.1
-	elif att.variable && rig.slotData.zoom == 2:
-		ModConfig.current_scope_mag = 3.0
-	elif att.variable && rig.slotData.zoom == 3:
-		ModConfig.current_scope_mag = 6.0
+		rig.reticleSize = sizes.x
+		gameData.isScoped = true
+		if !gameData.PIP:
+			gameData.aimFOV = 15.0
+	elif att.scope && gameData.secondaryOptic:
+		rig.reticleSize = sizes.x
+	elif att.variable:
+		var z = rig.slotData.zoom
+		rig.reticleSize = lerp(rig.reticleSize, sizes.x if z == 1 else (sizes.y if z == 2 else sizes.z), delta * 10.0)
+		if gameData.PIP:
+			gameData.isScoped = true
+			ModConfig.current_scope_mag = 1.1 if z == 1 else (3.0 if z == 2 else 6.0)
+		elif z == 2:
+			gameData.aimFOV = 25.0
+			gameData.isScoped = true
+		elif z == 3:
+			gameData.aimFOV = 10.0
+			gameData.isScoped = true
+	else:
+		rig.reticleSize = att.reticleSize.x
 
-	if !gameData.PIP || !gameData.isAiming || !gameData.isScoped || gameData.isColliding || !optic:
-		return
+	if gameData.PIP && gameData.isScoped:
+		var lens_radius: float = _get_lens_radius(optic)
+		if lens_radius > 0.0:
+			var distance: float = (ModConfig.FIXED_SCOPE_AIM_OFFSET if att.scope else ModConfig.VARIABLE_SCOPE_AIM_OFFSET) + ModConfig.eye_relief_offset
+			var target_fov: float = rad_to_deg(2.0 * atan(lens_radius / distance) / ModConfig.current_scope_mag)
+			optic.camera.fov = lerp(optic.camera.fov, target_fov, delta * 10.0)
 
-	gameData.aimFOV = gameData.baseFOV # force FOV back into 1x (your eyes don't have zoom)
+	_update_reticle(rig, optic)
 
-	var lens_radius: float = _get_lens_radius(optic)
-	if lens_radius <= 0.0:
-		return
 
-	var distance: float = (ModConfig.FIXED_SCOPE_AIM_OFFSET if att.scope else ModConfig.VARIABLE_SCOPE_AIM_OFFSET) + ModConfig.eye_relief_offset
-	var target_fov: float = rad_to_deg(2.0 * atan(lens_radius / distance) / ModConfig.current_scope_mag)
-
-	optic.camera.fov = target_fov # cannot lerp() without replacing ADS call
+func _update_reticle(rig, optic) -> void:
+	if optic.reticle:
+		optic.reticle.set_shader_parameter("size", rig.reticleSize)
+		optic.reticle.set_shader_parameter("opacity", rig.ocularOpacity)
 
 
 func _get_lens_radius(optic) -> float:

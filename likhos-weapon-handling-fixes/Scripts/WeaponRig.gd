@@ -35,13 +35,6 @@ func _inject_handler(rig, klass, node_name: String) -> void:
 	h.set_process(true)
 
 
-func on_input(_event) -> void:
-	var rig = _lib._caller
-	if rig == null:
-		return
-	_lib.skip_super()
-
-
 func on_physics_process(delta: float) -> void:
 	var rig = _lib._caller
 	if rig == null:
@@ -54,15 +47,6 @@ func on_physics_process(delta: float) -> void:
 	rig.FireInput()
 	rig.FireTimer(delta)
 	rig.FireImpulse(delta)
-
-
-func on_ads_post(delta: float) -> void:
-	var rig = _lib._caller
-	if rig == null:
-		return
-	var h = rig.get_node_or_null("Likho_WeaponRig_Optic")
-	if h:
-		h.on_ads_post(delta)
 
 
 func _is_busy() -> bool:
