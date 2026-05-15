@@ -1,7 +1,8 @@
 # TODO
 - food and sleep rework
 - redo mod control flow: pipe all input through InputBus.gd, create comain specific handlers, called from the bus, relegate existing scripts to be hooks/overrides only
-
+- show ammo count after ammo check or reload; hide again on firing
+- play click when attempting to shoot on empty chamber (add cocked status to rig)
 
 # Closed
 - MP7 clipping in canted mode - will not fix (missing texture on the gun)
