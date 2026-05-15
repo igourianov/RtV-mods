@@ -75,6 +75,9 @@ func on_weapon_handling(delta: float) -> void:
 func _handle_input(h, delta: float):
 	var aimToggle = gameData.aimMode == 2
 	var cantToggle = false
+	
+	if gameData.isInspecting || gameData.isChecking:
+		return
 
 	if ModConfig.cant_mode == "default":
 		cantToggle = aimToggle

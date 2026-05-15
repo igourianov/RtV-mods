@@ -51,7 +51,7 @@ func on_physics_process(delta: float) -> void:
 		return
 	_lib.skip_super()
 
-	if _is_busy() || gameData.isReloading || gameData.isClearing || gameData.isInserting || gameData.isInspecting:
+	if _is_busy() || gameData.isReloading || gameData.isClearing || gameData.isInserting || gameData.isInspecting || gameData.isChecking:
 		return
 
 	_fire_input(rig)
