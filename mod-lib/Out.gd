@@ -5,6 +5,7 @@ static var protip_timers: Dictionary[StringName,int] = {}
 static var prefix: String = "[likho]"
 static var debug_enabled: bool = true
 static var mod_main: Node
+static var show_protips: bool = true
 
 
 static func debug(...args):
@@ -21,6 +22,8 @@ static func bugfix(...args):
 
 
 static func protip(id: StringName, message: String) -> bool:
+	if !show_protips:
+		return false
 	var loader = mod_main.get_node_or_null("/root/Loader")
 	if !loader:
 		return false

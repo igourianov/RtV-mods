@@ -27,6 +27,8 @@ static var laser_auto_on: bool
 static var attachment_tooltips: bool
 static var pip_anti_aliasing: bool
 static var eye_relief_offset: float
+static var show_protips: bool
+static var debug_enabled: bool
 
 static var _menu_pos_auto: int = 0
 
@@ -50,6 +52,8 @@ const BASE_WEAPON_WEIGHT := 4.0
 const FIXED_SCOPE_AIM_OFFSET := 0.035
 const VARIABLE_SCOPE_AIM_OFFSET := 0.05
 
+const Out = preload("../Lib/Out.gd")
+
 
 static func _get_config_value(config: ConfigFile, section: String, key: String, default_val):
 	var value = config.get_value(section, key, {}).get("value", default_val)
@@ -58,6 +62,8 @@ static func _get_config_value(config: ConfigFile, section: String, key: String, 
 	return value
 
 static func apply_config(config: ConfigFile):
+	Out.show_protips = _get_config_value(config, "Bool", "show_protips", DEFAULT_ENABLED)
+	Out.debug_enabled = _get_config_value(config, "Bool", "debug_enabled", !DEFAULT_ENABLED)	
 	crosshair_style = _get_config_value(config, "Dropdown", "crosshair", DEFAULT_CROSSHAIR)
 	crosshair_color = _get_config_value(config, "Color", "crosshairColor", DEFAULT_CROSSHAIR_COLOR)
 	cant_mode = _get_config_value(config, "Dropdown", "cantMode", DEFAULT_CANT_MODE)
@@ -100,11 +106,15 @@ static func _set_config_entry(config: ConfigFile, section: String, category: Str
 
 
 static func create_template(config: ConfigFile):
+	config.set_value("Category", "General", { "menu_pos": 0 })
 	config.set_value("Category", "Crosshair", { "menu_pos": 1 })
 	config.set_value("Category", "Canted mode", { "menu_pos": 2 })
 	config.set_value("Category", "Inspect", { "menu_pos": 3 })
 	config.set_value("Category", "Aim tweaks", { "menu_pos": 4 })
 	config.set_value("Category", "Movement speeds", { "menu_pos": 5 })
+
+	_set_config_entry(config, "Bool", "General", "debug_enabled", "Debug", "Writing this mod's debug into stdout", !DEFAULT_ENABLED)
+	_set_config_entry(config, "Bool", "General", "show_protips", "Pro-tips", "In-game tips that help with new features and bindings", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Dropdown", "Crosshair", "crosshair", "Crosshair", "Used for exploration only", DEFAULT_CROSSHAIR, {
 		"options": {

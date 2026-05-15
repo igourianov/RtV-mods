@@ -125,6 +125,7 @@ func _init_inputs_hooks():
 		register_hook("inputs-createactions-post", _inputs.on_create_actions_post)
 		register_hook("inputs-resetactions-post", _inputs.on_reset_actions_post)
 
+
 func setup(lib):
 	pass
 
