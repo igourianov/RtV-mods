@@ -57,7 +57,7 @@ func _do_insert():
 		if !is_instance_valid(self):
 			return
 
-	await play("Insert_End", rig.data.insertEnd)
+	await play("Insert_End", rig.data.insertEnd, -1.0)
 	if !is_instance_valid(self):
 		return
 	_manual_load_state = ManualLoadState.NONE
