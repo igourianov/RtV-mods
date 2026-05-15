@@ -81,6 +81,11 @@ function New-ModZip {
 		Get-ChildItem -LiteralPath $sourceFull -Recurse -File | ForEach-Object {
 			$relative = $_.FullName.Substring($prefixLen).Replace('\', '/')
 
+			# Exclude CHANGELOG.md from the build
+			if ($_.Name -eq 'CHANGELOG.md') {
+				return
+			}
+
 			# Add to archive root if mod.txt or .md file
 			if ($relative -eq 'mod.txt' -or $relative -match '\.md$') {
 				[System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $_.FullName, $relative, $level) | Out-Null

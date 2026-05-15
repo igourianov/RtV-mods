@@ -6,31 +6,32 @@ Formerly `Likho's Weapon Handling Fixes`.
 
 ### New Features
 
-* Major rework of the PIP scope mode for realism
+* Rework of the PIP scope mode for realism
 * Reworked arm and leg stamina mechanics
-* Canted aim is now independent with optional laser auto-activation in hold mode (disable in MCM)
+* Reworked reload and ammo check mechanics
+* Rework of the inspect mode and associated bindings
+* Canted aim is now independent with optional laser auto-activation (disable in MCM)
 * Mouse sensitivity scales with zoom and stance (canted uses Aim, LPVO 1× uses Aim, mid/high use Scope/Scope×0.5)
 * Movement speeds rescaled and added new breakpoints (see MCM settings)
 * Default weapon position changed to patrol mode (rifle rests across chest)
-* LPVO zoom accessible without aiming - conflicts with lower/raise weapon - **REBIND** or change setting in MCM
+* LPVO zoom accessible without aiming - conflicts with lower/raise weapon by default - **REBIND** or change setting in MCM
+* Added explicit bindings to the base game settings for optic zoom in/out (it was hardcoded to mouse wheel)
 * Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in MCM)
 * Ability to toggle secondary optic out of aim with visual cue of the toggle
-* Rework of the inspect mode and associated bindings
-* Weapon handling speed now scales with weight and aim stance (disable in MCM)
-* Added explicit bindings to the base game settings for optic zoom in/out (it was hardcoded to mouse wheel)
+* Weapon handling speed now scales with aim stance (disable in MCM)
 * Flashlight now supports both toggle and hold actions on the same binding! Recommended for use with [LootLight mod](https://modworkshop.net/mod/56422), which I like very much.
-* Reworked ammo check functionality
+* Mosin and 870 now behave like real guns
+* Cocked state and dry fire click for all guns
 
 ### Vanilla Fixes
 
 * Ammo check no longer forces weapon into raised position (prior stance preserved)
 * Canted aim activation no longer blocked by interactables
 * Interactable tooltip no longer blocks vision when aiming around doorways
-* Manual reload (Mosin, 870) clipping issues fixed (weapon moves to default low position)
 * Number of HAMR fixes
 * Fixed Mosin ending up in weird state (mag + 0) after closing the bolt. Now both live round and spent casing are always ejected when opening bolt.
 * Fixed laser ray misaligned with collision dot. You may notice that bullet holes are now very slightly offset from the laser dot - that's how real lasers work.
-* Fixed flashlight draining battery while the game world is frozen (when opening containers)
+* Fixed flashlight draining battery while the game world is frozen
 
 ### PIP scope mode: realism
 !!!
@@ -91,9 +92,17 @@ HAMR in vanilla is bugged to hell and back. This mod introduces fixes and usabil
 ### Ammo check
 !!!
 Ammo check receives much needed love. 
-* Reload binding (default R) will now perform ammo check when held down for longer than 250ms. Old ammo check binding removed.
-* Ammo check is now interruptable. It will show ammo as long as you hold it, and you can execute reload right from it (the animation will be a bit iffy)
-* Weapons with equipped magazines will always show "? + chamber" for ammmo count. Either use ammo check function or remove the mag to see the amount of ammo it has.
+* Reload binding (default R) will now perform ammo check when held down for longer than 300ms.
+* Old ammo check binding removed.
+* Perform reload directly from the ammo check state by clicking fire button (detachable mag guns only)
+* Ammo check is now responsive - it will show ammo as long as you hold it.
+!!!
+### Mosin and 870
+!!!
+Both guns got realism pass.
+* Both can now cycle bolt on full and empty mag (you will lose ammo!)
+* Fixed round/casing not ejecting when opening bolt to load
+* Both will now play dry fire sounds when attempting to shoot while empty
 !!!
 ## Why this is one mod and not several
 

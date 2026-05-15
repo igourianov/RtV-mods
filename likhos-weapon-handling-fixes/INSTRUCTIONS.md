@@ -8,12 +8,10 @@
 
 This mod hooks multiple vanilla methods through Metro Mod Loader:
 
+- `WeaponRig` and `Handling` objects - basically rewritten. Will conflict with pretty much anything that toouches them.
+
 **Replace hooks** (other mods that also replace these will conflict, pick one):
 
-- `Handling.WeaponHandling`
-- `WeaponRig._input`
-- `WeaponRig.UpdateAimOffset`
-- `WeaponRig.Reload`
 - `Laser._input`
 - `Flashlight._physics_process`
 - `Controller.MovementStates`
@@ -22,19 +20,15 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 
 **Pre and Post hooks** (additive, run before/after vanilla, coexist with other mods cleanly):
 
-- `WeaponRig.AmmoCheck` (pre and post)
-- `WeaponRig.ADS` (post)
+- `RigManager.UpdateRig` (post)
+- `Recoil.ApplyRecoil` (post)
 - `Camera.ScopeDOF` (post)
-- `WeaponRig.Insert` (post)
 - `Noise._physics_process` (post)
 - `Tilt._physics_process` (pre)
 - `HUD._ready` (post)
-- `Recoil.ApplyRecoil` (post)
 - `Optic._physics_process` (pre)
-- `RigManager.UpdateRig` (post)
-- `Inputs.CreateActions` (post)
+- `Inputs.CreateActions` (pre and post)
 - `Inputs.ResetActions` (post)
-- `Item.UpdateDetails` (post)
 
 # Install / Uninstall
 
