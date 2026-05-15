@@ -32,10 +32,16 @@ func _input(event) -> void:
 
 
 func _handle_zoom(event, optic) -> bool:
+
+	if !optic || !optic.attachmentData.variable:
+		return false
+
 	var zoomIn = event.is_action_pressed("optic_zoom_in", true)
 	var zoomOut = event.is_action_pressed("optic_zoom_out", true)
-
-	if !(gameData.isAiming || ModConfig.lpvo_ooa_zoom) || !(zoomIn || zoomOut) || !optic || !optic.attachmentData.variable:
+	var zoomAllowed: bool = (gameData.isAiming || ModConfig.lpvo_ooa_zoom == "enabled"
+		|| (ModConfig.lpvo_ooa_zoom == "rail" && Input.is_action_pressed("rail_movement")))
+		
+	if !zoomAllowed || !(zoomIn || zoomOut):
 		return false
 
 	var rig = owner

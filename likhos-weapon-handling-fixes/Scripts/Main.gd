@@ -72,7 +72,6 @@ func setup(lib):
 	register_action("optic_zoom_in", "Optic Zoom In", _create_mouse_input(MOUSE_BUTTON_WHEEL_UP))
 	register_action("optic_zoom_out", "Optic Zoom Out", _create_mouse_input(MOUSE_BUTTON_WHEEL_DOWN))
 	remove_action("ammo_check")
-	remove_action("rail_movement")
 	remove_action("insert")
 
 
