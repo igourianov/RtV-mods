@@ -24,44 +24,45 @@ func _input(event) -> void:
 		return
 
 	var optic = rig.activeOptic
+
+	if _handle_zoom(event, optic):
+		return
+
+	if _handle_secondary_optic(event, optic):
+		return
+
+
+func _handle_zoom(event, optic) -> bool:
 	var zoomIn = event.is_action_pressed("optic_zoom_in", true)
 	var zoomOut = event.is_action_pressed("optic_zoom_out", true)
 
-	if (gameData.isAiming || ModConfig.lpvo_ooa_zoom) && (zoomIn || zoomOut) && optic && optic.attachmentData.variable:
-		if zoomIn && rig.slotData.zoom != 3:
-			rig.slotData.zoom += 1
-			rig.PlayRailMove()
-		elif zoomOut && rig.slotData.zoom != 1:
-			rig.slotData.zoom -= 1
-			rig.PlayRailMove()
-		return
+	if !(gameData.isAiming || ModConfig.lpvo_ooa_zoom) || !(zoomIn || zoomOut) || !optic || !optic.attachmentData.variable:
+		return false
 
-	if event.is_action_pressed("secondary_optic") && optic && optic.secondary && optic.attachmentData.secondary:
-		gameData.secondaryOptic = !gameData.secondaryOptic
-		_apply_aim_offset()
-		return
-
-
-func _apply_aim_offset() -> void:
 	var rig = owner
-	var data = rig.data
-	var optic = rig.activeOptic
+	if zoomIn && rig.slotData.zoom != 3:
+		rig.slotData.zoom += 1
+		rig.PlayRailMove()
+	elif zoomOut && rig.slotData.zoom != 1:
+		rig.slotData.zoom -= 1
+		rig.PlayRailMove()
+	return true
 
-	if optic && optic.secondary && gameData.secondaryOptic:
+
+func _handle_secondary_optic(event, optic) -> bool:
+	if !optic || !optic.secondary || !optic.attachmentData.secondary || !event.is_action_pressed("secondary_optic"):
+		return false
+
+	gameData.secondaryOptic = !gameData.secondaryOptic
+
+	var rig = owner
+	if gameData.secondaryOptic:
 		Out.bugfix("recalc secondary optic Y offset")
 		rig.aimOffset = optic.position.y + optic.secondary.position.y * optic.scale.y
-	elif optic:
-		rig.aimOffset = optic.position.y
 	else:
-		rig.aimOffset = 0.0
+		rig.aimOffset = optic.position.y
 
-	if data.foldSights:
-		var rot = Quaternion.from_euler(Vector3(data.foldSightsRotation if optic else 0.0, 0, 0))
-		rig.skeleton.set_bone_pose_rotation(rig.backSightIndex, rot)
-		if rig.frontSightIndex:
-			rig.skeleton.set_bone_pose_rotation(rig.frontSightIndex, rot)
-		else:
-			Out.bugfix("do not attempt to rotate front sight on M4A1 (flicker)")
+	return true
 
 
 func on_ads_post(_delta: float) -> void:
@@ -92,7 +93,7 @@ func on_ads_post(_delta: float) -> void:
 	var distance: float = (ModConfig.FIXED_SCOPE_AIM_OFFSET if att.scope else ModConfig.VARIABLE_SCOPE_AIM_OFFSET) + ModConfig.eye_relief_offset
 	var target_fov: float = rad_to_deg(2.0 * atan(lens_radius / distance) / ModConfig.current_scope_mag)
 
-	optic.camera.fov = target_fov
+	optic.camera.fov = target_fov # cannot lerp() without replacing ADS call
 
 
 func _get_lens_radius(optic) -> float:

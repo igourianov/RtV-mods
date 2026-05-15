@@ -257,6 +257,16 @@ func on_rig_update_post(_animate) -> void:
 		gameData.secondaryOptic = false
 		Out.bugfix("reset gameData.secondaryOptic flag")
 
+	# fold/unfold iron sights based on optic presence
+	var data = rig.data if rig else null
+	if data && data.foldSights:
+		var rot = Quaternion.from_euler(Vector3(data.foldSightsRotation if optic else 0.0, 0, 0))
+		rig.skeleton.set_bone_pose_rotation(rig.backSightIndex, rot)
+		if rig.frontSightIndex:
+			rig.skeleton.set_bone_pose_rotation(rig.frontSightIndex, rot)
+		else:
+			Out.bugfix("do not attempt to rotate front sight on M4A1 (flicker)")
+
 
 
 func _optic_lens_aim_z(optic) -> float:
@@ -317,4 +327,3 @@ func _play_laser_sound(node, start: float, duration: float) -> void:
 		await node.get_tree().create_timer(duration, false).timeout
 		if is_instance_valid(audio):
 			audio.stop()
-
