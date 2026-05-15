@@ -7,6 +7,7 @@ const BLUR_RADIUS_BASE := 3.0
 
 const _NVG_PIP_SHADER := preload("res://mods/likhos-weapon-handling-fixes/Shaders/PIP_NVG.gdshader")
 const ModConfig = preload("./ModConfig.gd")
+const Out = preload("../Lib/Out.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
 # Vanilla scene defaults for the optic's SubViewport, applied when AA mirror is off.
@@ -17,6 +18,9 @@ const _VANILLA_PIP_SSAA := 1
 
 var _lib
 var _preferences: Preferences
+
+# TEMP: probe whether the `in` operator detects shader uniforms on a ShaderMaterial.
+var _tested_shaders := {}
 
 
 func _init(lib, preferences: Preferences) -> void:
@@ -29,42 +33,21 @@ func on_physics_process_pre(_delta: float) -> void:
 	if optic == null:
 		return
 
+	var managed: bool = optic.visible && optic.attachmentData && (optic.attachmentData.scope || optic.attachmentData.variable)
+
 	var viewport: SubViewport = optic.viewport
-	if viewport == null:
-		return
-
-	var msaa: int
-	var ssaa: int
-	if ModConfig.pip_anti_aliasing:
-		msaa = _msaa_from_pref(_preferences.antialiasing)
-		ssaa = _ssaa_from_pref(_preferences.smaa)
-	else:
-		msaa = _VANILLA_PIP_MSAA
-		ssaa = _VANILLA_PIP_SSAA
-
-	if viewport.msaa_3d != msaa:
-		viewport.msaa_3d = msaa
-	if viewport.screen_space_aa != ssaa:
-		viewport.screen_space_aa = ssaa
+	if viewport != null:
+		var aa_on: bool = managed && gameData.PIP && ModConfig.pip_anti_aliasing
+		viewport.msaa_3d = _msaa_from_pref(_preferences.antialiasing) if aa_on else _VANILLA_PIP_MSAA
+		viewport.screen_space_aa = _ssaa_from_pref(_preferences.smaa) if aa_on else _VANILLA_PIP_SSAA
 
 	var pip_mat: ShaderMaterial = optic.PIP
-	if pip_mat == null:
-		return
-
-	if pip_mat.shader != _NVG_PIP_SHADER:
-		pip_mat.shader = _NVG_PIP_SHADER
-
-	var blur_active: bool = (
-		ModConfig.nvg_pip_blur
-		&& gameData.NVG
-		&& gameData.isAiming
-		&& !gameData.secondaryOptic
-	)
-	var radius: float = 0.0
-	if blur_active:
-		var mag: float = max(1.0, ModConfig.current_scope_mag)
-		radius = BLUR_RADIUS_BASE * mag
-	pip_mat.set_shader_parameter("blur_radius", radius)
+	if pip_mat && pip_mat.shader:
+		if !("blur_radius" in pip_mat.shader):
+			pip_mat.shader = _NVG_PIP_SHADER
+		var blur_on: bool = managed && gameData.PIP && gameData.NVG && ModConfig.nvg_pip_blur && ModConfig.current_scope_mag > 1.0
+		var radius: float = BLUR_RADIUS_BASE * ModConfig.current_scope_mag if blur_on else 0.0
+		pip_mat.set_shader_parameter("blur_radius", radius)
 
 
 # preferences.antialiasing 1..4 -> Viewport.MSAA enum (0..3)
