@@ -6,7 +6,7 @@ static var laser_latch: bool = false
 static var ammo_check_view := false
 
 # config vars
-static var crosshair_style: String
+static var crosshair_style: StringName
 static var crosshair_color: Color
 static var cant_mode: String
 static var lpvo_ooa_zoom: StringName
@@ -30,25 +30,25 @@ static var eye_relief_offset: float
 
 static var _menu_pos_auto: int = 0
 
-const DEFAULT_CROSSHAIR_COLOR = Color(0, 1, 0.04, 0.55)
-const DEFAULT_CROSSHAIR = "3seg-cross"
-const DEFAULT_CANT_MODE = "1default"
-const DEFAULT_LPVO_OOA_ZOOM = "3rail"
-const DEFAULT_ENABLED = true
-const DEFAULT_CROUCH_SPEED = 0.7
-const DEFAULT_WALK_SPEED = 3.0
-const DEFAULT_SPRINT_SPEED = 7.0
-const DEFAULT_AIM_SPEED_MULT = 0.6
-const DEFAULT_CANT_SPEED_MULT = 0.75
-const DEFAULT_SCOPE_SPEED_MULT = 0.3
-const SPEED_MIN = 0.0
-const SPEED_MAX = 20.0
-const MULT_MIN = 0.1
-const MULT_MAX = 1.5
-const DEFAULT_EYE_RELIEF_OFFSET = 0.0
-const BASE_WEAPON_WEIGHT: float = 4.0
-const FIXED_SCOPE_AIM_OFFSET: float = 0.035
-const VARIABLE_SCOPE_AIM_OFFSET: float = 0.05
+const DEFAULT_CROSSHAIR_COLOR := Color(0, 1, 0.04, 0.55)
+const DEFAULT_CROSSHAIR := "3seg-cross"
+const DEFAULT_CANT_MODE := "1default"
+const DEFAULT_LPVO_OOA_ZOOM := "3rail"
+const DEFAULT_ENABLED := true
+const DEFAULT_CROUCH_SPEED := 0.7
+const DEFAULT_WALK_SPEED := 3.0
+const DEFAULT_SPRINT_SPEED := 7.0
+const DEFAULT_AIM_SPEED_MULT := 0.6
+const DEFAULT_CANT_SPEED_MULT := 0.75
+const DEFAULT_SCOPE_SPEED_MULT := 0.3
+const SPEED_MIN := 0.0
+const SPEED_MAX := 20.0
+const MULT_MIN := 0.1
+const MULT_MAX := 1.5
+const DEFAULT_EYE_RELIEF_OFFSET := 0.0
+const BASE_WEAPON_WEIGHT := 4.0
+const FIXED_SCOPE_AIM_OFFSET := 0.035
+const VARIABLE_SCOPE_AIM_OFFSET := 0.05
 
 
 static func _get_config_value(config: ConfigFile, section: String, key: String, default_val):

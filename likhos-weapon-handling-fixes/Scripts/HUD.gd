@@ -68,10 +68,10 @@ class _Driver extends Node:
 func _draw_crosshair(c: Control) -> void:
 	var center := c.size * 0.5
 	match ModConfig.crosshair_style:
-		"dot":
+		&"dot":
 			c.draw_circle(center + Vector2(1, 1), _DOT_RADIUS, _CROSSHAIR_SHADOW)
 			c.draw_circle(center, _DOT_RADIUS, ModConfig.crosshair_color)
-		"seg-cross":
+		&"seg-cross":
 			_draw_arms(c, center + Vector2(1, 1), _CROSSHAIR_SHADOW)
 			_draw_arms(c, center, ModConfig.crosshair_color)
 		_:
