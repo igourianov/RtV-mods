@@ -64,6 +64,7 @@ func setup(lib):
 	register_hook("character-stamina", _character.on_stamina)
 	register_hook("optic-_physics_process-pre", _optic.on_physics_process_pre)
 	register_hook("laser-_input", _laser.on_input)
+	register_hook("laser-_process-post", _laser.on_process_post)
 	register_hook("flashlight-_physics_process", _flashlight.on_physics_process)
 
 	register_action("optic_zoom_in", "Optic Zoom In", _create_mouse_input(MOUSE_BUTTON_WHEEL_UP))

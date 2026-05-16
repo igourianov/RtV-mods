@@ -2,13 +2,12 @@
 # dynamic state vars
 static var current_scope_mag: float = 1.0
 static var current_weapon_weight: float = 0.0
-static var laser_latch: bool = false
 static var ammo_check_view := false
 
 # config vars
 static var crosshair_style: StringName
 static var crosshair_color: Color
-static var cant_mode: String
+static var cant_mode: StringName
 static var lpvo_ooa_zoom: StringName
 static var disable_zoom_dof: bool
 static var disable_optic_override: bool

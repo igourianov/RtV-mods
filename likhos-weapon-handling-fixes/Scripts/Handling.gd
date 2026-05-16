@@ -4,11 +4,6 @@ const ModConfig = preload("./ModConfig.gd")
 const Out = preload("../Lib/Out.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
-const _LASER_SOUND_VOLUME_DB = -12.0
-const _LASER_IN_START = 0.0
-const _LASER_IN_DURATION = 0.015
-const _LASER_OUT_START = 0.120
-const _LASER_OUT_DURATION = 0.0
 const _PATROL_POSITION = Vector3(0.06, -0.18, -0.25)
 const _PATROL_ROTATION = Vector3(25, 50, -20)
 const _PATROL_WEAPON_TYPES = {"Rifle": null, "SMG": null, "Bolt": null, "Shotgun": null}
@@ -28,10 +23,8 @@ enum HandlingMode {
 
 var _lib
 var _preferences: Preferences
-var _flashlight_stream: AudioStream = load("res://Audio/Interaction/Files/Flashlight.wav")
 var _lens_min_z_cache := {}
 var _handlingMode = HandlingMode.Default
-var _laser
 var _canted_elapsed: float = 0
 var _aim_elapsed: float = 0
 
@@ -39,8 +32,6 @@ var _aim_elapsed: float = 0
 func _init(lib, preferences: Preferences) -> void:
 	_lib = lib
 	_preferences = preferences
-	if _flashlight_stream == null:
-		Out.warning("failed to load flashlight audio")
 
 
 func on_weapon_handling(delta: float) -> void:
@@ -52,20 +43,12 @@ func on_weapon_handling(delta: float) -> void:
 	if gameData.freeze:
 		return
 
-	var oldCanted: bool = gameData.isCanted
-
 	_handle_input(h, delta)
-
-	if oldCanted != gameData.isCanted: # only apply laser logic on switch
-		if !gameData.isCanted:
-			_laser_deactivate(h)
-		elif ModConfig.laser_auto_on:
-			_laser_activate(h)
 
 	if _override_handling(h, h.get_parent()):
 		_handlingMode = HandlingMode.Default
-		gameData.isAiming = false
-		gameData.isCanted = false
+		#gameData.isAiming = false
+		#gameData.isCanted = false
 	elif !_weapon_handling(h, h.get_parent(), delta):
 		_set_target_idle(h)
 
@@ -81,9 +64,9 @@ func _handle_input(h, delta: float):
 		gameData.isAiming = false
 		return
 
-	if ModConfig.cant_mode == "default":
+	if ModConfig.cant_mode == &"default":
 		cantToggle = aimToggle
-	elif ModConfig.cant_mode == "toggle":
+	elif ModConfig.cant_mode == &"toggle":
 		cantToggle = true
 
 	if !cantToggle:
@@ -122,6 +105,7 @@ func _override_handling(h, rig) -> bool:
 		h.targetPosition = data.inspectPosition
 		h.targetRotation = data.inspectRotation
 		return true
+		
 	if gameData.isInserting && data.weaponType == "Shotgun":
 		gameData.weaponPosition = 1
 		h.targetPosition = data.lowPosition
@@ -248,11 +232,6 @@ func on_rig_update_post(_animate) -> void:
 	ModConfig.current_weapon_weight = weapon.Weight() if weapon else 0.0
 	Out.debug("weapon weight: %.1fkg" % ModConfig.current_weapon_weight)
 
-	# save laser module reference
-	_laser = null
-	for node in (rig.attachments.get_children() if rig else []):
-		if node.visible && node.has_method("PlayLaser"):
-			_laser = node
 
 	# Vanilla forgets to reset secondaryOptic flag when equipping another optic
 	# Causes other scopes to break in PIP mode
@@ -300,38 +279,3 @@ func _optic_lens_local_min_z(optic) -> float:
 		min_z = min(min_z, (t * v).z)
 	_lens_min_z_cache[key] = min_z
 	return min_z
-
-
-func _laser_activate(h) -> void:
-	if ModConfig.laser_latch || !_laser || _laser.active:
-		return
-	_laser.active = true
-	#_laser.raycast.global_position = _laser.owner.raycast.global_position
-	_laser.laser.show()
-	_play_laser_sound(_laser, _LASER_IN_START, _LASER_IN_DURATION)
-	ModConfig.laser_latch = true
-
-
-func _laser_deactivate(h) -> void:
-	if !ModConfig.laser_latch:
-		return
-	ModConfig.laser_latch = false
-	if !_laser || !_laser.active:
-		return
-	_laser.active = false
-	_laser.laser.hide()
-	_play_laser_sound(_laser, _LASER_OUT_START, _LASER_OUT_DURATION)
-
-
-func _play_laser_sound(node, start: float, duration: float) -> void:
-	if !_flashlight_stream:
-		return
-	var audio = node.audioInstance2D.instantiate()
-	node.add_child(audio)
-	audio.stream = _flashlight_stream
-	audio.volume_db = _LASER_SOUND_VOLUME_DB
-	audio.play(start)
-	if duration > 0.0:
-		await node.get_tree().create_timer(duration, false).timeout
-		if is_instance_valid(audio):
-			audio.stop()
