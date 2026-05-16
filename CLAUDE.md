@@ -11,7 +11,8 @@ Mods for the Godot game **Road to Vostok** (`config/name="Road to Vostok"`, vers
 * When writing boolean operations - use C-type operators
 * Use colon for dictionary {"key": "value"} pairs 
 * Enforce two empty lines befween functions
-* Enforce Tab identation 
+* Enforce Tab identation
+* Use `!obj` style for `null` checks instead of `obj == null`
 
 ## Mods
 
