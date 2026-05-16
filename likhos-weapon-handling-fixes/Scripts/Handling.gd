@@ -47,7 +47,7 @@ func on_weapon_handling(delta: float) -> void:
 
 	if _override_handling(h, h.get_parent()):
 		_handlingMode = HandlingMode.Default
-		#gameData.isAiming = false
+		gameData.isAiming = false
 		#gameData.isCanted = false
 	elif !_weapon_handling(h, h.get_parent(), delta):
 		_set_target_idle(h)
@@ -59,11 +59,6 @@ func _handle_input(h, delta: float):
 	var aimToggle = gameData.aimMode == 2
 	var cantToggle = false
 	
-	if gameData.isInspecting:
-		gameData.isCanted = false
-		gameData.isAiming = false
-		return
-
 	if ModConfig.cant_mode == &"default":
 		cantToggle = aimToggle
 	elif ModConfig.cant_mode == &"toggle":
@@ -231,7 +226,6 @@ func on_rig_update_post(_animate) -> void:
 	var weapon = rig.weaponSlot.get_children()[0] if rig && rig.weaponSlot else null
 	ModConfig.current_weapon_weight = weapon.Weight() if weapon else 0.0
 	Out.debug("weapon weight: %.1fkg" % ModConfig.current_weapon_weight)
-
 
 	# Vanilla forgets to reset secondaryOptic flag when equipping another optic
 	# Causes other scopes to break in PIP mode
