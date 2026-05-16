@@ -2,12 +2,14 @@
 const ModConfig = preload("./ModConfig.gd")
 const Out = preload("../Lib/Out.gd")
 
-const _SOUND_VOLUME_DB = -12.0
+const _SOUND_VOLUME_DB = -10.0
 const _IN_START = 0.0
 const _IN_DURATION = 0.015
 const _OUT_START = 0.120
 const _OUT_DURATION = 0.0
-const _AUTO_ON_LATCH_NAME := &"likho_laser_latch"
+const _AUTO_ON_LATCH := &"likho_laser_latch"
+const _SOUND_NODE_NAME := "LikhoLaserSound"
+const _PLAY_INDEX_META := &"likho_laser_play_index"
 
 var _lib
 var _flashlight_stream: AudioStream = load("res://Audio/Interaction/Files/Flashlight.wav")
@@ -46,29 +48,38 @@ func __process_post(caller):
 	if !caller.visible:
 		return
 
-	var latch: bool = caller.get_meta(_AUTO_ON_LATCH_NAME, false)
-	if gameData.isCanted && ModConfig.laser_auto_on && !caller.active && !latch:
-		caller.set_meta(_AUTO_ON_LATCH_NAME, true)
+	var latch: bool = caller.get_meta(_AUTO_ON_LATCH, false)
+	if gameData.isCanted && !gameData.isInspecting && ModConfig.laser_auto_on && !caller.active && !latch:
+		caller.set_meta(_AUTO_ON_LATCH, true)
 		caller.active = true
 		caller.laser.show()
-		_play_sound(caller, _IN_START, _IN_DURATION)
+		_play_sound(caller, _flashlight_stream, _IN_START, _IN_DURATION)
 	elif !gameData.isCanted && latch:
-		caller.set_meta(_AUTO_ON_LATCH_NAME, false)
+		caller.set_meta(_AUTO_ON_LATCH, false)
 		if caller.active:
 			caller.active = false
 			caller.laser.hide()
-			_play_sound(caller, _OUT_START, _OUT_DURATION)
+			_play_sound(caller, _flashlight_stream, _OUT_START, _OUT_DURATION)
 
 
-func _play_sound(caller, start: float, duration: float) -> void:
-	if !_flashlight_stream:
+func _play_sound(caller, stream: AudioStream, start: float, duration: float) -> void:
+	if !stream:
 		return
-	var audio = caller.audioInstance2D.instantiate()
-	caller.add_child(audio)
-	audio.stream = _flashlight_stream
-	audio.volume_db = _SOUND_VOLUME_DB
+	var audio: AudioStreamPlayer = caller.get_node_or_null(_SOUND_NODE_NAME)
+	if !audio:
+		audio = AudioStreamPlayer.new()
+		audio.name = _SOUND_NODE_NAME
+		audio.bus = &"SFX"
+		audio.volume_db = _SOUND_VOLUME_DB
+		caller.add_child(audio)
+	else:
+		audio.stop()
+	audio.stream = stream
+	var play_index: int = audio.get_meta(_PLAY_INDEX_META, 0) + 1
+	audio.set_meta(_PLAY_INDEX_META, play_index)
 	audio.play(start)
 	if duration > 0.0:
 		await caller.get_tree().create_timer(duration, false).timeout
-		if is_instance_valid(audio):
+		if is_instance_valid(audio) && audio.get_meta(_PLAY_INDEX_META, 0) == play_index:
 			audio.stop()
+
