@@ -2,6 +2,7 @@
 - food and sleep rework
 - Leupold - to SFP
 - crosshair MCM options - show when running/aiming/etc + fadein
+- flashlight shine onto inspected weapon
 
 # Closed
 - MP7 clipping in canted mode - will not fix (missing texture on the gun)
