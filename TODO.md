@@ -3,6 +3,8 @@
 - Leupold - to SFP
 - crosshair MCM options - show when running/aiming/etc + fadein
 - flashlight shine onto inspected weapon
+- sprint/aim override
+- hold breath
 
 # Closed
 - MP7 clipping in canted mode - will not fix (missing texture on the gun)
