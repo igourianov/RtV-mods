@@ -43,6 +43,7 @@ func __input(caller, event: InputEvent):
 			caller.laser.show()
 		else:
 			caller.laser.hide()
+			caller.set_meta(_AUTO_ON_LATCH, gameData.isCanted)
 
 func __process_post(caller):
 	if !caller.visible:
