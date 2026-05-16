@@ -113,9 +113,11 @@ func _handle_ads(delta: float) -> void:
 		elif z == 2:
 			gameData.aimFOV = 25.0
 			gameData.isScoped = true
+			ModConfig.current_scope_mag = 3.0
 		elif z == 3:
 			gameData.aimFOV = 10.0
 			gameData.isScoped = true
+			ModConfig.current_scope_mag = 6.0
 	else:
 		rig.reticleSize = att.reticleSize.x
 
