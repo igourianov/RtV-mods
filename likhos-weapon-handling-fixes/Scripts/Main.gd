@@ -53,7 +53,7 @@ func setup(lib):
 	register_hook("weaponrig-_ready-post", _weapon_rig.on_ready_post)
 	register_hook("weaponrig-ads", _noop)
 	register_hook("weaponrig-_physics_process", _weapon_rig.on_physics_process)
-	register_hook("weaponrig-_input", _noop)
+	register_hook("weaponrig-_input", _handling.on_input)
 	register_hook("camera-scopedof-post", _camera.on_scope_dof_post)
 	register_hook("controller-movementstates", _controller.on_movement_states)
 	register_hook("controller-_input", _controller.on_input)

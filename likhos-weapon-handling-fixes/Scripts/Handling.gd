@@ -25,8 +25,8 @@ var _lib
 var _preferences: Preferences
 var _lens_min_z_cache := {}
 var _handlingMode = HandlingMode.Default
-var _canted_elapsed: float = 0
-var _aim_elapsed: float = 0
+var _aim_intent := false
+var _cant_intent := false
 
 
 func _init(lib, preferences: Preferences) -> void:
@@ -43,7 +43,7 @@ func on_weapon_handling(delta: float) -> void:
 	if gameData.freeze:
 		return
 
-	_handle_input(h, delta)
+	gameData.isColliding = h.collision.is_colliding()
 
 	if _override_handling(h, h.get_parent()):
 		_handlingMode = HandlingMode.Default
@@ -55,36 +55,37 @@ func on_weapon_handling(delta: float) -> void:
 	_apply_target(h, delta)
 
 
-func _handle_input(h, delta: float):
+func on_input(evt) -> void:
+	_lib.skip_super()
+
 	var aimToggle = gameData.aimMode == 2
 	var cantToggle = false
-	
 	if ModConfig.cant_mode == &"default":
 		cantToggle = aimToggle
 	elif ModConfig.cant_mode == &"toggle":
 		cantToggle = true
 
-	if !cantToggle:
-		gameData.isCanted = Input.is_action_pressed("canted")
-	elif Input.is_action_just_pressed("canted"):
-		gameData.isCanted = !gameData.isCanted
+	if !gameData.freeze && evt.is_action_pressed("aim"):
+		_aim_intent = !_aim_intent if aimToggle else true
+		_resolve_intent(true)
+	elif !gameData.freeze && evt.is_action_pressed("canted"):
+		_cant_intent = !_cant_intent if cantToggle else true
+		_resolve_intent(false)
+	elif evt.is_action_released("aim") && !aimToggle:
+		_aim_intent = false
+		_resolve_intent(true)
+	elif evt.is_action_released("canted") && !cantToggle:
+		_cant_intent = false
+		_resolve_intent(false)
 
-	if !aimToggle:
-		gameData.isAiming = Input.is_action_pressed("aim")
-	elif Input.is_action_just_pressed("aim"):
-		gameData.isAiming = !gameData.isAiming
 
-	_aim_elapsed = _aim_elapsed + delta if gameData.isAiming else 0.0
-	_canted_elapsed = _canted_elapsed + delta if gameData.isCanted else 0.0
-
-	if gameData.isAiming && gameData.isCanted:
-		# resolve action conflict - last one wins
-		if _aim_elapsed > _canted_elapsed:
-			gameData.isAiming = false
-		else:
-			gameData.isCanted = false
-
-	gameData.isColliding = h.collision.is_colliding()
+func _resolve_intent(aim_changed: bool) -> void:
+	if aim_changed:
+		gameData.isAiming = _aim_intent
+		gameData.isCanted = false if _aim_intent else _cant_intent
+	else:
+		gameData.isCanted = _cant_intent
+		gameData.isAiming = false if _cant_intent else _aim_intent
 
 
 func _override_handling(h, rig) -> bool:
@@ -100,7 +101,7 @@ func _override_handling(h, rig) -> bool:
 		h.targetPosition = data.inspectPosition
 		h.targetRotation = data.inspectRotation
 		return true
-		
+
 	if gameData.isInserting && data.weaponType == "Shotgun":
 		gameData.weaponPosition = 1
 		h.targetPosition = data.lowPosition
@@ -247,7 +248,7 @@ func on_rig_update_post(_animate) -> void:
 	# true up cocked state if mag was loaded from inventory
 	if rig && rig.slotData:
 		rig.slotData.set_meta("cocked", rig.slotData.chamber)
-		
+
 
 
 func _optic_lens_aim_z(optic) -> float:
