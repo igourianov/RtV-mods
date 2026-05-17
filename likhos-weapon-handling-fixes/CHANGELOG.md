@@ -3,7 +3,7 @@
 * Hold breath function!
 * reworked sprint and crouch to override each other based on last user input
 * aim/canted now override sprint
-* further WeaponRig refactoring
+* further WeaponRig refactoring, sound system refactoring
 
 # 2.0.1109
 * major refactoring of the WeaponRig code
