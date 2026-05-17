@@ -23,7 +23,6 @@ func _input(event) -> void:
 	if is_engine_busy() || gameData.isInspecting || gameData.isInserting || gameData.isClearing || gameData.isReloading || gameData.isChecking:
 		return
 
-
 	var optic = get_parent().activeOptic
 
 	if _handle_zoom(event, optic):

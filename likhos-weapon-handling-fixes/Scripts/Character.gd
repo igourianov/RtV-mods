@@ -17,6 +17,7 @@ const ARM_STAMINA_AIM: float = -3.0
 const ARM_STAMINA_AIM_ZOOM: float = -3.5
 const ARM_STAMINA_RAISED: float = -2.0
 const ARM_STAMINA_AIM_CROUCH_MOD: float = 0.5
+const ARM_STAMINA_HOLD_BREATH_MOD: float = 1.5
 
 
 var _lib
@@ -24,6 +25,7 @@ var _interface
 var gameData = preload("res://Resources/GameData.tres")
 var _body_recovery_delay: float = 0.0
 var _arm_recovery_delay: float = 0.0
+var _hold_breath_pressed: bool = false
 
 
 func _init(lib) -> void:
@@ -36,8 +38,24 @@ func on_stamina(delta: float) -> void:
 	_lib.skip_super()
 	if !_interface:
 		_interface = _lib._caller.get_node("/root/Map/Core/UI/Interface")
+	_update_hold_breath()
 	_body_stamina(delta, _interface.currentInventoryWeight, _interface.currentInventoryCapacity if _interface.currentInventoryCapacity else _interface.baseCarryWeight)
 	_arm_stamina(delta)
+
+
+func _update_hold_breath() -> void:
+	var pressed: bool = Input.is_action_pressed("hold_breath")
+	var can_hold: bool = gameData.isAiming && gameData.armStamina > 0.0
+
+	if ModConfig.hold_breath:
+		if !pressed || !can_hold:
+			ModConfig.hold_breath = false
+			_interface.PlayError()
+	elif pressed && !_hold_breath_pressed && can_hold:
+		ModConfig.hold_breath = true
+		_interface.PlayError()
+
+	_hold_breath_pressed = pressed
 
 
 func _body_stamina(delta: float, current_inv_weight: float, max_inv_weight: float) -> void:
@@ -72,6 +90,8 @@ func _arm_stamina(delta: float) -> void:
 		stamina *= weight_factor
 		if gameData.isCrouching:
 			stamina *= ARM_STAMINA_AIM_CROUCH_MOD
+		if ModConfig.hold_breath:
+			stamina *= ARM_STAMINA_HOLD_BREATH_MOD
 		_arm_recovery_delay = 0.0
 	elif gameData.weaponPosition == 2:
 		stamina = ARM_STAMINA_RAISED * weight_factor
@@ -91,4 +111,3 @@ func _arm_stamina(delta: float) -> void:
 func _recovery_delay_threshold(current_stamina: float, vital_factor: float) -> float:
 	var delay_base: float = STAMINA_RECOVERY_DELAY_EMPTY if current_stamina <= 0.0 else STAMINA_RECOVERY_DELAY
 	return maxf(STAMINA_RECOVERY_DELAY_MIN, delay_base * (1.0 - vital_factor))
-

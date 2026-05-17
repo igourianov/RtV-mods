@@ -3,6 +3,7 @@
 static var current_scope_mag: float = 1.0
 static var current_weapon_weight: float = 0.0
 static var ammo_check_view := false
+static var hold_breath: bool = false
 
 # config vars
 static var crosshair_style: StringName
@@ -62,7 +63,7 @@ static func _get_config_value(config: ConfigFile, section: String, key: String, 
 
 static func apply_config(config: ConfigFile):
 	Out.show_protips = _get_config_value(config, "Bool", "show_protips", DEFAULT_ENABLED)
-	Out.debug_enabled = _get_config_value(config, "Bool", "debug_enabled", !DEFAULT_ENABLED)	
+	Out.debug_enabled = _get_config_value(config, "Bool", "debug_enabled", !DEFAULT_ENABLED)
 	crosshair_style = _get_config_value(config, "Dropdown", "crosshair", DEFAULT_CROSSHAIR)
 	crosshair_color = _get_config_value(config, "Color", "crosshairColor", DEFAULT_CROSSHAIR_COLOR)
 	cant_mode = _get_config_value(config, "Dropdown", "cantMode", DEFAULT_CANT_MODE)
@@ -194,4 +195,3 @@ static func create_template(config: ConfigFile):
 		"minRange": MULT_MIN,
 		"maxRange": MULT_MAX
 	})
-
