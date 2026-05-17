@@ -15,13 +15,10 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	var rig = owner
-	if !rig:
-		return
-
 	if is_engine_busy() || gameData.isReloading || gameData.isClearing || gameData.isInserting || gameData.isInspecting || gameData.isChecking:
 		return
 
+	var rig = get_parent()
 	_fire_input(rig)
 	rig.FireTimer(delta)
 	rig.FireImpulse(delta)

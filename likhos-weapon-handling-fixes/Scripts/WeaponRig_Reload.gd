@@ -53,9 +53,7 @@ func _input(event) -> void:
 	if is_engine_busy() || gameData.isInspecting || gameData.isInserting || gameData.isClearing || gameData.isReloading:
 		return
 
-	var rig = owner
-	if rig == null:
-		return
+	var rig = get_parent()
 
 	if _ammo_check_state == AmmoCheckState.NONE && event.is_action_pressed("reload"):
 		_ammo_check_state = AmmoCheckState.PENDING
@@ -79,7 +77,7 @@ func _do_ammo_check() -> void:
 
 
 func _do_ammo_check_inner() -> void:
-	var rig = owner
+	var rig = get_parent()
 
 	gameData.isFiring = false
 
@@ -136,7 +134,7 @@ func _do_ammo_check_inner() -> void:
 
 
 func _do_reload(ammoCheck: bool = false) -> void:
-	var rig = owner
+	var rig = get_parent()
 	var data = rig.data
 	var slotData = rig.slotData
 	var magAttach = ammoCheck || !rig.magazine.visible

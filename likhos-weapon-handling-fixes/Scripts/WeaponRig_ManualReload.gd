@@ -19,8 +19,8 @@ func _input(event) -> void:
 	if is_engine_busy() || gameData.isInspecting || gameData.isClearing || gameData.isReloading || gameData.isChecking:
 		return
 
-	var rig = owner
-	if rig == null || rig.data.weaponAction != "Manual":
+	var rig = get_parent()
+	if rig.data.weaponAction != "Manual":
 		return
 
 	if _manual_load_state == ManualLoadState.NONE && event.is_action_pressed("prepare"):
@@ -32,7 +32,7 @@ func _input(event) -> void:
 
 
 func _do_insert():
-	var rig = owner
+	var rig = get_parent()
 
 	gameData.isInserting = true
 

@@ -30,4 +30,3 @@ func _inject_handler(rig, klass, node_name: String) -> void:
 	var h = klass.new()
 	h.name = node_name
 	rig.add_child(h)
-	h.owner = rig

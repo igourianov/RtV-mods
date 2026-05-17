@@ -9,9 +9,7 @@ func _input(event) -> void:
 	if is_engine_busy() || gameData.isInserting || gameData.isClearing || gameData.isReloading || gameData.isChecking:
 		return
 
-	var rig = owner
-	if rig == null:
-		return
+	var rig = get_parent()
 
 	if event.is_action_pressed("inspect"):
 		_inspect_toggle()
@@ -50,7 +48,7 @@ func _input(event) -> void:
 
 
 func _inspect_toggle():
-	var rig = owner
+	var rig = get_parent()
 	gameData.isInspecting = !gameData.isInspecting
 	gameData.isFiring = false
 

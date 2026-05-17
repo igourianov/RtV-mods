@@ -23,11 +23,8 @@ func _input(event) -> void:
 	if is_engine_busy() || gameData.isInspecting || gameData.isInserting || gameData.isClearing || gameData.isReloading || gameData.isChecking:
 		return
 
-	var rig = owner
-	if rig == null:
-		return
 
-	var optic = rig.activeOptic
+	var optic = get_parent().activeOptic
 
 	if _handle_zoom(event, optic):
 		return
@@ -49,7 +46,7 @@ func _handle_zoom(event, optic) -> bool:
 	if !zoomAllowed || !(zoomIn || zoomOut):
 		return false
 
-	var rig = owner
+	var rig = get_parent()
 	if zoomIn && rig.slotData.zoom != 3:
 		rig.slotData.zoom += 1
 		rig.PlayRailMove()
@@ -65,7 +62,7 @@ func _handle_secondary_optic(event, optic) -> bool:
 
 	gameData.secondaryOptic = !gameData.secondaryOptic
 
-	var rig = owner
+	var rig = get_parent()
 	if gameData.secondaryOptic:
 		Out.bugfix("recalc secondary optic Y offset")
 		rig.aimOffset = optic.position.y + optic.secondary.position.y * optic.scale.y
@@ -76,13 +73,11 @@ func _handle_secondary_optic(event, optic) -> bool:
 
 
 func _process(delta: float) -> void:
-	if owner == null:
-		return
 	_handle_ads(delta)
 
 
 func _handle_ads(delta: float) -> void:
-	var rig = owner
+	var rig = get_parent()
 	var optic = rig.activeOptic
 	ModConfig.current_scope_mag = 1.0
 	gameData.aimFOV = gameData.baseFOV

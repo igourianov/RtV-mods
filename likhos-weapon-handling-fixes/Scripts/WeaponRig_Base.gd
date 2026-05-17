@@ -28,7 +28,7 @@ func play(animation_state: String, audio_event, wait_offset: float = -0.5) -> vo
 
 func await_animation(wait_offset: float = 0.0, playback = null):
 	if !playback:
-		playback = owner.animator.get("parameters/playback")
+		playback = get_parent().animator.get("parameters/playback")
 	await get_tree().create_timer(0.1, false).timeout
 	if !is_instance_valid(self):
 		return
@@ -40,7 +40,7 @@ func await_animation(wait_offset: float = 0.0, playback = null):
 
 func start_animation(state_name: String):
 	Out.debug("start_animation:", state_name)
-	var playback = owner.animator.get("parameters/playback")
+	var playback = get_parent().animator.get("parameters/playback")
 	playback.start(state_name)
 	return playback
 
