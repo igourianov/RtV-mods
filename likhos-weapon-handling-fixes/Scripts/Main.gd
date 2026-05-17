@@ -70,7 +70,6 @@ func setup(lib):
 
 	register_action("optic_zoom_in", "Optic Zoom In", _create_mouse_input(MOUSE_BUTTON_WHEEL_UP))
 	register_action("optic_zoom_out", "Optic Zoom Out", _create_mouse_input(MOUSE_BUTTON_WHEEL_DOWN))
-	register_action("hold_breath", "Hold Breath", _sprint_default_event())
 	remove_action("ammo_check")
 	remove_action("insert")
 
@@ -84,15 +83,6 @@ func _create_mouse_input(button: int) -> InputEventMouseButton:
 	input.button_index = button
 	input.pressed = true
 	return input
-
-
-func _sprint_default_event() -> InputEvent:
-	var events = InputMap.action_get_events("sprint")
-	if events.size() > 0:
-		return events[0].duplicate()
-	var key = InputEventKey.new()
-	key.physical_keycode = KEY_SHIFT
-	return key
 
 
 func load_config(config: ConfigFile):

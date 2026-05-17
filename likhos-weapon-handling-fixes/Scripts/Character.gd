@@ -66,7 +66,7 @@ func on_stamina(delta: float) -> void:
 
 
 func _update_hold_breath(delta: float) -> void:
-	var pressed: bool = Input.is_action_pressed("hold_breath")
+	var pressed: bool = Input.is_action_pressed("sprint")
 	var can_hold: bool = gameData.isAiming && gameData.armStamina > 0.0
 
 	if ModConfig.hold_breath:
@@ -149,10 +149,10 @@ func _arm_stamina(delta: float) -> void:
 	elif gameData.isAiming:
 		stamina = ARM_STAMINA_AIM_ZOOM if ModConfig.current_scope_mag >= 2.0 else ARM_STAMINA_AIM
 		stamina *= weight_factor
-		if gameData.isCrouching:
-			stamina *= ARM_STAMINA_AIM_CROUCH_MOD
 		if ModConfig.hold_breath:
 			stamina *= ARM_STAMINA_HOLD_BREATH_MOD
+		elif gameData.isCrouching:
+			stamina *= ARM_STAMINA_AIM_CROUCH_MOD
 		_arm_recovery_delay = 0.0
 	elif gameData.weaponPosition == 2:
 		stamina = ARM_STAMINA_RAISED * weight_factor

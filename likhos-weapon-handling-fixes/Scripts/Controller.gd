@@ -104,7 +104,7 @@ func on_input(evt) -> void:
 			_sprint_intent = true
 		else:
 			_sprint_intent = !_sprint_intent			
-		if _sprint_intent && gameData.isCrouching && !ctrl.above.is_colliding():
+		if _sprint_intent && gameData.isCrouching && !ctrl.above.is_colliding() && !gameData.isAiming:
 			gameData.isCrouching = false
 			_set_impulse(ctrl)
 	elif evt.is_action_released("sprint") && gameData.sprintMode == 1:
