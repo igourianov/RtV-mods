@@ -1,6 +1,10 @@
 extends "./WeaponRig_Base.gd"
 
 
+func _ready() -> void:
+	set_process_input(true)
+
+
 func _input(event) -> void:
 	if is_engine_busy() || gameData.isInserting || gameData.isClearing || gameData.isReloading || gameData.isChecking:
 		return

@@ -14,6 +14,11 @@ var _lens_radius_cache := {
 }
 
 
+func _ready() -> void:
+	set_process_input(true)
+	set_process(true)
+
+
 func _input(event) -> void:
 	if is_engine_busy() || gameData.isInspecting || gameData.isInserting || gameData.isClearing || gameData.isReloading || gameData.isChecking:
 		return
@@ -40,7 +45,7 @@ func _handle_zoom(event, optic) -> bool:
 	var zoomOut = event.is_action_pressed("optic_zoom_out", true)
 	var zoomAllowed: bool = (gameData.isAiming || ModConfig.lpvo_ooa_zoom == &"enabled"
 		|| (ModConfig.lpvo_ooa_zoom == &"rail" && Input.is_action_pressed("rail_movement")))
-		
+
 	if !zoomAllowed || !(zoomIn || zoomOut):
 		return false
 

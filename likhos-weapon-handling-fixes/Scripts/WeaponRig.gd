@@ -31,5 +31,3 @@ func _inject_handler(rig, klass, node_name: String) -> void:
 	h.name = node_name
 	rig.add_child(h)
 	h.owner = rig
-	h.set_process_input(true)
-	h.set_process(true)

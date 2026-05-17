@@ -45,6 +45,10 @@ enum AmmoCheckState {
 var _ammo_check_state: AmmoCheckState = AmmoCheckState.NONE
 
 
+func _ready() -> void:
+	set_process_input(true)
+
+
 func _input(event) -> void:
 	if is_engine_busy() || gameData.isInspecting || gameData.isInserting || gameData.isClearing || gameData.isReloading:
 		return

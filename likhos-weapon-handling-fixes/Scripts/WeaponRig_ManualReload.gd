@@ -11,6 +11,10 @@ enum ManualLoadState {
 var _manual_load_state := ManualLoadState.NONE
 
 
+func _ready() -> void:
+	set_process_input(true)
+
+
 func _input(event) -> void:
 	if is_engine_busy() || gameData.isInspecting || gameData.isClearing || gameData.isReloading || gameData.isChecking:
 		return
