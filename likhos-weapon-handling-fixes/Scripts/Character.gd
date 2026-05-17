@@ -2,6 +2,7 @@ extends RefCounted
 
 const ModConfig = preload("./ModConfig.gd")
 const Out = preload("../Lib/Out.gd")
+const SoundChannel = preload("./SoundChannel.gd")
 
 const STAMINA_RECOVERY: float = 100.0
 const STAMINA_RECOVERY_DELAY: float = 2.0
@@ -20,12 +21,13 @@ const ARM_STAMINA_AIM_CROUCH_MOD: float = 0.5
 const ARM_STAMINA_HOLD_BREATH_MOD: float = 2.0
 
 const HOLD_BREATH_STREAM_PATH: String = "res://mods/likhos-weapon-handling-fixes/Audio/hold_breath.mp3"
-const HOLD_BREATH_SOUND_NODE: String = "LikhoHoldBreathSound"
-const HOLD_BREATH_VOLUME_DB: float = 0.0
-const HOLD_BREATH_PLAY_INDEX_META: StringName = &"likho_hold_breath_play_index"
 const HOLD_BREATH_INTRO_DURATION: float = 0.5
 const HOLD_BREATH_OUTRO_START: float = 0.5
 const HOLD_BREATH_OUTRO_MIN_HOLD: float = 3.0
+
+const POINTING_SOUND_NODE := "LikhoPointingDeviceSound"
+const POINTING_SOUND_VOLUME := -10.0
+const POINTING_SOUND_STREAM = preload("res://Audio/Interaction/Files/Flashlight.wav")
 
 
 var _lib
@@ -37,20 +39,22 @@ var _hold_breath_pressed: bool = false
 var _hold_breath_time: float = 0.0
 var _intro_started_at: int = -1
 var _hold_breath_stream: AudioStream
+var _breath_sound
 
 
 func _init(lib) -> void:
 	_lib = lib
-	_hold_breath_stream = _load_stream(HOLD_BREATH_STREAM_PATH)
+	_hold_breath_stream = AudioStreamMP3.load_from_file(HOLD_BREATH_STREAM_PATH)
 
 
-func _load_stream(path: String) -> AudioStream:
-	if !FileAccess.file_exists(path):
-		Out.warning("hold breath audio missing: %s" % path)
-		return null
-	var stream := AudioStreamMP3.new()
-	stream.data = FileAccess.get_file_as_bytes(path)
-	return stream
+func _ensure_channels(host: Node) -> void:
+	if !is_instance_valid(_breath_sound):
+		_breath_sound = SoundChannel.new(&"SFX", 0.0, _hold_breath_stream)
+		host.add_child(_breath_sound)
+	if !host.has_node(POINTING_SOUND_NODE):
+		var pointing_sound = SoundChannel.new(&"SFX", POINTING_SOUND_VOLUME, POINTING_SOUND_STREAM)
+		pointing_sound.name = POINTING_SOUND_NODE
+		host.add_child(pointing_sound)
 
 
 # removes stamina drain on isInspecting
@@ -60,6 +64,7 @@ func on_stamina(delta: float) -> void:
 	_lib.skip_super()
 	if !_interface:
 		_interface = _lib._caller.get_node("/root/Map/Core/UI/Interface")
+	_ensure_channels(_lib._caller)
 	_update_hold_breath(delta)
 	_body_stamina(delta, _interface.currentInventoryWeight, _interface.currentInventoryCapacity if _interface.currentInventoryCapacity else _interface.baseCarryWeight)
 	_arm_stamina(delta)
@@ -76,7 +81,7 @@ func _update_hold_breath(delta: float) -> void:
 			ModConfig.hold_breath = false
 			ModConfig.hold_breath_progress = 0.0
 			if _hold_breath_time > HOLD_BREATH_OUTRO_MIN_HOLD:
-				_play_sound(HOLD_BREATH_OUTRO_START, 0.0)
+				_breath_sound.play_stream(null, HOLD_BREATH_OUTRO_START, 0.0)
 	elif pressed && !_hold_breath_pressed && can_hold:
 		ModConfig.hold_breath = true
 		ModConfig.hold_breath_progress = 0.0
@@ -91,32 +96,7 @@ func _play_intro() -> void:
 	if _intro_started_at >= 0 && now - _intro_started_at < int(HOLD_BREATH_INTRO_DURATION * 1000.0):
 		return
 	_intro_started_at = now
-	_play_sound(0.0, HOLD_BREATH_INTRO_DURATION)
-
-
-func _play_sound(start: float, duration: float) -> void:
-	if !_hold_breath_stream:
-		return
-	var caller = _lib._caller
-	if !caller:
-		return
-	var audio: AudioStreamPlayer = caller.get_node_or_null(HOLD_BREATH_SOUND_NODE)
-	if !audio:
-		audio = AudioStreamPlayer.new()
-		audio.name = HOLD_BREATH_SOUND_NODE
-		audio.bus = &"SFX"
-		audio.volume_db = HOLD_BREATH_VOLUME_DB
-		audio.stream = _hold_breath_stream
-		caller.add_child(audio)
-	else:
-		audio.stop()
-	var play_index: int = audio.get_meta(HOLD_BREATH_PLAY_INDEX_META, 0) + 1
-	audio.set_meta(HOLD_BREATH_PLAY_INDEX_META, play_index)
-	audio.play(start)
-	if duration > 0.0:
-		await caller.get_tree().create_timer(duration, false).timeout
-		if is_instance_valid(audio) && audio.get_meta(HOLD_BREATH_PLAY_INDEX_META, 0) == play_index:
-			audio.stop()
+	_breath_sound.play_stream(null, 0.0, HOLD_BREATH_INTRO_DURATION)
 
 
 func _body_stamina(delta: float, current_inv_weight: float, max_inv_weight: float) -> void:
