@@ -3,8 +3,6 @@
 - Leupold - to SFP
 - crosshair MCM options - show when running/aiming/etc + fadein
 - flashlight shine onto inspected weapon
-- sprint/aim override
-- hold breath
 - spawn new event after 30 minutes on the map
 
 # Closed
@@ -21,3 +19,5 @@
 - holding R key to check ammo - done
 - show ammo count after ammo check or reload; hide again on firing - pass; offloaded to another mod
 - dry fire - done
+- sprint/aim override - done
+- hold breath - done
