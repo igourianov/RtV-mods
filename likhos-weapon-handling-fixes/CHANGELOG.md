@@ -1,6 +1,6 @@
 
 # 2.3.1152
-* Hold breath function!
+* Hold breath function! (hold sprint while aiming)
 * crosshair is now dynamic + new MCM options
 * reworked sprint and crouch to override each other based on last user input
 * aim/canted now override sprint

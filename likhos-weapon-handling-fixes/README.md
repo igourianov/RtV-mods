@@ -8,8 +8,9 @@ Formerly `Likho's Weapon Handling Fixes`.
 
 * Rework of the PIP scope mode for realism
 * Reworked arm and leg stamina mechanics
-* Reworked reload and ammo check mechanics
+* Reworked reload and ammo check mechanics (hold R to check ammo, fire to reload while checking)
 * Rework of the inspect mode and associated bindings
+* Hold breath function (hold Sprint while aiming)
 * Canted aim is now independent with optional laser auto-activation (disable in MCM)
 * Mouse sensitivity scales with zoom and stance (canted uses Aim, LPVO 1× uses Aim, mid/high use Scope/Scope×0.5)
 * Movement speeds rescaled and added new breakpoints (see MCM settings)
