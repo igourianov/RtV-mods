@@ -12,6 +12,11 @@ const _DOT_RADIUS := 1.5
 const _ARM_LENGTH := 6.0
 const _ARM_THICKNESS := 2.0
 const _CENTER_GAP := 8.0
+const _CROSSHAIR_SHOW_DELAY := 0.5
+const _CROSSHAIR_FADE := 0.3
+
+var _crosshair_alpha := 0.0
+var _crosshair_delay := 0.0
 
 const _ATTACHMENT_SUBTYPES := ["Optic", "Muzzle", "Laser"]
 const _ATT_PAD_X := 16.0
@@ -62,7 +67,7 @@ class _Driver extends Node:
 			return
 		_logic._update_interaction_tooltip(_hud)
 		_logic._update_ammo_overlays(_hud)
-		_logic._update_crosshair_visibility(_hud)
+		_logic._update_crosshair_visibility(_hud, _delta)
 		_logic._update_attachment_tooltips(_hud)
 
 func _draw_crosshair(c: Control) -> void:
@@ -101,17 +106,34 @@ func _setup_crosshair(hud) -> void:
 	crosshair.offset_bottom = 12
 	crosshair.draw.connect(_draw_crosshair.bind(crosshair))
 	hud.add_child(crosshair)
+	crosshair.modulate.a = 0.0
 	crosshair.hide()
 	_crosshair = crosshair
+	_crosshair_alpha = 0.0
+	_crosshair_delay = 0.0
 	hud.tooltip.offset_top += 32
 	hud.tooltip.offset_bottom += 32
 
-func _update_crosshair_visibility(hud) -> void:
+func _update_crosshair_visibility(hud, delta: float) -> void:
 	if !is_instance_valid(_crosshair):
 		return
-	var aimingMode = gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2
+	var cantedHidden = gameData.isCanted && !ModConfig.crosshair_while_canted
+	var runningHidden = gameData.isRunning && !ModConfig.crosshair_while_running
+	var raisedHidden = gameData.weaponPosition == 2 && !ModConfig.crosshair_while_raised
 	var interactionBlocked = gameData.menu || gameData.isDead || gameData.isInspecting || gameData.isTransitioning || gameData.isChecking || gameData.isInserting
-	_crosshair.visible = !aimingMode && !interactionBlocked && ModConfig.crosshair_style != "off"
+	var shouldShow = !gameData.isAiming && !cantedHidden && !runningHidden && !raisedHidden && !interactionBlocked && ModConfig.crosshair_style != "off"
+
+	var target := 0.0
+	if shouldShow:
+		_crosshair_delay = min(_crosshair_delay + delta, _CROSSHAIR_SHOW_DELAY)
+		if _crosshair_delay >= _CROSSHAIR_SHOW_DELAY:
+			target = 1.0
+	else:
+		_crosshair_delay = 0.0
+
+	_crosshair_alpha = move_toward(_crosshair_alpha, target, delta / _CROSSHAIR_FADE)
+	_crosshair.modulate.a = _crosshair_alpha
+	_crosshair.visible = _crosshair_alpha > 0.0
 
 func _update_interaction_tooltip(hud) -> void:
 	var aimingMode = gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2

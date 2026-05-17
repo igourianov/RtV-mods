@@ -1,7 +1,6 @@
 # TODO
 - food and sleep rework
 - Leupold - to SFP
-- crosshair MCM options - show when running/aiming/etc + fadein
 - flashlight shine onto inspected weapon
 - spawn new event after 30 minutes on the map
 
@@ -21,3 +20,5 @@
 - dry fire - done
 - sprint/aim override - done
 - hold breath - done
+- crosshair MCM options - show when running/aiming/etc + fadein - done
+

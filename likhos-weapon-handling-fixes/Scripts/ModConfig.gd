@@ -9,6 +9,9 @@ static var hold_breath_progress: float = 0.0
 # config vars
 static var crosshair_style: StringName
 static var crosshair_color: Color
+static var crosshair_while_running: bool
+static var crosshair_while_canted: bool
+static var crosshair_while_raised: bool
 static var cant_mode: StringName
 static var lpvo_ooa_zoom: StringName
 static var disable_zoom_dof: bool
@@ -67,6 +70,9 @@ static func apply_config(config: ConfigFile):
 	Out.debug_enabled = _get_config_value(config, "Bool", "debug_enabled", !DEFAULT_ENABLED)
 	crosshair_style = _get_config_value(config, "Dropdown", "crosshair", DEFAULT_CROSSHAIR)
 	crosshair_color = _get_config_value(config, "Color", "crosshairColor", DEFAULT_CROSSHAIR_COLOR)
+	crosshair_while_running = _get_config_value(config, "Bool", "crosshairWhileRunning", !DEFAULT_ENABLED)
+	crosshair_while_canted = _get_config_value(config, "Bool", "crosshairWhileCanted", !DEFAULT_ENABLED)
+	crosshair_while_raised = _get_config_value(config, "Bool", "crosshairWhileRaised", !DEFAULT_ENABLED)
 	cant_mode = _get_config_value(config, "Dropdown", "cantMode", DEFAULT_CANT_MODE)
 	lpvo_ooa_zoom = _get_config_value(config, "Dropdown", "lpvoOofZoom", DEFAULT_LPVO_OOA_ZOOM)
 	disable_zoom_dof = !_get_config_value(config, "Bool", "enableZoomDof", DEFAULT_ENABLED)
@@ -126,6 +132,12 @@ static func create_template(config: ConfigFile):
 	})
 
 	_set_config_entry(config, "Color", "Crosshair", "crosshairColor", "Crosshair Color", "Crosshair Color", DEFAULT_CROSSHAIR_COLOR)
+
+	_set_config_entry(config, "Bool", "Crosshair", "crosshairWhileRunning", "Show while running", "Keep the crosshair visible while running", !DEFAULT_ENABLED)
+
+	_set_config_entry(config, "Bool", "Crosshair", "crosshairWhileCanted", "Show while canted", "Keep the crosshair visible while in canted aim", !DEFAULT_ENABLED)
+
+	_set_config_entry(config, "Bool", "Crosshair", "crosshairWhileRaised", "Show while weapon raised", "Keep the crosshair visible while the weapon is in the high-ready position", !DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Dropdown", "Canted mode", "cantMode", "Canted Aim Mode", "Behavior of the canted aim input", DEFAULT_CANT_MODE, {
 		"options": {

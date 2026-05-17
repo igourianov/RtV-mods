@@ -1,6 +1,7 @@
 
-# ?
+# 2.3.1152
 * Hold breath function!
+* crosshair is now dynamic + new MCM options
 * reworked sprint and crouch to override each other based on last user input
 * aim/canted now override sprint
 * further WeaponRig refactoring, sound system refactoring
