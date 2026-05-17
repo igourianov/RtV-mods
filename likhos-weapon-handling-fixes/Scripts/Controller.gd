@@ -40,7 +40,7 @@ func _update_state(ctrl) -> void:
 	elif gameData.bodyStamina <= 0.0 || gameData.overweight || gameData.fracture:
 		gameData.isRunning = false
 	else:
-		gameData.isRunning = _sprint_intent && gameData.isMoving
+		gameData.isRunning = _sprint_intent && gameData.isMoving && !gameData.isAiming && !gameData.isCanted
 
 	gameData.isWalking = gameData.isMoving && !gameData.isRunning
 

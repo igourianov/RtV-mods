@@ -47,8 +47,6 @@ func on_weapon_handling(delta: float) -> void:
 
 	if _override_handling(h, h.get_parent()):
 		_handlingMode = HandlingMode.Default
-		gameData.isAiming = false
-		#gameData.isCanted = false
 	elif !_weapon_handling(h, h.get_parent(), delta):
 		_set_target_idle(h)
 
