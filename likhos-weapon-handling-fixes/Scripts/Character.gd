@@ -17,11 +17,11 @@ const ARM_STAMINA_AIM: float = -3.0
 const ARM_STAMINA_AIM_ZOOM: float = -3.5
 const ARM_STAMINA_RAISED: float = -2.0
 const ARM_STAMINA_AIM_CROUCH_MOD: float = 0.5
-const ARM_STAMINA_HOLD_BREATH_MOD: float = 1.5
+const ARM_STAMINA_HOLD_BREATH_MOD: float = 2.0
 
 const HOLD_BREATH_STREAM_PATH: String = "res://mods/likhos-weapon-handling-fixes/Audio/hold_breath.mp3"
 const HOLD_BREATH_SOUND_NODE: String = "LikhoHoldBreathSound"
-const HOLD_BREATH_VOLUME_DB: float = -10.0
+const HOLD_BREATH_VOLUME_DB: float = 0.0
 const HOLD_BREATH_PLAY_INDEX_META: StringName = &"likho_hold_breath_play_index"
 const HOLD_BREATH_INTRO_DURATION: float = 0.5
 const HOLD_BREATH_OUTRO_START: float = 0.5
