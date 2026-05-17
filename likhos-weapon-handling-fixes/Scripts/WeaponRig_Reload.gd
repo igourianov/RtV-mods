@@ -165,19 +165,19 @@ func _do_reload(ammoCheck: bool = false) -> void:
 		return
 
 	if magAttach && !slotData.chamber:
-		if rig.interface.GetMagazine(data, rig.weaponSlot, magAttach):
+		if rig.interface.GetMagazine(data, rig.weaponSlot, false):
+			_show_mag_delayed(rig)
 			await _play_reload("Magazine_Attach_Empty", data.magazineAttachEmpty)
 			slotData.chamber = true
 			slotData.set_meta("cocked", true)
-			rig.magazine.show()
 			rig.UpdateBullets()
 		return
 
 	if magAttach && slotData.chamber:
-		if rig.interface.GetMagazine(data, rig.weaponSlot, magAttach):
+		if rig.interface.GetMagazine(data, rig.weaponSlot, false):
+			_show_mag_delayed(rig)
 			await _play_reload("Magazine_Attach_Tactical", data.magazineAttachTactical)
 			slotData.set_meta("cocked", true)
-			rig.magazine.show()
 			rig.UpdateBullets()
 		return
 
@@ -199,3 +199,9 @@ func _play_reload(animation_state: String, audio_event, wait_offset: float = -0.
 	gameData.isReloading = true
 	await play(animation_state, audio_event, wait_offset)
 	gameData.isReloading = false
+
+
+func _show_mag_delayed(rig):
+	await rig.get_tree().create_timer(0.1, false).timeout;
+	if is_instance_valid(rig):
+		rig.magazine.show()

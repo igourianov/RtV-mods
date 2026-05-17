@@ -1,10 +1,11 @@
 
-# 2.3.1152
+# 2.3.1156
 * Hold breath function! (hold sprint while aiming)
 * crosshair is now dynamic + new MCM options
 * reworked sprint and crouch to override each other based on last user input
 * aim/canted now override sprint
 * further WeaponRig refactoring, sound system refactoring
+* fixed mag not rendering on reload from no-mag
 
 # 2.0.1109
 * major refactoring of the WeaponRig code
