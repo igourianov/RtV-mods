@@ -9,6 +9,9 @@ const _CLICK_VOLUME_OFFSET := 15.0
 
 func _ready() -> void:
 	set_physics_process(true)
+	var rig = get_parent()
+	if rig.slotData && !rig.slotData.has_meta("cocked"):
+		rig.slotData.set_meta("cocked", rig.slotData.chamber)
 
 
 func _physics_process(delta: float) -> void:

@@ -25,9 +25,6 @@ func on_ready_post() -> void:
 	_inject_handler(rig, WeaponRig_Optic, "Likho_WeaponRig_Optic")
 	_inject_handler(rig, WeaponRig_Inspect, "Likho_WeaponRig_Inspect")
 
-	if rig.slotData && !rig.slotData.has_meta("cocked"):
-		rig.slotData.set_meta("cocked", rig.slotData.chamber)
-
 
 func _inject_handler(rig, klass, node_name: String) -> void:
 	var h = klass.new()
