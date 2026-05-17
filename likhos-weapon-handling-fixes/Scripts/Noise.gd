@@ -34,7 +34,7 @@ func on_physics_process_post(delta: float) -> void:
 func _apply_wobble(noise, gd, delta: float) -> void:
 	var mult: float = 1.0
 	if gd.isAiming && !gd.isFiring:
-		mult = WOBBLE_MULT_HOLD_BREATH if ModConfig.hold_breath else WOBBLE_MULT
+		mult = lerp(WOBBLE_MULT, WOBBLE_MULT_HOLD_BREATH, ModConfig.hold_breath_progress)
 
 	_wobble_frequency = lerp(_wobble_frequency, noise.targetFrequency * mult, delta * noise.targetLerpSpeed)
 	_wobble_amplitude = lerp(_wobble_amplitude, noise.targetAmplitude * mult, delta * noise.targetLerpSpeed)
