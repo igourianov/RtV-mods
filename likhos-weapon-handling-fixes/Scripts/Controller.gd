@@ -5,6 +5,7 @@ const Out = preload("../Lib/Out.gd")
 
 var gameData = preload("res://Resources/GameData.tres")
 var _lib
+var _sprint_intent: bool = false
 
 
 func _init(lib) -> void:
@@ -20,26 +21,29 @@ func on_movement_states(delta: float) -> void:
 	_update_state(ctrl)
 	_apply_speed(ctrl, delta)
 
+	ctrl.standCollider.disabled = gameData.isCrouching
+	ctrl.crouchCollider.disabled = !gameData.isCrouching
+
 
 func _update_state(ctrl) -> void:
-	gameData.isIdle = !gameData.isMoving
+	
 	gameData.isMoving = ctrl.inputDirection != Vector2.ZERO
+	gameData.isIdle = !gameData.isMoving
 
-	if !gameData.isMoving:
-		gameData.isWalking = false
-		gameData.isRunning = false
-		return
-
-	if gameData.bodyStamina <= 0.0 || gameData.overweight || gameData.fracture:
-		gameData.isRunning = false
-	elif gameData.sprintMode == 1:
-		gameData.isRunning = Input.is_action_pressed("sprint")
-	elif Input.is_action_just_pressed("sprint"):
-		gameData.isRunning = !gameData.isRunning
-
-	gameData.isWalking = !gameData.isRunning
-	if gameData.isRunning:
+	if gameData.isSwimming:
 		gameData.isCrouching = false
+		gameData.isRunning = false
+	elif !gameData.isCrouching && ctrl.above.is_colliding():
+		gameData.isCrouching = true
+		gameData.isRunning = false
+		_set_impulse(ctrl)
+	elif gameData.bodyStamina <= 0.0 || gameData.overweight || gameData.fracture:
+		gameData.isRunning = false
+	else:
+		gameData.isRunning = _sprint_intent && gameData.isMoving
+
+	gameData.isWalking = gameData.isMoving && !gameData.isRunning
+
 
 
 func _apply_speed(ctrl, delta: float) -> void:
@@ -84,6 +88,29 @@ func on_input(evt) -> void:
 		_mouse_input(ctrl, evt)
 		return
 
+	if gameData.freeze || gameData.isCaching:
+		return
+
+	if evt.is_action_pressed("crouch"):
+		if !gameData.isCrouching:
+			gameData.isCrouching = true
+			_sprint_intent = false
+			_set_impulse(ctrl)
+		elif !ctrl.above.is_colliding():
+			gameData.isCrouching = false
+			_set_impulse(ctrl)
+	elif evt.is_action_pressed("sprint"):
+		if gameData.sprintMode == 1:
+			_sprint_intent = true
+		else:
+			_sprint_intent = !_sprint_intent			
+		if _sprint_intent && gameData.isCrouching && !ctrl.above.is_colliding():
+			gameData.isCrouching = false
+			_set_impulse(ctrl)
+	elif evt.is_action_released("sprint") && gameData.sprintMode == 1:
+		_sprint_intent = false
+
+
 
 func _mouse_input(ctrl, evt) -> void:
 	if gameData.freeze || gameData.isCaching:
@@ -107,3 +134,20 @@ func _mouse_input(ctrl, evt) -> void:
 	ctrl.rotate_y(-evt.relative.x * factor)
 	ctrl.head.rotate_x(y_sign * evt.relative.y * factor)
 	ctrl.head.rotation.x = clamp(ctrl.head.rotation.x, -PI / 2, PI / 2)
+
+
+func on_crouch(delta: float) -> void:
+	var ctrl = _lib._caller
+	if !ctrl:
+		return
+	_lib.skip_super()
+
+	ctrl.pelvis.position.y = lerp(ctrl.pelvis.position.y, (0.5 if gameData.isCrouching else 1.0), delta * 5.0)
+	
+
+func _set_impulse(ctrl) -> void:
+	if gameData.isCrouching:
+		ctrl.crouchImpulse = 0.1
+	else:
+		ctrl.standImpulse = 0.1
+

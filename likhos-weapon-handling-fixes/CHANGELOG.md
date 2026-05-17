@@ -1,4 +1,7 @@
 
+# ?
+* reworked sprint and crouch to override each other based on last user input
+
 # 2.0.1109
 * major refactoring of the WeaponRig code
 * Mosin and 870 can now work the bolt like real guns do, both when empty and full
