@@ -1,7 +1,7 @@
 const Out = preload("../Lib/Out.gd")
 const ModConfig = preload("./ModConfig.gd")
 
-const _EXTRA_FIELDS := ["magnification", "vanilla", "reticlePlane"]
+const _EXTRA_FIELDS := ["mag_range", "default_mag_range", "reticlePlane"]
 
 const _DEFAULT_LPVO_MAG: Array[float] = [1.0, 3.0, 6.0]
 const _DEFAULT_SCOPE_MAG: Array[float] = [4.0]
@@ -9,8 +9,8 @@ const _FALLBACK_MAG: Array[float] = [1.0]
 
 const DATA := {
 	"ACOG": {
-		"magnification": [4.0],
-		"vanilla": _DEFAULT_SCOPE_MAG,
+		"mag_range": [4.0],
+		"default_mag_range": _DEFAULT_SCOPE_MAG,
 		"display": "ACOG",
 		"inventory": "ACOG",
 		"equipment": "ACOG",
@@ -18,30 +18,31 @@ const DATA := {
 		"name": "Trijicon ACOG TA31",
 	},
 	"HMR": {
-		"magnification": [4.0],
-		"vanilla": _DEFAULT_SCOPE_MAG,
+		"mag_range": [4.0],
+		"default_mag_range": _DEFAULT_SCOPE_MAG,
 		"display": "HAMR",
 		"inventory": "HAMR",
 		"equipment": "HAMR",
 		"rotated": "HAMR",
 		"name": "Leupold HAMR 4x",
+		"weight": 0.4
 	},
 	"POSP": {
-		"magnification": [2.0, 3.0, 4.0, 5.0, 6.0],
-		"vanilla": _DEFAULT_SCOPE_MAG,
+		"mag_range": [2.0, 3.0, 4.0, 5.0, 6.0],
+		"default_mag_range": _DEFAULT_SCOPE_MAG,
 		"scope": false,
 		"variable": true,
 		"weight": 0.9,
 		"name": "POSP 2-6x"
 	},
 	"PU": {
-		"magnification": [3.5],
-		"vanilla": _DEFAULT_SCOPE_MAG
+		"mag_range": [3.5],
+		"default_mag_range": _DEFAULT_SCOPE_MAG
 	},
 	"Vudu": {
 		"reticlePlane": &"FFP",
-		"magnification": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
-		"vanilla": _DEFAULT_LPVO_MAG,
+		"mag_range": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
+		"default_mag_range": _DEFAULT_LPVO_MAG,
 		"display": "Vudu",
 		"inventory": "Vudu",
 		"equipment": "Vudu",
@@ -52,8 +53,8 @@ const DATA := {
 	},
 	"Leopard": {
 		"reticlePlane": &"FFP",
-		"magnification": [1.1, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
-		"vanilla": _DEFAULT_LPVO_MAG,
+		"mag_range": [1.1, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
+		"default_mag_range": _DEFAULT_LPVO_MAG,
 		"display": "Leupold",
 		"inventory": "Leupold",
 		"equipment": "Leupold",
@@ -66,8 +67,8 @@ const DATA := {
 static func get_mag_range(key) -> Array:
 	var entry = DATA.get(key, {})
 	if ModConfig.real_scope_mag:
-		return entry.get("magnification", _FALLBACK_MAG)
-	return entry.get("vanilla", entry.get("magnification", _FALLBACK_MAG))
+		return entry.get("mag_range", _FALLBACK_MAG)
+	return entry.get("default_mag_range", entry.get("mag_range", _FALLBACK_MAG))
 
 
 static func apply(lib) -> void:
