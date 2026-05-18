@@ -16,6 +16,7 @@ const DATA := {
 		"equipment": "ACOG",
 		"rotated": "ACOG",
 		"name": "Trijicon ACOG TA31",
+		"weight": 0.45,
 	},
 	"HMR": {
 		"mag_range": [4.0],
@@ -25,7 +26,7 @@ const DATA := {
 		"equipment": "HAMR",
 		"rotated": "HAMR",
 		"name": "Leupold HAMR 4x",
-		"weight": 0.4
+		"weight": 0.4,
 	},
 	"POSP": {
 		"mag_range": [2.0, 3.0, 4.0, 5.0, 6.0],
@@ -33,11 +34,12 @@ const DATA := {
 		"scope": false,
 		"variable": true,
 		"weight": 0.9,
-		"name": "POSP 2-6x"
+		"name": "POSP 2-6x",
 	},
 	"PU": {
 		"mag_range": [3.5],
-		"default_mag_range": _DEFAULT_SCOPE_MAG
+		"default_mag_range": _DEFAULT_SCOPE_MAG,
+		"weight": 0.75,
 	},
 	"Vudu": {
 		"reticlePlane": &"FFP",
@@ -49,7 +51,8 @@ const DATA := {
 		"rotated": "Vudu",
 		"name": "EOTech Vudu 1-10x FFP",
 		"rarity": 2, # legendary
-		"value": 2500
+		"value": 2500,
+		"weight": 0.8,
 	},
 	"Leopard": {
 		"reticlePlane": &"FFP",
@@ -59,7 +62,8 @@ const DATA := {
 		"inventory": "Leupold",
 		"equipment": "Leupold",
 		"rotated": "Leupold",
-		"name": "Leupold Mark 8 CQBSS"
+		"name": "Leupold Mark 8 CQBSS",
+		"weight": 0.85,
 	}
 }
 
