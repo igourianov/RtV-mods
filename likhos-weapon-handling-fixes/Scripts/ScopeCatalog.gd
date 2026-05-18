@@ -1,7 +1,7 @@
 const Out = preload("../Lib/Out.gd")
 const ModConfig = preload("./ModConfig.gd")
 
-const _EXTRA_FIELDS := ["mag_range", "default_mag_range", "reticlePlane", "lens_radius"]
+const _EXTRA_FIELDS := ["mag_range", "default_mag_range", "isFFP", "lens_radius"]
 
 const _DEFAULT_LPVO_MAG: Array[float] = [1.0, 3.0, 6.0]
 const _DEFAULT_SCOPE_MAG: Array[float] = [4.0]
@@ -53,7 +53,7 @@ const DATA := {
 		"name": "PU",
 	},
 	"Vudu": {
-		"reticlePlane": &"FFP",
+		"isFFP": true,
 		"mag_range": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
 		"default_mag_range": _DEFAULT_LPVO_MAG,
 		"lens_radius": 0.020,
@@ -67,7 +67,7 @@ const DATA := {
 		"weight": 0.8,
 	},
 	"Leopard": {
-		"reticlePlane": &"FFP",
+		"isFFP": true,
 		"mag_range": [1.1, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
 		"default_mag_range": _DEFAULT_LPVO_MAG,
 		"lens_radius": 0.0185,
@@ -90,7 +90,7 @@ static func get_mag_range(key) -> Array:
 
 
 static func is_ffp(key) -> bool:
-	return DATA.get(key, {}).get("reticlePlane", &"SFP") == &"FFP"
+	return DATA.get(key, {}).get("isFFP", false)
 
 
 static func get_lens_radius(key) -> float:
