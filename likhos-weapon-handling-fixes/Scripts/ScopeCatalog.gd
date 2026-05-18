@@ -31,14 +31,14 @@ const DATA := {
 		"weight": 0.4,
 	},
 	"POSP": {
-		"mag_range": [2.0, 3.0, 4.0, 5.0, 6.0],
+		"mag_range": [2.0, 4.0, 6.0],
 		"default_mag_range": _DEFAULT_SCOPE_MAG,
 		"lens_radius": 0.012,
 		"scope": false,
 		"variable": true,
 		"weight": 0.9,
 		"name": "POSP 2-6x",
-		"reticleSize": Vector3(0.5, 0.5, 0.5), # default X is very small
+		"reticleSize": Vector3(0.3, 0.3, 0.3), # default X is very small
 		"reticleSizeP": Vector3(0.5, 0.5, 0.5), # default X is very small
 	},
 	"PU": {
@@ -54,7 +54,7 @@ const DATA := {
 	},
 	"Vudu": {
 		"isFFP": true,
-		"mag_range": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
+		"mag_range": [1.0, 5.0, 10.0],
 		"default_mag_range": _DEFAULT_LPVO_MAG,
 		"lens_radius": 0.020,
 		"display": "Vudu",
@@ -68,7 +68,7 @@ const DATA := {
 	},
 	"Leopard": {
 		"isFFP": true,
-		"mag_range": [1.1, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
+		"mag_range": [1.1, 4.5, 8.0],
 		"default_mag_range": _DEFAULT_LPVO_MAG,
 		"lens_radius": 0.0185,
 		"display": "Leupold",
