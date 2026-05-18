@@ -88,23 +88,15 @@ func _handle_ads(delta: float) -> void:
 
 	rig.ocularOpacity = move_toward(rig.ocularOpacity, 0.0 if (att.scope && gameData.secondaryOptic) else 1.0, delta * 5.0)
 
-	var sizes = att.reticleSizeP if gameData.PIP else att.reticleSize
-	if att.scope && !gameData.secondaryOptic:
-		ModConfig.current_scope_mag = ScopeCatalog.get_mag_range(att.file)[0]
-		rig.reticleSize = sizes.x
-		gameData.isScoped = true
-		if !gameData.PIP:
-			gameData.aimFOV = gameData.baseFOV / ModConfig.current_scope_mag
-	elif att.variable:
+	if (att.scope && !gameData.secondaryOptic) || att.variable:
+		var sizes = att.reticleSizeP if gameData.PIP else att.reticleSize
 		var mags = ScopeCatalog.get_mag_range(att.file)
 		ModConfig.current_scope_mag = mags[clamp(rig.slotData.zoom, 1, mags.size()) - 1]
-		var target_size = sizes.x
-		if ScopeCatalog.is_ffp(att.file):
-			var t = 0.0
-			if mags.size() > 1:
-				t = clampf(inverse_lerp(mags[0], mags[-1], ModConfig.current_scope_mag), 0.0, 1.0)
-			target_size = lerp(sizes.x, sizes.z, t)
-		rig.reticleSize = lerp(rig.reticleSize, target_size, delta * 10.0)
+		if mags.size() > 1 && ScopeCatalog.is_ffp(att.file):
+			var t = clampf(inverse_lerp(mags[0], mags[-1], ModConfig.current_scope_mag), 0.0, 1.0)
+			rig.reticleSize = lerp(rig.reticleSize, lerp(sizes.x, sizes.z, t), delta * 10.0)
+		else:
+			rig.reticleSize = sizes.x
 		if gameData.PIP:
 			gameData.isScoped = true
 		else:
