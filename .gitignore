@@ -1,6 +1,10 @@
 src/
-build.config.json
+target/
+
 Godot/
 vostok-mod-loader/
-*.uid
+
 */Lib/
+
+build.config.json
+*.uid
