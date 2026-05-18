@@ -103,8 +103,6 @@ func _handle_ads(delta: float) -> void:
 		gameData.isScoped = true
 		if !gameData.PIP:
 			gameData.aimFOV = gameData.baseFOV / ModConfig.current_scope_mag
-	elif att.scope && gameData.secondaryOptic:
-		rig.reticleSize = sizes.x
 	elif att.variable:
 		var mags = ScopeCatalog.get_mag_range(att.file)
 		ModConfig.current_scope_mag = mags[clamp(rig.slotData.zoom, 1, mags.size()) - 1]
