@@ -6,7 +6,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 
 ### New Features
 
-* Rework of the PIP scope mode for realism
+* Rework of the PIP scope mode for realism. Recommended to pair with [ExitPupil](https://modworkshop.net/mod/56890) PIP reshader mod.
 * Reworked arm and leg stamina mechanics
 * Reworked reload and ammo check mechanics (hold R to check ammo, fire to reload while checking)
 * Rework of the inspect mode and associated bindings
