@@ -21,7 +21,7 @@ const DATA := {
 		"weight": 0.4,
 	},
 	"POSP": {
-		"mag_range": [2.0, 4.0, 6.0],
+		"mag_range": [2.0, 3.5, 6.0],
 		"lens_radius": 0.012,
 		"scope": false,
 		"variable": true,
@@ -39,7 +39,7 @@ const DATA := {
 	},
 	"Vudu": {
 		"isFFP": true,
-		"mag_range": [1.0, 5.0, 10.0],
+		"mag_range": [1.0, 3.2, 10.0],
 		"lens_radius": 0.020,
 		"display": "Vudu",
 		"name": "EOTech Vudu 1-10x FFP",
@@ -49,7 +49,7 @@ const DATA := {
 	},
 	"Leopard": {
 		"isFFP": true,
-		"mag_range": [1.1, 4.5, 8.0],
+		"mag_range": [1.1, 3.0, 8.0],
 		"lens_radius": 0.0185,
 		"display": "Leupold",
 		"name": "Leupold Mark 8 CQBSS",
