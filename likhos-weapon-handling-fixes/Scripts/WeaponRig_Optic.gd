@@ -1,6 +1,7 @@
 extends "./WeaponRig_Base.gd"
 
 const ModConfig = preload("./ModConfig.gd")
+const ScopeCatalog = preload("./ScopeCatalog.gd")
 
 # Lens radius in meters, keyed by optic node name. Populated from mesh on first miss
 # pre-seeded with existing optics
@@ -46,10 +47,11 @@ func _handle_zoom(event, optic) -> bool:
 		return false
 
 	var rig = get_parent()
-	if zoomIn && rig.slotData.zoom != 3:
+	var max_zoom = ScopeCatalog.get_mag_range(optic.attachmentData.file).size()
+	if zoomIn && rig.slotData.zoom < max_zoom:
 		rig.slotData.zoom += 1
 		rig.PlayRailMove()
-	elif zoomOut && rig.slotData.zoom != 1:
+	elif zoomOut && rig.slotData.zoom > 1:
 		rig.slotData.zoom -= 1
 		rig.PlayRailMove()
 	return true
@@ -96,27 +98,25 @@ func _handle_ads(delta: float) -> void:
 
 	var sizes = att.reticleSizeP if gameData.PIP else att.reticleSize
 	if att.scope && !gameData.secondaryOptic:
-		ModConfig.current_scope_mag = 4.0
+		ModConfig.current_scope_mag = ScopeCatalog.get_mag_range(att.file)[0]
 		rig.reticleSize = sizes.x
 		gameData.isScoped = true
 		if !gameData.PIP:
-			gameData.aimFOV = 15.0
+			gameData.aimFOV = gameData.baseFOV / ModConfig.current_scope_mag
 	elif att.scope && gameData.secondaryOptic:
 		rig.reticleSize = sizes.x
 	elif att.variable:
-		var z = rig.slotData.zoom
-		rig.reticleSize = lerp(rig.reticleSize, sizes.x if z == 1 else (sizes.y if z == 2 else sizes.z), delta * 10.0)
+		var mags = ScopeCatalog.get_mag_range(att.file)
+		ModConfig.current_scope_mag = mags[clamp(rig.slotData.zoom, 1, mags.size()) - 1]
+		var t = 0.0
+		if mags.size() > 1 else 
+			t = clampf(inverse_lerp(mags[0], mags[-1], ModConfig.current_scope_mag), 0.0, 1.0)
+		rig.reticleSize = lerp(rig.reticleSize, lerp(sizes.x, sizes.z, t), delta * 10.0)
 		if gameData.PIP:
 			gameData.isScoped = true
-			ModConfig.current_scope_mag = 1.1 if z == 1 else (3.0 if z == 2 else 6.0)
-		elif z == 2:
-			gameData.aimFOV = 25.0
-			gameData.isScoped = true
-			ModConfig.current_scope_mag = 3.0
-		elif z == 3:
-			gameData.aimFOV = 10.0
-			gameData.isScoped = true
-			ModConfig.current_scope_mag = 6.0
+		else:
+			gameData.aimFOV = gameData.baseFOV / ModConfig.current_scope_mag
+			gameData.isScoped = ModConfig.current_scope_mag > 1.0
 	else:
 		rig.reticleSize = att.reticleSize.x
 

@@ -13,6 +13,7 @@ const Character = preload("./Character.gd")
 const Optic = preload("./Optic.gd")
 const Laser = preload("./Laser.gd")
 const Flashlight = preload("./Flashlight.gd")
+const ScopeCatalog = preload("./ScopeCatalog.gd")
 
 
 var _handling
@@ -32,6 +33,8 @@ var _item
 
 
 func setup(lib):
+
+	ScopeCatalog.apply(lib)
 
 	var preferences = Preferences.Load()
 
