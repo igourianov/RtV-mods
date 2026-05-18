@@ -1,7 +1,7 @@
 const Out = preload("../Lib/Out.gd")
 const ModConfig = preload("./ModConfig.gd")
 
-const _EXTRA_FIELDS := ["mag_range", "default_mag_range", "reticlePlane"]
+const _EXTRA_FIELDS := ["mag_range", "default_mag_range", "reticlePlane", "lens_radius"]
 
 const _DEFAULT_LPVO_MAG: Array[float] = [1.0, 3.0, 6.0]
 const _DEFAULT_SCOPE_MAG: Array[float] = [4.0]
@@ -11,6 +11,7 @@ const DATA := {
 	"ACOG": {
 		"mag_range": [4.0],
 		"default_mag_range": _DEFAULT_SCOPE_MAG,
+		"lens_radius": 0.0117,
 		"display": "ACOG",
 		"inventory": "ACOG",
 		"equipment": "ACOG",
@@ -21,6 +22,7 @@ const DATA := {
 	"HMR": {
 		"mag_range": [4.0],
 		"default_mag_range": _DEFAULT_SCOPE_MAG,
+		"lens_radius": 0.017,
 		"display": "HAMR",
 		"inventory": "HAMR",
 		"equipment": "HAMR",
@@ -31,14 +33,18 @@ const DATA := {
 	"POSP": {
 		"mag_range": [2.0, 3.0, 4.0, 5.0, 6.0],
 		"default_mag_range": _DEFAULT_SCOPE_MAG,
+		"lens_radius": 0.012,
 		"scope": false,
 		"variable": true,
 		"weight": 0.9,
 		"name": "POSP 2-6x",
+		"reticleSize": Vector3(0.5, 0.5, 0.5), # default X is very small
+		"reticleSizeP": Vector3(0.5, 0.5, 0.5), # default X is very small
 	},
 	"PU": {
 		"mag_range": [3.5],
 		"default_mag_range": _DEFAULT_SCOPE_MAG,
+		"lens_radius": 0.0115,
 		"weight": 0.75,
 		"display": "PU",
 		"inventory": "PU",
@@ -50,6 +56,7 @@ const DATA := {
 		"reticlePlane": &"FFP",
 		"mag_range": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
 		"default_mag_range": _DEFAULT_LPVO_MAG,
+		"lens_radius": 0.020,
 		"display": "Vudu",
 		"inventory": "Vudu",
 		"equipment": "Vudu",
@@ -63,12 +70,14 @@ const DATA := {
 		"reticlePlane": &"FFP",
 		"mag_range": [1.1, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
 		"default_mag_range": _DEFAULT_LPVO_MAG,
+		"lens_radius": 0.0185,
 		"display": "Leupold",
 		"inventory": "Leupold",
 		"equipment": "Leupold",
 		"rotated": "Leupold",
 		"name": "Leupold Mark 8 CQBSS",
 		"weight": 0.85,
+		"reticleSizeP": Vector3(0.2, 0.4, 0.6), # default X is very small
 	}
 }
 
@@ -82,6 +91,10 @@ static func get_mag_range(key) -> Array:
 
 static func is_ffp(key) -> bool:
 	return DATA.get(key, {}).get("reticlePlane", &"SFP") == &"FFP"
+
+
+static func get_lens_radius(key) -> float:
+	return DATA.get(key, {}).get("lens_radius", 0.0)
 
 
 static func apply(lib) -> void:

@@ -3,16 +3,8 @@ extends "./WeaponRig_Base.gd"
 const ModConfig = preload("./ModConfig.gd")
 const ScopeCatalog = preload("./ScopeCatalog.gd")
 
-# Lens radius in meters, keyed by optic node name. Populated from mesh on first miss
-# pre-seeded with existing optics
-var _lens_radius_cache := {
-	"Vudu": 0.020,
-	"ACOG": 0.0117,
-	"Leopard": 0.0185,
-	"HMR": 0.017,
-	"PU": 0.0115,
-	"POSP": 0.012
-}
+# Runtime cache for lens radii extracted from mesh, keyed by optic node name
+var _lens_radius_cache := {}
 
 
 func _ready() -> void:
@@ -139,10 +131,13 @@ func _update_reticle(rig, optic) -> void:
 
 func _get_lens_radius(optic) -> float:
 	var key = String(optic.name)
+	var radius: float = ScopeCatalog.get_lens_radius(key)
+	if radius > 0.0:
+		return radius
 	var cached = _lens_radius_cache.get(key, -1.0)
 	if cached >= 0.0:
 		return cached
-	var radius: float = _extract_lens_radius(optic)
+	radius = _extract_lens_radius(optic)
 	_lens_radius_cache[key] = radius
 	Out.debug("extracted lens radius for", key, ":", radius)
 	return radius
