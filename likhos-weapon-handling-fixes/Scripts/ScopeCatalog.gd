@@ -1,16 +1,13 @@
 const Out = preload("../Lib/Out.gd")
 const ModConfig = preload("./ModConfig.gd")
 
-const _EXTRA_FIELDS := ["mag_range", "default_mag_range", "isFFP", "lens_radius"]
+const _EXTRA_FIELDS := ["mag_range", "isFFP", "lens_radius"]
 
-const _DEFAULT_LPVO_MAG: Array[float] = [1.0, 3.0, 6.0]
-const _DEFAULT_SCOPE_MAG: Array[float] = [4.0]
 const _FALLBACK_MAG: Array[float] = [1.0]
 
 const DATA := {
 	"ACOG": {
 		"mag_range": [4.0],
-		"default_mag_range": _DEFAULT_SCOPE_MAG,
 		"lens_radius": 0.0117,
 		"display": "ACOG",
 		"name": "Trijicon ACOG TA31",
@@ -18,7 +15,6 @@ const DATA := {
 	},
 	"HMR": {
 		"mag_range": [4.0],
-		"default_mag_range": _DEFAULT_SCOPE_MAG,
 		"lens_radius": 0.017,
 		"display": "HAMR",
 		"name": "Leupold HAMR 4x",
@@ -26,7 +22,6 @@ const DATA := {
 	},
 	"POSP": {
 		"mag_range": [2.0, 4.0, 6.0],
-		"default_mag_range": _DEFAULT_SCOPE_MAG,
 		"lens_radius": 0.012,
 		"scope": false,
 		"variable": true,
@@ -37,7 +32,6 @@ const DATA := {
 	},
 	"PU": {
 		"mag_range": [3.5],
-		"default_mag_range": _DEFAULT_SCOPE_MAG,
 		"lens_radius": 0.0115,
 		"weight": 0.75,
 		"display": "PU",
@@ -46,7 +40,6 @@ const DATA := {
 	"Vudu": {
 		"isFFP": true,
 		"mag_range": [1.0, 5.0, 10.0],
-		"default_mag_range": _DEFAULT_LPVO_MAG,
 		"lens_radius": 0.020,
 		"display": "Vudu",
 		"name": "EOTech Vudu 1-10x FFP",
@@ -57,7 +50,6 @@ const DATA := {
 	"Leopard": {
 		"isFFP": true,
 		"mag_range": [1.1, 4.5, 8.0],
-		"default_mag_range": _DEFAULT_LPVO_MAG,
 		"lens_radius": 0.0185,
 		"display": "Leupold",
 		"name": "Leupold Mark 8 CQBSS",
@@ -103,10 +95,7 @@ const DATA := {
 
 
 static func get_mag_range(key) -> Array:
-	var entry = DATA.get(key, {})
-	if ModConfig.real_scope_mag:
-		return entry.get("mag_range", _FALLBACK_MAG)
-	return entry.get("default_mag_range", entry.get("mag_range", _FALLBACK_MAG))
+	return DATA.get(key, {}).get("mag_range", _FALLBACK_MAG)
 
 
 static func is_ffp(key) -> bool:
