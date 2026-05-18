@@ -88,6 +88,7 @@ Rescaled movement speeds and added new break points. You can edit all these valu
 * Weapon rotation in inspect mode is now done with the Canted aim binding.
 * Stamina drain removed
 * Added ammo and attachment cards to the inspect mode (disable via MCM menu)
+* Flashlight will now shine on the wepon while inspecting
 !!!
 ### HAMR love
 !!!
