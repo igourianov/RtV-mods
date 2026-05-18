@@ -1,3 +1,6 @@
+# ?
+* reworked scopes magnification, naming and weight
+
 # 2.3.1160
 * toned down scope noise speed
 
