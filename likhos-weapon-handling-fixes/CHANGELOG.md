@@ -1,3 +1,5 @@
+# 2.3.1160
+* toned down scope noise speed
 
 # 2.3.1158
 * hotfix for mag disappearing on reload from ammo check

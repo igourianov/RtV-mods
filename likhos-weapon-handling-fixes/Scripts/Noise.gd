@@ -36,7 +36,7 @@ func _apply_wobble(noise, gd, delta: float) -> void:
 	if gd.isAiming && !gd.isFiring:
 		mult = lerp(WOBBLE_MULT, WOBBLE_MULT_HOLD_BREATH, ModConfig.hold_breath_progress)
 
-	_wobble_frequency = lerp(_wobble_frequency, noise.targetFrequency * mult, delta * noise.targetLerpSpeed)
+	_wobble_frequency = lerp(_wobble_frequency, noise.targetFrequency, delta * noise.targetLerpSpeed)
 	_wobble_amplitude = lerp(_wobble_amplitude, noise.targetAmplitude * mult, delta * noise.targetLerpSpeed)
 
 	var scroll: float = delta * _wobble_frequency
