@@ -1,7 +1,5 @@
 # TODO
 - food and sleep rework
-- Leupold - to SFP
-- LPVOs to have 6 zoom levels
 - flashlight shine onto inspected weapon
 - spawn new event after 30 minutes on the map
 
@@ -22,4 +20,4 @@
 - sprint/aim override - done
 - hold breath - done
 - crosshair MCM options - show when running/aiming/etc + fadein - done
-
+- LPVO zoom rework and real weights/names - done

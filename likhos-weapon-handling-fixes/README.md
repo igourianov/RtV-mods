@@ -7,6 +7,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 ### New Features
 
 * Rework of the PIP scope mode for realism. Recommended to pair with [ExitPupil](https://modworkshop.net/mod/56890) PIP reshader mod.
+* Reworked all optics to have real names, weights and magnification values
 * Reworked arm and leg stamina mechanics
 * Reworked reload and ammo check mechanics (hold R to check ammo, fire to reload while checking)
 * Rework of the inspect mode and associated bindings
@@ -40,18 +41,25 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 - **Realistic eye relief:** camera parked at proper distance behind rear lens (LPVOs 5cm, fixed scopes 3.5cm)
 - **Main camera FOV no longer narrows when scoped** — only the inside of the optic magnifies
 - **LPVOs stay "scoped" at 1x** — realistic lens distortion and DOF even at 1x
-- **Magnification dialed to real-world values:** prism sights 4x, LPVOs 1.1x/3x/6x
 - **Scope DOF reworked:** scales with magnification, near-DOF enabled for foreground/background softening
 - **PIP MSAA matches main viewport:** the optic's SubViewport now mirrors the antialiasing settings used by the rest of the game - vanilla left it disabled (disable in MCM if it causes performance issues)
 - **NVG-aware PIP blur:** when night vision is active and you aim a magnified optic, the PIP image will now blur. Real scopes cannot work under NVG because of eye relief differences (disable in MCM)
 !!!
+### Optics rework
+!!!
+* All optics now have names and weight values true to real life optics
+* Changed Mark 8 ("Leopard") to 1.1-8x zoom and fixed reticle size at 1x
+* Changed Vudu to 1-10x zoom and made it legendary rarity (it's pretty OP)
+* Changed POSP to be the 2-6x variant and fixed reticle size
+* PU: 3.5x zoom
+!!!
 ### Stamina and movement
 !!!
-Both stamina bars are now dynamic and much more realistic. There is also now a dynamic delay for beginning recovery after use.
-
+Both stamina bars are now dynamic and much more realistic. 
+* There is now a dynamic delay for beginning recovery after use.
 * Arm stamina drain scales with the weight of the gun held and position it is held in (canted=slower; aim zoomed=faster)
 * Arm stamina recovery and recovery delay scales with the Energy stat
-* Crouch halves aim stamina drain
+* Crouch halves aim stamina drain, except when holding breath
 * Leg stamina drain scales with the inventory weight
 * Leg stamina recovery and recovery delay scales with the Hydration stat
 * Overweight, Fracture and Leg Stamina=0 now block sprinting completely
@@ -59,8 +67,7 @@ Both stamina bars are now dynamic and much more realistic. There is also now a d
 !!!
 ### Handling speed 
 !!!
-This mod changes weapon handling speed (how fast you transition into desired state) based on stance and optic equipped:
-
+Added varying handling speeds (how fast you transition into desired state) based on stance and optic equipped:
 * Default = 100% (vanilla)
 * Aim into a red dot = 115%
 * Canted aim = 130%
@@ -102,8 +109,8 @@ Ammo check receives much needed love.
 !!!
 Both guns got realism pass.
 * Both can now cycle bolt on full and empty mag (you will lose ammo!)
-* Fixed round/casing not ejecting when opening bolt to load
-* Both will now play dry fire sounds when attempting to shoot while empty
+* Fixed round/casing not ejecting when opening bolt to load (no animation, but it is cleared)
+* Both will now play dry fire sounds when attempting to shoot on empty chamber
 !!!
 ## Why this is one mod and not several
 
