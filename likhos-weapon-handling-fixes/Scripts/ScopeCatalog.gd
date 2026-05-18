@@ -80,6 +80,10 @@ static func get_mag_range(key) -> Array:
 	return entry.get("default_mag_range", entry.get("mag_range", _FALLBACK_MAG))
 
 
+static func is_ffp(key) -> bool:
+	return DATA.get(key, {}).get("reticlePlane", &"SFP") == &"FFP"
+
+
 static func apply(lib) -> void:
 	for file in DATA:
 		var fields := {}
