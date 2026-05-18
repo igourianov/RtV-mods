@@ -1,6 +1,5 @@
 # TODO
 - food and sleep rework
-- flashlight shine onto inspected weapon
 - spawn new event after 30 minutes on the map
 
 # Closed
@@ -21,3 +20,4 @@
 - hold breath - done
 - crosshair MCM options - show when running/aiming/etc + fadein - done
 - LPVO zoom rework and real weights/names - done
+- flashlight shine onto inspected weapon - done
