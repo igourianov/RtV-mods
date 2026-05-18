@@ -165,7 +165,7 @@ func _do_reload(ammoCheck: bool = false) -> void:
 		return
 
 	if magAttach && !slotData.chamber:
-		if rig.interface.GetMagazine(data, rig.weaponSlot, false):
+		if rig.interface.GetMagazine(data, rig.weaponSlot, rig.magazine.visible):
 			_show_mag_delayed(rig)
 			await _play_reload("Magazine_Attach_Empty", data.magazineAttachEmpty)
 			slotData.chamber = true
@@ -174,7 +174,7 @@ func _do_reload(ammoCheck: bool = false) -> void:
 		return
 
 	if magAttach && slotData.chamber:
-		if rig.interface.GetMagazine(data, rig.weaponSlot, false):
+		if rig.interface.GetMagazine(data, rig.weaponSlot, rig.magazine.visible):
 			_show_mag_delayed(rig)
 			await _play_reload("Magazine_Attach_Tactical", data.magazineAttachTactical)
 			slotData.set_meta("cocked", true)
