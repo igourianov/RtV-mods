@@ -40,6 +40,11 @@ const DATA := {
 		"mag_range": [3.5],
 		"default_mag_range": _DEFAULT_SCOPE_MAG,
 		"weight": 0.75,
+		"display": "PU",
+		"inventory": "PU",
+		"equipment": "PU",
+		"rotated": "PU",
+		"name": "PU",
 	},
 	"Vudu": {
 		"reticlePlane": &"FFP",
