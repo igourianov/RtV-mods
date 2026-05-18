@@ -109,7 +109,7 @@ func _handle_ads(delta: float) -> void:
 		var mags = ScopeCatalog.get_mag_range(att.file)
 		ModConfig.current_scope_mag = mags[clamp(rig.slotData.zoom, 1, mags.size()) - 1]
 		var t = 0.0
-		if mags.size() > 1 else 
+		if mags.size() > 1:
 			t = clampf(inverse_lerp(mags[0], mags[-1], ModConfig.current_scope_mag), 0.0, 1.0)
 		rig.reticleSize = lerp(rig.reticleSize, lerp(sizes.x, sizes.z, t), delta * 10.0)
 		if gameData.PIP:

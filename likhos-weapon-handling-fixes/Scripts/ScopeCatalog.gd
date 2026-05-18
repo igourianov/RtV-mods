@@ -1,10 +1,16 @@
 const Out = preload("../Lib/Out.gd")
+const ModConfig = preload("./ModConfig.gd")
 
-const _SCOPE_FIELDS := ["magnification", "reticlePlane"]
+const _EXTRA_FIELDS := ["magnification", "vanilla", "reticlePlane"]
+
+const _DEFAULT_LPVO_MAG: Array[float] = [1.0, 3.0, 6.0]
+const _DEFAULT_SCOPE_MAG: Array[float] = [4.0]
+const _FALLBACK_MAG: Array[float] = [1.0]
 
 const DATA := {
 	"ACOG": {
 		"magnification": [4.0],
+		"vanilla": _DEFAULT_SCOPE_MAG,
 		"display": "ACOG",
 		"inventory": "ACOG",
 		"equipment": "ACOG",
@@ -13,6 +19,7 @@ const DATA := {
 	},
 	"HMR": {
 		"magnification": [4.0],
+		"vanilla": _DEFAULT_SCOPE_MAG,
 		"display": "HAMR",
 		"inventory": "HAMR",
 		"equipment": "HAMR",
@@ -20,14 +27,21 @@ const DATA := {
 		"name": "Leupold HAMR 4x",
 	},
 	"POSP": {
-		"magnification": [4.0]
+		"magnification": [2.0, 3.0, 4.0, 5.0, 6.0],
+		"vanilla": _DEFAULT_SCOPE_MAG,
+		"scope": false,
+		"variable": true,
+		"weight": 0.9,
+		"name": "POSP 2-6x"
 	},
 	"PU": {
-		"magnification": [3.5]
+		"magnification": [3.5],
+		"vanilla": _DEFAULT_SCOPE_MAG
 	},
 	"Vudu": {
 		"reticlePlane": &"FFP",
 		"magnification": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
+		"vanilla": _DEFAULT_LPVO_MAG,
 		"display": "Vudu",
 		"inventory": "Vudu",
 		"equipment": "Vudu",
@@ -39,6 +53,7 @@ const DATA := {
 	"Leopard": {
 		"reticlePlane": &"FFP",
 		"magnification": [1.1, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
+		"vanilla": _DEFAULT_LPVO_MAG,
 		"display": "Leupold",
 		"inventory": "Leupold",
 		"equipment": "Leupold",
@@ -49,14 +64,17 @@ const DATA := {
 
 
 static func get_mag_range(key) -> Array:
-	return DATA.get(key, {}).get("magnification", [1.0])
+	var entry = DATA.get(key, {})
+	if ModConfig.real_scope_mag:
+		return entry.get("magnification", _FALLBACK_MAG)
+	return entry.get("vanilla", entry.get("magnification", _FALLBACK_MAG))
 
 
 static func apply(lib) -> void:
 	for file in DATA:
 		var fields := {}
 		for key in DATA[file]:
-			if !(key in _SCOPE_FIELDS):
+			if !(key in _EXTRA_FIELDS):
 				fields[key] = DATA[file][key]
 		if !fields.is_empty():
 			lib.patch(lib.Registry.ITEMS, file, fields)
