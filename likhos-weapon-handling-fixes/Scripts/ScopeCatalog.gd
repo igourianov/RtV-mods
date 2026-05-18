@@ -13,9 +13,6 @@ const DATA := {
 		"default_mag_range": _DEFAULT_SCOPE_MAG,
 		"lens_radius": 0.0117,
 		"display": "ACOG",
-		"inventory": "ACOG",
-		"equipment": "ACOG",
-		"rotated": "ACOG",
 		"name": "Trijicon ACOG TA31",
 		"weight": 0.45,
 	},
@@ -24,9 +21,6 @@ const DATA := {
 		"default_mag_range": _DEFAULT_SCOPE_MAG,
 		"lens_radius": 0.017,
 		"display": "HAMR",
-		"inventory": "HAMR",
-		"equipment": "HAMR",
-		"rotated": "HAMR",
 		"name": "Leupold HAMR 4x",
 		"weight": 0.4,
 	},
@@ -47,9 +41,6 @@ const DATA := {
 		"lens_radius": 0.0115,
 		"weight": 0.75,
 		"display": "PU",
-		"inventory": "PU",
-		"equipment": "PU",
-		"rotated": "PU",
 		"name": "PU",
 	},
 	"Vudu": {
@@ -58,9 +49,6 @@ const DATA := {
 		"default_mag_range": _DEFAULT_LPVO_MAG,
 		"lens_radius": 0.020,
 		"display": "Vudu",
-		"inventory": "Vudu",
-		"equipment": "Vudu",
-		"rotated": "Vudu",
 		"name": "EOTech Vudu 1-10x FFP",
 		"rarity": 2, # legendary
 		"value": 2500,
@@ -72,12 +60,44 @@ const DATA := {
 		"default_mag_range": _DEFAULT_LPVO_MAG,
 		"lens_radius": 0.0185,
 		"display": "Leupold",
-		"inventory": "Leupold",
-		"equipment": "Leupold",
-		"rotated": "Leupold",
 		"name": "Leupold Mark 8 CQBSS",
 		"weight": 0.85,
 		"reticleSizeP": Vector3(0.2, 0.4, 0.6), # default X is very small
+	},
+	"RMR": {
+		"display": "RMR",
+		"name": "Trijicon RMR",
+		"weight": 0.1,
+	},
+	"EXPS": {
+		"display": "EXP",
+		"name": "EOTech EXPS",
+		"weight": 0.5,
+	},
+	"Kobra": {
+		"display": "Kobra",
+		"name": "Kobra",
+		"weight": 0.4,
+	},
+	"Micro": {
+		"display": "T2",
+		"name": "Aimpoint T2",
+		"weight": 0.15,
+	},
+	"MRO": {
+		"display": "MRO",
+		"name": "Trijicon MRO",
+		"weight": 0.15,
+	},
+	"PRO": {
+		"display": "PRO",
+		"name": "Aimpoint PRO",
+		"weight": 0.35,
+	},
+	"SRO": {
+		"display": "SRO",
+		"name": "Trijicon SRO",
+		"weight": 0.1,
 	}
 }
 
@@ -103,5 +123,11 @@ static func apply(lib) -> void:
 		for key in DATA[file]:
 			if !(key in _EXTRA_FIELDS):
 				fields[key] = DATA[file][key]
+
+		if "display" in fields:
+			fields["inventory"] = fields["display"]
+			fields["equipment"] = fields["display"]
+			fields["rotated"] = fields["display"]
+
 		if !fields.is_empty():
 			lib.patch(lib.Registry.ITEMS, file, fields)
