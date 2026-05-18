@@ -1,4 +1,7 @@
 
+# 2.3.1158
+* hotfix for mag disappearing on reload from ammo check
+
 # 2.3.1156
 * Hold breath function! (hold sprint while aiming)
 * crosshair is now dynamic + new MCM options
