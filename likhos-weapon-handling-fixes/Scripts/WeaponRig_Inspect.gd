@@ -1,8 +1,28 @@
 extends "./WeaponRig_Base.gd"
 
 
+const FPS_LIGHT_PATH := "/root/Map/Core/Camera/Flashlight/FPS"
+const INSPECT_LIGHT_POSITION := Vector3(0, 0.15, 0.2)
+const LIGHT_LERP_SPEED := 10.0
+
+var _fps_light
+var _fps_light_origin
+
+
 func _ready() -> void:
 	set_process_input(true)
+	set_process(true)
+
+
+func _process(delta: float) -> void:
+	if !_fps_light:
+		_fps_light = get_node_or_null(FPS_LIGHT_PATH)
+		if !_fps_light:
+			return
+		_fps_light_origin = _fps_light.position
+
+	var target = INSPECT_LIGHT_POSITION if gameData.isInspecting else _fps_light_origin
+	_fps_light.position = _fps_light.position.lerp(target, delta * LIGHT_LERP_SPEED)
 
 
 func _input(event) -> void:
