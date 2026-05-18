@@ -1,6 +1,6 @@
 # 2.5.1191
 * reworked scopes magnification, naming and weight
-* fhlashlight now shines on your weapon in inspect mode
+* flashlight now shines on your weapon in inspect mode
 
 # 2.3.1160
 * toned down scope noise speed
