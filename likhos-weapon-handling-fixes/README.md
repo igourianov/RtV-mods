@@ -52,6 +52,11 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 * Changed Vudu to 1-10x zoom and made it legendary rarity (it's pretty OP)
 * Changed POSP to be the 2-6x variant and fixed reticle size
 * PU: 3.5x zoom
+* Input acceleration for zoom bindings to quick flick from min to max or vice versa
+* MCM setting for magnification controle schema
+	- *Short:* 3 zoom level spread evently along scope's magnification range (like vanilla but mid-point is visually middle). Choose this if you're more CoD than Tarkov guy.
+	- *Discrete:* literal, physical zoom levels. E.g. for Vudu: 1, 2, 3, 4,...,10. Input acceleration makes this setting tolerable.
+	- *Normalized:* a comfortable middle ground between the two options above.
 !!!
 ### Stamina and movement
 !!!

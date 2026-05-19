@@ -17,12 +17,12 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `Controller.MovementStates`
 - `Controller._input`
 - `Character.Stamina`
+- `Camera.ScopeDOF`
 
 **Pre and Post hooks** (additive, run before/after vanilla, coexist with other mods cleanly):
 
 - `RigManager.UpdateRig` (post)
 - `Recoil.ApplyRecoil` (post)
-- `Camera.ScopeDOF` (post)
 - `Noise._physics_process` (post)
 - `Tilt._physics_process` (pre)
 - `HUD._ready` (post)

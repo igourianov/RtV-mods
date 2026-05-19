@@ -1,3 +1,8 @@
+# ?
+* DOF lerp() for smooth transtition on zoom
+* reworked magnification ranges + MCM setting (Short, Normalized, Discrete)
+* magnification acceleration
+
 # 2.5.1191
 * reworked scopes magnification, naming and weight
 * flashlight now shines on your weapon in inspect mode
