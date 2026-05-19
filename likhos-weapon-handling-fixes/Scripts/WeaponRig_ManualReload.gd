@@ -27,7 +27,7 @@ func _input(event) -> void:
 		_do_insert()
 	elif _manual_load_state == ManualLoadState.IDLE && event.is_action_pressed("fire"):
 		_manual_load_state = ManualLoadState.INSERT
-	elif _manual_load_state == ManualLoadState.IDLE && event.is_action_pressed("prepare"):
+	elif _manual_load_state in [ManualLoadState.OPEN, ManualLoadState.IDLE, ManualLoadState.INSERT] && event.is_action_released("prepare"):
 		_manual_load_state = ManualLoadState.CLOSE
 
 
@@ -40,7 +40,8 @@ func _do_insert():
 	await play("Insert_Start", rig.data.insertStart)
 	if !is_instance_valid(self):
 		return
-	_manual_load_state = ManualLoadState.IDLE
+	if _manual_load_state == ManualLoadState.OPEN:
+		_manual_load_state = ManualLoadState.IDLE
 
 	rig.slotData.chamber = false
 	rig.slotData.casing = false
@@ -56,7 +57,8 @@ func _do_insert():
 				rig.slotData.amount += 1
 			else:
 				start_audio(rig.audioLibrary.UIError)
-			_manual_load_state = ManualLoadState.IDLE
+			if _manual_load_state == ManualLoadState.INSERT:
+				_manual_load_state = ManualLoadState.IDLE
 		await get_tree().process_frame
 		if !is_instance_valid(self):
 			return
