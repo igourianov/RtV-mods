@@ -4,6 +4,7 @@ const ModConfig = preload("./ModConfig.gd")
 
 const WOBBLE_MULT: float = 3.0
 const WOBBLE_MULT_HOLD_BREATH: float = 0.5
+const WOBBLE_FREQ_MULT_EXHAUSTED: float = 2.0
 
 var _lib
 var _preferences: Preferences
@@ -32,12 +33,18 @@ func on_physics_process_post(delta: float) -> void:
 
 
 func _apply_wobble(noise, gd, delta: float) -> void:
-	var mult: float = 1.0
-	if gd.isAiming && !gd.isFiring:
-		mult = lerp(WOBBLE_MULT, WOBBLE_MULT_HOLD_BREATH, ModConfig.hold_breath_progress)
+	var frequency_mult: float = 1.0
+	var amplitude_mult: float = 1.0
 
-	_wobble_frequency = lerp(_wobble_frequency, noise.targetFrequency, delta * noise.targetLerpSpeed)
-	_wobble_amplitude = lerp(_wobble_amplitude, noise.targetAmplitude * mult, delta * noise.targetLerpSpeed)
+	if gd.isAiming && !gd.isFiring:
+		amplitude_mult = lerp(WOBBLE_MULT, WOBBLE_MULT_HOLD_BREATH, ModConfig.hold_breath_progress)
+	
+	if gd.armStamina <= 0.0:
+		frequency_mult = WOBBLE_FREQ_MULT_EXHAUSTED
+		amplitude_mult *= WOBBLE_FREQ_MULT_EXHAUSTED
+
+	_wobble_frequency = lerp(_wobble_frequency, noise.targetFrequency * frequency_mult, delta * noise.targetLerpSpeed)
+	_wobble_amplitude = lerp(_wobble_amplitude, noise.targetAmplitude * amplitude_mult, delta * noise.targetLerpSpeed)
 
 	var scroll: float = delta * _wobble_frequency
 	_wobble_offset += Vector3(scroll, scroll, scroll)
