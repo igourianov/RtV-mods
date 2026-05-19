@@ -3,7 +3,8 @@
 * reworked magnification ranges + MCM setting (Short, Normalized, Discrete)
 * magnification acceleration
 * increased scope sway when out of arm stamina
-* fixed shotgun losing chambered shell on reload
+* fixed 870 losing chambered shell on reload
+* protips for checking mag and inserting more ammo
 
 # 2.5.1191
 * reworked scopes magnification, naming and weight

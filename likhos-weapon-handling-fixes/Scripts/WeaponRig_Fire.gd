@@ -52,9 +52,21 @@ func _fire_input(rig) -> void:
 			rig.fireRate = data.fireRate
 		if (data.weaponAction == "Manual" || data.weaponAction == "Single") && !slotData.chamber:
 			slotData.set_meta("cocked", false)
+		_check_low_ammo_protip(rig)
 	elif !slotData.chamber && cocked:
 		slotData.set_meta("cocked", false)
 		_play_dry_click(rig)
+
+
+func _check_low_ammo_protip(rig) -> void:
+	var slotData = rig.slotData
+	var data = rig.data
+
+	if !data.insert && slotData.amount < data.magazineSize * 0.3:
+		Out.protip("low-mag-ammo", "Hold [%s] to check the mag" % Inputs.get_binding("reload"))
+	elif data.insert && slotData.amount <= data.magazineSize * 0.4:
+		Out.protip("low-internal-ammo", "Hold [%s] to load more ammo" % Inputs.get_binding("prepare"))
+
 
 
 func _play_dry_click(rig) -> void:
