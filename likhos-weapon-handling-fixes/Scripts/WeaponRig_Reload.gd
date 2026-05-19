@@ -157,10 +157,10 @@ func _do_reload(ammoCheck: bool = false) -> void:
 		await _play_reload("Reload", data.reload, -0.2)
 		slotData.casing = false
 		slotData.chamber = false
+		slotData.set_meta("cocked", true)
 		if slotData.amount:
 			slotData.chamber = true
 			slotData.amount -= 1
-		slotData.set_meta("cocked", true)
 		rig.UpdateBullets()
 		return
 

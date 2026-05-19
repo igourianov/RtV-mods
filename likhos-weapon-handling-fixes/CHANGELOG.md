@@ -3,6 +3,7 @@
 * reworked magnification ranges + MCM setting (Short, Normalized, Discrete)
 * magnification acceleration
 * increased scope sway when out of arm stamina
+* fixed shotgun losing chambered shell on reload
 
 # 2.5.1191
 * reworked scopes magnification, naming and weight

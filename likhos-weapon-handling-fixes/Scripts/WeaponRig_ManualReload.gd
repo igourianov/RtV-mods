@@ -43,8 +43,9 @@ func _do_insert():
 	if _manual_load_state == ManualLoadState.OPEN:
 		_manual_load_state = ManualLoadState.IDLE
 
-	rig.slotData.chamber = false
-	rig.slotData.casing = false
+	if rig.data.weaponType == "Bolt":
+		rig.slotData.chamber = false
+		rig.slotData.casing = false
 
 	Out.protip("ammo-manual-insert", "Press [%s] to start reloading" % Inputs.get_binding("fire"))
 
