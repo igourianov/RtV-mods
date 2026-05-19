@@ -164,35 +164,29 @@ func _do_reload(ammoCheck: bool = false) -> void:
 		rig.UpdateBullets()
 		return
 
-	if magAttach && !slotData.chamber:
-		if rig.interface.GetMagazine(data, rig.weaponSlot, rig.magazine.visible):
-			_show_mag_delayed(rig)
-			await _play_reload("Magazine_Attach_Empty", data.magazineAttachEmpty)
-			slotData.chamber = true
-			slotData.set_meta("cocked", true)
-			rig.UpdateBullets()
+	if !magAttach && !rig.magazine.visible:
 		return
 
-	if magAttach && slotData.chamber:
-		if rig.interface.GetMagazine(data, rig.weaponSlot, rig.magazine.visible):
-			_show_mag_delayed(rig)
-			await _play_reload("Magazine_Attach_Tactical", data.magazineAttachTactical)
-			slotData.set_meta("cocked", true)
-			rig.UpdateBullets()
+	var empty: bool = !slotData.chamber
+	var anim_state: String
+	var audio_event
+
+	if magAttach:
+		anim_state = "Magazine_Attach_Empty" if empty else "Magazine_Attach_Tactical"
+		audio_event = data.magazineAttachEmpty if empty else data.magazineAttachTactical
+	else:
+		anim_state = "Reload_Empty" if empty else "Reload_Tactical"
+		audio_event = data.reloadEmpty if empty else data.reloadTactical
+
+	if !rig.interface.GetMagazine(data, rig.weaponSlot, !magAttach || rig.magazine.visible):
 		return
 
-	if rig.magazine.visible && !slotData.chamber:
-		if rig.interface.GetMagazine(data, rig.weaponSlot, true):
-			await _play_reload("Reload_Empty", data.reloadEmpty)
-			slotData.chamber = true
-			slotData.set_meta("cocked", true)
-		return
-
-	if rig.magazine.visible && slotData.chamber:
-		if rig.interface.GetMagazine(data, rig.weaponSlot, true):
-			await _play_reload("Reload_Tactical", data.reloadTactical)
-			slotData.set_meta("cocked", true)
-		return
+	if magAttach:
+		_show_mag_delayed(rig)
+	await _play_reload(anim_state, audio_event)
+	slotData.chamber = true
+	slotData.set_meta("cocked", true)
+	rig.UpdateBullets()
 
 
 func _play_reload(animation_state: String, audio_event, wait_offset: float = -0.5) -> void:
