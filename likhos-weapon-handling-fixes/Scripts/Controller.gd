@@ -47,33 +47,28 @@ func _update_state(ctrl) -> void:
 
 
 func _apply_speed(ctrl, delta: float) -> void:
-	var target: float
-	var rate: float
-	var crouchSpeed: float = ctrl.crouchSpeed if !ModConfig.override_movement_speeds else ModConfig.crouch_speed
-	var walkSpeed: float = ctrl.walkSpeed if !ModConfig.override_movement_speeds else ModConfig.walk_speed
-	var sprintSpeed: float = ctrl.sprintSpeed if !ModConfig.override_movement_speeds else ModConfig.sprint_speed
+	var useOverride: bool = ModConfig.override_movement_speeds
+	var crouchSpeed: float = ModConfig.crouch_speed if useOverride else ctrl.crouchSpeed
+	var walkSpeed: float = ModConfig.walk_speed if useOverride else ctrl.walkSpeed
+	var sprintSpeed: float = ModConfig.sprint_speed if useOverride else ctrl.sprintSpeed
+
+	var target: float = walkSpeed
+	var rate: float = 2.5
 
 	if !gameData.isMoving:
 		target = 0.0
 		rate = 5.0
 	elif gameData.isCrouching:
 		target = crouchSpeed
-		rate = 2.5
 	elif gameData.isRunning:
 		target = sprintSpeed
 		rate = 1.0
 	elif gameData.isAiming && gameData.isScoped && ModConfig.current_scope_mag >= 2.0:
 		target = walkSpeed * ModConfig.walk_scope_mult
-		rate = 2.5
 	elif gameData.isAiming:
 		target = walkSpeed * ModConfig.walk_aim_mult
-		rate = 2.5
 	elif gameData.isCanted:
 		target = walkSpeed * ModConfig.walk_cant_mult
-		rate = 2.5
-	else:
-		target = walkSpeed
-		rate = 2.5
 
 	ctrl.currentSpeed = lerp(ctrl.currentSpeed, target, delta * rate)
 
