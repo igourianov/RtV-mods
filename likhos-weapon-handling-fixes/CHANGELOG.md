@@ -1,3 +1,6 @@
+# 2.7.1214
+* fixed walk speed MCM override not applying correctly
+
 # 2.7.1213
 * DOF lerp() for smooth transition on zoom
 * reworked magnification ranges + MCM setting (Short, Normalized, Discrete)

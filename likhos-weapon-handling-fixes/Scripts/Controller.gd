@@ -72,7 +72,7 @@ func _apply_speed(ctrl, delta: float) -> void:
 		target = walkSpeed * ModConfig.walk_cant_mult
 		rate = 2.5
 	else:
-		target = ctrl.walkSpeed
+		target = walkSpeed
 		rate = 2.5
 
 	ctrl.currentSpeed = lerp(ctrl.currentSpeed, target, delta * rate)
