@@ -1,7 +1,7 @@
 const Out = preload("../Lib/Out.gd")
 const ModConfig = preload("./ModConfig.gd")
 
-const _EXTRA_FIELDS := ["mag_range", "isFFP", "lens_radius"]
+const _EXTRA_FIELDS := ["mag_range", "mag_range_discrete", "mag_range_normalized", "isFFP", "lens_radius"]
 
 const _FALLBACK_MAG: Array[float] = [1.0]
 
@@ -22,6 +22,7 @@ const DATA := {
 	},
 	"POSP": {
 		"mag_range": [2.0, 3.5, 6.0],
+		"mag_range_discrete": [2.0, 3.0, 4.0, 5.0, 6.0],
 		"lens_radius": 0.012,
 		"scope": false,
 		"variable": true,
@@ -40,16 +41,21 @@ const DATA := {
 	"Vudu": {
 		"isFFP": true,
 		"mag_range": [1.0, 3.2, 10.0],
+		"mag_range_normalized": [1.0, 1.6, 2.5, 4.0, 6.3, 10.0],
+		"mag_range_discrete": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
 		"lens_radius": 0.020,
 		"display": "Vudu",
 		"name": "EOTech Vudu 1-10x FFP",
 		"rarity": 2, # legendary
 		"value": 2500,
 		"weight": 0.8,
+		"reticleSizeP": Vector3(0.1, 0.3, 1.2), # default Z is too small
 	},
 	"Leopard": {
 		"isFFP": true,
 		"mag_range": [1.1, 3.0, 8.0],
+		"mag_range_normalized": [1.1, 1.7, 2.8, 4.8, 8.0],
+		"mag_range_discrete": [1.1, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
 		"lens_radius": 0.0185,
 		"display": "Leupold",
 		"name": "Leupold Mark 8 CQBSS",
@@ -95,7 +101,14 @@ const DATA := {
 
 
 static func get_mag_range(key) -> Array:
-	return DATA.get(key, {}).get("mag_range", _FALLBACK_MAG)
+	var entry: Dictionary = DATA.get(key, {})
+	var field := "mag_range"
+	match ModConfig.mag_schema:
+		&"discrete":
+			field = "mag_range_discrete"
+		&"normalized":
+			field = "mag_range_normalized"
+	return entry.get(field, entry.get("mag_range", _FALLBACK_MAG))
 
 
 static func is_ffp(key) -> bool:

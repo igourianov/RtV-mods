@@ -14,6 +14,7 @@ static var crosshair_while_canted: bool
 static var crosshair_while_raised: bool
 static var cant_mode: StringName
 static var lpvo_ooa_zoom: StringName
+static var mag_schema: StringName
 static var disable_zoom_dof: bool
 static var disable_optic_override: bool
 static var disable_canted_override: bool
@@ -41,6 +42,7 @@ const DEFAULT_CROSSHAIR_COLOR := Color(0, 1, 0.04, 0.55)
 const DEFAULT_CROSSHAIR := "3seg-cross"
 const DEFAULT_CANT_MODE := "1default"
 const DEFAULT_LPVO_OOA_ZOOM := "3rail"
+const DEFAULT_MAG_SCHEMA := "2normalized"
 const DEFAULT_ENABLED := true
 const DEFAULT_CROUCH_SPEED := 0.7
 const DEFAULT_WALK_SPEED := 3.0
@@ -76,6 +78,7 @@ static func apply_config(config: ConfigFile):
 	crosshair_while_raised = _get_config_value(config, "Bool", "crosshairWhileRaised", !DEFAULT_ENABLED)
 	cant_mode = _get_config_value(config, "Dropdown", "cantMode", DEFAULT_CANT_MODE)
 	lpvo_ooa_zoom = _get_config_value(config, "Dropdown", "lpvoOofZoom", DEFAULT_LPVO_OOA_ZOOM)
+	mag_schema = _get_config_value(config, "Dropdown", "magSchema", DEFAULT_MAG_SCHEMA)
 	disable_zoom_dof = !_get_config_value(config, "Bool", "enableZoomDof", DEFAULT_ENABLED)
 	disable_optic_override = !_get_config_value(config, "Bool", "enableOpticOverride", DEFAULT_ENABLED)
 	disable_canted_override = !_get_config_value(config, "Bool", "enableCantedOverride", DEFAULT_ENABLED)
@@ -163,6 +166,14 @@ static func create_template(config: ConfigFile):
 		}
 	})
 	_set_config_entry(config, "Bool", "Aim tweaks", "realScopeMagnification", "Realistic scope magnification", "Use each optic's real magnification values for zoom and FOV. Disable for vanilla zoom behavior.", DEFAULT_ENABLED)
+
+	_set_config_entry(config, "Dropdown", "Aim tweaks", "magSchema", "Magnification schema", "Which set of magnification steps variable optics use. Falls back to Short when an optic lacks the chosen schema.", DEFAULT_MAG_SCHEMA, {
+		"options": {
+			"1discrete": "Discrete",
+			"2normalized": "Normalized",
+			"3short": "Short"
+		}
+	})
 
 	_set_config_entry(config, "Bool", "Aim tweaks", "nvgPipBlur", "Blur scope PIP under NVG", "Blur the magnified optic's picture-in-picture image while aiming with night vision active", DEFAULT_ENABLED)
 
