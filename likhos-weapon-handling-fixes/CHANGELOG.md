@@ -2,6 +2,7 @@
 * DOF lerp() for smooth transtition on zoom
 * reworked magnification ranges + MCM setting (Short, Normalized, Discrete)
 * magnification acceleration
+* increased scope sway when out of arm stamina
 
 # 2.5.1191
 * reworked scopes magnification, naming and weight
