@@ -29,9 +29,9 @@ static func protip(id: StringName, message: String) -> bool:
 		return false
 	var last = protip_timers.get(id, 0)
 	var now = Time.get_ticks_msec()
-	protip_timers.set(id, now)
 	if last && (now - last) < PROTIP_DELAY:
 		return false
+	protip_timers.set(id, now)
 	loader.Message("Likho's pro-tip: " + message, PROTIP_COLOR)
 	return true
 
