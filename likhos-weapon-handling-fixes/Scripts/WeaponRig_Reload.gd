@@ -139,7 +139,8 @@ func _do_reload(ammoCheck: bool = false) -> void:
 	var slotData = rig.slotData
 	var magAttach = ammoCheck || !rig.magazine.visible
 
-	if is_engine_busy() || gameData.isReloading || gameData.isClearing:
+	# repeat state collision check since _do_reload() can be called from inside Ammo Check await
+	if is_engine_busy() || gameData.isInspecting || gameData.isInserting || gameData.isClearing || gameData.isReloading:
 		return
 
 	gameData.isFiring = false
@@ -153,7 +154,7 @@ func _do_reload(ammoCheck: bool = false) -> void:
 			slotData.state = ""
 		return
 
-	if data.weaponAction == "Manual" && !gameData.isInserting:
+	if data.weaponAction == "Manual":
 		await _play_reload("Reload", data.reload, -0.2)
 		slotData.casing = false
 		slotData.chamber = false
