@@ -1,4 +1,4 @@
-# ?
+# 2.7.1213
 * DOF lerp() for smooth transtition on zoom
 * reworked magnification ranges + MCM setting (Short, Normalized, Discrete)
 * magnification acceleration
