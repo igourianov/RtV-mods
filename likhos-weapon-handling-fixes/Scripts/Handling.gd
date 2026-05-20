@@ -200,7 +200,6 @@ func _update_scope_shadow(optic) -> void:
 	var slack: float = (eye_relief.y - eye_relief.x) * 2.0
 
 	ModConfig.current_lens_camera_distance = camera.global_transform.origin.distance_to(lens_world)
-	Out.debug("ModConfig.current_lens_camera_distance:", ModConfig.current_lens_camera_distance)
 	if ModConfig.current_lens_camera_distance < eye_relief.x:
 		ModConfig.current_scope_shadow = clampf((eye_relief.x - ModConfig.current_lens_camera_distance) / slack, 0.0, 1.0)
 	elif ModConfig.current_lens_camera_distance > eye_relief.y:
