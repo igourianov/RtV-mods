@@ -2,6 +2,7 @@ extends "./WeaponRig_Base.gd"
 
 const ModConfig = preload("./ModConfig.gd")
 const ScopeCatalog = preload("./ScopeCatalog.gd")
+const _RETICLE_SHADER := preload("res://mods/likhos-weapon-handling-fixes/Shaders/Reticle.gdshader")
 
 # Runtime cache for lens radii extracted from mesh, keyed by optic node name
 var _lens_radius_cache := {}
@@ -123,8 +124,8 @@ func _handle_ads(delta: float) -> void:
 
 	if gameData.PIP && gameData.isScoped:
 		var lens_radius: float = _get_lens_radius(optic)
-		if lens_radius > 0.0:
-			var distance: float = (ModConfig.FIXED_SCOPE_AIM_OFFSET if att.scope else ModConfig.VARIABLE_SCOPE_AIM_OFFSET) + ModConfig.eye_relief_offset
+		var distance: float = ModConfig.current_lens_camera_distance
+		if lens_radius > 0.0 && distance > 0.0:
 			var target_fov: float = rad_to_deg(2.0 * atan(lens_radius / distance) / ModConfig.current_scope_mag)
 			optic.camera.fov = lerp(optic.camera.fov, target_fov, delta * 10.0)
 
@@ -132,9 +133,15 @@ func _handle_ads(delta: float) -> void:
 
 
 func _update_reticle(rig, optic) -> void:
-	if optic.reticle:
-		optic.reticle.set_shader_parameter("size", rig.reticleSize)
-		optic.reticle.set_shader_parameter("opacity", rig.ocularOpacity)
+	if !optic.reticle:
+		return
+	var att = optic.attachmentData
+	if att && (att.scope || att.variable):
+		if !("shader_parameter/shadow_tightness" in optic.reticle):
+			optic.reticle.shader = _RETICLE_SHADER
+		optic.reticle.set_shader_parameter("shadow_tightness", ModConfig.current_scope_shadow_tightness)
+	optic.reticle.set_shader_parameter("size", rig.reticleSize)
+	optic.reticle.set_shader_parameter("opacity", rig.ocularOpacity)
 
 
 func _get_lens_radius(optic) -> float:

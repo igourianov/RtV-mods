@@ -1,6 +1,7 @@
 extends RefCounted
 
 const ModConfig = preload("./ModConfig.gd")
+const ScopeCatalog = preload("./ScopeCatalog.gd")
 const Out = preload("../Lib/Out.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
@@ -11,6 +12,9 @@ const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-10.0, 0.0, 0.0)
 const _MOSIN_LOW_ROTATION_OFFSET = Vector3(-15.0, 15.0, 0.0)
 const _REMINGTON_870_LOW_ROTATION_OFFSET = Vector3(-20.0, 10.0, 0.0)
 
+const SCOPE_SHADOW_NONE := 0.02
+const SCOPE_SHADOW_FULL := 0.002
+const EYE_RELIEF_SLACK := 0.03
 
 # the handling speed modifier - read as % of base
 enum HandlingMode {
@@ -23,7 +27,7 @@ enum HandlingMode {
 
 var _lib
 var _preferences: Preferences
-var _lens_min_z_cache := {}
+var _lens_center_cache := {}
 var _handlingMode = HandlingMode.Default
 var _aim_intent := false
 var _cant_intent := false
@@ -162,24 +166,49 @@ func _weapon_handling(h, rig, delta: float) -> bool:
 	else:
 		_handlingMode = HandlingMode.RDS
 
-	# vanilla logic
-	if ModConfig.disable_optic_override:
-		h.targetPosition = Vector3(0.0, -rig.aimOffset, data.aimPosition.z) if optic else data.aimPosition
-		h.targetRotation = data.aimRotation
-		if gameData.isScoped && !gameData.PIP:
-			h.targetPosition -= Vector3(0.0, 0.0, 0.1)
-		return true
-
 	var aim_z = data.aimPosition.z
-	if optic && gameData.PIP && !gameData.secondaryOptic:
-		if optic.attachmentData.scope:
-			aim_z = _optic_lens_aim_z(optic) - ModConfig.FIXED_SCOPE_AIM_OFFSET - ModConfig.eye_relief_offset
-		elif optic.attachmentData.variable:
-			aim_z = _optic_lens_aim_z(optic) - ModConfig.VARIABLE_SCOPE_AIM_OFFSET - ModConfig.eye_relief_offset
+	if optic && gameData.isScoped:
+		aim_z += 0.05 if gameData.PIP else -0.1
+
+	_update_scope_shadow(optic)
 
 	h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z) if optic else data.aimPosition
 	h.targetRotation = data.aimRotation
 	return true
+
+
+func _update_scope_shadow(optic) -> void:
+	ModConfig.current_scope_shadow_tightness = SCOPE_SHADOW_NONE
+	ModConfig.current_lens_camera_distance = 0.0
+
+	if !optic || !gameData.PIP || gameData.secondaryOptic:
+		return
+
+	var att = optic.attachmentData
+	if !(att.scope || att.variable):
+		return
+
+	var camera = optic.get_viewport().get_camera_3d()
+	if !camera:
+		return
+
+	if camera.near > 0.01:
+		camera.near = 0.01
+
+	var lens_world: Vector3 = optic.global_transform * _optic_lens_local_center(optic)
+	var eye_dist: float = camera.global_transform.origin.distance_to(lens_world)
+	ModConfig.current_lens_camera_distance = eye_dist
+	Out.debug("eye_dist: %.4fcm (%s)" % [eye_dist * 100.0, att.file])
+
+	var eye_relief: Vector2 = ScopeCatalog.get_eye_relief(att.file)
+	#var slack: float = 0.03 # (eye_relief.y - eye_relief.x) #* 2.0
+	var eye_relief_distance: float = 0.0
+	if eye_dist < eye_relief.x:
+		eye_relief_distance = clampf((eye_relief.x - eye_dist) / EYE_RELIEF_SLACK, 0.0, 1.0)
+	elif eye_dist > eye_relief.y:
+		eye_relief_distance = clampf((eye_dist - eye_relief.y) / EYE_RELIEF_SLACK, 0.0, 1.0)
+	if eye_relief_distance:
+		ModConfig.current_scope_shadow_tightness = lerp(SCOPE_SHADOW_NONE, SCOPE_SHADOW_FULL, eye_relief_distance)
 
 
 func _set_target_idle(h):
@@ -249,26 +278,22 @@ func on_rig_update_post(_animate) -> void:
 
 
 
-func _optic_lens_aim_z(optic) -> float:
-	var local_min_z = _optic_lens_local_min_z(optic)
-	return (optic.transform * Vector3(0, 0, local_min_z)).z
-
-
-func _optic_lens_local_min_z(optic) -> float:
+func _optic_lens_local_center(optic) -> Vector3:
 	var key = optic.scene_file_path if optic.scene_file_path != "" else optic.name
-	if _lens_min_z_cache.has(key):
-		return _lens_min_z_cache[key]
+	if _lens_center_cache.has(key):
+		return _lens_center_cache[key]
 	if optic.mesh == null or optic.mesh.mesh == null:
-		return 0.0
+		return Vector3.ZERO
 	var arrays = optic.mesh.mesh.surface_get_arrays(optic.maskIndex)
 	if arrays.is_empty():
-		return 0.0
+		return Vector3.ZERO
 	var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 	if verts.is_empty():
-		return 0.0
+		return Vector3.ZERO
 	var t = optic.mesh.transform
-	var min_z = INF
+	var sum := Vector3.ZERO
 	for v in verts:
-		min_z = min(min_z, (t * v).z)
-	_lens_min_z_cache[key] = min_z
-	return min_z
+		sum += t * v
+	var center: Vector3 = sum / verts.size()
+	_lens_center_cache[key] = center
+	return center

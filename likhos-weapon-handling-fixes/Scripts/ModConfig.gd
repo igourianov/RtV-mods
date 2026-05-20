@@ -2,6 +2,8 @@
 # dynamic state vars
 static var current_scope_mag: float = 1.0
 static var current_weapon_weight: float = 0.0
+static var current_scope_shadow_tightness: float = 0.025
+static var current_lens_camera_distance: float = 0.0
 static var ammo_check_view := false
 static var hold_breath: bool = false
 static var hold_breath_progress: float = 0.0
@@ -16,7 +18,6 @@ static var cant_mode: StringName
 static var lpvo_ooa_zoom: StringName
 static var mag_schema: StringName
 static var disable_zoom_dof: bool
-static var disable_optic_override: bool
 static var disable_canted_override: bool
 static var disable_lowered_override: bool
 static var override_movement_speeds: bool
@@ -32,7 +33,6 @@ static var walk_scope_mult: float
 static var laser_auto_on: bool
 static var attachment_tooltips: bool
 static var pip_anti_aliasing: bool
-static var eye_relief_offset: float
 static var show_protips: bool
 static var debug_enabled: bool
 
@@ -54,10 +54,7 @@ const SPEED_MIN := 0.0
 const SPEED_MAX := 20.0
 const MULT_MIN := 0.1
 const MULT_MAX := 1.5
-const DEFAULT_EYE_RELIEF_OFFSET := 0.0
 const BASE_WEAPON_WEIGHT := 4.0
-const FIXED_SCOPE_AIM_OFFSET := 0.035
-const VARIABLE_SCOPE_AIM_OFFSET := 0.05
 
 const Out = preload("../Lib/Out.gd")
 
@@ -80,7 +77,6 @@ static func apply_config(config: ConfigFile):
 	lpvo_ooa_zoom = _get_config_value(config, "Dropdown", "lpvoOofZoom", DEFAULT_LPVO_OOA_ZOOM)
 	mag_schema = _get_config_value(config, "Dropdown", "magSchema", DEFAULT_MAG_SCHEMA)
 	disable_zoom_dof = !_get_config_value(config, "Bool", "enableZoomDof", DEFAULT_ENABLED)
-	disable_optic_override = !_get_config_value(config, "Bool", "enableOpticOverride", DEFAULT_ENABLED)
 	disable_canted_override = !_get_config_value(config, "Bool", "enableCantedOverride", DEFAULT_ENABLED)
 	disable_lowered_override = !_get_config_value(config, "Bool", "enableLoweredOverride", DEFAULT_ENABLED)
 	override_movement_speeds = _get_config_value(config, "Bool", "overrideMovementSpeeds", DEFAULT_ENABLED)
@@ -96,7 +92,6 @@ static func apply_config(config: ConfigFile):
 	laser_auto_on = _get_config_value(config, "Bool", "laserAutoOn", DEFAULT_ENABLED)
 	attachment_tooltips = _get_config_value(config, "Bool", "attachmentTooltips", DEFAULT_ENABLED)
 	pip_anti_aliasing = _get_config_value(config, "Bool", "pipAntiAliasing", DEFAULT_ENABLED)
-	eye_relief_offset = _get_config_value(config, "Float", "eyeReliefOffset", DEFAULT_EYE_RELIEF_OFFSET) / 100.0
 
 
 static func _next_pos():
@@ -181,16 +176,9 @@ static func create_template(config: ConfigFile):
 
 	_set_config_entry(config, "Bool", "Aim tweaks", "enableZoomDof", "Enable zoom DOF", "Apply depth-of-field blur when looking through scopes", DEFAULT_ENABLED)
 
-	_set_config_entry(config, "Bool", "Aim tweaks", "enableOpticOverride", "Override optic position", "Apply the mod's eye-relief and Y-offset adjustments when scoped. Disable to use vanilla aim position.", DEFAULT_ENABLED)
-
 	_set_config_entry(config, "Bool", "Aim tweaks", "enableCantedOverride", "Override canted position", "Apply the mod's Y offset and roll tweak when canted. Disable to use vanilla canted position and rotation.", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Bool", "Aim tweaks", "enableLoweredOverride", "Override lowered position", "Apply the mod's patrol-mode replacement. Disable to use vanilla low position and rotation.", DEFAULT_ENABLED)
-
-	_set_config_entry(config, "Float", "Aim tweaks", "eyeReliefOffset", "Eye relief offset for magnified optics (cm)", "Adjust how close the scope is during zoom", DEFAULT_EYE_RELIEF_OFFSET, {
-		"minRange": 0.0,
-		"maxRange": 5.0
-	})
 
 	_set_config_entry(config, "Bool", "Movement speeds", "overrideMovementSpeeds", "Override movement speed", "Change default walk/crouch/spring speeds", DEFAULT_ENABLED)
 

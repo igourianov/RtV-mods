@@ -1,13 +1,12 @@
 const Out = preload("../Lib/Out.gd")
 const ModConfig = preload("./ModConfig.gd")
 
-const _EXTRA_FIELDS := ["mag_range", "mag_range_discrete", "mag_range_normalized", "isFFP", "lens_radius"]
-
 const _FALLBACK_MAG: Array[float] = [1.0]
 
 const DATA := {
 	"ACOG": {
 		"mag_range": [4.0],
+		"eye_relief": Vector2(2.5, 4.5),
 		"lens_radius": 0.0117,
 		"display": "ACOG",
 		"name": "Trijicon ACOG TA31",
@@ -15,6 +14,7 @@ const DATA := {
 	},
 	"HMR": {
 		"mag_range": [4.0],
+		"eye_relief": Vector2(5.5, 8.0),
 		"lens_radius": 0.017,
 		"display": "HAMR",
 		"name": "Leupold HAMR 4x",
@@ -23,6 +23,7 @@ const DATA := {
 	"POSP": {
 		"mag_range": [2.0, 3.5, 6.0],
 		"mag_range_discrete": [2.0, 3.0, 4.0, 5.0, 6.0],
+		"eye_relief": Vector2(6.5, 9.0),
 		"lens_radius": 0.012,
 		"scope": false,
 		"variable": true,
@@ -33,6 +34,7 @@ const DATA := {
 	},
 	"PU": {
 		"mag_range": [3.5],
+		"eye_relief": Vector2(6.5, 8.5),
 		"lens_radius": 0.0115,
 		"weight": 0.75,
 		"display": "PU",
@@ -43,6 +45,7 @@ const DATA := {
 		"mag_range": [1.0, 3.2, 10.0],
 		"mag_range_normalized": [1.0, 1.6, 2.5, 4.0, 6.3, 10.0],
 		"mag_range_discrete": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
+		"eye_relief": Vector2(6.5, 12.5),
 		"lens_radius": 0.020,
 		"display": "Vudu",
 		"name": "EOTech Vudu 1-10x FFP",
@@ -56,6 +59,7 @@ const DATA := {
 		"mag_range": [1.1, 3.0, 8.0],
 		"mag_range_normalized": [1.1, 1.7, 2.8, 4.8, 8.0],
 		"mag_range_discrete": [1.1, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
+		"eye_relief": Vector2(7.0, 11.5),
 		"lens_radius": 0.0185,
 		"display": "Leupold",
 		"name": "Leupold Mark 8 CQBSS",
@@ -100,7 +104,7 @@ const DATA := {
 }
 
 
-static func get_mag_range(key) -> Array:
+static func get_mag_range(key: String) -> Array:
 	var entry: Dictionary = DATA.get(key, {})
 	var field := "mag_range"
 	match ModConfig.mag_schema:
@@ -111,19 +115,28 @@ static func get_mag_range(key) -> Array:
 	return entry.get(field, entry.get("mag_range", _FALLBACK_MAG))
 
 
-static func is_ffp(key) -> bool:
+static func is_ffp(key: String) -> bool:
 	return DATA.get(key, {}).get("isFFP", false)
 
 
-static func get_lens_radius(key) -> float:
+static func get_lens_radius(key: String) -> float:
 	return DATA.get(key, {}).get("lens_radius", 0.0)
 
 
+static func get_eye_relief(key: String) -> Vector2:
+	var er = DATA.get(key, {}).get("eye_relief", null)
+	if !(er is Vector2):
+		return Vector2.ZERO
+	return er * 0.01
+
+
 static func apply(lib) -> void:
+	var attData = load("res://Scripts/AttachmentData.gd").new()
+
 	for file in DATA:
 		var fields := {}
 		for key in DATA[file]:
-			if !(key in _EXTRA_FIELDS):
+			if key in attData:
 				fields[key] = DATA[file][key]
 
 		if "display" in fields:
