@@ -14,7 +14,6 @@ const _REMINGTON_870_LOW_ROTATION_OFFSET = Vector3(-20.0, 10.0, 0.0)
 
 const SCOPE_SHADOW_NONE := 0.02
 const SCOPE_SHADOW_FULL := 0.002
-const EYE_RELIEF_SLACK := 0.03
 
 # the handling speed modifier - read as % of base
 enum HandlingMode {
@@ -201,12 +200,12 @@ func _update_scope_shadow(optic) -> void:
 	Out.debug("eye_dist: %.4fcm (%s)" % [eye_dist * 100.0, att.file])
 
 	var eye_relief: Vector2 = ScopeCatalog.get_eye_relief(att.file)
-	#var slack: float = 0.03 # (eye_relief.y - eye_relief.x) #* 2.0
+	var slack: float = (eye_relief.y - eye_relief.x)
 	var eye_relief_distance: float = 0.0
 	if eye_dist < eye_relief.x:
-		eye_relief_distance = clampf((eye_relief.x - eye_dist) / EYE_RELIEF_SLACK, 0.0, 1.0)
+		eye_relief_distance = clampf((eye_relief.x - eye_dist) / slack, 0.0, 1.0)
 	elif eye_dist > eye_relief.y:
-		eye_relief_distance = clampf((eye_dist - eye_relief.y) / EYE_RELIEF_SLACK, 0.0, 1.0)
+		eye_relief_distance = clampf((eye_dist - eye_relief.y) / slack, 0.0, 1.0)
 	if eye_relief_distance:
 		ModConfig.current_scope_shadow_tightness = lerp(SCOPE_SHADOW_NONE, SCOPE_SHADOW_FULL, eye_relief_distance)
 
