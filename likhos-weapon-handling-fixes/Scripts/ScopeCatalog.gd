@@ -3,13 +3,14 @@ const ModConfig = preload("./ModConfig.gd")
 
 const _FALLBACK_MAG: Array[float] = [1.0]
 
-static var _lens_center_cache := {}
+static var _lens_geometry_cache := {}
 
 const DATA := {
 	"ACOG": {
 		"mag_range": [4.0],
 		"eye_relief": Vector2(2.5, 4.5),
-		"lens_radius": 0.0117,
+		"lens_radius": 0.013,
+		"lens_center": Vector3(0.0, 0.0, -0.102),
 		"display": "ACOG",
 		"name": "Trijicon ACOG TA31",
 		"weight": 0.45,
@@ -18,6 +19,7 @@ const DATA := {
 		"mag_range": [4.0],
 		"eye_relief": Vector2(5.5, 8.0),
 		"lens_radius": 0.017,
+		"lens_center": Vector3(0.0, 0.0, -0.069),
 		"display": "HAMR",
 		"name": "Leupold HAMR 4x",
 		"weight": 0.4,
@@ -27,6 +29,7 @@ const DATA := {
 		"mag_range_discrete": [2.0, 3.0, 4.0, 5.0, 6.0],
 		"eye_relief": Vector2(6.5, 9.0),
 		"lens_radius": 0.012,
+		"lens_center": Vector3(0.0, 0.0, -0.078),
 		"scope": false,
 		"variable": true,
 		"weight": 0.9,
@@ -38,6 +41,7 @@ const DATA := {
 		"mag_range": [3.5],
 		"eye_relief": Vector2(6.5, 8.5),
 		"lens_radius": 0.0115,
+		"lens_center": Vector3(0.0, 0.0, -0.081),
 		"weight": 0.75,
 		"display": "PU",
 		"name": "PU",
@@ -49,6 +53,7 @@ const DATA := {
 		"mag_range_discrete": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
 		"eye_relief": Vector2(6.5, 12.5),
 		"lens_radius": 0.020,
+		"lens_center": Vector3(0.0, 0.0, -0.131),
 		"display": "Vudu",
 		"name": "EOTech Vudu 1-10x FFP",
 		"rarity": 2, # legendary
@@ -63,6 +68,7 @@ const DATA := {
 		"mag_range_discrete": [1.1, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
 		"eye_relief": Vector2(7.0, 11.5),
 		"lens_radius": 0.0185,
+		"lens_center": Vector3(0.0, 0.0, -0.177),
 		"display": "Leupold",
 		"name": "Leupold Mark 8 CQBSS",
 		"weight": 0.85,
@@ -121,10 +127,6 @@ static func is_ffp(key: String) -> bool:
 	return DATA.get(key, {}).get("isFFP", false)
 
 
-static func get_lens_radius(key: String) -> float:
-	return DATA.get(key, {}).get("lens_radius", 0.0)
-
-
 static func get_eye_relief(key: String) -> Vector2:
 	var er = DATA.get(key, {}).get("eye_relief", null)
 	if !(er is Vector2):
@@ -132,25 +134,52 @@ static func get_eye_relief(key: String) -> Vector2:
 	return er * 0.01
 
 
-static func get_optic_lens_center(optic) -> Vector3:
-	var key = optic.scene_file_path if optic.scene_file_path != "" else optic.name
-	if _lens_center_cache.has(key):
-		return _lens_center_cache[key]
-	if optic.mesh == null or optic.mesh.mesh == null:
-		return Vector3.ZERO
+static func get_lens_radius(optic) -> float:
+	var key := String(optic.attachmentData.file)
+	var radius: float = DATA.get(key, {}).get("lens_radius", 0.0)
+	if radius > 0.0:
+		return radius
+	return _ensure_lens_geometry(optic, key).get("radius", 0.0)
+
+
+static func get_lens_center(optic) -> Vector3:
+	var key := String(optic.attachmentData.file)
+	var center = DATA.get(key, {}).get("lens_center", null)
+	if center is Vector3:
+		return center
+	return _ensure_lens_geometry(optic, key).get("center", Vector3.ZERO)
+
+
+static func _ensure_lens_geometry(optic, key: String) -> Dictionary:
+	if _lens_geometry_cache.has(key):
+		return _lens_geometry_cache[key]
+	var result := {"center": Vector3.ZERO, "radius": 0.0}
+	if optic.mesh == null || optic.mesh.mesh == null:
+		return result
 	var arrays = optic.mesh.mesh.surface_get_arrays(optic.maskIndex)
 	if arrays.is_empty():
-		return Vector3.ZERO
+		return result
 	var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 	if verts.is_empty():
-		return Vector3.ZERO
+		return result
 	var t = optic.mesh.transform
 	var sum := Vector3.ZERO
 	for v in verts:
 		sum += t * v
 	var center: Vector3 = sum / verts.size()
-	_lens_center_cache[key] = center
-	return center
+	var max_r_sq: float = 0.0
+	for v in verts:
+		var p = t * v
+		var dx: float = p.x - center.x
+		var dy: float = p.y - center.y
+		var r_sq: float = dx * dx + dy * dy
+		if r_sq > max_r_sq:
+			max_r_sq = r_sq
+	result["center"] = center
+	result["radius"] = sqrt(max_r_sq)
+	_lens_geometry_cache[key] = result
+	Out.debug("extracted lens geometry for", key, "center:", center, "radius:", result["radius"])
+	return result
 
 
 static func apply(lib) -> void:

@@ -191,7 +191,7 @@ func _update_scope_shadow(optic) -> void:
 	if camera.near > 0.01:
 		camera.near = 0.01
 
-	var lens_world: Vector3 = optic.global_transform * ScopeCatalog.get_optic_lens_center(optic)
+	var lens_world: Vector3 = optic.global_transform * ScopeCatalog.get_lens_center(optic)
 	var eye_relief: Vector2 = ScopeCatalog.get_eye_relief(att.file)
 	var slack: float = (eye_relief.y - eye_relief.x) * 2.0
 
