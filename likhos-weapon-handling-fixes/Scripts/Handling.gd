@@ -12,9 +12,6 @@ const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-10.0, 0.0, 0.0)
 const _MOSIN_LOW_ROTATION_OFFSET = Vector3(-15.0, 15.0, 0.0)
 const _REMINGTON_870_LOW_ROTATION_OFFSET = Vector3(-20.0, 10.0, 0.0)
 
-const SCOPE_SHADOW_NONE := 0.02
-const SCOPE_SHADOW_FULL := 0.002
-
 # the handling speed modifier - read as % of base
 enum HandlingMode {
 	Default = 100,
@@ -129,7 +126,7 @@ func _override_handling(h, rig) -> bool:
 
 	return false
 
-
+var _aimPos: Vector3
 func _weapon_handling(h, rig, delta: float) -> bool:
 	var data = h.data
 	var optic = rig.activeOptic
@@ -154,6 +151,10 @@ func _weapon_handling(h, rig, delta: float) -> bool:
 
 	if !gameData.isAiming:
 		return false
+	
+	if _aimPos != data.aimPosition:
+		_aimPos = data.aimPosition
+		Out.debug("gun:", data.file, "| optic:", optic.attachmentData.file, "| aimPosition:", data.aimPosition, "| aimRotation:", data.aimRotation)
 
 	if optic == null:
 		_handlingMode = HandlingMode.Default
@@ -166,7 +167,7 @@ func _weapon_handling(h, rig, delta: float) -> bool:
 
 	var aim_z = data.aimPosition.z
 	if optic && gameData.isScoped:
-		aim_z += 0.05 if gameData.PIP else -0.1
+		aim_z += 0.06 if gameData.PIP else -0.1
 
 	_update_scope_shadow(optic)
 
@@ -176,7 +177,7 @@ func _weapon_handling(h, rig, delta: float) -> bool:
 
 
 func _update_scope_shadow(optic) -> void:
-	ModConfig.current_scope_shadow_tightness = SCOPE_SHADOW_NONE
+	ModConfig.current_scope_shadow = 0.0
 	ModConfig.current_lens_camera_distance = 0.0
 
 	if !optic || !gameData.PIP || gameData.secondaryOptic:
@@ -195,19 +196,14 @@ func _update_scope_shadow(optic) -> void:
 		camera.near = 0.01
 
 	var lens_world: Vector3 = optic.global_transform * ScopeCatalog.get_optic_lens_center(optic)
-	var eye_dist: float = camera.global_transform.origin.distance_to(lens_world)
-	ModConfig.current_lens_camera_distance = eye_dist
-	Out.debug("eye_dist: %.4fcm (%s)" % [eye_dist * 100.0, att.file])
-
 	var eye_relief: Vector2 = ScopeCatalog.get_eye_relief(att.file)
-	var slack: float = (eye_relief.y - eye_relief.x)
-	var eye_relief_distance: float = 0.0
-	if eye_dist < eye_relief.x:
-		eye_relief_distance = clampf((eye_relief.x - eye_dist) / slack, 0.0, 1.0)
-	elif eye_dist > eye_relief.y:
-		eye_relief_distance = clampf((eye_dist - eye_relief.y) / slack, 0.0, 1.0)
-	if eye_relief_distance:
-		ModConfig.current_scope_shadow_tightness = lerp(SCOPE_SHADOW_NONE, SCOPE_SHADOW_FULL, eye_relief_distance)
+	var slack: float = (eye_relief.y - eye_relief.x) * 2.0
+
+	ModConfig.current_lens_camera_distance = camera.global_transform.origin.distance_to(lens_world)
+	if ModConfig.current_lens_camera_distance < eye_relief.x:
+		ModConfig.current_scope_shadow = clampf((eye_relief.x - ModConfig.current_lens_camera_distance) / slack, 0.0, 1.0)
+	elif ModConfig.current_lens_camera_distance > eye_relief.y:
+		ModConfig.current_scope_shadow = clampf((ModConfig.current_lens_camera_distance - eye_relief.y) / slack, 0.0, 1.0)
 
 
 func _set_target_idle(h):

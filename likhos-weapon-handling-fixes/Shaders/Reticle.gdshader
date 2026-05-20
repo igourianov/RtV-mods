@@ -6,20 +6,15 @@ uniform sampler2D reticle : repeat_disable;
 uniform float opacity : hint_range(0.0, 1.0, 0.1) = 1.0;
 uniform float size : hint_range(0.0, 1.0, 0.01) = 0.1;
 uniform float intensity : hint_range(0.0, 10.0, 1.0) = 5.0;
-uniform float shadow_tightness : hint_range(0.0, 1.0, 0.001) = 0.025;
+uniform float shadow : hint_range(0.0, 1.0, 0.001) = 0.0;
 
 varying float occlusion;
 varying float spherical;
-varying float shadow;
-varying vec3 shadowVertex;
-varying vec3 shadowPosition;
 varying vec3 reticlePosition;
 global uniform sampler2D Specular : filter_linear_mipmap;
 
 void vertex()
 {
-	shadowVertex = ((PROJECTION_MATRIX * MODELVIEW_MATRIX) * vec4(VERTEX, 1.0)).xyz;
-	shadowPosition = (INV_PROJECTION_MATRIX * vec4(shadowVertex, 1.0)).xyz;
 	reticlePosition = (MODELVIEW_MATRIX * vec4(VERTEX, 1.0)).xyz;
 }
 
@@ -30,13 +25,11 @@ void fragment()
 	if (scope)
 	{
 		occlusion = 0.5;
-		shadow = shadow_tightness;
 		spherical = mix(1.0, 2.0, opacity);
 	}
 	else
 	{
 		occlusion = 1.0;
-		shadow = 1.0;
 		spherical = 0.0;
 	}
 
@@ -57,9 +50,10 @@ void fragment()
 
 	// Shadow ----------------------------------------
 
-	vec3 shadowOffset = normalize(shadowPosition) + NORMAL;
-	float shadowUV = length(shadowOffset.xy / shadow);
-	float shadowMask = smoothstep(0.9, 1.0, shadowUV);
+	float r = length(UV - 0.5);
+	float aperture_outer = mix(0.58, 0.0, shadow);
+	float aperture_inner = aperture_outer - 0.08;
+	float shadowMask = scope ? smoothstep(aperture_inner, aperture_outer, r) : 0.0;
 
 	// Reticle ----------------------------------------
 

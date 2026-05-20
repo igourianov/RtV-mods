@@ -137,9 +137,9 @@ func _update_reticle(rig, optic) -> void:
 		return
 	var att = optic.attachmentData
 	if att && (att.scope || att.variable):
-		if !("shader_parameter/shadow_tightness" in optic.reticle):
+		if !("shader_parameter/shadow" in optic.reticle):
 			optic.reticle.shader = _RETICLE_SHADER
-		optic.reticle.set_shader_parameter("shadow_tightness", ModConfig.current_scope_shadow_tightness)
+		optic.reticle.set_shader_parameter("shadow", ModConfig.current_scope_shadow)
 	optic.reticle.set_shader_parameter("size", rig.reticleSize)
 	optic.reticle.set_shader_parameter("opacity", rig.ocularOpacity)
 

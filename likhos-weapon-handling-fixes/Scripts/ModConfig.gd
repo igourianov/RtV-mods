@@ -2,7 +2,7 @@
 # dynamic state vars
 static var current_scope_mag: float = 1.0
 static var current_weapon_weight: float = 0.0
-static var current_scope_shadow_tightness: float = 0.025
+static var current_scope_shadow: float = 0.0
 static var current_lens_camera_distance: float = 0.0
 static var ammo_check_view := false
 static var hold_breath: bool = false
