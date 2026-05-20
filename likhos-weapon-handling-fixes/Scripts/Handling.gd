@@ -126,7 +126,7 @@ func _override_handling(h, rig) -> bool:
 
 	return false
 
-var _aimPos: Vector3
+
 func _weapon_handling(h, rig, delta: float) -> bool:
 	var data = h.data
 	var optic = rig.activeOptic
@@ -151,10 +151,6 @@ func _weapon_handling(h, rig, delta: float) -> bool:
 
 	if !gameData.isAiming:
 		return false
-	
-	if _aimPos != data.aimPosition:
-		_aimPos = data.aimPosition
-		Out.debug("gun:", data.file, "| optic:", optic.attachmentData.file, "| aimPosition:", data.aimPosition, "| aimRotation:", data.aimRotation)
 
 	if optic == null:
 		_handlingMode = HandlingMode.Default
@@ -165,9 +161,9 @@ func _weapon_handling(h, rig, delta: float) -> bool:
 	else:
 		_handlingMode = HandlingMode.RDS
 
-	var aim_z = data.aimPosition.z
-	if optic && gameData.isScoped:
-		aim_z += 0.06 if gameData.PIP else -0.1
+	var aim_z = data.aimPosition.z - 0.1 # vanilla logic
+	if optic && gameData.isScoped && gameData.PIP:
+		aim_z = data.aimPosition.z + 0.075
 
 	_update_scope_shadow(optic)
 
