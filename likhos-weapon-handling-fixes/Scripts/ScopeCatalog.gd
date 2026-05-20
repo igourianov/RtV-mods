@@ -3,6 +3,8 @@ const ModConfig = preload("./ModConfig.gd")
 
 const _FALLBACK_MAG: Array[float] = [1.0]
 
+static var _lens_center_cache := {}
+
 const DATA := {
 	"ACOG": {
 		"mag_range": [4.0],
@@ -128,6 +130,27 @@ static func get_eye_relief(key: String) -> Vector2:
 	if !(er is Vector2):
 		return Vector2.ZERO
 	return er * 0.01
+
+
+static func get_optic_lens_center(optic) -> Vector3:
+	var key = optic.scene_file_path if optic.scene_file_path != "" else optic.name
+	if _lens_center_cache.has(key):
+		return _lens_center_cache[key]
+	if optic.mesh == null or optic.mesh.mesh == null:
+		return Vector3.ZERO
+	var arrays = optic.mesh.mesh.surface_get_arrays(optic.maskIndex)
+	if arrays.is_empty():
+		return Vector3.ZERO
+	var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	if verts.is_empty():
+		return Vector3.ZERO
+	var t = optic.mesh.transform
+	var sum := Vector3.ZERO
+	for v in verts:
+		sum += t * v
+	var center: Vector3 = sum / verts.size()
+	_lens_center_cache[key] = center
+	return center
 
 
 static func apply(lib) -> void:

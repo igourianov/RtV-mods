@@ -26,7 +26,6 @@ enum HandlingMode {
 
 var _lib
 var _preferences: Preferences
-var _lens_center_cache := {}
 var _handlingMode = HandlingMode.Default
 var _aim_intent := false
 var _cant_intent := false
@@ -194,7 +193,7 @@ func _update_scope_shadow(optic) -> void:
 	if camera.near > 0.01:
 		camera.near = 0.01
 
-	var lens_world: Vector3 = optic.global_transform * _optic_lens_local_center(optic)
+	var lens_world: Vector3 = optic.global_transform * ScopeCatalog.get_optic_lens_center(optic)
 	var eye_dist: float = camera.global_transform.origin.distance_to(lens_world)
 	ModConfig.current_lens_camera_distance = eye_dist
 	Out.debug("eye_dist: %.4fcm (%s)" % [eye_dist * 100.0, att.file])
@@ -275,24 +274,3 @@ func on_rig_update_post(_animate) -> void:
 	if rig && rig.slotData:
 		rig.slotData.set_meta("cocked", rig.slotData.chamber)
 
-
-
-func _optic_lens_local_center(optic) -> Vector3:
-	var key = optic.scene_file_path if optic.scene_file_path != "" else optic.name
-	if _lens_center_cache.has(key):
-		return _lens_center_cache[key]
-	if optic.mesh == null or optic.mesh.mesh == null:
-		return Vector3.ZERO
-	var arrays = optic.mesh.mesh.surface_get_arrays(optic.maskIndex)
-	if arrays.is_empty():
-		return Vector3.ZERO
-	var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
-	if verts.is_empty():
-		return Vector3.ZERO
-	var t = optic.mesh.transform
-	var sum := Vector3.ZERO
-	for v in verts:
-		sum += t * v
-	var center: Vector3 = sum / verts.size()
-	_lens_center_cache[key] = center
-	return center
