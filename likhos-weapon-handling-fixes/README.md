@@ -6,14 +6,14 @@ Formerly `Likho's Weapon Handling Fixes`.
 
 ### Features
 
-* Reworked the PIP scope mode for realism. Recommended to pair with [ExitPupil](https://modworkshop.net/mod/56890) PIP reshader mod. [*(details)*](#pip-mode-realism)
+* Reworked the PIP scope mode for realism [*(details)*](#pip-mode-realism). Recommended to pair with [ExitPupil](https://modworkshop.net/mod/56890) PIP reshader mod.
 * Reworked all optics with real names, weights and magnification values. [*(details)*](#optics-rework)
 * Reworked arm and leg stamina mechanics. [*(details)*](#stamina)
 * Reworked reload, insert and ammo check mechanics. [*(details)*](#ammo-check)
 * Reworked the inspect mode and associated bindings. [*(details)*](#inspect-mode-rework)
 * Hold breath function (hold Sprint while aiming)
-* Reworked input priority for Couch/Sprint/Aim/Canted actions. Last action wins (exception: sprint while aiming, see above)
 * Canted aim is now independent with optional laser auto-activation (disable in MCM)
+* Reworked input priority for Couch/Sprint/Aim/Canted actions. Last action wins instead of following hardcoded order (exception: sprint while aiming)
 * Mouse sensitivity scales with zoom and stance (canted uses Aim, LPVO 1× uses Aim, mid/high use Scope/Scope×0.5)
 * Weapon handling speed (how fast you transition into the desired state) now scales with stance and optic: red dot 115%, canted 130%, LPVO at 1× 105%, magnified scope 80%, default 100% (disable in MCM)
 * Movement speeds rescaled with new breakpoints. Crouch/walk/sprint changed from vanilla 1/2.5/5 to 0.7/3/7, with new walk-canted/walk-aiming-1×/walk-scoped breakpoints at 2.25/1.8/0.9× walk speed (all editable in MCM)
