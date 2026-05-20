@@ -28,6 +28,7 @@ const DATA := {
 		"mag_range": [2.0, 3.5, 6.0],
 		"mag_range_discrete": [2.0, 3.0, 4.0, 5.0, 6.0],
 		"eye_relief": Vector2(6.5, 9.0),
+		"force_z_pos": true,
 		"lens_radius": 0.012,
 		"lens_center": Vector3(0.0, 0.0, -0.078),
 		"scope": false,
@@ -40,6 +41,7 @@ const DATA := {
 	"PU": {
 		"mag_range": [3.5],
 		"eye_relief": Vector2(6.5, 8.5),
+		"force_z_pos": true,
 		"lens_radius": 0.0115,
 		"lens_center": Vector3(0.0, 0.0, -0.081),
 		"weight": 0.75,
@@ -125,6 +127,13 @@ static func get_mag_range(key: String) -> Array:
 
 static func is_ffp(key: String) -> bool:
 	return DATA.get(key, {}).get("isFFP", false)
+
+
+static func get_fixed_z(key: String):
+	var entry: Dictionary = DATA.get(key, {})
+	if entry.get("force_z_pos", false) && entry.get("eye_relief") is Vector2:
+		return entry.eye_relief.x / 100.0
+	return null
 
 
 static func get_eye_relief(key: String) -> Vector2:

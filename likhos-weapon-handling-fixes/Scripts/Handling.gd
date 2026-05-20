@@ -163,7 +163,11 @@ func _weapon_handling(h, rig, delta: float) -> bool:
 
 	var aim_z = data.aimPosition.z - 0.1 # vanilla logic
 	if optic && gameData.isScoped && gameData.PIP:
-		aim_z = data.aimPosition.z + 0.075
+		var fixed_offset = ScopeCatalog.get_fixed_z(optic.attachmentData.file)
+		if fixed_offset:
+			aim_z = (optic.transform * ScopeCatalog.get_lens_center(optic)).z - fixed_offset
+		else:
+			aim_z = data.aimPosition.z + 0.075
 
 	_update_scope_shadow(optic)
 
@@ -196,6 +200,7 @@ func _update_scope_shadow(optic) -> void:
 	var slack: float = (eye_relief.y - eye_relief.x) * 2.0
 
 	ModConfig.current_lens_camera_distance = camera.global_transform.origin.distance_to(lens_world)
+	Out.debug("ModConfig.current_lens_camera_distance:", ModConfig.current_lens_camera_distance)
 	if ModConfig.current_lens_camera_distance < eye_relief.x:
 		ModConfig.current_scope_shadow = clampf((eye_relief.x - ModConfig.current_lens_camera_distance) / slack, 0.0, 1.0)
 	elif ModConfig.current_lens_camera_distance > eye_relief.y:
