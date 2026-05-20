@@ -190,6 +190,7 @@ func _update_scope_shadow(optic) -> void:
 	if !camera:
 		return
 
+	# adjust camera near plane to avoid clipping short eye relief scopes
 	if camera.near > 0.01:
 		camera.near = 0.01
 
