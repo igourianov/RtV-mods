@@ -11,20 +11,14 @@ const DATA := {
 		"eye_relief": Vector2(2.5, 4.5),
 		"lens_radius": 0.013,
 		"lens_center": Vector3(0.0, 0.0, -0.102),
-		"display": "ACOG",
-		"name": "Trijicon ACOG TA31",
-		"weight": 0.45,
 	},
 	"HMR": {
 		"mag_range": [4.0],
 		"eye_relief": Vector2(5.5, 8.0),
 		"lens_radius": 0.017,
 		"lens_center": Vector3(0.0, 0.0, -0.069),
-		"display": "HAMR",
-		"name": "Leupold HAMR 4x",
 		"rarity": 2, # legendary
 		"value": 2000,
-		"weight": 0.4,
 	},
 	"POSP": {
 		"mag_range": [2.0, 3.5, 6.0],
@@ -35,8 +29,6 @@ const DATA := {
 		"lens_center": Vector3(0.0, 0.0, -0.078),
 		"scope": false,
 		"variable": true,
-		"weight": 0.9,
-		"name": "POSP 2-6x",
 		"reticleSize": Vector3(0.3, 0.3, 0.3), # default X is very small
 		"reticleSizeP": Vector3(0.5, 0.5, 0.5), # default X is very small
 	},
@@ -46,9 +38,6 @@ const DATA := {
 		"force_z_pos": true,
 		"lens_radius": 0.0115,
 		"lens_center": Vector3(0.0, 0.0, -0.081),
-		"weight": 0.75,
-		"display": "PU",
-		"name": "PU",
 	},
 	"Vudu": {
 		"isFFP": true,
@@ -62,7 +51,6 @@ const DATA := {
 		"name": "EOTech Vudu 1-10x FFP",
 		"rarity": 2, # legendary
 		"value": 2500,
-		"weight": 0.8,
 		"reticleSizeP": Vector3(0.1, 0.3, 1.2), # default Z is too small
 	},
 	"Leopard": {
@@ -75,44 +63,8 @@ const DATA := {
 		"lens_center": Vector3(0.0, 0.0, -0.177),
 		"display": "Leupold",
 		"name": "Leupold Mark 8 CQBSS",
-		"weight": 0.85,
 		"reticleSizeP": Vector3(0.2, 0.4, 0.6), # default X is very small
 	},
-	"RMR": {
-		"display": "RMR",
-		"name": "Trijicon RMR",
-		"weight": 0.1,
-	},
-	"EXPS": {
-		"display": "EXP",
-		"name": "EOTech EXPS",
-		"weight": 0.5,
-	},
-	"Kobra": {
-		"display": "Kobra",
-		"name": "Kobra",
-		"weight": 0.4,
-	},
-	"Micro": {
-		"display": "T2",
-		"name": "Aimpoint T2",
-		"weight": 0.15,
-	},
-	"MRO": {
-		"display": "MRO",
-		"name": "Trijicon MRO",
-		"weight": 0.15,
-	},
-	"PRO": {
-		"display": "PRO",
-		"name": "Aimpoint PRO",
-		"weight": 0.35,
-	},
-	"SRO": {
-		"display": "SRO",
-		"name": "Trijicon SRO",
-		"weight": 0.1,
-	}
 }
 
 
