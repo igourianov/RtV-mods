@@ -1,9 +1,6 @@
 # TODO
 - food and sleep rework
 - spawn new event after 30 minutes on the map
-- sway - the whole camera instead of just the gun
-- sway - remove the scope shadow tilt
-- precalc and save optic lens pos
 - move scope shadown behind reticle
 
 # Closed
@@ -25,3 +22,5 @@
 - crosshair MCM options - show when running/aiming/etc + fadein - done
 - LPVO zoom rework and real weights/names - done
 - flashlight shine onto inspected weapon - done
+- sway - done
+- precalc optic maths - done
