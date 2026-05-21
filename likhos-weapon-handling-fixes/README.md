@@ -52,7 +52,6 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 !!!
 ### Optics rework
 !!!
-* All optics now have names and weight values true to real life optics
 * All optics now have eye relief values and create scope shadow if mounted outside ideal eye relief
 * Changed Mark 8 ("Leopard") to 1.1-8x zoom and fixed reticle size at 1x
 * Changed Vudu to 1-10x zoom and made it legendary rarity
