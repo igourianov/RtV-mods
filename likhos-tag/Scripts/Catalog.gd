@@ -14,7 +14,7 @@ const DATA := {
 		"weight": 0.5,
 	},
 	"POSP": {
-		"name": "Зенит ПОСП"
+		"name": "Зенит ПОСП",
 		"weight": 0.9,
 	},
 	"PU": {
