@@ -176,8 +176,10 @@ static func apply(lib) -> void:
 	for file in DATA:
 		var fields: Dictionary = DATA[file].duplicate()
 		if "inventory" in fields:
-			fields["rotated"] = fields["inventory"]
-			fields["equipment"] = fields["inventory"]
+			if !("rotated" in fields):
+				fields["rotated"] = fields["inventory"]
+			if !("rotated" in fields):
+				fields["rotated"] = fields["inventory"]
 			if !("display" in fields):
 				fields["display"] = fields["inventory"]
 			

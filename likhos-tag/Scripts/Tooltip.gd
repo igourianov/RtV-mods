@@ -47,36 +47,12 @@ func on_update_post(item) -> void:
 	else:
 		tooltip.caliber.hide()
 
-	var capacity = _ensure_row(tooltip, "likho_capacity", "Capacity:")
-	if itemData.maxAmount:
-		capacity.get_child(1).text = "%dx" % itemData.maxAmount
-		capacity.show()
+	if itemData.maxAmount || itemData.capacity:
+		tooltip.capacity.get_child(0).text = itemData.maxAmount if itemData.maxAmount else "+%dkg" % itemData.capacity
+		tooltip.capacity.show()
 	else:
-		capacity.hide()
+		tooltip.capacity.hide()
 
+	tooltip.panel.size = Vector2(256, 0)
+	tooltip.interface.tooltipOffset = tooltip.panel.size.y / 2.0
 
-func _ensure_row(tooltip, meta_key: String, title_text: String) -> Control:
-	if tooltip.has_meta(meta_key):
-		return tooltip.get_meta(meta_key)
-
-	var sibling: Label = tooltip.weight
-	var parent: Node = sibling.get_parent()
-	var row: HBoxContainer = HBoxContainer.new()
-	row.add_theme_constant_override("separation", 4)
-
-	var title := Label.new()
-	title.theme = sibling.theme
-	title.add_theme_font_size_override("font_size", 12)
-	title.text = title_text
-	title.vertical_alignment = VERTICAL_ALIGNMENT_FILL
-	row.add_child(title)
-
-	var value := Label.new()
-	value.add_theme_color_override("font_color", Color.GREEN)
-	value.add_theme_font_size_override("font_size", 12)
-	value.vertical_alignment = VERTICAL_ALIGNMENT_FILL
-	row.add_child(value)
-
-	parent.add_child(row)
-	tooltip.set_meta(meta_key, row)
-	return row
