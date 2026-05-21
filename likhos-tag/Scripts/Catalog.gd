@@ -67,6 +67,97 @@ const DATA := {
 		"name": "Trijicon SRO",
 		"weight": 0.045,
 	},
+	"ANPEQ": {
+		"display": "PEQ-15",
+		"name": "ATPIAL AN/PEQ-15",
+		"weight": 0.21
+	},
+	"Hybrid": {
+		"display": "Hybrid 46",
+		"name": "SilencerCo Hybrid .46",
+		"weight": 0.4,
+	},
+	"Monster": {
+		"display": "SF Monster",
+		"name": "SureFire SOCOM556 Monster",
+		"weight": 0.5,
+	},
+	"Navy": {
+		"display": "KAC Navy",
+		"name": "KAC Navy",
+		"weight": 0.43,
+	},
+	"OZ5": {
+		"display": "SAPL",
+		"name": "Swiss Arms Pro Laser",
+		"weight": 0.21,
+	},
+	"PBS": {
+		"display": "PBS-1",
+		"name": "ПБС-1",
+		"weight": 0.62,
+	},
+	"PTN": {
+		"display": "Putnik",
+		"name": "Resilient Suppressors Putnik",
+		"weight": 0.59,
+	},
+	"Rider": {
+		"display": "SF Ryder",
+		"name": "SureFire Ryder 9M-Ti",
+		"weight": 0.31,
+	},
+	"Salvo": {
+		"display": "SLV-12",
+		"name": "SilencerCo Salvo 12",
+		"weight": 0.97,
+	},
+	"SOCOM": {
+		"display": "SF RC2",
+		"name": "SureFire SOCOM556 RC2",
+		"weight": 0.48,
+	},
+	"Thor": {
+		"display": "Thor",
+		"name": "AWC Thor PSR",
+		"weight": 0.51,
+	},
+	"AK_12_Magazine": {
+		"name": "AK-12 mag. [6Л34]",
+		"weight": 0.19,
+	},
+	"AKM_Magazine": {
+		"name": "AKM \"Banana\" [57-A-231]",
+		"weight": 0.43,
+	},
+	"AKS_74U_Magazine": {
+		"name": "AK-74 \"Bakelite\" [6Л20]",
+		"weight": 0.23,
+	},
+	"KAR_21_223_Magazine": {
+		"name": "Magpul PMAG Gen M3",
+		"weight": 0.14
+	},
+	"KAR_21_308_Magazine": {
+		"name": "Magpul PMAG LR/SR Gen M3",
+		"weight": 0.18,
+	},
+	"RK_Magazine": {
+		"name": "Sako RK-95 TP mag.",
+		"weight": 0.17,
+	},
+	"STANAG_Magazine": {
+		"name": "USGI STANAG mag.",
+		"weight": 0.17,
+	},
+	"SVD_Magazine": {
+		"name": "SVD mag. [6Л18]",
+		"weight": 0.21,
+	},
+	"VSS_Magazine": {
+		"name": "VSS mag. [6Л24]",
+		"weight": 0.18,
+	},
 }
 
 
