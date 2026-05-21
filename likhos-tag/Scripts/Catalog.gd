@@ -125,7 +125,6 @@ const DATA := {
 	"AK_12": {
 		"name": "AK-12",
 		"inventory": "AK-12",
-		"weight": 3.5,
 	},
 	"AKM": {
 		"name": "AKM \"Калаш\"",
@@ -140,12 +139,10 @@ const DATA := {
 	"Colt_1911": {
 		"name": "Colt 1911",
 		"inventory": "1911",
-		"weight": 1.1,
 	},
 	"Glock_17": {
 		"name": "Glock 17",
 		"inventory": "G17",
-		"weight": 0.62,
 	},
 	"HK416": {
 		"name": "H&K 416",
@@ -155,17 +152,14 @@ const DATA := {
 	"KAR_21_223": {
 		"name": "KAR-21 .223",
 		"inventory": "KAR-21-223",
-		"weight": 3.7,
 	},
 	"KAR_21_308": {
 		"name": "KAR-21 .308",
 		"inventory": "KAR-21-308",
-		"weight": 3.8,
 	},
 	"KP_31": {
 		"name": "Suomi KP-31",
 		"inventory": "KP-31",
-		"weight": 4.6,
 	},
 	"M4A1": {
 		"name": "Colt M4A1",
@@ -180,17 +174,14 @@ const DATA := {
 	"Makarov": {
 		"name": "Макаров",
 		"inventory": "Makarov",
-		"weight": 0.73,
 	},
 	"MK18": {
 		"name": "Mk 18 Mod 1 SOPMOD",
 		"inventory": "MK18",
-		"weight": 2.7,
 	},
 	"Mosin": {
 		"name": "Мосин 1891/30",
 		"inventory": "Mosin",
-		"weight": 4.0,
 	},
 	"MP5": {
 		"name": "H&K MP5A3",
@@ -200,7 +191,6 @@ const DATA := {
 	"MP5K": {
 		"name": "H&K MP5K",
 		"inventory": "MP5K",
-		"weight": 2.0,
 	},
 	"MP5SD": {
 		"name": "H&K MP5SD",
@@ -215,7 +205,6 @@ const DATA := {
 	"P320": {
 		"name": "Sig P320",
 		"inventory": "P320",
-		"weight": 0.8,
 	},
 	"Remington_870": {
 		"name": "Remington 870 Police Magnum",
