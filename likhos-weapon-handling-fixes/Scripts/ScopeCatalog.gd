@@ -150,8 +150,9 @@ static func apply(lib) -> void:
 		"rarity": 2, # legendary
 		"value": 2000,
 	})
+	var posp = lib.get_entry(lib.Registry.ITEMS, "POSP")
 	lib.patch(lib.Registry.ITEMS, "POSP", {
-		"name": "POSP 2-6x",
+		"name": posp.name + " 2-6x",
 		"scope": false,
 		"variable": true,
 		"reticleSize": Vector3(0.3, 0.3, 0.3), # default X is very small
