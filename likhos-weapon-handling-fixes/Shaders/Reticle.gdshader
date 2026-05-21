@@ -60,7 +60,7 @@ void fragment()
 	vec3 reticleOffset = normalize(reticlePosition) + NORMAL;
 	vec2 reticleUV = (reticleOffset.xy / size) * vec2(1.0, -1.0);
 	vec4 reticleSample = texture(reticle, reticleUV + vec2(0.5, 0.5));
-	float reticleAlpha = reticleSample.a * (1.0 - shadowMask);
+	float reticleAlpha = reticleSample.a;
 	vec3 reticleColor = reticleSample.rgb * vec3(intensity, 0.0, 0.0) * reticleAlpha;
 
 	// Reflection ----------------------------------------
@@ -71,7 +71,7 @@ void fragment()
 	// Output ----------------------------------------
 
 	vec3 color = mix(vec3(0.0), reticleColor, opacity);
-	float alpha = mix(1.0, shadowMask + reticleAlpha, opacity * edge);
+	float alpha = mix(1.0, max(shadowMask, reticleAlpha), opacity * edge);
 
 	ALBEDO = color;
 	ALPHA = alpha;
