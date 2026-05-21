@@ -28,6 +28,7 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `HUD._ready` (post)
 - `Optic._physics_process` (pre)
 - `Laser._process` (post)
+- `Tooltip.Update` (post)
 - `Inputs.CreateActions` (pre and post)
 - `Inputs.ResetActions` (post)
 

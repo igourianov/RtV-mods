@@ -1,3 +1,10 @@
+# ?
+* redone eye relief logic - rail position now works again for altering how close the scope is to the camera
+* all scopes now have realistc eye relief ranges instead of being hardcoded
+* scope shadow no longer wobbles as you move, but works as penalty outside declared eye relief (ACOG users beware!)
+* scope tooltip now shows actual sope magnification and eye relief values
+* moved reticle in front of the scope shadow (as it should be)
+
 # 2.7.1214
 * fixed walk speed MCM override not applying correctly
 

@@ -7,7 +7,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 ### Features
 
 * Reworked the PIP scope mode for realism [*(details)*](#pip-mode-realism). Recommended to pair with [ExitPupil](https://modworkshop.net/mod/56890) PIP reshader mod.
-* Reworked all optics with real names, weights and magnification values. [*(details)*](#optics-rework)
+* Reworked all optics with real names, weights eye relief and magnification values. [*(details)*](#optics-rework)
 * Reworked arm and leg stamina mechanics. [*(details)*](#stamina)
 * Reworked reload, insert and ammo check mechanics. [*(details)*](#ammo-check)
 * Reworked the inspect mode and associated bindings. [*(details)*](#inspect-mode-rework)
@@ -43,7 +43,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 ### PIP mode realism
 !!!
 Vanilla PIP is completely unusable - every scope feels like a "scout" scope. This mod addresses that:
-- *Realistic eye relief:* camera parked at proper distance behind rear lens (LPVOs 5cm, fixed scopes 3.5cm)
+- *Realistic eye relief:* optics placed too close/far on tha rail will get cope shadow (ACOG will suck the most!) Scope shadow no longer wobbles as you move and appears behind the reticle.
 - *Main camera FOV no longer narrows when scoped* — only the inside of the optic magnifies
 - *LPVOs stay "scoped" at 1x* — realistic lens distortion and DOF even at 1x
 - *Scope DOF reworked:* scales with magnification, near-DOF enabled for foreground/background softening
@@ -54,12 +54,13 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 !!!
 * All optics now have names and weight values true to real life optics
 * Changed Mark 8 ("Leopard") to 1.1-8x zoom and fixed reticle size at 1x
-* Changed Vudu to 1-10x zoom and made it legendary rarity (it's pretty OP)
+* Changed Vudu to 1-10x zoom and made it legendary rarity
 * Changed POSP to be the 2-6x variant and fixed reticle size
+* HAMR is now legendary 
 * PU: 3.5x zoom
 * Input acceleration for zoom bindings to quick flick from min to max or vice versa
 * MCM setting for magnification controle schema
-	- *Short:* 3 zoom level spread evently along scope's magnification range (like vanilla but mid-point is visually middle). Choose this if you're more CoD than Tarkov guy.
+	- *Short:* 3 zoom level spread evently along scope's magnification range - like vanilla but mid-point is visually middle. Choose this if you're more CoD than Tarkov guy.
 	- *Discrete:* literal, physical zoom levels. E.g. for Vudu: 1, 2, 3, 4,...,10. Input acceleration makes this setting tolerable.
 	- *Normalized:* a comfortable middle ground between the two options above.
 !!!
