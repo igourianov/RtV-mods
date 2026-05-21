@@ -23,6 +23,7 @@ const DATA := {
 		"display": "HAMR",
 		"name": "Leupold HAMR 4x",
 		"rarity": 2, # legendary
+		"value": 2000,
 		"weight": 0.4,
 	},
 	"POSP": {
