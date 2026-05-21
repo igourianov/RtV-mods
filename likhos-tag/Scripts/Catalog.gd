@@ -73,17 +73,17 @@ const DATA := {
 		"weight": 0.21
 	},
 	"Hybrid": {
-		"display": "Hybrid 46",
+		"display": ".46",
 		"name": "SilencerCo Hybrid .46",
 		"weight": 0.4,
 	},
 	"Monster": {
-		"display": "SF Monster",
+		"display": "Monster",
 		"name": "SureFire SOCOM556 Monster",
 		"weight": 0.5,
 	},
 	"Navy": {
-		"display": "KAC Navy",
+		"display": "Navy",
 		"name": "KAC Navy",
 		"weight": 0.43,
 	},
@@ -103,7 +103,7 @@ const DATA := {
 		"weight": 0.59,
 	},
 	"Rider": {
-		"display": "SF Ryder",
+		"display": "Ryder",
 		"name": "SureFire Ryder 9M-Ti",
 		"weight": 0.31,
 	},
@@ -113,7 +113,7 @@ const DATA := {
 		"weight": 0.97,
 	},
 	"SOCOM": {
-		"display": "SF RC2",
+		"display": "RC2",
 		"name": "SureFire SOCOM556 RC2",
 		"weight": 0.48,
 	},
@@ -151,11 +151,11 @@ const DATA := {
 		"weight": 0.17,
 	},
 	"SVD_Magazine": {
-		"name": "SVD mag. [6Л18]",
+		"name": "SVD \"Waffle\" [6Л18]",
 		"weight": 0.21,
 	},
 	"VSS_Magazine": {
-		"name": "VSS mag. [6Л24]",
+		"name": "VSS \"Plum\" [6Л24]",
 		"weight": 0.18,
 	},
 }
