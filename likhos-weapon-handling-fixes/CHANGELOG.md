@@ -1,3 +1,6 @@
+# 2.8.1288
+* moved all the attachment renaming and weight changes into [Likho's tag](https://modworkshop.net/mod/56993) mod
+
 # 2.8.1286
 * redone eye relief logic - rail position now works again for altering how close the scope is to the camera
 * MCM setting that faked eye relief removed
