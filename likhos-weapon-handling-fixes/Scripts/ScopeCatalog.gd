@@ -17,8 +17,6 @@ const DATA := {
 		"eye_relief": Vector2(5.5, 8.0),
 		"lens_radius": 0.017,
 		"lens_center": Vector3(0.0, 0.0, -0.069),
-		"rarity": 2, # legendary
-		"value": 2000,
 	},
 	"POSP": {
 		"mag_range": [2.0, 3.5, 6.0],
@@ -27,10 +25,6 @@ const DATA := {
 		"force_z_pos": true,
 		"lens_radius": 0.012,
 		"lens_center": Vector3(0.0, 0.0, -0.078),
-		"scope": false,
-		"variable": true,
-		"reticleSize": Vector3(0.3, 0.3, 0.3), # default X is very small
-		"reticleSizeP": Vector3(0.5, 0.5, 0.5), # default X is very small
 	},
 	"PU": {
 		"mag_range": [3.5],
@@ -47,11 +41,6 @@ const DATA := {
 		"eye_relief": Vector2(6.5, 12.5),
 		"lens_radius": 0.020,
 		"lens_center": Vector3(0.0, 0.0, -0.131),
-		"display": "Vudu",
-		"name": "EOTech Vudu 1-10x FFP",
-		"rarity": 2, # legendary
-		"value": 2500,
-		"reticleSizeP": Vector3(0.1, 0.3, 1.2), # default Z is too small
 	},
 	"Leopard": {
 		"isFFP": true,
@@ -61,9 +50,6 @@ const DATA := {
 		"eye_relief": Vector2(7.0, 11.5),
 		"lens_radius": 0.0185,
 		"lens_center": Vector3(0.0, 0.0, -0.177),
-		"display": "Leupold",
-		"name": "Leupold Mark 8 CQBSS",
-		"reticleSizeP": Vector3(0.2, 0.4, 0.6), # default X is very small
 	},
 }
 
@@ -160,18 +146,24 @@ static func _ensure_lens_geometry(optic, key: String) -> Dictionary:
 
 
 static func apply(lib) -> void:
-	var attData = load("res://Scripts/AttachmentData.gd").new()
-
-	for file in DATA:
-		var fields := {}
-		for key in DATA[file]:
-			if key in attData:
-				fields[key] = DATA[file][key]
-
-		if "display" in fields:
-			fields["inventory"] = fields["display"]
-			fields["equipment"] = fields["display"]
-			fields["rotated"] = fields["display"]
-
-		if !fields.is_empty():
-			lib.patch(lib.Registry.ITEMS, file, fields)
+	lib.patch(lib.Registry.ITEMS, "HMR", {
+		"rarity": 2, # legendary
+		"value": 2000,
+	})
+	lib.patch(lib.Registry.ITEMS, "POSP", {
+		"name": "POSP 2-6x",
+		"scope": false,
+		"variable": true,
+		"reticleSize": Vector3(0.3, 0.3, 0.3), # default X is very small
+		"reticleSizeP": Vector3(0.5, 0.5, 0.5), # default X is very small
+	})
+	lib.patch(lib.Registry.ITEMS, "Vudu", {
+		"name": "EOTech Vudu 1-10x FFP",
+		"rarity": 2, # legendary
+		"value": 3000,
+		"reticleSizeP": Vector3(0.1, 0.3, 1.2), # default Z is too small
+	})
+	lib.patch(lib.Registry.ITEMS, "Leopard", {
+		"name": "Leupold Mark 8 CQBSS 1.1-8x FFP",
+		"reticleSizeP": Vector3(0.2, 0.4, 0.6), # default X is very small
+	})
