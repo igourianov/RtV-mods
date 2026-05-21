@@ -172,8 +172,8 @@ const DATA := {
 		"weight": 5.0,
 	},
 	"Makarov": {
-		"name": "Макаров",
-		"inventory": "Мак",
+		"name": "ПМ [56-А-125]",
+		"inventory": "Makarov",
 	},
 	"MK18": {
 		"name": "Mk 18 Mod 1 SOPMOD",
@@ -268,7 +268,7 @@ const DATA := {
 	},
 	"KAR_21_308_Magazine": {
 		"name": "Magpul PMAG LR/SR M3 [MAG291]",
-		"display": "PMAG LS/SR",
+		"display": "PMAG 308",
 		"weight": 0.18,
 		"defaultAmount": 20,
 		"maxAmount": 20,
