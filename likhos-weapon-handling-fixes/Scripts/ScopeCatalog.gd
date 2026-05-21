@@ -22,6 +22,7 @@ const DATA := {
 		"lens_center": Vector3(0.0, 0.0, -0.069),
 		"display": "HAMR",
 		"name": "Leupold HAMR 4x",
+		"rarity": 2, # legendary
 		"weight": 0.4,
 	},
 	"POSP": {
