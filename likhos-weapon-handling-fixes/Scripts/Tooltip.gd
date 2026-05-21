@@ -18,8 +18,8 @@ func on_update_post(item) -> void:
 	if !tooltip:
 		return
 
-	var mag_row: Control = _ensure_row(tooltip, _META_MAG_ROW, "Magnification:", 85)
-	var eye_row: Control = _ensure_row(tooltip, _META_EYE_ROW, "Eye Relief:", 65)
+	var mag_row: Control = _ensure_row(tooltip, _META_MAG_ROW, "Magnification:")
+	var eye_row: Control = _ensure_row(tooltip, _META_EYE_ROW, "Eye Relief:")
 
 	mag_row.hide()
 	eye_row.hide()
@@ -39,36 +39,37 @@ func on_update_post(item) -> void:
 		elif mag.size() > 1:
 			text = "%s-%sx" % [_fmt_num(mag[0]), _fmt_num(mag[-1])]
 		if text != "":
-			mag_row.get_child(0).text = text
+			mag_row.get_child(1).text = text
 			mag_row.show()
 
 	if entry.has("eye_relief"):
 		var er = entry["eye_relief"]
 		if er is Vector2:
-			eye_row.get_child(0).text = "%s-%s cm" % [_fmt_num(er.x), _fmt_num(er.y)]
+			eye_row.get_child(1).text = "%s-%s cm" % [_fmt_num(er.x), _fmt_num(er.y)]
 			eye_row.show()
 
 
-func _ensure_row(tooltip, meta_key: String, title_text: String, value_offset_left: int) -> Control:
+func _ensure_row(tooltip, meta_key: String, title_text: String) -> Control:
 	if tooltip.has_meta(meta_key):
 		return tooltip.get_meta(meta_key)
 
 	var sibling: Label = tooltip.weight
 	var parent: Node = sibling.get_parent()
 
-	var row := Label.new()
-	row.theme = sibling.theme
-	row.add_theme_font_size_override("font_size", 12)
-	row.text = title_text
-	row.vertical_alignment = VERTICAL_ALIGNMENT_FILL
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 4)
+
+	var title := Label.new()
+	title.theme = sibling.theme
+	title.add_theme_font_size_override("font_size", 12)
+	title.text = title_text
+	title.vertical_alignment = VERTICAL_ALIGNMENT_FILL
+	row.add_child(title)
 
 	var value := Label.new()
 	value.add_theme_color_override("font_color", Color.GREEN)
 	value.add_theme_font_size_override("font_size", 12)
 	value.vertical_alignment = VERTICAL_ALIGNMENT_FILL
-	value.offset_left = value_offset_left
-	value.offset_right = value_offset_left + 80
-	value.offset_bottom = 22
 	row.add_child(value)
 
 	parent.add_child(row)
