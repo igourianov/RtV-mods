@@ -197,7 +197,7 @@ func _update_scope_shadow(optic) -> void:
 
 	var lens_world: Vector3 = optic.global_transform * ScopeCatalog.get_lens_center(optic)
 	var eye_relief: Vector2 = ScopeCatalog.get_eye_relief(att.file)
-	var slack: float = (eye_relief.y - eye_relief.x) * 2.0
+	var slack: float = 0.03 #(eye_relief.y - eye_relief.x) #* 2.0
 
 	ModConfig.current_lens_camera_distance = camera.global_transform.origin.distance_to(lens_world)
 	if ModConfig.current_lens_camera_distance < eye_relief.x:
