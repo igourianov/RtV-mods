@@ -1,4 +1,4 @@
-# ?
+# 2.8.1286
 * redone eye relief logic - rail position now works again for altering how close the scope is to the camera
 * all scopes now have realistc eye relief ranges instead of being hardcoded
 * scope shadow no longer wobbles as you move, but works as penalty outside declared eye relief (ACOG users beware!)
