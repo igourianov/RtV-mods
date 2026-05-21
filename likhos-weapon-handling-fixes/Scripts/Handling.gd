@@ -169,41 +169,9 @@ func _weapon_handling(h, rig, delta: float) -> bool:
 		else:
 			aim_z = data.aimPosition.z + 0.075
 
-	_update_scope_shadow(optic)
-
 	h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z) if optic else data.aimPosition
 	h.targetRotation = data.aimRotation
 	return true
-
-
-func _update_scope_shadow(optic) -> void:
-	ModConfig.current_scope_shadow = 0.0
-	ModConfig.current_lens_camera_distance = 0.0
-
-	if !optic || !gameData.PIP || gameData.secondaryOptic:
-		return
-
-	var att = optic.attachmentData
-	if !(att.scope || att.variable):
-		return
-
-	var camera = optic.get_viewport().get_camera_3d()
-	if !camera:
-		return
-
-	# adjust camera near plane to avoid clipping short eye relief scopes
-	if camera.near > 0.01:
-		camera.near = 0.01
-
-	var lens_world: Vector3 = optic.global_transform * ScopeCatalog.get_lens_center(optic)
-	var eye_relief: Vector2 = ScopeCatalog.get_eye_relief(att.file)
-	var slack: float = 0.03 #(eye_relief.y - eye_relief.x) #* 2.0
-
-	ModConfig.current_lens_camera_distance = camera.global_transform.origin.distance_to(lens_world)
-	if ModConfig.current_lens_camera_distance < eye_relief.x:
-		ModConfig.current_scope_shadow = clampf((eye_relief.x - ModConfig.current_lens_camera_distance) / slack, 0.0, 1.0)
-	elif ModConfig.current_lens_camera_distance > eye_relief.y:
-		ModConfig.current_scope_shadow = clampf((ModConfig.current_lens_camera_distance - eye_relief.y) / slack, 0.0, 1.0)
 
 
 func _set_target_idle(h):
