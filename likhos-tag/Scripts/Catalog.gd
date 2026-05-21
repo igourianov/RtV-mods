@@ -24,7 +24,7 @@ const DATA := {
 	},
 	"Vudu": {
 		"display": "Vudu",
-		"name": "EOTech Vudu",
+		"name": "EOTech Vudu 1-10x",
 		"weight": 0.75,
 	},
 	"Leopard": {

@@ -159,12 +159,10 @@ static func apply(lib) -> void:
 		"reticleSizeP": Vector3(0.5, 0.5, 0.5), # default X is very small
 	})
 	lib.patch(lib.Registry.ITEMS, "Vudu", {
-		"name": "EOTech Vudu 1-10x FFP",
 		"rarity": 2, # legendary
 		"value": 3000,
 		"reticleSizeP": Vector3(0.1, 0.3, 1.2), # default Z is too small
 	})
 	lib.patch(lib.Registry.ITEMS, "Leopard", {
-		"name": "Leupold Mark 8 CQBSS 1.1-8x FFP",
 		"reticleSizeP": Vector3(0.2, 0.4, 0.6), # default X is very small
 	})
