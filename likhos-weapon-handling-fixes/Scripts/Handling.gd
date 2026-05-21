@@ -163,11 +163,7 @@ func _weapon_handling(h, rig, delta: float) -> bool:
 
 	var aim_z = data.aimPosition.z - 0.1 # vanilla logic
 	if optic && gameData.isScoped && gameData.PIP:
-		var fixed_offset = ScopeCatalog.get_fixed_z(optic.attachmentData.file)
-		if fixed_offset:
-			aim_z = (optic.transform * ScopeCatalog.get_lens_center(optic)).z - fixed_offset
-		else:
-			aim_z = data.aimPosition.z + 0.075
+		aim_z = rig.get_meta("opticAimZ", 0.0)
 
 	h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z) if optic else data.aimPosition
 	h.targetRotation = data.aimRotation
@@ -224,6 +220,9 @@ func on_rig_update_post(_animate) -> void:
 	if gameData.secondaryOptic && !(optic && optic.secondary):
 		gameData.secondaryOptic = false
 		Out.bugfix("reset gameData.secondaryOptic flag")
+
+	if rig:
+		ScopeCatalog.update_optic_cache(rig, optic)
 
 	# fold/unfold iron sights based on optic presence
 	var data = rig.data if rig else null
