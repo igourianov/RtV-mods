@@ -137,6 +137,16 @@ const DATA := {
 		"display": "AK-74 mag.",
 		"weight": 0.23,
 	},
+	"Colt_1911_Magazine": {
+		"name": "Colt 1911 Magazine",
+		"display": "1911 mag.",
+		"weight": 0.08,
+	},
+	"Glock_17_Magazine": {
+		"name": "G17 Magazine",
+		"display": "G17 mag.",
+		"weight": 0.08,
+	},
 	"KAR_21_223_Magazine": {
 		"name": "Magpul PMAG M3 [MAG557]",
 		"display": "PMAG",
@@ -148,6 +158,38 @@ const DATA := {
 		"weight": 0.18,
 		"defaultAmount": 20,
 		"maxAmount": 20,
+	},
+	"KP_31_Drum": {
+		"name": "KP-31 Drum",
+		"display": "KP-31 Drum",
+		"weight": 1.1,
+	},
+	"M78_Magazine": {
+		"name": "M78 Magazine",
+		"display": "M78 mag.",
+		"weight": 0.3,
+	},
+	"Makarov_Magazine": {
+		"name": "Makarov Magazine",
+		"display": "Makarov mag.",
+		"weight": 0.05,
+	},
+	"MP5_Magazine": {
+		"name": "MP5 Magazine",
+		"display": "MP5 mag.",
+		"weight": 0.18,
+	},
+	"MP7_Magazine": {
+		"name": "MP7 Magazine",
+		"display": "MP7 mag.",
+		"weight": 0.1,
+		"defaultAmount": 40,
+		"maxAmount": 40,
+	},
+	"P320_Magazine": {
+		"name": "P320 Magazine",
+		"display": "P320 mag.",
+		"weight": 0.075,
 	},
 	"RK_Magazine": {
 		"name": "Sako RK-95 TP mag.",
