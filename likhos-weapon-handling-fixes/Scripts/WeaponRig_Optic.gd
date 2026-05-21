@@ -152,3 +152,6 @@ func _update_reticle(rig, optic) -> void:
 		optic.reticle.set_shader_parameter("shadow", rig.get_meta("scopeShadow", 0.0))
 	optic.reticle.set_shader_parameter("size", rig.reticleSize)
 	optic.reticle.set_shader_parameter("opacity", rig.ocularOpacity)
+
+	if gameData.isAiming && gameData.isScoped && rig.get_meta("scopeShadow", 0.0) > 0.5:
+		Out.protip("scope-shadow", "Adjust scope position on the rail to reduce scope shadow")
