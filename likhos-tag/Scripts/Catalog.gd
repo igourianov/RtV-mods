@@ -123,16 +123,16 @@ const DATA := {
 		"weight": 0.51,
 	},
 	"AK_12": {
-		"name": "AK-12",
+		"name": "AK-12 Gen 1 [6П70]",
 		"inventory": "AK-12",
 	},
 	"AKM": {
-		"name": "AKM \"Калаш\"",
+		"name": "AKM \"Калаш\" [6П1]",
 		"inventory": "AKM",
 		"weight": 3.1,
 	},
 	"AKS_74U": {
-		"name": "AKS-74U",
+		"name": "АКС-74У [6П26]",
 		"inventory": "AKS-74U",
 		"weight": 2.7,
 	},
@@ -173,14 +173,14 @@ const DATA := {
 	},
 	"Makarov": {
 		"name": "Макаров",
-		"inventory": "Makarov",
+		"inventory": "Мак",
 	},
 	"MK18": {
 		"name": "Mk 18 Mod 1 SOPMOD",
 		"inventory": "MK18",
 	},
 	"Mosin": {
-		"name": "Мосин 1891/30",
+		"name": "Трёхлинейка 1891/30",
 		"inventory": "Mosin",
 	},
 	"MP5": {
@@ -227,12 +227,12 @@ const DATA := {
 		"weight": 3.7,
 	},
 	"SVD": {
-		"name": "SVD \"Dragunov\"",
+		"name": "СВД \"Драгунов\" [6В1]",
 		"inventory": "SVD",
 		"weight": 3.7,
 	},
 	"VSS": {
-		"name": "VSS \"Vintorez\"",
+		"name": "ВСС \"Винторез\" [6П29]",
 		"inventory": "VSS",
 		"weight": 1.8,
 	},
