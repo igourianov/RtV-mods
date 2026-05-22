@@ -6,15 +6,14 @@ const ModConfig = preload("./ModConfig.gd")
 
 
 var _tooltip
-var _config := ModConfig.new()
 
 
 func create_config(config: ConfigFile) -> void:
-	_config.create(config)
+	ModConfig.create(config)
 
 
 func load_config(config: ConfigFile) -> void:
-	_config.apply(config)
+	ModConfig.apply(config)
 
 
 func setup(lib) -> void:

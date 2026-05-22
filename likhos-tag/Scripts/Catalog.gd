@@ -1,6 +1,7 @@
 extends RefCounted
 
 const Out = preload("../Lib/Out.gd")
+const ModConfig = preload("./ModConfig.gd")
 
 const EXTRAS := ["grau_index", "model"]
 const DATA := {
@@ -15,12 +16,12 @@ const DATA := {
 		"weight": 0.5,
 	},
 	"POSP": {
-		"name": "БелОМО ПОСП",
+		"name": ["BelOMO POSP", "БелОМО ПОСП"],
 		"weight": 0.9,
 	},
 	"PU": {
 		"inventory": "PU",
-		"name": "ПУ 3.5x",
+		"name": ["PU 3.5x", "ПУ 3.5x"],
 		"weight": 0.4,
 	},
 	"Vudu": {
@@ -45,7 +46,8 @@ const DATA := {
 	},
 	"Kobra": {
 		"inventory": "Kobra",
-		"name": "Аксион ЭКП-8-18 \"Кобра\"",
+		"name": ["Axion \"Kobra\"", "Аксион \"Кобра\""],
+		"model": ["EKP-8-18", "ЭКП-8-18"],
 		"weight": 0.4,
 	},
 	"Micro": {
@@ -95,7 +97,7 @@ const DATA := {
 	},
 	"PBS": {
 		"inventory": "PBS-1",
-		"name": "ПБС-1",
+		"name": ["PBS-1", "ПБС-1"],
 		"grau_index": "6Ч12",
 		"weight": 0.62,
 	},
@@ -125,18 +127,18 @@ const DATA := {
 		"weight": 0.51,
 	},
 	"AK_12": {
-		"name": "АК-12 Gen 1",
+		"name": ["AK-12 Gen 1", "АК-12 Gen 1"],
 		"grau_index": "6П70",
 		"inventory": "AK-12",
 	},
 	"AKM": {
-		"name": "АКМ \"Калаш\"",
+		"name": ["AKM \"Kalash\"", "АКМ \"Калаш\""],
 		"grau_index": "6П1",
 		"inventory": "AKM",
 		"weight": 3.1,
 	},
 	"AKS_74U": {
-		"name": "АКС-74У",
+		"name": ["AKS-74U", "АКС-74У"],
 		"grau_index": "6П26",
 		"inventory": "AKS-74U",
 		"weight": 2.7,
@@ -177,7 +179,7 @@ const DATA := {
 		"weight": 5.0,
 	},
 	"Makarov": {
-		"name": "ПМ",
+		"name": ["PM", "ПМ"],
 		"grau_index": "56-А-125",
 		"inventory": "PM",
 	},
@@ -186,7 +188,7 @@ const DATA := {
 		"inventory": "MK18",
 	},
 	"Mosin": {
-		"name": "Трёхлинейка 1891/30",
+		"name": ["Mosin-Nagant M1891", "Трёхлинейка 1891/30"],
 		"inventory": "Mosin",
 	},
 	"MP5": {
@@ -233,13 +235,13 @@ const DATA := {
 		"weight": 3.7,
 	},
 	"SVD": {
-		"name": "СВД \"Драгунов\"",
+		"name": ["SVD \"Dragunov\"", "СВД \"Драгунов\""],
 		"grau_index": "6В1",
 		"inventory": "SVD",
 		"weight": 3.7,
 	},
 	"VSS": {
-		"name": "ВСС \"Винторез\"",
+		"name": ["VSS \"Vintorez\"", "ВСС \"Винторез\""],
 		"grau_index": "6П29",
 		"inventory": "VSS",
 		"weight": 1.8,
@@ -344,13 +346,14 @@ const DATA := {
 
 
 static func apply(lib) -> void:
+	var idx = 0 if ModConfig.force_english_names else 1
 	for file in DATA:
-		#var fields: Dictionary = DATA[file].duplicate()
 		var fields := {}
 		for key in DATA[file]:
 			if !(key in EXTRAS):
-				fields[key] = DATA[file][key]
-				
+				var value = DATA[file][key]
+				fields[key] = value[idx] if value is Array else value
+
 		if "inventory" in fields:
 			var inv: String = fields["inventory"]
 			if !("rotated" in fields):
@@ -359,6 +362,6 @@ static func apply(lib) -> void:
 				fields["display"] = inv
 			if !("equipment" in fields):
 				fields["equipment"] = inv
-			
+
 		if !lib.patch(lib.Registry.ITEMS, file, fields):
 			Out.warning("patch failed for %s" % file)
