@@ -127,12 +127,12 @@ const DATA := {
 		"weight": 0.51,
 	},
 	"AK_12": {
-		"name": ["AK-12 Gen 1", "АК-12 Gen 1"],
+		"name": "AK-12 Gen 1",
 		"grau_index": "6П70",
 		"inventory": "AK-12",
 	},
 	"AKM": {
-		"name": ["AKM", "АКМ"],
+		"name": "AKM",
 		"grau_index": "6П1",
 		"inventory": "AKM",
 		"weight": 3.1,
