@@ -14,7 +14,7 @@ const DATA := {
 		"weight": 0.5,
 	},
 	"POSP": {
-		"name": "Зенит ПОСП",
+		"name": "БелОМО ПОСП",
 		"weight": 0.9,
 	},
 	"PU": {
@@ -44,7 +44,7 @@ const DATA := {
 	},
 	"Kobra": {
 		"inventory": "Kobra",
-		"name": "Аксион ЭКП-8-16 \"Кобра\"",
+		"name": "Аксион ЭКП-8-18 \"Кобра\"",
 		"weight": 0.4,
 	},
 	"Micro": {
@@ -69,12 +69,12 @@ const DATA := {
 	},
 	"ANPEQ": {
 		"inventory": "PEQ-15",
-		"name": "ATPIAL AN/PEQ-15",
+		"name": "L3 Insight AN/PEQ-15",
 		"weight": 0.21
 	},
 	"Hybrid": {
 		"inventory": ".46",
-		"name": "SilencerCo Hybrid .46",
+		"name": "SilencerCo Hybrid 46",
 		"weight": 0.4,
 	},
 	"Monster": {
@@ -84,7 +84,7 @@ const DATA := {
 	},
 	"Navy": {
 		"inventory": "Navy",
-		"name": "KAC Navy",
+		"name": "KAC MP5-N",
 		"weight": 0.43,
 	},
 	"OZ5": {
@@ -94,7 +94,7 @@ const DATA := {
 	},
 	"PBS": {
 		"inventory": "PBS-1",
-		"name": "ПБС-1",
+		"name": "ПБС-1 [6Ч12]",
 		"weight": 0.62,
 	},
 	"PTN": {
@@ -123,11 +123,11 @@ const DATA := {
 		"weight": 0.51,
 	},
 	"AK_12": {
-		"name": "AK-12 Gen 1 [6П70]",
+		"name": "АК-12 Gen 1 [6П70]",
 		"inventory": "AK-12",
 	},
 	"AKM": {
-		"name": "AKM \"Калаш\" [6П1]",
+		"name": "АКМ \"Калаш\" [6П1]",
 		"inventory": "AKM",
 		"weight": 3.1,
 	},
@@ -173,10 +173,10 @@ const DATA := {
 	},
 	"Makarov": {
 		"name": "ПМ [56-А-125]",
-		"inventory": "Makarov",
+		"inventory": "PM",
 	},
 	"MK18": {
-		"name": "Mk 18 Mod 1 SOPMOD",
+		"name": "Mk 18 Mod 1",
 		"inventory": "MK18",
 	},
 	"Mosin": {
@@ -203,7 +203,7 @@ const DATA := {
 		"weight": 2.0,
 	},
 	"P320": {
-		"name": "Sig P320",
+		"name": "SIG Sauer P320",
 		"inventory": "P320",
 	},
 	"Remington_870": {
@@ -217,7 +217,7 @@ const DATA := {
 		"weight": 3.5,
 	},
 	"RK_62M": {
-		"name": "Valmet RK-62M3",
+		"name": "Millog RK-62M3",
 		"inventory": "RK-62M3",
 		"weight": 4.1,
 	},
@@ -247,18 +247,18 @@ const DATA := {
 		"weight": 0.43,
 	},
 	"AKS_74U_Magazine": {
-		"name": "AK-74 \"Bakelite\" [6Л20]",
+		"name": "AK-74 \"Bakelite\" [6Л23]",
 		"display": "AK-74 mag.",
 		"weight": 0.23,
 	},
 	"Colt_1911_Magazine": {
-		"name": "Colt 1911 Magazine",
+		"name": "Colt 1911 mag.",
 		"display": "1911 mag.",
 		"weight": 0.08,
 	},
 	"Glock_17_Magazine": {
-		"name": "G17 Magazine",
-		"display": "G17 mag.",
+		"name": "Glock mag.",
+		"display": "Glock mag.",
 		"weight": 0.08,
 	},
 	"KAR_21_223_Magazine": {
@@ -279,34 +279,34 @@ const DATA := {
 		"weight": 1.1,
 	},
 	"M78_Magazine": {
-		"name": "M78 Magazine",
+		"name": "M78 mag.",
 		"display": "M78 mag.",
 		"weight": 0.3,
 	},
 	"Makarov_Magazine": {
-		"name": "Makarov Magazine",
-		"display": "Makarov mag.",
+		"name": "PM mag.",
+		"display": "PM mag.",
 		"weight": 0.05,
 	},
 	"MP5_Magazine": {
-		"name": "MP5 Magazine",
+		"name": "MP5 mag.",
 		"display": "MP5 mag.",
 		"weight": 0.18,
 	},
 	"MP7_Magazine": {
-		"name": "MP7 Magazine",
+		"name": "MP7 mag.",
 		"display": "MP7 mag.",
 		"weight": 0.1,
 		"defaultAmount": 40,
 		"maxAmount": 40,
 	},
 	"P320_Magazine": {
-		"name": "P320 Magazine",
+		"name": "P320 mag.",
 		"display": "P320 mag.",
 		"weight": 0.075,
 	},
 	"RK_Magazine": {
-		"name": "Sako RK-95 TP mag.",
+		"name": "Sako RK mag.",
 		"display": "RK mag.",
 		"weight": 0.17,
 	},
