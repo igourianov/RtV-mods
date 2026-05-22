@@ -41,7 +41,7 @@ const DATA := {
 	},
 	"EXPS": {
 		"inventory": "EXPS",
-		"name": "EOTech EXPS",
+		"name": "EOTech EXPS3-0",
 		"weight": 0.4,
 	},
 	"Kobra": {

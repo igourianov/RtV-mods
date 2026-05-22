@@ -76,7 +76,7 @@ Functional changes:
 | VDU | EOTech Vudu 1-10x | 0.6 → 0.75 |
 | Leopard | Leupold Mark 8 CQBSS | 0.7 → 0.85 |
 | MRM | Trijicon RMR | 0.1 → 0.035 |
-| EXP | EOTech EXPS | 0.5 → 0.4 |
+| EXP | EOTech EXPS3-0 | 0.5 → 0.4 |
 | Kobra | Axion Kobra | |
 | Micro | Aimpoint T2 | |
 | RMO | Trijicon MRO | 0.3 → 0.2 |
