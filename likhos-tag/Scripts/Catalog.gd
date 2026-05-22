@@ -245,6 +245,7 @@ const DATA := {
 		"grau_index": "6П29",
 		"inventory": "VSS",
 		"weight": 1.8,
+		"penetration": 4,
 	},
 	"AK_12_Magazine": {
 		"name": "AK-12 mag",
