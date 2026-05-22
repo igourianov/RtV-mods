@@ -6,7 +6,6 @@ const Inputs = preload("./Inputs.gd")
 
 var _lib
 var _hooks: Array[int]
-var _menu_pos_auto: int = 0
 var _inputs: Inputs
 
 var mod_id: String
@@ -44,7 +43,6 @@ func _load_mod_info():
 
 func _init_config():
 
-	_menu_pos_auto = 0
 	var config = ConfigFile.new()
 	create_config(config)
 	if !config.get_sections().size():
@@ -93,11 +91,6 @@ func register_hook(hookName: String, callback: Callable):
 	else:
 		Out.warning("hook(%s) failed" % hookName)
 	return id
-
-
-func next_menu_pos() -> int:
-	_menu_pos_auto += 1
-	return _menu_pos_auto
 
 
 func register_action(action: String, label: String, event: InputEvent, hidden: bool = false):
