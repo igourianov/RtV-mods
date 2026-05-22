@@ -1,7 +1,7 @@
 # Requirements
 
 - Road to Vostok 0.1.1.3 (Godot 4.6.2)
-- [Metro Mod Loader](https://modworkshop.net/mod/56483) v3.0.1 or later (separate install, not bundled with the game)
+- [Metro Mod Loader](https://modworkshop.net/mod/55623) v3.0.1 or later (separate install, not bundled with the game)
 
 # Compatibility
 
