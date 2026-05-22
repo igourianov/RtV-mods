@@ -16,12 +16,13 @@ const DATA := {
 		"weight": 0.5,
 	},
 	"POSP": {
-		"name": ["BelOMO POSP", "БелОМО ПОСП"],
+		"name": ["Zenit-BelOMO POSP", "Зенит-БелОМО ПОСП"],
 		"weight": 0.9,
 	},
 	"PU": {
 		"inventory": "PU",
 		"name": ["PU 3.5x", "ПУ 3.5x"],
+		"grau_index": "56-В-421У",
 		"weight": 0.4,
 	},
 	"Vudu": {

@@ -71,7 +71,7 @@ Functional changes:
 |--------------|---------------|-----------------------------|
 | ATOG | Trijicon ACOG TA31 | 0.6 → 0.5 |
 | HMR | Leupold HAMR 4x | 0.6 → 0.5 |
-| POSP | BelOMO POSP | 0.6 → 0.9 |
+| POSP | Zenit-BelOMO POSP | 0.6 → 0.9 |
 | PU Scope | PU 3.5x | 0.6 → 0.4 |
 | VDU | EOTech Vudu 1-10x | 0.6 → 0.75 |
 | Leopard | Leupold Mark 8 CQBSS | 0.7 → 0.85 |
