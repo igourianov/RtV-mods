@@ -20,7 +20,6 @@ static var disable_canted_override: bool
 static var disable_lowered_override: bool
 static var override_movement_speeds: bool
 static var nvg_pip_blur: bool
-static var real_scope_mag: bool
 static var ammo_tooltips: bool
 static var crouch_speed: float
 static var walk_speed: float
@@ -79,7 +78,6 @@ static func apply_config(config: ConfigFile):
 	disable_lowered_override = !_get_config_value(config, "Bool", "enableLoweredOverride", DEFAULT_ENABLED)
 	override_movement_speeds = _get_config_value(config, "Bool", "overrideMovementSpeeds", DEFAULT_ENABLED)
 	nvg_pip_blur = _get_config_value(config, "Bool", "nvgPipBlur", DEFAULT_ENABLED)
-	real_scope_mag = _get_config_value(config, "Bool", "realScopeMagnification", DEFAULT_ENABLED)
 	ammo_tooltips = _get_config_value(config, "Bool", "ammoTooltips", DEFAULT_ENABLED)
 	crouch_speed = _get_config_value(config, "Float", "crouchSpeed", DEFAULT_CROUCH_SPEED)
 	walk_speed = _get_config_value(config, "Float", "walkSpeed", DEFAULT_WALK_SPEED)
@@ -158,7 +156,6 @@ static func create_template(config: ConfigFile):
 			"3rail": "Rail movement"
 		}
 	})
-	_set_config_entry(config, "Bool", "Aim tweaks", "realScopeMagnification", "Realistic scope magnification", "Use each optic's real magnification values for zoom and FOV. Disable for vanilla zoom behavior.", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Dropdown", "Aim tweaks", "magSchema", "Magnification schema", "Which set of magnification steps variable optics use. Falls back to Short when an optic lacks the chosen schema.", DEFAULT_MAG_SCHEMA, {
 		"options": {

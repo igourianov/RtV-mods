@@ -1,3 +1,6 @@
+# ?
+* removed dead MCM toggle fo "real scope magnifications"
+
 # 2.8.1288
 * moved all the attachment renaming and weight changes into [Likho's tag](https://modworkshop.net/mod/56993) mod
 
