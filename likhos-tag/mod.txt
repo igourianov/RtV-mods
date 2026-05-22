@@ -1,14 +1,14 @@
 [mod]
 name="Likho's Tag"
 id="likhos-tag"
-version="1.0.36"
+version="1.0.42"
 prefix="[likho-tag]"
 description="Likho's comprehensive renaming and property tweaks for weapons and attachments"
 debug=true
 priority=-10
 
 [hooks]
-"res://Scripts/Tooltip.gd"="Update"
+"res://Scripts/Tooltip.gd"="_ready,Update,Reset"
 
 [autoload]
 LikhosTag="res://mods/likhos-tag/Scripts/Main.gd"

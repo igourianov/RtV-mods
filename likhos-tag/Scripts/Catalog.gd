@@ -2,6 +2,7 @@ extends RefCounted
 
 const Out = preload("../Lib/Out.gd")
 
+const EXTRAS := ["grau_index", "model"]
 const DATA := {
 	"ACOG": {
 		"inventory": "ACOG",
@@ -94,7 +95,8 @@ const DATA := {
 	},
 	"PBS": {
 		"inventory": "PBS-1",
-		"name": "ПБС-1 [6Ч12]",
+		"name": "ПБС-1",
+		"grau_index": "6Ч12",
 		"weight": 0.62,
 	},
 	"PTN": {
@@ -123,16 +125,19 @@ const DATA := {
 		"weight": 0.51,
 	},
 	"AK_12": {
-		"name": "АК-12 Gen 1 [6П70]",
+		"name": "АК-12 Gen 1",
+		"grau_index": "6П70",
 		"inventory": "AK-12",
 	},
 	"AKM": {
-		"name": "АКМ \"Калаш\" [6П1]",
+		"name": "АКМ \"Калаш\"",
+		"grau_index": "6П1",
 		"inventory": "AKM",
 		"weight": 3.1,
 	},
 	"AKS_74U": {
-		"name": "АКС-74У [6П26]",
+		"name": "АКС-74У",
+		"grau_index": "6П26",
 		"inventory": "AKS-74U",
 		"weight": 2.7,
 	},
@@ -172,7 +177,8 @@ const DATA := {
 		"weight": 5.0,
 	},
 	"Makarov": {
-		"name": "ПМ [56-А-125]",
+		"name": "ПМ",
+		"grau_index": "56-А-125",
 		"inventory": "PM",
 	},
 	"MK18": {
@@ -227,27 +233,32 @@ const DATA := {
 		"weight": 3.7,
 	},
 	"SVD": {
-		"name": "СВД \"Драгунов\" [6В1]",
+		"name": "СВД \"Драгунов\"",
+		"grau_index": "6В1",
 		"inventory": "SVD",
 		"weight": 3.7,
 	},
 	"VSS": {
-		"name": "ВСС \"Винторез\" [6П29]",
+		"name": "ВСС \"Винторез\"",
+		"grau_index": "6П29",
 		"inventory": "VSS",
 		"weight": 1.8,
 	},
 	"AK_12_Magazine": {
-		"name": "AK-12 mag. [6Л34]",
+		"name": "AK-12 mag.",
+		"grau_index": "6Л34",
 		"display": "AK-12 mag.",
 		"weight": 0.19,
 	},
 	"AKM_Magazine": {
-		"name": "AKM \"Banana\" [57-A-231]",
+		"name": "AKM \"Banana\"",
+		"grau_index": "57-A-231",
 		"display": "AKM mag.",
 		"weight": 0.43,
 	},
 	"AKS_74U_Magazine": {
-		"name": "AK-74 \"Bakelite\" [6Л23]",
+		"name": "AK-74 \"Bakelite\"",
+		"grau_index": "6Л23",
 		"display": "AK-74 mag.",
 		"weight": 0.23,
 	},
@@ -262,12 +273,14 @@ const DATA := {
 		"weight": 0.08,
 	},
 	"KAR_21_223_Magazine": {
-		"name": "Magpul PMAG M3 [MAG557]",
+		"name": "Magpul PMAG M3",
+		"model": "MAG557",
 		"display": "PMAG",
 		"weight": 0.14
 	},
 	"KAR_21_308_Magazine": {
-		"name": "Magpul PMAG LR/SR M3 [MAG291]",
+		"name": "Magpul PMAG LR/SR M3",
+		"model": "MAG291",
 		"display": "PMAG 308",
 		"weight": 0.18,
 		"defaultAmount": 20,
@@ -316,12 +329,14 @@ const DATA := {
 		"weight": 0.17,
 	},
 	"SVD_Magazine": {
-		"name": "SVD \"Waffle\" [6Л10]",
+		"name": "SVD \"Waffle\"",
+		"grau_index": "6Л10",
 		"display": "SVD mag.",
 		"weight": 0.21,
 	},
 	"VSS_Magazine": {
-		"name": "VSS \"Plum\" [6Л24]",
+		"name": "VSS \"Plum\"",
+		"grau_index": "6Л24",
 		"display": "VSS mag.",
 		"weight": 0.18,
 	},
@@ -330,11 +345,14 @@ const DATA := {
 
 static func apply(lib) -> void:
 	for file in DATA:
-		var fields: Dictionary = DATA[file].duplicate()
+		#var fields: Dictionary = DATA[file].duplicate()
+		var fields := {}
+		for key in DATA[file]:
+			if !(key in EXTRAS):
+				fields[key] = DATA[file][key]
+				
 		if "inventory" in fields:
 			var inv: String = fields["inventory"]
-			if !("rotated" in fields):
-				fields["rotated"] = inv
 			if !("rotated" in fields):
 				fields["rotated"] = inv
 			if !("display" in fields):
