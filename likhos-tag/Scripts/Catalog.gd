@@ -46,8 +46,8 @@ const DATA := {
 	},
 	"Kobra": {
 		"inventory": "Kobra",
-		"name": ["Axion \"Kobra\"", "Аксион \"Кобра\""],
-		"model": ["EKP-8-18", "ЭКП-8-18"],
+		"name": ["Axion Kobra", "Аксион Кобра"],
+		"model": "EKP-8-18",
 		"weight": 0.4,
 	},
 	"Micro": {
@@ -235,13 +235,13 @@ const DATA := {
 		"weight": 3.7,
 	},
 	"SVD": {
-		"name": ["SVD \"Dragunov\"", "СВД \"Драгунов\""],
+		"name": ["Dragunov", "Драгунов"],
 		"grau_index": "6В1",
 		"inventory": "SVD",
 		"weight": 3.7,
 	},
 	"VSS": {
-		"name": ["VSS \"Vintorez\"", "ВСС \"Винторез\""],
+		"name": ["Vintorez", "Винторез"],
 		"grau_index": "6П29",
 		"inventory": "VSS",
 		"weight": 1.8,
@@ -260,7 +260,7 @@ const DATA := {
 		"weight": 0.43,
 	},
 	"AKS_74U_Magazine": {
-		"name": "AK-74 \"Bakelite\"",
+		"name": "AK-74 Bakelite mag",
 		"grau_index": "6Л23",
 		"display": "AK-74 mag",
 		"weight": 0.23,
@@ -332,13 +332,13 @@ const DATA := {
 		"weight": 0.17,
 	},
 	"SVD_Magazine": {
-		"name": "SVD \"Waffle\"",
+		"name": "SVD Waffle mag",
 		"grau_index": "6Л10",
 		"display": "SVD mag",
 		"weight": 0.21,
 	},
 	"VSS_Magazine": {
-		"name": "VSS \"Plum\"",
+		"name": "VSS Plum mag",
 		"grau_index": "6Л24",
 		"display": "VSS mag",
 		"weight": 0.18,
