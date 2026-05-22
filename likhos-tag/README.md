@@ -12,6 +12,10 @@ Functional changes:
 * KAR-21 (308) mag 30 -> 20
 * VSS penetration 3 -> 4
 
+## Out of scope / Will not fix
+
+The recipe names retain vanilla weapon names. The name is used as a look up key, and I can't change it without breaking every other mod touching recipes. Not worth it to just change the name.
+
 
 ## Weapon Name and Weight Changes
 !!!
