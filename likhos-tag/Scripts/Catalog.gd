@@ -132,7 +132,7 @@ const DATA := {
 		"inventory": "AK-12",
 	},
 	"AKM": {
-		"name": ["AKM \"Kalash\"", "АКМ \"Калаш\""],
+		"name": ["AKM", "АКМ"],
 		"grau_index": "6П1",
 		"inventory": "AKM",
 		"weight": 3.1,
@@ -175,7 +175,7 @@ const DATA := {
 	},
 	"M78": {
 		"name": "Valmet M78",
-		"inventory": "Valmet",
+		"inventory": "M78",
 		"weight": 5.0,
 	},
 	"Makarov": {
@@ -254,7 +254,7 @@ const DATA := {
 		"weight": 0.19,
 	},
 	"AKM_Magazine": {
-		"name": "AKM \"Banana\"",
+		"name": "AKM mag",
 		"grau_index": "57-A-231",
 		"display": "AKM mag",
 		"weight": 0.43,
