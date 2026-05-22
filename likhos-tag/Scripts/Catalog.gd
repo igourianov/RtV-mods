@@ -332,12 +332,15 @@ static func apply(lib) -> void:
 	for file in DATA:
 		var fields: Dictionary = DATA[file].duplicate()
 		if "inventory" in fields:
+			var inv: String = fields["inventory"]
 			if !("rotated" in fields):
-				fields["rotated"] = fields["inventory"]
+				fields["rotated"] = inv
 			if !("rotated" in fields):
-				fields["rotated"] = fields["inventory"]
+				fields["rotated"] = inv
 			if !("display" in fields):
-				fields["display"] = fields["inventory"]
+				fields["display"] = inv
+			if !("equipment" in fields):
+				fields["equipment"] = inv
 			
 		if !lib.patch(lib.Registry.ITEMS, file, fields):
 			Out.warning("patch failed for %s" % file)
