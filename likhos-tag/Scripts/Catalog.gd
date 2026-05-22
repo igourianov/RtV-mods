@@ -85,7 +85,7 @@ const DATA := {
 	},
 	"Navy": {
 		"inventory": "Navy",
-		"name": "KAC MP5-N",
+		"name": "KAC MP5-N Suppressor",
 		"weight": 0.43,
 	},
 	"OZ5": {
