@@ -16,4 +16,4 @@ LikhosMrClean="res://mods/likhos-mr-clean/Scripts/Main.gd"
 enabled=true
 
 [updates]
-modworkshop=0
+modworkshop=57039
