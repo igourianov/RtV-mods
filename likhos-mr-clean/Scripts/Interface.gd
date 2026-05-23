@@ -16,40 +16,45 @@ func _init(lib) -> void:
 
 func on_release_pre() -> void:
 	var caller = _lib._caller
-	if !caller.itemDragged || !caller.canCombine: return
-	if !_is_wrk(caller.hoverItem) || !_is_weapon(caller.itemDragged): return
-	_combine(caller, caller.hoverItem, caller.itemDragged)
+	if !caller.itemDragged || !caller.canCombine:
+		return
+	var target = caller.hoverItem.slotData if caller.hoverItem else null
+	if !target || !target.itemData || target.itemData.file != WRK_FILE:
+		return
+	var source = caller.itemDragged.slotData
+	if !source || !source.itemData || source.itemData.type != "Weapon":
+		return
+
+	_combine(caller, caller.hoverItem, caller.itemDragged) # no await deliberate
+	caller.Return(caller.itemDragged)
+	caller.Reset()
 
 
-func _combine(caller, wrkItem, weaponItem) -> void:
-	if wrkItem.slotData.condition <= 0 || weaponItem.slotData.condition >= 100:
-		caller.Return(weaponItem)
-		caller.Reset()
+func _combine(caller, kitItem, weaponItem) -> void:
+	var kitSlotData = kitItem.slotData
+	var weaponSlotData = weaponItem.slotData
+
+	if kitSlotData.condition <= 0 || weaponSlotData.condition >= 100:
 		caller.PlayError()
 		return
 
-	caller.Return(weaponItem)
-	caller.PlayStack()
-	caller.Reset()
-
-	var wrkGrid = wrkItem.get_parent()
-
-	await _use_anim(caller, wrkItem, REPAIR_TIME)
+	await _use_anim(caller, kitItem, REPAIR_TIME)
 
 	if gameData.isDead: return
 
-	var repairAmount = min(100.0 - weaponItem.slotData.condition, wrkItem.slotData.condition)
-	weaponItem.slotData.condition += repairAmount
-	wrkItem.slotData.condition -= repairAmount
+	var repairAmount = min(100.0 - weaponSlotData.condition, kitSlotData.condition)
+	weaponSlotData.condition += repairAmount
+	kitSlotData.condition -= repairAmount
 
 	weaponItem.UpdateDetails()
-	wrkItem.UpdateDetails()
+	kitItem.UpdateDetails()
 
-	if wrkItem.slotData.condition <= 0:
+	if kitSlotData.condition <= 0:
 		Out.debug("WRK depleted, consuming")
-		if wrkGrid && wrkGrid.has_method("Pick"):
-			wrkGrid.Pick(wrkItem)
-		wrkItem.queue_free()
+		var grid = kitItem.get_parent()
+		if grid && grid.has_method("Pick"):
+			grid.Pick(kitItem)
+		kitItem.queue_free()
 
 
 func _use_anim(caller, targetItem, timer: float):
@@ -70,11 +75,3 @@ func _use_anim(caller, targetItem, timer: float):
 	await prog.completed
 	prog.queue_free()
 	gameData.isOccupied = false
-
-
-func _is_wrk(item) -> bool:
-	return item && item.slotData && item.slotData.itemData && item.slotData.itemData.file == WRK_FILE
-
-
-func _is_weapon(item) -> bool:
-	return item && item.slotData && item.slotData.itemData && item.slotData.itemData.type == "Weapon"

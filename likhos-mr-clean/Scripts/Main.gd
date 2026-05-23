@@ -28,7 +28,7 @@ func _strip_repair_recipes() -> void:
 	var removed: int = 0
 	for i in range(weapons.size() - 1, -1, -1):
 		var r = weapons[i]
-		if r && r.get("repair"):
+		if r && r.repair:
 			weapons.remove_at(i)
 			removed += 1
 
