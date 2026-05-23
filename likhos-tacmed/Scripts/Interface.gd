@@ -1,6 +1,8 @@
 extends Node
 
 const Out = preload("../Lib/Out.gd")
+const INTERFACE_NODE := "/root/Map/Core/UI/Interface"
+const CHARACTER_NODE := "/root/Map/Core/Controller/Character"
 
 const TACMED = {
 	"IFAK": {
@@ -95,8 +97,6 @@ func on_release_pre() -> void:
 	var source = caller.itemDragged.slotData
 	if !source || !source.itemData:
 		return
-	#if !target.itemData.compatible.any(func(i): return i.file == source.itemData.file):
-	#	return
 
 	Out.debug("custom heal item reload")
 	_combine(caller, caller.hoverItem, caller.itemDragged, extraData) # no await deliberate
@@ -128,13 +128,13 @@ func _combine(caller, targetItem, sourceItem, extraData):
 func _input(ev):
 	if ev.is_action_pressed("tacmed"):
 		Out.debug("action pressed: tacmed")
-		_tacmed_heal(_lib._caller.get_node("/root/Map/Core/UI/Interface"), _lib._caller.get_node("/root/Map/Core/Controller/Character"))
+		_tacmed_heal(get_node(INTERFACE_NODE), get_node(CHARACTER_NODE))
 		return
 
 	if ev.is_action_pressed("hurt_myself"):
-		_hurt_myself(_lib._caller.get_node("/root/Map/Core/Controller/Character"), true)
+		_hurt_myself(get_node(CHARACTER_NODE), true)
 	elif ev.is_action_pressed("hurt_myself_more"):
-		_hurt_myself(_lib._caller.get_node("/root/Map/Core/Controller/Character"), false)
+		_hurt_myself(get_node(CHARACTER_NODE), false)
 		
 
 func _hurt_myself(caller, bleedOnly: bool):
