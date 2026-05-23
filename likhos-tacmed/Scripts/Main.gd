@@ -45,7 +45,9 @@ func _patch_items(lib) -> void:
 		lib.get_entry(lib.Registry.ITEMS, "Antibiotics"),
 		lib.get_entry(lib.Registry.ITEMS, "Cold_Medicine"),
 		lib.get_entry(lib.Registry.ITEMS, "Tourniquet"),
-		lib.get_entry(lib.Registry.ITEMS, "Tourniquet_Improvised")
+		lib.get_entry(lib.Registry.ITEMS, "Tourniquet_Improvised"),
+		lib.get_entry(lib.Registry.ITEMS, "Balm"),
+		lib.get_entry(lib.Registry.ITEMS, "Lotion")
 	]
 	lib.patch(lib.Registry.ITEMS, "IFAK", {
 		"showCondition": true,
