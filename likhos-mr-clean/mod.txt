@@ -1,13 +1,13 @@
 [mod]
 name="Likho's Mr. Clean"
 id="likhos-mr-clean"
-version="1.0.2"
+version="1.0.24"
 prefix="[likho-mr-clean]"
 description="Likho's mod reworking the Weapon Repair Kit into a reusable Weapon Cleaning Kit"
 debug=false
 
 [hooks]
-"res://Scripts/Interface.gd"="Combine,Hover"
+"res://Scripts/Interface.gd"="Release"
 
 [autoload]
 LikhosMrClean="res://mods/likhos-mr-clean/Scripts/Main.gd"

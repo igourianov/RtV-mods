@@ -1,6 +1,6 @@
 # Likho's Mr. Clean
 
-Road to Vostok mod that reworks the Weapon Repair Kit into a reusable Weapon Cleaning Kit. Lore friendly.
+RtV mod that reworks functionality of the Weapon Repair Kit into a Cleaning Kit.
 
 ## Weapon Cleaning Kit
 

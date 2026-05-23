@@ -15,8 +15,7 @@ This mod uses the registry API and hooks vanilla methods through Metro Mod Loade
 - Strips every `repair == true` entry from `res://Crafting/Recipes.tres`'s weapons array. Recipes return on uninstall.
 
 **Hooks** (other mods that also replace these will conflict, pick one):
-- `Interface.Combine` (replace, only for WRK + weapon path; falls through to vanilla otherwise)
-- `Interface.Hover` (post)
+- `Interface.Release` (pre)
 
 # Install / Uninstall
 

@@ -14,19 +14,11 @@ func _init(lib) -> void:
 	_lib = lib
 
 
-func on_hover_post() -> void:
+func on_release_pre() -> void:
 	var caller = _lib._caller
-	if !caller.itemDragged || !caller.hoverItem: return
-	if _is_wrk(caller.hoverItem) && _is_weapon(caller.itemDragged):
-		caller.canCombine = true
-
-
-func on_combine(targetItem) -> void:
-	var caller = _lib._caller
-	if !caller.itemDragged: return
-	if !_is_wrk(targetItem) || !_is_weapon(caller.itemDragged): return
-	_combine(caller, targetItem, caller.itemDragged)
-	_lib.skip_super()
+	if !caller.itemDragged || !caller.canCombine: return
+	if !_is_wrk(caller.hoverItem) || !_is_weapon(caller.itemDragged): return
+	_combine(caller, caller.hoverItem, caller.itemDragged)
 
 
 func _combine(caller, wrkItem, weaponItem) -> void:

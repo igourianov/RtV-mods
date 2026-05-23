@@ -15,8 +15,7 @@ func setup(lib) -> void:
 
 	_interface = Interface.new(lib)
 
-	register_hook("interface-combine", _interface.on_combine)
-	register_hook("interface-hover-post", _interface.on_hover_post)
+	register_hook("interface-release-pre", _interface.on_release_pre)
 
 
 func _strip_repair_recipes() -> void:
