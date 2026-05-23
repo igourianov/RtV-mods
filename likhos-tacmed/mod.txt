@@ -1,13 +1,13 @@
 [mod]
 name="Likho's TacMed"
 id="likhos-tacmed"
-version="1.3.131"
+version="1.3.133"
 prefix="[likho-tacmed]"
 description="Likho's mod overhauling advanced healing consumables"
 debug=false
 
 [hooks]
-"res://Scripts/Interface.gd"="Use,Combine,Hover"
+"res://Scripts/Interface.gd"="Use,Release"
 "res://Scripts/Inputs.gd"="CreateActions,ResetActions"
 
 [autoload]

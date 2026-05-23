@@ -15,8 +15,7 @@ func setup(lib) -> void:
 	add_child(_interface)
 
 	register_hook("interface-use", _interface.on_use)
-	register_hook("interface-combine", _interface.on_combine)
-	register_hook("interface-hover-post", _interface.on_hover_post)
+	register_hook("interface-release-pre", _interface.on_release_pre)
 
 	var tacmedKey = InputEventKey.new()
 	tacmedKey.keycode = KEY_Z

@@ -82,39 +82,34 @@ func _use_anim(caller, targetItem, timer: float):
 	gameData.isOccupied = false
 
 
-func on_hover_post():
+func on_release_pre() -> void:
 	var caller = _lib._caller
-	if caller.itemDragged && caller.hoverItem:
-		_hover_post(caller, caller.hoverItem, caller.itemDragged)
+	if !caller.itemDragged || !caller.canCombine:
+		return
+	var target = caller.hoverItem.slotData if caller.hoverItem else null
+	if !target || !target.itemData:
+		return
+	var extraData = TACMED[target.itemData.file]
+	if !extraData || !extraData.replenishTime:
+		return
+	var source = caller.itemDragged.slotData
+	if !source || !source.itemData:
+		return
+	#if !target.itemData.compatible.any(func(i): return i.file == source.itemData.file):
+	#	return
 
-
-func _hover_post(caller, targetItem, sourceItem):
-	var targetItemData = targetItem.slotData.itemData
-	var sourceItemData = sourceItem.slotData.itemData
-	var extraData = TACMED[targetItemData.file]
-	if extraData && targetItemData.compatible.any(func(i): return i.file == sourceItemData.file):
-		caller.canCombine = true
-
-
-func on_combine(targetItem):
-	var caller = _lib._caller
-	var itemData = targetItem.slotData.itemData
-	var extraData = TACMED[itemData.file]
-	if extraData && caller.canCombine:
-		Out.debug("custom heal item reload")
-		_combine(caller, targetItem, caller.itemDragged, extraData)
-		_lib.skip_super()
+	Out.debug("custom heal item reload")
+	_combine(caller, caller.hoverItem, caller.itemDragged, extraData) # no await deliberate
+	caller.Return(caller.itemDragged)
+	caller.Reset()
 
 
 func _combine(caller, targetItem, sourceItem, extraData):
 	if targetItem.slotData.condition >= 100.0:
-		caller.Return(sourceItem)
-		caller.Reset()
 		caller.PlayError()
 		return
 
 	caller.PlayStack()
-	caller.Reset()
 
 	await _use_anim(caller, targetItem, extraData.replenishTime)
 
@@ -124,8 +119,7 @@ func _combine(caller, targetItem, sourceItem, extraData):
 	if !replenish:
 		replenish = extraData.replenishDefault
 
-	targetItem.slotData.condition += replenish
-	targetItem.slotData.condition = min(targetItem.slotData.condition, 100.0)
+	targetItem.slotData.condition = min(targetItem.slotData.condition + replenish, 100.0)
 	targetItem.UpdateDetails()
 
 	sourceItem.queue_free()
