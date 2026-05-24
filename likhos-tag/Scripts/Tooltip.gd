@@ -60,20 +60,18 @@ func on_update_post(item) -> void:
 		tooltip.caliber.get_child(0).text = caliber_name
 		tooltip.caliber.show()
 
-	if itemData.maxAmount:
+	if itemData.maxAmount && itemData.type == "Attachment" && itemData.subtype == "Magazine":
 		tooltip.capacity.get_child(0).text = itemData.maxAmount
 		tooltip.capacity.show()
 
-	var grau_index = extra_data.get("grau_index", "")
-	if grau_index:
+	if extra_data.grau_index:
 		var row = tooltip.get_node(ROW_PATH + "likho_grau")
-		row.get_child(1).text = grau_index
+		row.get_child(1).text = extra_data.grau_index
 		row.show()
 
-	var model_name = extra_data.get("model", "")
-	if model_name:
+	if extra_data.model_name:
 		var row = tooltip.get_node(ROW_PATH + "likho_model")
-		row.get_child(1).text = model_name
+		row.get_child(1).text = extra_data.model_name
 		row.show()
 
 	tooltip.panel.size = Vector2(256, 0)
