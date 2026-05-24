@@ -180,7 +180,7 @@ const DATA := {
 		"weight": 5.0,
 	},
 	"Makarov": {
-		"name": ["PM", "ПМ"],
+		"name": ["Makarov", "Макаров"],
 		"grau_index": "56-А-125",
 		"inventory": "PM",
 	},
