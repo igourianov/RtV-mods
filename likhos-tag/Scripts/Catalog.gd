@@ -344,6 +344,11 @@ const DATA := {
 		"display": "VSS mag",
 		"weight": 0.18,
 	},
+	"PV7": {
+		"name": "AN/PVS-7",
+		"inventory": "PVS-7",
+		"weight": 0.9,
+	},
 }
 
 

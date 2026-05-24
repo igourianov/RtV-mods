@@ -98,6 +98,10 @@ The recipe names retain vanilla weapon names. The name is used as a look up key,
 | SOCOM | SureFire SOCOM556 RC2 | 0.5 → 0.48 |
 | Thor | AWC Thor PSR | 0.7 → 0.51 |
 !!!
+### Other
+| Vanilla Name | Override Name | Weight (Vanilla → Override) |
+|--------------|---------------|-----------------------------|
+| PV7 | AN/PVS-7 | 1.2 → 0.9 |
 ## [Check out my other mods](https://modworkshop.net/search/mods?query=%22Likho%27s%22&sort=likes)
 
 *Feedback and likes are welcome!*
