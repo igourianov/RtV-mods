@@ -32,7 +32,7 @@ The recipe names retain vanilla weapon names. The name is used as a look up key,
 | KP-31 | Suomi KP-31 | |
 | M4A1 | Colt M4A1 | 3.0 → 3.3 |
 | M78 | Valmet M78 | 4.8 → 5.0 |
-| Karov | PM | |
+| Karov | Makarov | |
 | KM18 | Mk 18 Mod 1 | |
 | Mosin | Mosin-Nagant M1891 | |
 | PM5 | H&K MP5A3 | 2.6 → 3.1 |
