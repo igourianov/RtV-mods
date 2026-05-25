@@ -2,6 +2,7 @@ extends "../Lib/Main.gd"
 
 const Interface = preload("./Interface.gd")
 const ItemData = preload("res://Scripts/ItemData.gd")
+const CleaningKitRefill = preload("../Recipes/Cleaning_Kit_Refill.tres")
 
 const WRK_ID := "Weapon_Repair_Kit"
 const RECIPES_PATH := "res://Crafting/Recipes.tres"
@@ -14,6 +15,11 @@ var _interface
 func setup(lib) -> void:
 	_strip_repair_recipes()
 	_patch_wrk(lib)
+
+	lib.register(lib.Registry.RECIPES, "likhos_cleaning_kit_refill", {
+		"recipe": CleaningKitRefill,
+		"category": "weapons",
+	})
 
 	_interface = Interface.new(lib)
 
@@ -44,19 +50,22 @@ func _patch_wrk(lib) -> void:
 		compatible.append(m.entry)
 	Out.debug("found %d weapons for WRK compatibility" % compatible.size())
 
+	var icon: ImageTexture = ImageTexture.create_from_image(Image.load_from_file(ICON_PATH))
 	lib.patch(lib.Registry.ITEMS, WRK_ID, {
 		"name": "Likho's No.9 Gun Cleaning Kit",
 		"inventory": "Cleaning Kit",
 		"rotated": "Cleaning Kit",
 		"equipment": "Cleaning Kit",
-		"display": "Cleaning Kit",
+		"display": "C. Kit",
 		"showCondition": true,
 		"compatible": compatible,
-		"tetris": _rebuild_tetris(TETRIS_PATH, Image.load_from_file(ICON_PATH))
+		"icon": icon,
+		"tetris": _rebuild_tetris(TETRIS_PATH, icon),
+		"repairs": true,
 	})
 
 
-func _rebuild_tetris(tetris:String, icon: Image) -> PackedScene:
+func _rebuild_tetris(tetris:String, icon: ImageTexture) -> PackedScene:
 	var src: PackedScene = load(tetris)
 	if !src:
 		Out.warning("failed to load tetris scene from %s" % tetris)
@@ -69,7 +78,7 @@ func _rebuild_tetris(tetris:String, icon: Image) -> PackedScene:
 		inst.queue_free()
 		return null
 
-	sprite.texture = ImageTexture.create_from_image(icon)
+	sprite.texture = icon
 
 	var packed := PackedScene.new()
 	if packed.pack(inst) != OK:

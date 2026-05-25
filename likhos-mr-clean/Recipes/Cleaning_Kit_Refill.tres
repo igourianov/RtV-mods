@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RecipeData" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://Scripts/RecipeData.gd" id="1"]
+[ext_resource type="Resource" path="res://Audio/Crafting/Craft_Plastic.tres" id="2"]
+[ext_resource type="Resource" path="res://Items/Misc/Weapon_Repair_Kit/Weapon_Repair_Kit.tres" id="3"]
+[ext_resource type="Resource" path="res://Items/Medical/Antiseptic/Antiseptic.tres" id="4"]
+[ext_resource type="Resource" path="res://Items/Medical/Tissues/Tissues.tres" id="5"]
+[ext_resource type="Resource" path="res://Items/Clothing/Gloves_Work/Gloves_Work.tres" id="6"]
+
+
+[resource]
+script = ExtResource("1")
+name = "Cleaning Kit Refill"
+time = 5.0
+repair = true
+audio = ExtResource("2")
+input = [ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("5"), ExtResource("6")]
+output = [ExtResource("3")]

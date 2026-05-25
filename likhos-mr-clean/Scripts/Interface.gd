@@ -49,13 +49,6 @@ func _combine(caller, kitItem, weaponItem) -> void:
 	weaponItem.UpdateDetails()
 	kitItem.UpdateDetails()
 
-	if kitSlotData.condition <= 0:
-		Out.debug("WRK depleted, consuming")
-		var grid = kitItem.get_parent()
-		if grid && grid.has_method("Pick"):
-			grid.Pick(kitItem)
-		kitItem.queue_free()
-
 
 func _use_anim(caller, targetItem, timer: float):
 	gameData.isOccupied = true
