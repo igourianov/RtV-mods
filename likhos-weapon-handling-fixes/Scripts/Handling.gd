@@ -7,9 +7,9 @@ var gameData = preload("res://Resources/GameData.tres")
 
 var _IDLE_POSITION_OFFSET = Vector3(0, 0, 0.03)
 var _IDLE_ROTATION_OFFSET = Vector3(0, 10, 20)
+const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-20.0, 0.0, -10.0)
+const _LOOK_DOWN_THRESHOLD_DEG: float = -30.0
 
-const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-10.0, 0.0, -10.0)
-const _FUDD_GUN_POSITION_OFFSET = Vector3(0, 0, 0.05) # long guns w/o pistol grip
 
 # the handling speed modifier - read as % of base
 enum HandlingMode {
@@ -30,6 +30,7 @@ var _free_look_blend: float = 1.0
 var _manager_local_baseline: Transform3D
 var _baseline_captured := false
 var _handling_speed: float = 7.5
+var _camera_pitch_deg: float = 0.0
 
 
 func _init(lib, preferences: Preferences) -> void:
@@ -107,12 +108,13 @@ func on_weapon_handling(delta: float) -> void:
 
 	_handlingMode = HandlingMode.Default
 	_free_look = false
-	_process_handling_state(h, h.get_parent())
+	_process_handling_state(h)
 	_apply_target(h, delta)
 
 
-func _process_handling_state(h, rig) -> void:
+func _process_handling_state(h) -> void:
 	var data = h.data
+	var rig = h.get_parent()
 
 	if gameData.isClearing || gameData.isColliding:
 		h.targetPosition = data.collisionPosition
@@ -143,11 +145,11 @@ func _process_handling_state(h, rig) -> void:
 
 	if gameData.isPlacing:
 		gameData.weaponPosition = 1
-		_set_target_idle(h, data)
+		_set_target_idle(h)
 		return
 
 	if gameData.isRunning:
-		_set_target_idle(h, data)
+		_set_target_idle(h)
 		return
 
 	if gameData.isColliding:
@@ -187,17 +189,24 @@ func _process_handling_state(h, rig) -> void:
 		h.targetRotation = data.highRotation
 		return
 
-	_set_target_idle(h, data)
+	_set_target_idle(h)
 
 
-func _set_target_idle(h, data) -> void:
-	_free_look = data.type == "Weapon"
+func _set_target_idle(h) -> void:
+	var data = h.data
+
+	_free_look = ModConfig.enable_free_look && data.type == "Weapon" && _camera_pitch_deg >= _LOOK_DOWN_THRESHOLD_DEG
+
+	if !_free_look:
+		h.targetPosition = data.lowPosition
+		h.targetRotation = data.lowRotation
+		return
+
 	var pos_offset = _IDLE_POSITION_OFFSET
 	var rot_offset = _IDLE_ROTATION_OFFSET
-	if data.file == "Mosin" || data.file == "Remington_870": # long guns w/o pistol grip
-		pos_offset += _FUDD_GUN_POSITION_OFFSET
 	if gameData.secondaryOptic:
 		rot_offset += _SECONDARY_OPTIC_LOW_ROTATION_OFFSET
+
 	h.targetPosition = data.collisionPosition + pos_offset
 	h.targetRotation = data.collisionRotation + rot_offset
 
@@ -218,8 +227,8 @@ func _apply_target(h, delta: float):
 	if !outer_cam:
 		return
 
-	var target_blend := 0.0 if _free_look else 1.0
-	_free_look_blend = lerp(_free_look_blend, target_blend, t)
+	_camera_pitch_deg = rad_to_deg(outer_cam.global_transform.basis.get_euler().x)
+	_free_look_blend = lerp(_free_look_blend, 0.0 if _free_look else 1.0, t)
 
 	var cam_xform: Transform3D = outer_cam.global_transform
 	var euler = cam_xform.basis.get_euler()

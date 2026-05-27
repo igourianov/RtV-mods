@@ -30,6 +30,7 @@ static var attachment_tooltips: bool
 static var pip_anti_aliasing: bool
 static var show_protips: bool
 static var debug_enabled: bool
+static var enable_free_look: bool = true
 
 static var _menu_pos_auto: int = 0
 
