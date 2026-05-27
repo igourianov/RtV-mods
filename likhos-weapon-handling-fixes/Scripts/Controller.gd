@@ -127,7 +127,7 @@ func _mouse_input(ctrl, evt) -> void:
 
 	ctrl.rotate_y(-evt.relative.x * factor)
 	ctrl.head.rotate_x(y_sign * evt.relative.y * factor)
-	ctrl.head.rotation.x = clamp(ctrl.head.rotation.x, -deg_to_rad(70.0), PI / 2)
+	ctrl.head.rotation.x = clamp(ctrl.head.rotation.x, -deg_to_rad(65.0), PI / 2)
 
 
 func on_crouch(delta: float) -> void:

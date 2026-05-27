@@ -5,9 +5,9 @@ const ScopeCatalog = preload("./ScopeCatalog.gd")
 const Out = preload("../Lib/Out.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
-var _IDLE_POSITION_OFFSET = Vector3(0, 0, 0.03)
-var _IDLE_ROTATION_OFFSET = Vector3(0, 10, 20)
-const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-20.0, 0.0, -10.0)
+var _IDLE_POSITION_OFFSET = Vector3(-0.02, -0.08, 0.03) #(0, 0, 0.03)
+var _IDLE_ROTATION_OFFSET = Vector3(25.0, 60.0, 10.0) #(0, 10, 20)
+const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-10.0, 0.0, -10.0)
 const _LOOK_DOWN_THRESHOLD_DEG: float = -30.0
 
 
@@ -195,20 +195,23 @@ func _process_handling_state(h) -> void:
 func _set_target_idle(h) -> void:
 	var data = h.data
 
-	_free_look = ModConfig.enable_free_look && data.type == "Weapon" && _camera_pitch_deg >= _LOOK_DOWN_THRESHOLD_DEG
-
-	if !_free_look:
+	if data.type != "Weapon":
 		h.targetPosition = data.lowPosition
 		h.targetRotation = data.lowRotation
 		return
 
+	_free_look = ModConfig.enable_free_look && _camera_pitch_deg >= _LOOK_DOWN_THRESHOLD_DEG
+
 	var pos_offset = _IDLE_POSITION_OFFSET
 	var rot_offset = _IDLE_ROTATION_OFFSET
+	if data.file == "Mosin" || data.file == "Remington_870": # long guns w/o pistol grip
+		pos_offset += Vector3(-0.03, -0.05, 0)
+		rot_offset += Vector3(-10, 0, 0)
 	if gameData.secondaryOptic:
 		rot_offset += _SECONDARY_OPTIC_LOW_ROTATION_OFFSET
 
-	h.targetPosition = data.collisionPosition + pos_offset
-	h.targetRotation = data.collisionRotation + rot_offset
+	h.targetPosition = data.lowPosition + pos_offset
+	h.targetRotation = data.lowPosition + rot_offset
 
 
 func _apply_target(h, delta: float):
