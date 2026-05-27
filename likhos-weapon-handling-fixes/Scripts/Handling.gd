@@ -29,6 +29,7 @@ var _free_look := true
 var _free_look_blend: float = 1.0
 var _manager_local_baseline: Transform3D
 var _baseline_captured := false
+var _handling_speed: float = 7.5
 
 
 func _init(lib, preferences: Preferences) -> void:
@@ -202,9 +203,9 @@ func _set_target_idle(h, data) -> void:
 
 
 func _apply_target(h, delta: float):
-	var speed: float = h.handlingSpeed * (_handlingMode / 100.0)
-	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), delta * speed)
-	h.rotation_degrees = lerp(h.rotation_degrees, h.targetRotation, delta * speed)
+	_handling_speed = h.handlingSpeed * (_handlingMode / 100.0)
+	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), delta * _handling_speed)
+	h.rotation_degrees = lerp(h.rotation_degrees, h.targetRotation, delta * _handling_speed)
 
 
 func on_manager_physics_process_post(delta: float) -> void:
@@ -219,8 +220,8 @@ func on_manager_physics_process_post(delta: float) -> void:
 		_manager_local_baseline = manager.transform
 		_baseline_captured = true
 
-	var target_blend = 0.0 if _free_look else 1.0
-	_free_look_blend = move_toward(_free_look_blend, target_blend, delta * 10.0)
+	var target_blend := 0.0 if _free_look else 1.0
+	_free_look_blend = lerp(_free_look_blend, target_blend, delta * _handling_speed)
 
 	var cam_xform: Transform3D = outer_cam.global_transform
 	var euler = cam_xform.basis.get_euler()
