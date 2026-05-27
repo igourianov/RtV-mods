@@ -26,11 +26,13 @@ var _handlingMode = HandlingMode.Default
 var _aim_intent := false
 var _cant_intent := false
 var _free_look := true
-var _free_look_blend: float = 1.0
+var _anchored := false
 var _manager_local_baseline: Transform3D
 var _baseline_captured := false
 var _handling_speed: float = 7.5
 var _camera_pitch_deg: float = 0.0
+var _anchor_pitch: float = 0.0
+var _smoothed_pitch: float = 0.0
 
 
 func _init(lib, preferences: Preferences) -> void:
@@ -108,6 +110,7 @@ func on_weapon_handling(delta: float) -> void:
 
 	_handlingMode = HandlingMode.Default
 	_free_look = false
+	_anchored = false
 	_process_handling_state(h)
 	_apply_target(h, delta)
 
@@ -200,7 +203,9 @@ func _set_target_idle(h) -> void:
 		h.targetRotation = data.lowRotation
 		return
 
-	_free_look = ModConfig.enable_free_look && _camera_pitch_deg >= _LOOK_DOWN_THRESHOLD_DEG
+	var above_threshold = _camera_pitch_deg >= _LOOK_DOWN_THRESHOLD_DEG
+	_free_look = ModConfig.enable_free_look && above_threshold
+	_anchored = ModConfig.enable_free_look && !above_threshold
 
 	var pos_offset = _IDLE_POSITION_OFFSET
 	var rot_offset = _IDLE_ROTATION_OFFSET
@@ -230,15 +235,25 @@ func _apply_target(h, delta: float):
 	if !outer_cam:
 		return
 
-	_camera_pitch_deg = rad_to_deg(outer_cam.global_transform.basis.get_euler().x)
-	_free_look_blend = lerp(_free_look_blend, 0.0 if _free_look else 1.0, t)
-
 	var cam_xform: Transform3D = outer_cam.global_transform
-	var euler = cam_xform.basis.get_euler()
-	euler.x = 0.0
-	var body_xform := Transform3D(Basis.from_euler(euler), cam_xform.origin)
+	var cam_euler := cam_xform.basis.get_euler()
+	_camera_pitch_deg = rad_to_deg(cam_euler.x)
 
-	manager.global_transform = body_xform.interpolate_with(cam_xform, _free_look_blend) * _manager_local_baseline
+	if _camera_pitch_deg >= _LOOK_DOWN_THRESHOLD_DEG:
+		_anchor_pitch = cam_euler.x
+
+	var target_pitch: float
+	if _free_look:
+		target_pitch = 0.0
+	elif _anchored:
+		target_pitch = cam_euler.x - _anchor_pitch
+	else:
+		target_pitch = cam_euler.x
+
+	_smoothed_pitch = lerp(_smoothed_pitch, target_pitch, t)
+
+	var weapon_basis := Basis.from_euler(Vector3(_smoothed_pitch, cam_euler.y, cam_euler.z))
+	manager.global_transform = Transform3D(weapon_basis, cam_xform.origin) * _manager_local_baseline
 
 
 func on_rig_update_post(_animate) -> void:
