@@ -9,7 +9,7 @@ var _IDLE_POSITION_OFFSET = Vector3(0, 0, 0.03)
 var _IDLE_ROTATION_OFFSET = Vector3(0, 10, 20)
 
 const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-10.0, 0.0, -10.0)
-const _FUDD_GUN_POSITION_OFFSET = Vector3(0, -0.02, 0.1) # long guns w/o pistol grip
+const _FUDD_GUN_POSITION_OFFSET = Vector3(0, 0, 0.05) # long guns w/o pistol grip
 
 # the handling speed modifier - read as % of base
 enum HandlingMode {
@@ -204,38 +204,42 @@ func _set_target_idle(h, data) -> void:
 
 func _apply_target(h, delta: float):
 	_handling_speed = h.handlingSpeed * (_handlingMode / 100.0)
-	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), delta * _handling_speed)
-	h.rotation_degrees = lerp(h.rotation_degrees, h.targetRotation, delta * _handling_speed)
+	var t := delta * _handling_speed
 
+	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), t)
+	h.rotation_degrees = lerp(h.rotation_degrees, h.targetRotation, t)
 
-func on_manager_physics_process_post(delta: float) -> void:
-	var manager = _lib._caller
-	if !manager:
+	if !_baseline_captured:
 		return
-	var outer_cam = manager.get_parent()
+
+	var rig = h.get_parent()
+	var manager = rig.get_parent() if rig else null
+	var outer_cam = manager.get_parent() if manager else null
 	if !outer_cam:
 		return
 
-	if !_baseline_captured:
-		_manager_local_baseline = manager.transform
-		_baseline_captured = true
-
 	var target_blend := 0.0 if _free_look else 1.0
-	_free_look_blend = lerp(_free_look_blend, target_blend, delta * _handling_speed)
+	_free_look_blend = lerp(_free_look_blend, target_blend, t)
 
 	var cam_xform: Transform3D = outer_cam.global_transform
 	var euler = cam_xform.basis.get_euler()
 	euler.x = 0.0
 	var body_xform := Transform3D(Basis.from_euler(euler), cam_xform.origin)
 
-	var target_cam = body_xform.interpolate_with(cam_xform, _free_look_blend)
-	manager.global_transform = target_cam * _manager_local_baseline
+	manager.global_transform = body_xform.interpolate_with(cam_xform, _free_look_blend) * _manager_local_baseline
 
 
 func on_rig_update_post(_animate) -> void:
 	var manager = _lib._caller
 	if manager == null:
 		return
+
+	if !_baseline_captured:
+		_manager_local_baseline = manager.transform
+		_baseline_captured = true
+	else:
+		manager.transform = _manager_local_baseline
+
 	var rig = manager.get_child(manager.get_child_count() - 1) if manager.get_child_count() else null
 
 	# save weapon weight for the handling speed calc
