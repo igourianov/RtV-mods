@@ -5,27 +5,30 @@ const ScopeCatalog = preload("./ScopeCatalog.gd")
 const Out = preload("../Lib/Out.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
-const _PATROL_POSITION = Vector3(0.06, -0.18, -0.25)
-const _PATROL_ROTATION = Vector3(25, 50, -20)
-const _PATROL_WEAPON_TYPES = {"Rifle": null, "SMG": null, "Bolt": null, "Shotgun": null}
-const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-10.0, 0.0, 0.0)
-const _MOSIN_LOW_ROTATION_OFFSET = Vector3(-15.0, 15.0, 0.0)
-const _REMINGTON_870_LOW_ROTATION_OFFSET = Vector3(-20.0, 10.0, 0.0)
+var _IDLE_POSITION_OFFSET = Vector3(0, 0, 0.03)
+var _IDLE_ROTATION_OFFSET = Vector3(0, 10, 20)
+
+const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-10.0, 0.0, -10.0)
+const _FUDD_GUN_POSITION_OFFSET = Vector3(0, -0.02, 0.1) # long guns w/o pistol grip
 
 # the handling speed modifier - read as % of base
 enum HandlingMode {
 	Default = 100,
 	RDS = 115,
 	Cant = 130,
-	Scope1x = 105,
 	ScopeZoom = 80
 }
+
 
 var _lib
 var _preferences: Preferences
 var _handlingMode = HandlingMode.Default
 var _aim_intent := false
 var _cant_intent := false
+var _free_look := true
+var _free_look_blend: float = 1.0
+var _manager_local_baseline: Transform3D
+var _baseline_captured := false
 
 
 func _init(lib, preferences: Preferences) -> void:
@@ -33,27 +36,10 @@ func _init(lib, preferences: Preferences) -> void:
 	_preferences = preferences
 
 
-func on_weapon_handling(delta: float) -> void:
-	var h = _lib._caller
-	if h == null:
-		return
-	_lib.skip_super()
-
-	if gameData.freeze:
-		return
-
-	gameData.isColliding = h.collision.is_colliding()
-
-	if _override_handling(h, h.get_parent()):
-		_handlingMode = HandlingMode.Default
-	elif !_weapon_handling(h, h.get_parent(), delta):
-		_set_target_idle(h)
-
-	_apply_target(h, delta)
-
-
 func on_input(evt) -> void:
 	_lib.skip_super()
+
+	_debug_adjust_target(evt)
 
 	var aimToggle = gameData.aimMode == 2
 	var cantToggle = false
@@ -76,6 +62,28 @@ func on_input(evt) -> void:
 		_resolve_intent(false)
 
 
+func _debug_adjust_target(evt) -> void:
+
+	if !(evt is InputEventKey) || !evt.pressed || evt.echo:
+		return
+
+	var axis_idx = -1
+	match evt.keycode:
+		KEY_F7: axis_idx = 0
+		KEY_F8: axis_idx = 1
+		KEY_F9: axis_idx = 2
+		_: return
+
+	if evt.ctrl_pressed:
+		var step = -5.0 if evt.shift_pressed else 5.0
+		_IDLE_ROTATION_OFFSET[axis_idx] += step
+	else:
+		var step = -0.01 if evt.shift_pressed else 0.01
+		_IDLE_POSITION_OFFSET[axis_idx] += step
+
+	Out.debug("_IDLE_POSITION_OFFSET:", _IDLE_POSITION_OFFSET, "_IDLE_ROTATION_OFFSET:", _IDLE_ROTATION_OFFSET)
+
+
 func _resolve_intent(aim_changed: bool) -> void:
 	if aim_changed:
 		gameData.isAiming = _aim_intent
@@ -85,122 +93,142 @@ func _resolve_intent(aim_changed: bool) -> void:
 		gameData.isAiming = false if _cant_intent else _aim_intent
 
 
-func _override_handling(h, rig) -> bool:
+func on_weapon_handling(delta: float) -> void:
+	var h = _lib._caller
+	if !h:
+		return
+	_lib.skip_super()
+
+	if gameData.freeze:
+		return
+
+	gameData.isColliding = h.collision.is_colliding()
+
+	_handlingMode = HandlingMode.Default
+	_free_look = false
+	_process_handling_state(h, h.get_parent())
+	_apply_target(h, delta)
+
+
+func _process_handling_state(h, rig) -> void:
 	var data = h.data
 
-	if gameData.isClearing:
+	if gameData.isClearing || gameData.isColliding:
 		h.targetPosition = data.collisionPosition
 		h.targetRotation = data.collisionRotation
-		return true
+		return
 
 	if gameData.isInspecting:
 		gameData.weaponPosition = 1
 		h.targetPosition = data.inspectPosition
 		h.targetRotation = data.inspectRotation
-		return true
+		return
 
-	if gameData.isInserting && data.weaponType == "Shotgun":
+	if gameData.isInserting:
 		gameData.weaponPosition = 1
 		h.targetPosition = data.lowPosition
 		h.targetRotation = data.lowRotation
-		return true
-
-	if gameData.isPlacing || gameData.isInserting:
-		gameData.weaponPosition = 1
-		_set_target_idle(h)
-		return true
+		return
 
 	if gameData.isChecking && ModConfig.ammo_check_view:
 		h.targetPosition = data.highPosition
-		h.targetRotation = data.highPosition
-		return true
+		h.targetRotation = data.highRotation
+		return
 
-	if gameData.isChecking && gameData.isReloading:
+	if gameData.isReloading && data.weaponAction != "Manual":
 		h.targetPosition = data.lowPosition
-		h.targetRotation = data.lowRotation
-		return true
+		h.targetRotation = data.lowRotation + Vector3(-20, 0, 0)
+		return
 
-	if gameData.isRunning || (gameData.isReloading && data.weaponAction != "Manual"):
-		_set_target_idle(h)
-		return true
+	if gameData.isPlacing:
+		gameData.weaponPosition = 1
+		_set_target_idle(h, data)
+		return
 
-	return false
-
-
-func _weapon_handling(h, rig, delta: float) -> bool:
-	var data = h.data
-	var optic = rig.activeOptic
+	if gameData.isRunning:
+		_set_target_idle(h, data)
+		return
 
 	if gameData.isColliding:
 		h.targetPosition = data.collisionPosition
 		h.targetRotation = data.collisionRotation
-		return true
+		return
 
 	if gameData.isCanted:
 		_handlingMode = HandlingMode.Cant
-		if ModConfig.disable_canted_override:
-			h.targetPosition = data.cantedPosition
-			h.targetRotation = data.cantedRotation
+		var optic = rig.activeOptic
+		h.targetPosition = data.cantedPosition + Vector3(0.0, -0.03, 0.0)
+		if optic && (optic.attachmentData.variable || optic.attachmentData.scope):
+			h.targetRotation = data.cantedRotation + Vector3(0.0, 0.0, -20.0)
 		else:
-			h.targetPosition = data.cantedPosition + Vector3(0.0, -0.03, 0.0)
-			if optic && (optic.attachmentData.variable || optic.attachmentData.scope):
-				h.targetRotation = data.cantedRotation + Vector3(0.0, 0.0, -20.0)
-			else:
-				h.targetRotation = data.cantedRotation + Vector3(0.0, 0.0, 10.0)
-		return true
+			h.targetRotation = data.cantedRotation + Vector3(0.0, 0.0, 10.0)
+		return
 
-	if !gameData.isAiming:
-		return false
+	if gameData.isAiming:
+		var optic = rig.activeOptic
+		if optic && optic.attachmentData.scope && !gameData.secondaryOptic:
+			_handlingMode = HandlingMode.ScopeZoom
+		elif optic && optic.attachmentData.variable && ModConfig.current_scope_mag >= 1.5:
+			_handlingMode = HandlingMode.ScopeZoom
+		elif optic:
+			_handlingMode = HandlingMode.RDS
 
-	if optic == null:
-		_handlingMode = HandlingMode.Default
-	elif optic.attachmentData.scope && !gameData.secondaryOptic:
-		_handlingMode = HandlingMode.ScopeZoom
-	elif optic.attachmentData.variable:
-		_handlingMode = HandlingMode.Scope1x if rig.slotData.zoom == 1 else HandlingMode.ScopeZoom
-	else:
-		_handlingMode = HandlingMode.RDS
+		var aim_z = data.aimPosition.z - 0.1 # vanilla logic
+		if optic && gameData.isScoped && gameData.PIP:
+			aim_z = rig.get_meta("opticAimZ", 0.0)
 
-	var aim_z = data.aimPosition.z - 0.1 # vanilla logic
-	if optic && gameData.isScoped && gameData.PIP:
-		aim_z = rig.get_meta("opticAimZ", 0.0)
-
-	h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z) if optic else data.aimPosition
-	h.targetRotation = data.aimRotation
-	return true
-
-
-func _set_target_idle(h):
-	var data = h.data
+		h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z) if optic else data.aimPosition
+		h.targetRotation = data.aimRotation
+		return
 
 	if gameData.weaponPosition == 2:
 		h.targetPosition = data.highPosition
 		h.targetRotation = data.highRotation
 		return
 
-	if ModConfig.disable_lowered_override:
-		h.targetPosition = data.lowPosition
-		h.targetRotation = data.lowRotation
-		return
+	_set_target_idle(h, data)
 
-	h.targetPosition = _PATROL_POSITION if _PATROL_WEAPON_TYPES.has(data.weaponType) else data.lowPosition
 
-	if !_PATROL_WEAPON_TYPES.has(data.weaponType):
-		h.targetRotation = data.lowRotation
-	elif gameData.secondaryOptic:
-		h.targetRotation = _PATROL_ROTATION + _SECONDARY_OPTIC_LOW_ROTATION_OFFSET
-	elif data.file == "Mosin":
-		h.targetRotation = _PATROL_ROTATION + _MOSIN_LOW_ROTATION_OFFSET
-	elif data.file == "Remington_870":
-		h.targetRotation = _PATROL_ROTATION + _REMINGTON_870_LOW_ROTATION_OFFSET
-	else:
-		h.targetRotation = _PATROL_ROTATION
+func _set_target_idle(h, data) -> void:
+	_free_look = data.type == "Weapon"
+	var pos_offset = _IDLE_POSITION_OFFSET
+	var rot_offset = _IDLE_ROTATION_OFFSET
+	if data.file == "Mosin" || data.file == "Remington_870": # long guns w/o pistol grip
+		pos_offset += _FUDD_GUN_POSITION_OFFSET
+	if gameData.secondaryOptic:
+		rot_offset += _SECONDARY_OPTIC_LOW_ROTATION_OFFSET
+	h.targetPosition = data.collisionPosition + pos_offset
+	h.targetRotation = data.collisionRotation + rot_offset
 
 
 func _apply_target(h, delta: float):
 	var speed: float = h.handlingSpeed * (_handlingMode / 100.0)
 	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), delta * speed)
 	h.rotation_degrees = lerp(h.rotation_degrees, h.targetRotation, delta * speed)
+
+
+func on_manager_physics_process_post(delta: float) -> void:
+	var manager = _lib._caller
+	if !manager:
+		return
+	var outer_cam = manager.get_parent()
+	if !outer_cam:
+		return
+
+	if !_baseline_captured:
+		_manager_local_baseline = manager.transform
+		_baseline_captured = true
+
+	var target_blend = 0.0 if _free_look else 1.0
+	_free_look_blend = move_toward(_free_look_blend, target_blend, delta * 10.0)
+
+	var cam_xform: Transform3D = outer_cam.global_transform
+	var euler = cam_xform.basis.get_euler()
+	euler.x = 0.0
+	var body_xform := Transform3D(Basis.from_euler(euler), cam_xform.origin)
+
+	var target_cam = body_xform.interpolate_with(cam_xform, _free_look_blend)
+	manager.global_transform = target_cam * _manager_local_baseline
 
 
 func on_rig_update_post(_animate) -> void:
@@ -237,4 +265,3 @@ func on_rig_update_post(_animate) -> void:
 	# true up cocked state if mag was loaded from inventory
 	if rig && rig.slotData:
 		rig.slotData.set_meta("cocked", rig.slotData.chamber)
-

@@ -106,7 +106,6 @@ func on_input(evt) -> void:
 		_sprint_intent = false
 
 
-
 func _mouse_input(ctrl, evt) -> void:
 	if gameData.freeze || gameData.isCaching:
 		return
@@ -138,7 +137,7 @@ func on_crouch(delta: float) -> void:
 	_lib.skip_super()
 
 	ctrl.pelvis.position.y = lerp(ctrl.pelvis.position.y, (0.5 if gameData.isCrouching else 1.0), delta * 5.0)
-	
+
 
 func _set_impulse(ctrl) -> void:
 	if gameData.isCrouching:

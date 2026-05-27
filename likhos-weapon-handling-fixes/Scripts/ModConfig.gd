@@ -16,8 +16,6 @@ static var cant_mode: StringName
 static var lpvo_ooa_zoom: StringName
 static var mag_schema: StringName
 static var disable_zoom_dof: bool
-static var disable_canted_override: bool
-static var disable_lowered_override: bool
 static var override_movement_speeds: bool
 static var nvg_pip_blur: bool
 static var ammo_tooltips: bool
@@ -74,8 +72,6 @@ static func apply_config(config: ConfigFile):
 	lpvo_ooa_zoom = _get_config_value(config, "Dropdown", "lpvoOofZoom", DEFAULT_LPVO_OOA_ZOOM)
 	mag_schema = _get_config_value(config, "Dropdown", "magSchema", DEFAULT_MAG_SCHEMA)
 	disable_zoom_dof = !_get_config_value(config, "Bool", "enableZoomDof", DEFAULT_ENABLED)
-	disable_canted_override = !_get_config_value(config, "Bool", "enableCantedOverride", DEFAULT_ENABLED)
-	disable_lowered_override = !_get_config_value(config, "Bool", "enableLoweredOverride", DEFAULT_ENABLED)
 	override_movement_speeds = _get_config_value(config, "Bool", "overrideMovementSpeeds", DEFAULT_ENABLED)
 	nvg_pip_blur = _get_config_value(config, "Bool", "nvgPipBlur", DEFAULT_ENABLED)
 	ammo_tooltips = _get_config_value(config, "Bool", "ammoTooltips", DEFAULT_ENABLED)
@@ -170,10 +166,6 @@ static func create_template(config: ConfigFile):
 	_set_config_entry(config, "Bool", "Aim tweaks", "pipAntiAliasing", "Scope PIP Anti-Aliasing", "Enable anti-aliasing on the magnified optic's picture-in-picture view", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Bool", "Aim tweaks", "enableZoomDof", "Enable zoom DOF", "Apply depth-of-field blur when looking through scopes", DEFAULT_ENABLED)
-
-	_set_config_entry(config, "Bool", "Aim tweaks", "enableCantedOverride", "Override canted position", "Apply the mod's Y offset and roll tweak when canted. Disable to use vanilla canted position and rotation.", DEFAULT_ENABLED)
-
-	_set_config_entry(config, "Bool", "Aim tweaks", "enableLoweredOverride", "Override lowered position", "Apply the mod's patrol-mode replacement. Disable to use vanilla low position and rotation.", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Bool", "Movement speeds", "overrideMovementSpeeds", "Override movement speed", "Change default walk/crouch/spring speeds", DEFAULT_ENABLED)
 
