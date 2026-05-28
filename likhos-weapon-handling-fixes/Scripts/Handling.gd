@@ -65,7 +65,7 @@ func _init(lib, preferences: Preferences) -> void:
 func on_input(evt) -> void:
 	_lib.skip_super()
 
-	_debug_adjust_target(evt)
+	#_debug_adjust_target(evt)
 
 	var aimToggle = gameData.aimMode == 2
 	var cantToggle = false
