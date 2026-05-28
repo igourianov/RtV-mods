@@ -1,3 +1,4 @@
+# 2.10.1405
 * scoped sensitivity now scales progressively with magnification level instead of fixed multiplier
 
 # 2.9.1403
