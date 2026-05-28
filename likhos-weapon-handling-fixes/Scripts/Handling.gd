@@ -160,13 +160,8 @@ func _process_handling_state(h) -> void:
 		h.targetRotation = data.lowRotation
 		return
 
-	if gameData.isChecking && ModConfig.ammo_check_view:
-		h.targetPosition = data.highPosition
-		h.targetRotation = data.highRotation
-		return
-
-	if gameData.isReloading && data.weaponAction != "Manual":
-		h.targetPosition = data.lowPosition
+	if (gameData.isChecking && ModConfig.ammo_check_view) || (gameData.isReloading && data.weaponAction != "Manual"):
+		h.targetPosition = data.lowPosition + Vector3(0, 0.05, 0)
 		h.targetRotation = data.lowRotation + Vector3(-20, 0, 0)
 		return
 
