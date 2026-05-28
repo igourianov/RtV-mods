@@ -12,7 +12,7 @@ const _DOT_RADIUS := 1.5
 const _ARM_LENGTH := 6.0
 const _ARM_THICKNESS := 2.0
 const _CENTER_GAP := 8.0
-const _CROSSHAIR_SHOW_DELAY := 0.5
+const _CROSSHAIR_SHOW_DELAY := 0.2
 const _CROSSHAIR_FADE := 0.3
 
 var _crosshair_alpha := 0.0
@@ -120,8 +120,7 @@ func _update_crosshair_visibility(hud, delta: float) -> void:
 	var cantedHidden = gameData.isCanted && !ModConfig.crosshair_while_canted
 	var runningHidden = gameData.isRunning && !ModConfig.crosshair_while_running
 	var raisedHidden = gameData.weaponPosition == 2 && !ModConfig.crosshair_while_raised
-	var interactionBlocked = gameData.menu || gameData.isDead || gameData.isInspecting || gameData.isTransitioning || gameData.isChecking || gameData.isInserting
-	var shouldShow = !gameData.isAiming && !cantedHidden && !runningHidden && !raisedHidden && !interactionBlocked && ModConfig.crosshair_style != "off"
+	var shouldShow = !gameData.isAiming && !cantedHidden && !runningHidden && !raisedHidden && !_is_interaction_blocked() && ModConfig.crosshair_style != "off"
 
 	var target := 0.0
 	if shouldShow:
@@ -138,7 +137,7 @@ func _update_crosshair_visibility(hud, delta: float) -> void:
 func _update_interaction_tooltip(hud) -> void:
 	var aimingMode = gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2
 	hud.label.text = str(gameData.tooltip)
-	hud.tooltip.visible = gameData.interaction && !gameData.transition && !aimingMode
+	hud.tooltip.visible = gameData.interaction && !gameData.transition && !aimingMode && !_is_interaction_blocked()
 
 func _update_ammo_overlays(hud) -> void:
 	if gameData.isInspecting && ModConfig.ammo_tooltips:
@@ -232,3 +231,10 @@ func _update_attachment_tooltips(hud) -> void:
 
 		tooltip.global_position = _camera.unproject_position(attachment.global_position)
 		tooltip.show()
+
+
+func _is_interaction_blocked() -> bool:
+	return gameData.freeze || gameData.menu \
+		|| gameData.isDead || gameData.isTransitioning || gameData.isOccupied || gameData.isPlacing \
+		|| gameData.isInspecting || gameData.isChecking || gameData.isInserting || gameData.isReloading
+
