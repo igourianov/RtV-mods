@@ -5,10 +5,26 @@ const ScopeCatalog = preload("./ScopeCatalog.gd")
 const Out = preload("../Lib/Out.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
-var _IDLE_POSITION_OFFSET = Vector3(-0.02, -0.08, 0.03) #(0, 0, 0.03)
-var _IDLE_ROTATION_OFFSET = Vector3(25.0, 60.0, 10.0) #(0, 10, 20)
-const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-10.0, 0.0, -10.0)
-const _LOOK_DOWN_THRESHOLD_DEG: float = -30.0
+enum IdleCategory { Default, Pistol, NoGrip }
+
+var _idle_offsets := {
+	IdleCategory.Default: {
+		"pos": Vector3(-0.03, -0.08, 0),
+		"rot": Vector3(10.0, 30.0, 10.0),
+	},
+	IdleCategory.Pistol: {
+		"pos": Vector3(-0.07, -0.06, 0),
+		"rot": Vector3(15, 10, 0),
+	},
+	IdleCategory.NoGrip: {
+		"pos": Vector3(0.01, -0.1, 0.08),
+		"rot": Vector3(-5.0, 45.0, 10.0),
+	},
+}
+var _current_idle_category: int = IdleCategory.Default
+const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-15.0, 0.0, 0)
+const _LOOK_DOWN_THRESHOLD_DEG: float = -20.0
+const _LOOK_DOWN_COLLISION_THRESHOLD_DEG: float = -60.0
 
 
 # the handling speed modifier - read as % of base
@@ -78,14 +94,15 @@ func _debug_adjust_target(evt) -> void:
 		KEY_F9: axis_idx = 2
 		_: return
 
+	var entry = _idle_offsets[_current_idle_category]
 	if evt.ctrl_pressed:
 		var step = -5.0 if evt.shift_pressed else 5.0
-		_IDLE_ROTATION_OFFSET[axis_idx] += step
+		entry["rot"][axis_idx] += step
 	else:
 		var step = -0.01 if evt.shift_pressed else 0.01
-		_IDLE_POSITION_OFFSET[axis_idx] += step
+		entry["pos"][axis_idx] += step
 
-	Out.debug("_IDLE_POSITION_OFFSET:", _IDLE_POSITION_OFFSET, "_IDLE_ROTATION_OFFSET:", _IDLE_ROTATION_OFFSET)
+	Out.debug("[%s] pos:" % IdleCategory.keys()[_current_idle_category], entry["pos"], "rot:", entry["rot"])
 
 
 func _resolve_intent(aim_changed: bool) -> void:
@@ -203,20 +220,30 @@ func _set_target_idle(h) -> void:
 		h.targetRotation = data.lowRotation
 		return
 
+	if _camera_pitch_deg < _LOOK_DOWN_COLLISION_THRESHOLD_DEG:
+		h.targetPosition = data.collisionPosition
+		h.targetRotation = data.collisionRotation
+		return
+
 	var above_threshold = _camera_pitch_deg >= _LOOK_DOWN_THRESHOLD_DEG
 	_free_look = ModConfig.enable_free_look && above_threshold
 	_anchored = ModConfig.enable_free_look && !above_threshold
 
-	var pos_offset = _IDLE_POSITION_OFFSET
-	var rot_offset = _IDLE_ROTATION_OFFSET
-	if data.file == "Mosin" || data.file == "Remington_870": # long guns w/o pistol grip
-		pos_offset += Vector3(-0.03, -0.05, 0)
-		rot_offset += Vector3(-10, 0, 0)
+	if data.weaponType == "Pistol":
+		_current_idle_category = IdleCategory.Pistol
+	elif data.file == "Mosin" || data.file == "Remington_870":
+		_current_idle_category = IdleCategory.NoGrip
+	else:
+		_current_idle_category = IdleCategory.Default
+
+	var entry = _idle_offsets[_current_idle_category]
+	var pos_offset: Vector3 = entry["pos"]
+	var rot_offset: Vector3 = entry["rot"]
 	if gameData.secondaryOptic:
 		rot_offset += _SECONDARY_OPTIC_LOW_ROTATION_OFFSET
 
 	h.targetPosition = data.lowPosition + pos_offset
-	h.targetRotation = data.lowPosition + rot_offset
+	h.targetRotation = data.lowRotation + rot_offset
 
 
 func _apply_target(h, delta: float):
