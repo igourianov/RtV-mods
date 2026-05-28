@@ -1,4 +1,4 @@
-# ?
+# 2.9.1403
 * reworked patrol mode into intelligent free look mode
 * removed dead MCM toggle for "real scope magnifications"
 * fixed deadlock on opening inventory while checking ammo
