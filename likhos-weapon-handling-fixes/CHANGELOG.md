@@ -1,3 +1,6 @@
+# 2.10.1407
+* made tooltip override code less aggressive to improve compat with other mods
+
 # 2.10.1405
 * scoped sensitivity now scales progressively with magnification level instead of fixed multiplier
 

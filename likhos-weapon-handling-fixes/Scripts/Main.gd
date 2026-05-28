@@ -70,6 +70,7 @@ func setup(lib):
 	register_hook("noise-_physics_process-post", _noise.on_physics_process_post)
 	register_hook("tilt-_physics_process-pre", _tilt.on_physics_process_pre)
 	register_hook("hud-_ready-post", _hud.on_ready_post)
+	register_hook("hud-_physics_process-post", _hud.on_physics_process_post)
 	register_hook("recoil-applyrecoil-post", _recoil.on_apply_recoil_post)
 	register_hook("character-stamina", _character.on_stamina)
 	register_hook("optic-_physics_process-pre", _optic.on_physics_process_pre)
