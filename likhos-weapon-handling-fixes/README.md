@@ -9,7 +9,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 * Reworked the PIP scope mode for realism [*(details)*](#pip-mode-realism). Recommended to pair with [ExitPupil](https://modworkshop.net/mod/56890) PIP reshader mod.
 * Reworked all optics with real eye relief and magnification values. [*(details)*](#optics-rework)
 * Hold breath function to steady aim (hold Sprint while aiming)
-* Canted aim is now independent with optional laser auto-activation
+* Canted aim is now an independent action from aim with optional laser auto-activation
 * Mouse sensitivity scales with zoom and stance (canted uses Aim, LPVO 1× uses Aim, mid/high use Scope/Scope×0.5)
 * LPVO zoom is now accessible without aiming - gated by the Rail movement modifier by default to avoid collision with lower/raise weapon (change in MCM)
 * Ability to toggle the secondary optic out of aim, with a visual cue of the toggle
@@ -22,20 +22,20 @@ Formerly `Likho's Weapon Handling Fixes`.
 * Reworked reload, insert and ammo check mechanics. [*(details)*](#ammo-check)
 * Reworked the inspect mode and associated bindings. [*(details)*](#inspect-mode-rework)
 * Mosin and 870 can now cycle the bolt on a full or empty mag like real guns (you will lose ammo)
-* Cocked state and dry fire click for all guns
+* Cocked state and dry fire click for manual action guns
 
 ## Movement & Stamina
 
-* Reworked arm and leg stamina mechanics. [*(details)*](#stamina)
+* Reworked arm and leg stamina mechanics to be based on vitals and weight. [*(details)*](#stamina)
 * Movement speeds rescaled with new breakpoints
 	- Crouch/walk/sprint changed from vanilla 1/2.5/5 to 0.7/3/7
 	- New walk-canted/walk-aiming-1×/walk-scoped breakpoints at 2.25/1.8/0.9× walk speed (all editable in MCM)
 
 ## Controls & HUD
 
-* Reworked input priority for Couch/Sprint/Aim/Canted actions. Last action wins instead of following hardcoded order (exception: sprint while aiming)
+* Reworked input priority for Crouch/Sprint/Aim/Canted actions. Last action wins instead of following hardcoded order (exception: sprint while aiming)
 * Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in MCM)
-* Flashlight now supports both toggle and hold actions on the same binding, and will shine the light on the inspected weapon. Recommended for use with [LootLight mod](https://modworkshop.net/mod/56422).
+* Flashlight now supports both toggle and hold actions on the same binding, and will shine the light on the inspected weapon. Recommended for use with [LootLight](https://modworkshop.net/mod/56422) mod.
 * Likho's protips in-game to make the user aware of the changed bindings
 
 ## Vanilla Fixes
@@ -54,7 +54,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 ### PIP mode realism
 !!!
 Vanilla PIP is completely unusable - every scope feels like a "scout" scope. This mod addresses that:
-- *Realistic eye relief:* optics placed too close/far on tha rail will get cope shadow (ACOG will suck the most!) Scope shadow no longer wobbles as you move and appears behind the reticle.
+- *Realistic eye relief:* optics placed too close/far on the rail will get scope shadow (ACOG will suck the most!) Scope shadow no longer wobbles as you move and appears behind the reticle.
 - *Main camera FOV no longer narrows when scoped* — only the inside of the optic magnifies
 - *LPVOs stay "scoped" at 1x* — realistic lens distortion and DOF even at 1x
 - *Scope DOF reworked:* scales with magnification, near-DOF enabled for foreground/background softening
@@ -70,8 +70,8 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 * HAMR is now legendary
 * PU: 3.5x zoom
 * Input acceleration for zoom bindings to quick flick from min to max or vice versa
-* MCM setting for magnification controle schema
-	- *Short:* 3 zoom level spread evently along scope's magnification range - like vanilla but mid-point is visually middle. Choose this if you're more CoD than Tarkov guy.
+* MCM setting for magnification control schema
+	- *Short:* 3 zoom level spread evenly along scope's magnification range - like vanilla but mid-point is visually middle. Choose this if you're more CoD than Tarkov guy.
 	- *Discrete:* literal, physical zoom levels. E.g. for Vudu: 1, 2, 3, 4,...,10. Input acceleration makes this setting tolerable.
 	- *Normalized:* a comfortable middle ground between the two options above.
 !!!
@@ -94,7 +94,7 @@ Both stamina bars are now dynamic and much more realistic.
 * Weapon rotation in inspect mode is now done with the Canted aim binding.
 * Stamina drain removed
 * Added ammo and attachment cards to the inspect mode (disable via MCM menu)
-* Flashlight will now shine on the wepon while inspecting
+* Flashlight will now shine on the weapon while inspecting
 !!!
 ### Ammo check
 !!!
