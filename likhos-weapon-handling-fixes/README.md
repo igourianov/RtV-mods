@@ -6,8 +6,8 @@ Formerly `Likho's Weapon Handling Fixes`.
 
 ## Aiming & Optics
 
-* Reworked the PIP scope mode for realism [*(details)*](#pip-mode-realism). Recommended to pair with [ExitPupil](https://modworkshop.net/mod/56890) PIP reshader mod.
-* Reworked all optics with real eye relief and magnification values. [*(details)*](#optics-rework)
+* Reworked the PIP scope mode for realism. Recommended to pair with [ExitPupil](https://modworkshop.net/mod/56890) PIP reshader mod.
+* Reworked all optics with real eye relief and magnification values.
 * Hold breath function to steady aim (hold Sprint while aiming)
 * Canted aim is now an independent action from aim with optional laser auto-activation
 * Mouse sensitivity scales with stance and progressively with zoom level
@@ -19,14 +19,14 @@ Formerly `Likho's Weapon Handling Fixes`.
 
 * Reworked lowered weapon mode into *Adaptive Free Look* mode (disable in MCM). Recommended to use with [FP Body](https://modworkshop.net/mod/56744) mod.
 * Weapon handling speed (how fast you transition into the desired state) now scales with stance and optic: red dot `115%`, canted `130%`, magnified scope `80%`
-* Reworked reload, insert and ammo check mechanics. [*(details)*](#ammo-check)
-* Reworked the inspect mode and associated bindings. [*(details)*](#inspect-mode-rework)
+* Reworked reload, insert and ammo check mechanics.
+* Reworked the inspect mode and associated bindings.
 * Mosin and 870 can now cycle the bolt on a full or empty mag like real guns (you will lose ammo)
 * Cocked state and dry fire click for manual action guns
 
 ## Movement & Stamina
 
-* Reworked arm and leg stamina mechanics to be based on vitals and weight. [*(details)*](#stamina)
+* Reworked arm and leg stamina mechanics to be based on vitals and weight.
 * Changed movement speed Crouch/walk/sprint from vanilla `1 / 2.5 / 5` to `0.7 / 3 / 7` (editable in MCM)
 * New movement breakpoints walk-canted/walk-aiming-1×/walk-scoped as multiplier of the walk speed `0.6 / 0.75 / 0.3` (editable in MCM)
 
@@ -37,7 +37,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 * Flashlight now supports both toggle and hold actions on the same binding, and will shine the light on the inspected weapon. Recommended for use with [LootLight](https://modworkshop.net/mod/56422) mod.
 * Likho's protips in-game to make the user aware of the changed bindings
 
-## Vanilla Fixes
+## Vanilla Bug Fixes
 
 * Ammo check no longer forces weapon into raised position (prior stance preserved)
 * Canted aim activation no longer blocked by interactables
@@ -50,8 +50,9 @@ Formerly `Likho's Weapon Handling Fixes`.
 * Fixed laser ray misaligned with collision dot. You may notice that bullet holes are now very slightly offset from the laser dot - that's how real lasers work.
 * Fixed flashlight draining battery while the game world is frozen
 
-### PIP mode realism
-!!!
+## More details
+
+!!! PIP mode
 Vanilla PIP is completely unusable - every scope feels like a "scout" scope. This mod addresses that:
 - *Realistic eye relief:* optics placed too close/far on the rail will get scope shadow (ACOG will suck the most!) Scope shadow no longer wobbles as you move and appears behind the reticle.
 - *Main camera FOV no longer narrows when scoped* — only the inside of the optic magnifies
@@ -60,8 +61,8 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 - *PIP MSAA matches main viewport:* the optic's SubViewport now mirrors the antialiasing settings used by the rest of the game - vanilla left it disabled (disable in MCM if it causes performance issues)
 - *NVG-aware PIP blur:* when night vision is active and you aim a magnified optic, the PIP image will now blur. Real scopes cannot work under NVG because of eye relief differences (disable in MCM)
 !!!
-### Optics rework
-!!!
+
+!!! Optics
 * All optics now have eye relief values and create scope shadow if mounted outside ideal eye relief
 * Changed Mark 8 ("Leopard") to 1.1-8x zoom and fixed reticle size at 1x
 * Changed Vudu to 1-10x zoom and made it legendary rarity
@@ -74,8 +75,8 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 	- *Discrete:* literal, physical zoom levels. E.g. for Vudu: 1, 2, 3, 4,...,10. Input acceleration makes this setting tolerable.
 	- *Normalized:* a comfortable middle ground between the two options above.
 !!!
-### Stamina
-!!!
+
+!!! Stamina
 Both stamina bars are now dynamic and much more realistic. 
 * There is now a dynamic delay for beginning recovery after use.
 * Arm stamina drain scales with the weight of the gun held and position it is held in (canted=slower; aim zoomed=faster)
@@ -86,8 +87,8 @@ Both stamina bars are now dynamic and much more realistic.
 * Overweight, Fracture and Leg Stamina=0 now block sprinting completely
 * Sprint now overrides crouch, so you can panic GTFO when discovered sneaking about
 !!!
-### Inspect mode rework
-!!!
+
+!!! Inspect mode
 * Fixed and rewrote several overlapping and dangling key bindings and states.
 * Rail movement now works only in inspect mode. Rail movement binding is now unused.
 * Weapon rotation in inspect mode is now done with the Canted aim binding.
@@ -95,8 +96,8 @@ Both stamina bars are now dynamic and much more realistic.
 * Added ammo and attachment cards to the inspect mode (disable via MCM menu)
 * Flashlight will now shine on the weapon while inspecting
 !!!
-### Ammo check
-!!!
+
+!!! Ammo check & insert
 Ammo check receives much needed love. 
 * Reload binding (default R) will now perform ammo check when held down for longer than 300ms.
 * Old ammo check binding removed.
