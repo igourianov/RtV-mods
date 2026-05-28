@@ -5,26 +5,32 @@ const ScopeCatalog = preload("./ScopeCatalog.gd")
 const Out = preload("../Lib/Out.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
-enum IdleCategory { Default, Pistol, NoGrip }
+enum IdleCategory { Default, Pistol, NoGrip, SMG }
 
 var _idle_offsets := {
 	IdleCategory.Default: {
-		"pos": Vector3(-0.03, -0.08, 0),
-		"rot": Vector3(10.0, 30.0, 10.0),
+		"pos": Vector3(0, -0.04, 0.02),
+		"rot": Vector3(10, 25, 10),
+	},
+	IdleCategory.SMG: {
+		"pos": Vector3(0, -0.06, 0.04),
+		"rot": Vector3(15, 20, 10),
 	},
 	IdleCategory.Pistol: {
 		"pos": Vector3(-0.07, -0.06, 0),
 		"rot": Vector3(15, 10, 0),
 	},
 	IdleCategory.NoGrip: {
-		"pos": Vector3(0.01, -0.1, 0.08),
-		"rot": Vector3(-5.0, 45.0, 10.0),
+		"pos": Vector3(0, -0.06, 0.05),
+		"rot": Vector3(-5, 40, 10),
 	},
 }
 var _current_idle_category: int = IdleCategory.Default
 const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-15.0, 0.0, 0)
-const _LOOK_DOWN_THRESHOLD_DEG: float = -20.0
-const _LOOK_DOWN_COLLISION_THRESHOLD_DEG: float = -60.0
+const _ANCHOR_THRESHOLD: float = -10.0
+const _LOOK_DOWN_THRESHOLD: float = -45.0
+const _LOOK_DOWN_POS := Vector3(0.2, -0.28, -0.25)#(-0.05, -0.20, -0.3)
+const _LOOK_DOWN_ROT := Vector3(45, -0.5, 10)# (20, 20, -45)
 
 
 # the handling speed modifier - read as % of base
@@ -130,6 +136,7 @@ func on_weapon_handling(delta: float) -> void:
 	_anchored = false
 	_process_handling_state(h)
 	_apply_target(h, delta)
+	#Out.debug("pos:", h.targetPosition, "rot:", h.targetRotation)
 
 
 func _process_handling_state(h) -> void:
@@ -220,17 +227,19 @@ func _set_target_idle(h) -> void:
 		h.targetRotation = data.lowRotation
 		return
 
-	if _camera_pitch_deg < _LOOK_DOWN_COLLISION_THRESHOLD_DEG:
-		h.targetPosition = data.collisionPosition
-		h.targetRotation = data.collisionRotation
+	if _camera_pitch_deg < _LOOK_DOWN_THRESHOLD:
+		h.targetPosition = _LOOK_DOWN_POS
+		h.targetRotation = _LOOK_DOWN_ROT
 		return
 
-	var above_threshold = _camera_pitch_deg >= _LOOK_DOWN_THRESHOLD_DEG
+	var above_threshold = _camera_pitch_deg >= _ANCHOR_THRESHOLD
 	_free_look = ModConfig.enable_free_look && above_threshold
 	_anchored = ModConfig.enable_free_look && !above_threshold
 
 	if data.weaponType == "Pistol":
 		_current_idle_category = IdleCategory.Pistol
+	elif data.weaponType == "SMG":
+		_current_idle_category = IdleCategory.SMG
 	elif data.file == "Mosin" || data.file == "Remington_870":
 		_current_idle_category = IdleCategory.NoGrip
 	else:
@@ -266,7 +275,7 @@ func _apply_target(h, delta: float):
 	var cam_euler := cam_xform.basis.get_euler()
 	_camera_pitch_deg = rad_to_deg(cam_euler.x)
 
-	if _camera_pitch_deg >= _LOOK_DOWN_THRESHOLD_DEG:
+	if _camera_pitch_deg >= _ANCHOR_THRESHOLD:
 		_anchor_pitch = cam_euler.x
 
 	var target_pitch: float
