@@ -217,7 +217,7 @@ func _process_handling_state(h) -> void:
 func _set_target_idle(h) -> void:
 	var data = h.data
 
-	if data.type != "Weapon":
+	if data.type != "Weapon" || !ModConfig.enable_free_look:
 		h.targetPosition = data.lowPosition
 		h.targetRotation = data.lowRotation
 		return
@@ -227,9 +227,8 @@ func _set_target_idle(h) -> void:
 		h.targetRotation = _LOOK_DOWN_ROT
 		return
 
-	var above_threshold = _camera_pitch_deg >= _ANCHOR_PITCH
-	_free_look = ModConfig.enable_free_look && above_threshold
-	_anchored = ModConfig.enable_free_look && !above_threshold
+	_free_look = _camera_pitch_deg >= _ANCHOR_PITCH
+	_anchored = !_free_look
 
 	if data.weaponType == "Pistol":
 		_current_idle_category = IdleCategory.Pistol
@@ -257,7 +256,7 @@ func _apply_target(h, delta: float):
 	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), t)
 	h.rotation_degrees = lerp(h.rotation_degrees, h.targetRotation, t)
 
-	if !_baseline_captured:
+	if !_baseline_captured || !ModConfig.enable_free_look:
 		return
 
 	var rig = h.get_parent()
@@ -295,7 +294,7 @@ func on_rig_update_post(_animate) -> void:
 	if !_baseline_captured:
 		_manager_local_baseline = manager.transform
 		_baseline_captured = true
-	else:
+	elif ModConfig.enable_free_look:
 		manager.transform = _manager_local_baseline
 
 	var rig = manager.get_child(manager.get_child_count() - 1) if manager.get_child_count() else null

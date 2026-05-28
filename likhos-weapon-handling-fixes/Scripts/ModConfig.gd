@@ -30,7 +30,7 @@ static var attachment_tooltips: bool
 static var pip_anti_aliasing: bool
 static var show_protips: bool
 static var debug_enabled: bool
-static var enable_free_look: bool = true
+static var enable_free_look: bool
 
 static var _menu_pos_auto: int = 0
 
@@ -85,6 +85,7 @@ static func apply_config(config: ConfigFile):
 	laser_auto_on = _get_config_value(config, "Bool", "laserAutoOn", DEFAULT_ENABLED)
 	attachment_tooltips = _get_config_value(config, "Bool", "attachmentTooltips", DEFAULT_ENABLED)
 	pip_anti_aliasing = _get_config_value(config, "Bool", "pipAntiAliasing", DEFAULT_ENABLED)
+	enable_free_look = _get_config_value(config, "Bool", "enableFreeLook", DEFAULT_ENABLED)
 
 
 static func _next_pos():
@@ -145,6 +146,8 @@ static func create_template(config: ConfigFile):
 	_set_config_entry(config, "Bool", "Inspect", "ammoTooltips", "Show ammo cards", "Show magazine and chamber overlays while inspecting the weapon", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Bool", "Inspect", "attachmentTooltips", "Show attachment cards", "Show attachment names (optic, muzzle, laser) over the weapon while inspecting", DEFAULT_ENABLED)
+
+	_set_config_entry(config, "Bool", "Aim tweaks", "enableFreeLook", "Intelligent free look", "Allow camera to go into free look when weapon is idle", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Dropdown", "Aim tweaks", "lpvoOofZoom", "LPVO out-of-aim zoom", "Allow changing LPVO zoom level when not aiming. Rail movement: requires Rail Movement binding held as a modifier.", DEFAULT_LPVO_OOA_ZOOM, {
 		"options": {
