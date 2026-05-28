@@ -1,5 +1,7 @@
 # ?
-* removed dead MCM toggle fo "real scope magnifications"
+* reworked patrol mode into intelligent free look mode
+* removed dead MCM toggle for "real scope magnifications"
+* fixed deadlock on opening inventory while checking ammo
 
 # 2.8.1288
 * moved all the attachment renaming and weight changes into [Likho's tag](https://modworkshop.net/mod/56993) mod

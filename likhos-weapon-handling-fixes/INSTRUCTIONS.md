@@ -12,12 +12,13 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 
 **Replace hooks** (other mods that also replace these will conflict, pick one):
 
-- `Laser._input`
-- `Flashlight._physics_process`
+- `Camera.ScopeDOF`
 - `Controller.MovementStates`
 - `Controller._input`
+- `Controller.Crouch`
+- `Laser._input`
+- `Flashlight._physics_process`
 - `Character.Stamina`
-- `Camera.ScopeDOF`
 
 **Pre and Post hooks** (additive, run before/after vanilla, coexist with other mods cleanly):
 
@@ -31,6 +32,7 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `Tooltip.Update` (post)
 - `Inputs.CreateActions` (pre and post)
 - `Inputs.ResetActions` (post)
+- `Interactor._physics_process` (pre)
 
 # Install / Uninstall
 

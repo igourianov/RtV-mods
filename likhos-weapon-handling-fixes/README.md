@@ -4,30 +4,41 @@ Comprehensive RtV overhaul that modifies weapon positions, handling mechanics, o
 
 Formerly `Likho's Weapon Handling Fixes`.
 
-### Features
+## Aiming & Optics
 
 * Reworked the PIP scope mode for realism [*(details)*](#pip-mode-realism). Recommended to pair with [ExitPupil](https://modworkshop.net/mod/56890) PIP reshader mod.
-* Reworked all optics with real names, weights eye relief and magnification values. [*(details)*](#optics-rework)
-* Reworked arm and leg stamina mechanics. [*(details)*](#stamina)
+* Reworked all optics with real eye relief and magnification values. [*(details)*](#optics-rework)
+* Hold breath function to steady aim (hold Sprint while aiming)
+* Canted aim is now independent with optional laser auto-activation
+* Mouse sensitivity scales with zoom and stance (canted uses Aim, LPVO 1× uses Aim, mid/high use Scope/Scope×0.5)
+* LPVO zoom is now accessible without aiming - gated by the Rail movement modifier by default to avoid collision with lower/raise weapon (change in MCM)
+* Ability to toggle the secondary optic out of aim, with a visual cue of the toggle
+* Added explicit bindings to the base game settings for optic zoom in/out (it was hardcoded to mouse wheel)
+
+## Weapons & Handling
+
+* Reworked lowered weapon mode into *Intelligent Free Look* mode (disable in MCM). Recommended to use with [FP Body](https://modworkshop.net/mod/56744) mod.
+* Weapon handling speed (how fast you transition into the desired state) now scales with stance and optic: red dot 115%, canted 130%, magnified scope 80%
 * Reworked reload, insert and ammo check mechanics. [*(details)*](#ammo-check)
 * Reworked the inspect mode and associated bindings. [*(details)*](#inspect-mode-rework)
-* Hold breath function (hold Sprint while aiming)
-* Canted aim is now independent with optional laser auto-activation (disable in MCM)
-* Reworked input priority for Couch/Sprint/Aim/Canted actions. Last action wins instead of following hardcoded order (exception: sprint while aiming)
-* Mouse sensitivity scales with zoom and stance (canted uses Aim, LPVO 1× uses Aim, mid/high use Scope/Scope×0.5)
-* Weapon handling speed (how fast you transition into the desired state) now scales with stance and optic: red dot 115%, canted 130%, LPVO at 1× 105%, magnified scope 80%, default 100% (disable in MCM)
-* Movement speeds rescaled with new breakpoints. Crouch/walk/sprint changed from vanilla 1/2.5/5 to 0.7/3/7, with new walk-canted/walk-aiming-1×/walk-scoped breakpoints at 2.25/1.8/0.9× walk speed (all editable in MCM)
-* Default weapon position changed to patrol mode (rifle rests across the chest)
-* LPVO zoom accessible without aiming - gated by the Rail movement modifier by default to avoid collision with lower/raise weapon (change in MCM)
-* Added explicit bindings to the base game settings for optic zoom in/out (it was hardcoded to mouse wheel)
-* Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in MCM)
-* Ability to toggle the secondary optic out of aim, with a visual cue of the toggle
-* Flashlight now supports both toggle and hold actions on the same binding, and will shine the light on the inspected weapon. Recommended for use with [LootLight mod](https://modworkshop.net/mod/56422).
 * Mosin and 870 can now cycle the bolt on a full or empty mag like real guns (you will lose ammo)
 * Cocked state and dry fire click for all guns
+
+## Movement & Stamina
+
+* Reworked arm and leg stamina mechanics. [*(details)*](#stamina)
+* Movement speeds rescaled with new breakpoints
+	- Crouch/walk/sprint changed from vanilla 1/2.5/5 to 0.7/3/7
+	- New walk-canted/walk-aiming-1×/walk-scoped breakpoints at 2.25/1.8/0.9× walk speed (all editable in MCM)
+
+## Controls & HUD
+
+* Reworked input priority for Couch/Sprint/Aim/Canted actions. Last action wins instead of following hardcoded order (exception: sprint while aiming)
+* Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in MCM)
+* Flashlight now supports both toggle and hold actions on the same binding, and will shine the light on the inspected weapon. Recommended for use with [LootLight mod](https://modworkshop.net/mod/56422).
 * Likho's protips in-game to make the user aware of the changed bindings
 
-### Vanilla Fixes
+## Vanilla Fixes
 
 * Ammo check no longer forces weapon into raised position (prior stance preserved)
 * Canted aim activation no longer blocked by interactables
@@ -56,7 +67,7 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 * Changed Mark 8 ("Leopard") to 1.1-8x zoom and fixed reticle size at 1x
 * Changed Vudu to 1-10x zoom and made it legendary rarity
 * Changed POSP to be the 2-6x variant and fixed reticle size
-* HAMR is now legendary 
+* HAMR is now legendary
 * PU: 3.5x zoom
 * Input acceleration for zoom bindings to quick flick from min to max or vice versa
 * MCM setting for magnification controle schema
