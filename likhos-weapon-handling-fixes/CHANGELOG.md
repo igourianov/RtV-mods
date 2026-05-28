@@ -1,7 +1,7 @@
 * scoped sensitivity now scales progressively with magnification level instead of fixed multiplier
 
 # 2.9.1403
-* reworked patrol mode into intelligent free look mode
+* reworked patrol mode into adaptive free look mode
 * removed dead MCM toggle for "real scope magnifications"
 * fixed deadlock on opening inventory while checking ammo
 

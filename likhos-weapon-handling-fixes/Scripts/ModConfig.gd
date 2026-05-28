@@ -147,7 +147,7 @@ static func create_template(config: ConfigFile):
 
 	_set_config_entry(config, "Bool", "Inspect", "attachmentTooltips", "Show attachment cards", "Show attachment names (optic, muzzle, laser) over the weapon while inspecting", DEFAULT_ENABLED)
 
-	_set_config_entry(config, "Bool", "Aim tweaks", "enableFreeLook", "Intelligent free look", "Allow camera to go into free look when weapon is idle", DEFAULT_ENABLED)
+	_set_config_entry(config, "Bool", "Aim tweaks", "enableFreeLook", "Adaptive free look", "Allow camera to go into free look when weapon is idle", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Dropdown", "Aim tweaks", "lpvoOofZoom", "LPVO out-of-aim zoom", "Allow changing LPVO zoom level when not aiming. Rail movement: requires Rail Movement binding held as a modifier.", DEFAULT_LPVO_OOA_ZOOM, {
 		"options": {

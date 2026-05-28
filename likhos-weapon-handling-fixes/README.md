@@ -10,15 +10,15 @@ Formerly `Likho's Weapon Handling Fixes`.
 * Reworked all optics with real eye relief and magnification values. [*(details)*](#optics-rework)
 * Hold breath function to steady aim (hold Sprint while aiming)
 * Canted aim is now an independent action from aim with optional laser auto-activation
-* Mouse sensitivity scales dynamically with zoom and stance
+* Mouse sensitivity scales with stance and progressively with zoom level
 * LPVO zoom is now accessible without aiming - gated by the Rail movement modifier by default to avoid collision with lower/raise weapon (change in MCM)
 * Ability to toggle the secondary optic out of aim, with a visual cue of the toggle
 * Added explicit bindings to the base game settings for optic zoom in/out (it was hardcoded to mouse wheel)
 
 ## Weapons & Handling
 
-* Reworked lowered weapon mode into *Intelligent Free Look* mode (disable in MCM). Recommended to use with [FP Body](https://modworkshop.net/mod/56744) mod.
-* Weapon handling speed (how fast you transition into the desired state) now scales with stance and optic: red dot 115%, canted 130%, magnified scope 80%
+* Reworked lowered weapon mode into *Adaptive Free Look* mode (disable in MCM). Recommended to use with [FP Body](https://modworkshop.net/mod/56744) mod.
+* Weapon handling speed (how fast you transition into the desired state) now scales with stance and optic: red dot `115%`, canted `130%`, magnified scope `80%`
 * Reworked reload, insert and ammo check mechanics. [*(details)*](#ammo-check)
 * Reworked the inspect mode and associated bindings. [*(details)*](#inspect-mode-rework)
 * Mosin and 870 can now cycle the bolt on a full or empty mag like real guns (you will lose ammo)
@@ -27,9 +27,8 @@ Formerly `Likho's Weapon Handling Fixes`.
 ## Movement & Stamina
 
 * Reworked arm and leg stamina mechanics to be based on vitals and weight. [*(details)*](#stamina)
-* Movement speeds rescaled with new breakpoints
-	- Crouch/walk/sprint changed from vanilla 1/2.5/5 to 0.7/3/7
-	- New walk-canted/walk-aiming-1×/walk-scoped breakpoints at 2.25/1.8/0.9× walk speed (all editable in MCM)
+* Changed movement speed Crouch/walk/sprint from vanilla `1 / 2.5 / 5` to `0.7 / 3 / 7` (editable in MCM)
+* New movement breakpoints walk-canted/walk-aiming-1×/walk-scoped as multiplier of the walk speed `0.6 / 0.75 / 0.3` (editable in MCM)
 
 ## Controls & HUD
 
