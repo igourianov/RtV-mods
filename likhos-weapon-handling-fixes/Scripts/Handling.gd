@@ -26,11 +26,11 @@ var _idle_offsets := {
 	},
 }
 var _current_idle_category: int = IdleCategory.Default
-const _SECONDARY_OPTIC_LOW_ROTATION_OFFSET = Vector3(-15.0, 0.0, 0)
-const _ANCHOR_THRESHOLD: float = -10.0
-const _LOOK_DOWN_THRESHOLD: float = -45.0
-const _LOOK_DOWN_POS := Vector3(0.2, -0.28, -0.25)#(-0.05, -0.20, -0.3)
-const _LOOK_DOWN_ROT := Vector3(45, -0.5, 10)# (20, 20, -45)
+const _SECONDARY_OPTIC_ROT_OFFSET := Vector3(-15.0, 0.0, 0)
+const _ANCHOR_PITCH := -10.0
+const _LOOK_DOWN_PITCH := -45.0
+const _LOOK_DOWN_POS := Vector3(0.2, -0.28, -0.25)
+const _LOOK_DOWN_ROT := Vector3(45, -0.5, 10)
 
 
 # the handling speed modifier - read as % of base
@@ -227,12 +227,12 @@ func _set_target_idle(h) -> void:
 		h.targetRotation = data.lowRotation
 		return
 
-	if _camera_pitch_deg < _LOOK_DOWN_THRESHOLD:
+	if _camera_pitch_deg < _LOOK_DOWN_PITCH:
 		h.targetPosition = _LOOK_DOWN_POS
 		h.targetRotation = _LOOK_DOWN_ROT
 		return
 
-	var above_threshold = _camera_pitch_deg >= _ANCHOR_THRESHOLD
+	var above_threshold = _camera_pitch_deg >= _ANCHOR_PITCH
 	_free_look = ModConfig.enable_free_look && above_threshold
 	_anchored = ModConfig.enable_free_look && !above_threshold
 
@@ -249,7 +249,7 @@ func _set_target_idle(h) -> void:
 	var pos_offset: Vector3 = entry["pos"]
 	var rot_offset: Vector3 = entry["rot"]
 	if gameData.secondaryOptic:
-		rot_offset += _SECONDARY_OPTIC_LOW_ROTATION_OFFSET
+		rot_offset += _SECONDARY_OPTIC_ROT_OFFSET
 
 	h.targetPosition = data.lowPosition + pos_offset
 	h.targetRotation = data.lowRotation + rot_offset
@@ -275,7 +275,7 @@ func _apply_target(h, delta: float):
 	var cam_euler := cam_xform.basis.get_euler()
 	_camera_pitch_deg = rad_to_deg(cam_euler.x)
 
-	if _camera_pitch_deg >= _ANCHOR_THRESHOLD:
+	if _camera_pitch_deg >= _ANCHOR_PITCH:
 		_anchor_pitch = cam_euler.x
 
 	var target_pitch: float
