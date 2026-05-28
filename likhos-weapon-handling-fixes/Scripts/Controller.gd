@@ -113,14 +113,12 @@ func _mouse_input(ctrl, evt) -> void:
 	var sensitivity: float
 	if gameData.isCanted:
 		sensitivity = gameData.aimSensitivity
-	elif !gameData.isAiming:
-		sensitivity = gameData.lookSensitivity
-	elif ModConfig.current_scope_mag < 2.0:
+	elif gameData.isAiming && gameData.isScoped:
+		sensitivity = gameData.scopeSensitivity / ModConfig.current_scope_mag
+	elif gameData.isAiming:
 		sensitivity = gameData.aimSensitivity
-	elif ModConfig.current_scope_mag > 4.0:
-		sensitivity = gameData.scopeSensitivity * 0.5
 	else:
-		sensitivity = gameData.scopeSensitivity
+		sensitivity = gameData.lookSensitivity
 
 	var factor = deg_to_rad(clampf(sensitivity, 0.1, 2.0) / 10.0)
 	var y_sign = 1.0 if gameData.mouseMode == 2 else -1.0

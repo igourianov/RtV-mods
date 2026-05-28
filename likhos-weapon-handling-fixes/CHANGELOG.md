@@ -1,3 +1,6 @@
+#
+* scoped sensitivity now scales with magnification level instead of fixed multiplier
+
 # 2.9.1403
 * reworked patrol mode into intelligent free look mode
 * removed dead MCM toggle for "real scope magnifications"

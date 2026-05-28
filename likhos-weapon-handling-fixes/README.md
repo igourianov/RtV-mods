@@ -10,7 +10,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 * Reworked all optics with real eye relief and magnification values. [*(details)*](#optics-rework)
 * Hold breath function to steady aim (hold Sprint while aiming)
 * Canted aim is now an independent action from aim with optional laser auto-activation
-* Mouse sensitivity scales with zoom and stance (canted uses Aim, LPVO 1× uses Aim, mid/high use Scope/Scope×0.5)
+* Mouse sensitivity scales dynamically with zoom and stance
 * LPVO zoom is now accessible without aiming - gated by the Rail movement modifier by default to avoid collision with lower/raise weapon (change in MCM)
 * Ability to toggle the secondary optic out of aim, with a visual cue of the toggle
 * Added explicit bindings to the base game settings for optic zoom in/out (it was hardcoded to mouse wheel)
