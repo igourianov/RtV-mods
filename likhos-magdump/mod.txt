@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Magdump"
 id="likhos-magdump"
-version="1.2.49"
+version="1.2.53"
 prefix="[likho-magdump]"
 description="Likho's cross-compatibility mod for several rifle magazines"
 debug=false

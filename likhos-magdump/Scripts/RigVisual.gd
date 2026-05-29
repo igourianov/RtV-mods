@@ -5,6 +5,8 @@ const Out = preload("../Lib/Out.gd")
 const NATIVE_KEY = &"likho_magdump_native"
 const OVERLAYS_KEY = &"likho_magdump_overlays"
 
+const SWAP_DELAY := 0.3
+
 var _lib
 # gun_file -> { mag_file: {mesh: ArrayMesh, material: Material, bullet_local: Vector3} }
 var _table: Dictionary = {}
@@ -138,13 +140,40 @@ func on_update_rig_pre() -> void:
 
 
 func refresh_after_cross_swap(iface) -> void:
-	if !iface || !iface.rigManager:
+	var rig = _get_rig(iface)
+	if !rig:
 		return
+	_await_then_resolve(rig)
+
+
+func refresh_after_attach(iface) -> void:
+	var rig = _get_rig(iface)
+	if !rig:
+		return
+	# Magazine_Attach_* paths: gun had no mag visible. rig.magazine points at the
+	# (hidden) native mesh. Swap the pointer now so the vanilla magazine.show()
+	# at the tail of WeaponRig.Reload reveals the foreign overlay instead.
+	_resolve_pointer(rig, false)
+
+
+func _get_rig(iface):
+	if !iface || !iface.rigManager:
+		return null
 	var rm = iface.rigManager
 	if rm.get_child_count() == 0:
-		return
+		return null
 	var rig = rm.get_child(rm.get_child_count() - 1)
 	if !rig || !rig.has_meta(OVERLAYS_KEY):
+		return null
+	return rig
+
+
+func _await_then_resolve(rig) -> void:
+	var tree = rig.get_tree()
+	if !tree:
+		return
+	await tree.create_timer(SWAP_DELAY, false).timeout
+	if !is_instance_valid(rig):
 		return
 	_resolve_pointer(rig, true)
 

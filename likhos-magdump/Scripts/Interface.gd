@@ -63,6 +63,7 @@ func on_get_magazine(weaponData, weaponSlot, swapMagazine) -> bool:
 			weapon_item.Combine(picked)
 			iface.inventoryGrid.Pick(picked)
 			picked.queue_free()
+			_rig_visual.refresh_after_attach(iface)
 		return true
 
 	# Cross-mag swap: real object swap.
