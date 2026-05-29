@@ -15,6 +15,7 @@ func _init(lib, compat: Dictionary, pickups: Dictionary) -> void:
 	_build_table(compat, pickups)
 
 
+
 func _build_table(compat: Dictionary, pickups: Dictionary) -> void:
 	var cache := {}
 	for gun_id in compat:
@@ -32,6 +33,7 @@ func _build_table(compat: Dictionary, pickups: Dictionary) -> void:
 			_table[gun_id] = overlays
 
 
+
 # Pickup .tscn carries LOD0/LOD1 meshes plus a Bullets/Cartridge_Rifle child
 # positioned at the topmost-round point in mesh-local frame. We extract the
 # mesh, material and bullet position in one pass.
@@ -45,7 +47,7 @@ func _extract_pickup_data(pickup_path: String) -> Dictionary:
 		return {}
 	var instance = scene.instantiate()
 	var lod0 = instance.get_node_or_null("LOD0")
-	if !lod0 or !(lod0 is MeshInstance3D):
+	if !lod0 || !(lod0 is MeshInstance3D):
 		Out.warning("no LOD0 MeshInstance3D in %s" % pickup_path)
 		instance.free()
 		return {}
@@ -63,7 +65,7 @@ func _extract_pickup_data(pickup_path: String) -> Dictionary:
 
 func on_ready_post() -> void:
 	var rig = _lib._caller
-	if !rig or !rig.data or !rig.skeleton or !rig.magazine:
+	if !rig || !rig.data || !rig.skeleton || !rig.magazine:
 		return
 	var gun_file: String = rig.data.file
 	if !_table.has(gun_file):
@@ -85,7 +87,7 @@ func on_ready_post() -> void:
 	# the two coincide; the chamber-end of the foreign mag lines up regardless of
 	# the mag's overall length.
 	var host_bullet_local: Vector3 = Vector3.ZERO
-	if rig.bullets and rig.bullets.get_child_count() > 0:
+	if rig.bullets && rig.bullets.get_child_count() > 0:
 		host_bullet_local = rig.bullets.get_child(0).position
 	else:
 		Out.warning("no bullets node for %s, falling back to identity anchor" % gun_file)
@@ -122,10 +124,10 @@ func on_ready_post() -> void:
 
 func on_update_rig_pre() -> void:
 	var rm = _lib._caller
-	if !rm or rm.get_child_count() == 0:
+	if !rm || rm.get_child_count() == 0:
 		return
 	var rig = rm.get_child(rm.get_child_count() - 1)
-	if !rig or !rig.has_meta(OVERLAYS_KEY):
+	if !rig || !rig.has_meta(OVERLAYS_KEY):
 		return
 	# Detach path needs `magazine.visible == true` for the drop animation to
 	# play, so we leave the pointer alone there. On attach / cross-swap we
@@ -136,13 +138,13 @@ func on_update_rig_pre() -> void:
 
 
 func refresh_after_cross_swap(iface) -> void:
-	if !iface or !iface.rigManager:
+	if !iface || !iface.rigManager:
 		return
 	var rm = iface.rigManager
 	if rm.get_child_count() == 0:
 		return
 	var rig = rm.get_child(rm.get_child_count() - 1)
-	if !rig or !rig.has_meta(OVERLAYS_KEY):
+	if !rig || !rig.has_meta(OVERLAYS_KEY):
 		return
 	_resolve_pointer(rig, true)
 
@@ -152,19 +154,19 @@ func _resolve_pointer(rig, transfer_visibility: bool) -> void:
 	var overlays: Dictionary = rig.get_meta(OVERLAYS_KEY)
 	var mag_file := _get_loaded_mag_file(rig)
 	var target = overlays.get(mag_file, native)
-	if !target or rig.magazine == target:
+	if !target || rig.magazine == target:
 		return
 	var was_visible: bool = rig.magazine.visible if rig.magazine else false
 	if rig.magazine:
 		rig.magazine.hide()
 	rig.magazine = target
-	if transfer_visibility and was_visible:
+	if transfer_visibility && was_visible:
 		target.show()
 
 
 func _find_mag_bone(skeleton: Skeleton3D) -> String:
 	for child in skeleton.get_children():
-		if child is BoneAttachment3D and child.bone_name.ends_with("_Magazine"):
+		if child is BoneAttachment3D && child.bone_name.ends_with("_Magazine"):
 			return child.bone_name
 	return ""
 
