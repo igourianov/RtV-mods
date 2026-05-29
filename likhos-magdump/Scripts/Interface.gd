@@ -1,9 +1,12 @@
 extends RefCounted
 
 var _lib
+var _rig_visual
 
-func _init(lib) -> void:
+
+func _init(lib, rig_visual) -> void:
 	_lib = lib
+	_rig_visual = rig_visual
 
 
 # Replace hook for Interface.GetMagazine. Reimplements the vanilla function in
@@ -86,5 +89,7 @@ func on_get_magazine(weaponData, weaponSlot, swapMagazine) -> bool:
 	new_slot.amount = weapon_ammo
 	new_slot.gridRotated = picked_rotated
 	iface.LoadGridItem(new_slot, iface.inventoryGrid, picked_pos)
+
+	_rig_visual.refresh_after_cross_swap(iface)
 
 	return true
