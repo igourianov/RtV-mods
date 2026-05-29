@@ -56,10 +56,13 @@ func _extract_pickup_data(pickup_path: String) -> Dictionary:
 	var cartridge = instance.get_node_or_null("Bullets/Cartridge_Rifle")
 	if !cartridge:
 		Out.warning("no Bullets/Cartridge_Rifle in %s" % pickup_path)
+	var bullet_xform := Transform3D.IDENTITY
+	if cartridge:
+		bullet_xform = Transform3D(cartridge.basis.orthonormalized(), cartridge.position)
 	var data := {
 		"mesh": lod0.mesh,
 		"material": lod0.get_surface_override_material(0),
-		"bullet_local": cartridge.position if cartridge else Vector3.ZERO,
+		"bullet_xform": bullet_xform,
 	}
 	instance.free()
 	return data
@@ -83,14 +86,17 @@ func on_ready_post() -> void:
 		Out.warning("bone %s missing in skeleton of %s" % [bone_name, gun_file])
 		return
 
-	# Anchor by topmost-round position. The host rig has Bullets/Cartridge_Rifle
-	# in mag-bone-local frame, marking the chamber feed point. Each foreign mag's
-	# pickup carries the same node in mesh-local frame. Translate the overlay so
-	# the two coincide; the chamber-end of the foreign mag lines up regardless of
-	# the mag's overall length.
-	var host_bullet_local: Vector3 = Vector3.ZERO
+	# Anchor by topmost-round full pose. The host rig has Bullets/Cartridge_Rifle
+	# in mag-bone-local frame, marking the chamber feed point + orientation. Each
+	# foreign mag's pickup carries the same node in mesh-local frame. We align the
+	# overlay so the two cartridge poses coincide; this handles both translation
+	# (works regardless of mag length) and rotation (mags authored "straight" in
+	# their pickup get tilted to match a rig whose mag bone is tilted, e.g.
+	# AKM mag overlaying RK-62's angled magwell).
+	var host_xform := Transform3D.IDENTITY
 	if rig.bullets && rig.bullets.get_child_count() > 0:
-		host_bullet_local = rig.bullets.get_child(0).position
+		var host_cart = rig.bullets.get_child(0)
+		host_xform = Transform3D(host_cart.basis.orthonormalized(), host_cart.position)
 	else:
 		Out.warning("no bullets node for %s, falling back to identity anchor" % gun_file)
 
@@ -104,7 +110,7 @@ func on_ready_post() -> void:
 		rig.skeleton.add_child(attachment)
 
 		var mesh: Mesh = data["mesh"]
-		var foreign_bullet_local: Vector3 = data["bullet_local"]
+		var foreign_xform: Transform3D = data["bullet_xform"]
 
 		var mesh_node := MeshInstance3D.new()
 		mesh_node.layers = rig.magazine.layers
@@ -112,7 +118,9 @@ func on_ready_post() -> void:
 		mesh_node.mesh = mesh
 		if data["material"]:
 			mesh_node.set_surface_override_material(0, data["material"])
-		mesh_node.position = host_bullet_local - foreign_bullet_local
+		var basis := host_xform.basis * foreign_xform.basis.inverse()
+		var origin := host_xform.origin - basis * foreign_xform.origin
+		mesh_node.transform = Transform3D(basis, origin)
 		mesh_node.visible = false
 		attachment.add_child(mesh_node)
 
