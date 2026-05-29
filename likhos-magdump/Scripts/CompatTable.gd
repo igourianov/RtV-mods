@@ -18,15 +18,17 @@ const COMPAT := {
 }
 
 
-# mag_id -> path to its _Static.tscn prefab. Used by RigVisual to render the
-# foreign mag on the equipped rig.
-const MAG_STATICS := {
-	"AKS_74U_Magazine": "res://Items/Weapons/AKS-74U/AKS-74U_Magazine_Static.tscn",
-	"AK_12_Magazine": "res://Items/Weapons/AK-12/AK-12_Magazine_Static.tscn",
-	"AKM_Magazine": "res://Items/Weapons/AKM/AKM_Magazine_Static.tscn",
-	"RK_Magazine": "res://Items/Weapons/RK-62/RK_Magazine_Static.tscn",
-	"KAR_21_223_Magazine": "res://Items/Weapons/KAR-21/KAR-21_223_Magazine_Static.tscn",
-	"STANAG_Magazine": "res://Items/Weapons/M4A1/M4A1_Magazine_Static.tscn",
+# mag_id -> path to its pickup .tscn. Used by RigVisual to render the foreign
+# mag on the equipped rig. The pickup carries LOD0/LOD1 meshes plus a
+# Bullets/Cartridge_Rifle child marking the topmost-round position in
+# mesh-local space.
+const MAG_PICKUPS := {
+	"AKS_74U_Magazine": "res://Items/Weapons/AKS-74U/AKS-74U_Magazine.tscn",
+	"AK_12_Magazine": "res://Items/Weapons/AK-12/AK-12_Magazine.tscn",
+	"AKM_Magazine": "res://Items/Weapons/AKM/AKM_Magazine.tscn",
+	"RK_Magazine": "res://Items/Weapons/RK-62/RK_Magazine.tscn",
+	"KAR_21_223_Magazine": "res://Items/Weapons/KAR-21/KAR-21_223_Magazine.tscn",
+	"STANAG_Magazine": "res://Items/Weapons/M4A1/STANAG_Magazine.tscn",
 }
 
 

@@ -6,25 +6,25 @@ const NATIVE_KEY = &"likho_magdump_native"
 const OVERLAYS_KEY = &"likho_magdump_overlays"
 
 var _lib
-# gun_file -> { mag_file: {mesh: ArrayMesh, material: Material} }
+# gun_file -> { mag_file: {mesh: ArrayMesh, material: Material, bullet_local: Vector3} }
 var _table: Dictionary = {}
 
 
-func _init(lib, compat: Dictionary, statics: Dictionary) -> void:
+func _init(lib, compat: Dictionary, pickups: Dictionary) -> void:
 	_lib = lib
-	_build_table(compat, statics)
+	_build_table(compat, pickups)
 
 
-func _build_table(compat: Dictionary, statics: Dictionary) -> void:
+func _build_table(compat: Dictionary, pickups: Dictionary) -> void:
 	var cache := {}
 	for gun_id in compat:
 		var overlays := {}
 		for mag_file in compat[gun_id]:
-			if !statics.has(mag_file):
-				Out.warning("no static path for %s" % mag_file)
+			if !pickups.has(mag_file):
+				Out.warning("no pickup path for %s" % mag_file)
 				continue
 			if !cache.has(mag_file):
-				cache[mag_file] = _extract_mesh_data(statics[mag_file])
+				cache[mag_file] = _extract_pickup_data(pickups[mag_file])
 			var data: Dictionary = cache[mag_file]
 			if !data.is_empty():
 				overlays[mag_file] = data
@@ -32,23 +32,30 @@ func _build_table(compat: Dictionary, statics: Dictionary) -> void:
 			_table[gun_id] = overlays
 
 
-func _extract_mesh_data(static_path: String) -> Dictionary:
-	if !ResourceLoader.exists(static_path):
-		Out.warning("static prefab missing: %s" % static_path)
+# Pickup .tscn carries LOD0/LOD1 meshes plus a Bullets/Cartridge_Rifle child
+# positioned at the topmost-round point in mesh-local frame. We extract the
+# mesh, material and bullet position in one pass.
+func _extract_pickup_data(pickup_path: String) -> Dictionary:
+	if !ResourceLoader.exists(pickup_path):
+		Out.warning("pickup missing: %s" % pickup_path)
 		return {}
-	var scene: PackedScene = load(static_path)
+	var scene: PackedScene = load(pickup_path)
 	if !scene:
-		Out.warning("failed to load %s" % static_path)
+		Out.warning("failed to load %s" % pickup_path)
 		return {}
 	var instance = scene.instantiate()
 	var lod0 = instance.get_node_or_null("LOD0")
 	if !lod0 or !(lod0 is MeshInstance3D):
-		Out.warning("no LOD0 MeshInstance3D in %s" % static_path)
+		Out.warning("no LOD0 MeshInstance3D in %s" % pickup_path)
 		instance.free()
 		return {}
+	var cartridge = instance.get_node_or_null("Bullets/Cartridge_Rifle")
+	if !cartridge:
+		Out.warning("no Bullets/Cartridge_Rifle in %s" % pickup_path)
 	var data := {
 		"mesh": lod0.mesh,
 		"material": lod0.get_surface_override_material(0),
+		"bullet_local": cartridge.position if cartridge else Vector3.ZERO,
 	}
 	instance.free()
 	return data
@@ -72,6 +79,17 @@ func on_ready_post() -> void:
 		Out.warning("bone %s missing in skeleton of %s" % [bone_name, gun_file])
 		return
 
+	# Anchor by topmost-round position. The host rig has Bullets/Cartridge_Rifle
+	# in mag-bone-local frame, marking the chamber feed point. Each foreign mag's
+	# pickup carries the same node in mesh-local frame. Translate the overlay so
+	# the two coincide; the chamber-end of the foreign mag lines up regardless of
+	# the mag's overall length.
+	var host_bullet_local: Vector3 = Vector3.ZERO
+	if rig.bullets and rig.bullets.get_child_count() > 0:
+		host_bullet_local = rig.bullets.get_child(0).position
+	else:
+		Out.warning("no bullets node for %s, falling back to identity anchor" % gun_file)
+
 	var overlays := {}
 	for mag_file in overlay_data:
 		var data: Dictionary = overlay_data[mag_file]
@@ -81,12 +99,16 @@ func on_ready_post() -> void:
 		attachment.bone_idx = bone_idx
 		rig.skeleton.add_child(attachment)
 
+		var mesh: Mesh = data["mesh"]
+		var foreign_bullet_local: Vector3 = data["bullet_local"]
+
 		var mesh_node := MeshInstance3D.new()
 		mesh_node.layers = rig.magazine.layers
 		mesh_node.cast_shadow = MeshInstance3D.SHADOW_CASTING_SETTING_OFF
-		mesh_node.mesh = data["mesh"]
+		mesh_node.mesh = mesh
 		if data["material"]:
 			mesh_node.set_surface_override_material(0, data["material"])
+		mesh_node.position = host_bullet_local - foreign_bullet_local
 		mesh_node.visible = false
 		attachment.add_child(mesh_node)
 
