@@ -4,7 +4,7 @@ id="likhos-tag"
 version="1.0.54"
 prefix="[likho-tag]"
 description="Likho's comprehensive renaming and property tweaks for weapons and attachments"
-debug=true
+debug=false
 priority=-10
 
 [hooks]
