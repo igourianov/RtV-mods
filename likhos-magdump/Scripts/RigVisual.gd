@@ -5,7 +5,7 @@ const Out = preload("../Lib/Out.gd")
 const NATIVE_KEY = &"likho_magdump_native"
 const OVERLAYS_KEY = &"likho_magdump_overlays"
 
-const SWAP_DELAY := 0.3
+const SWAP_DELAY := 1.2
 
 var _lib
 # gun_file -> { mag_file: {mesh: ArrayMesh, material: Material, bullet_local: Vector3} }
