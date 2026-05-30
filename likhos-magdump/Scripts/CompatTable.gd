@@ -32,6 +32,19 @@ const MAG_PICKUPS := {
 }
 
 
+# mag_id -> path to its static .tscn. Used by Pickup to inject foreign mag
+# meshes into world gun pickups. The static carries just LOD0/LOD1 with no
+# script or physics, mirroring how vanilla bakes native mag attachments.
+const MAG_STATICS := {
+	"AKS_74U_Magazine": "res://Items/Weapons/AKS-74U/AKS-74U_Magazine_Static.tscn",
+	"AK_12_Magazine": "res://Items/Weapons/AK-12/AK-12_Magazine_Static.tscn",
+	"AKM_Magazine": "res://Items/Weapons/AKM/AKM_Magazine_Static.tscn",
+	"RK_Magazine": "res://Items/Weapons/RK-62/RK_Magazine_Static.tscn",
+	"KAR_21_223_Magazine": "res://Items/Weapons/KAR-21/KAR-21_223_Magazine_Static.tscn",
+	"STANAG_Magazine": "res://Items/Weapons/M4A1/M4A1_Magazine_Static.tscn",
+}
+
+
 static func apply(lib) -> void:
 	for gun_id in COMPAT:
 		var gun = lib.get_entry(lib.Registry.ITEMS, gun_id)

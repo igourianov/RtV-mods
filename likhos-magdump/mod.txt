@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Magdump"
 id="likhos-magdump"
-version="1.2.53"
+version="1.2.54"
 prefix="[likho-magdump]"
 description="Likho's cross-compatibility mod for several rifle magazines"
 debug=false
@@ -10,6 +10,7 @@ debug=false
 "res://Scripts/Interface.gd"="GetMagazine"
 "res://Scripts/WeaponRig.gd"="_ready"
 "res://Scripts/RigManager.gd"="UpdateRig"
+"res://Scripts/Pickup.gd"="_ready"
 
 [autoload]
 LikhosMagdump="res://mods/likhos-magdump/Scripts/Main.gd"
