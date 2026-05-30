@@ -203,7 +203,7 @@ func _resolve_pointer(rig, transfer_visibility: bool) -> void:
 
 func _find_mag_bone(skeleton: Skeleton3D) -> String:
 	for child in skeleton.get_children():
-		if child is BoneAttachment3D && child.bone_name.ends_with("_Magazine"):
+		if child is BoneAttachment3D && child.name == "Ammo_Magazine":
 			return child.bone_name
 	return ""
 
