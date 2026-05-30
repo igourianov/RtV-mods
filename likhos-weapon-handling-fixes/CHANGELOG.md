@@ -1,3 +1,5 @@
+* fixed mag showing empty on reload
+
 # 2.10.1407
 * made tooltip override code less aggressive to improve compat with other mods
 
