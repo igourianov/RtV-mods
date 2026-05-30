@@ -179,12 +179,14 @@ func _do_reload(ammoCheck: bool = false) -> void:
 		anim_state = "Reload_Empty" if empty else "Reload_Tactical"
 		audio_event = data.reloadEmpty if empty else data.reloadTactical
 
-	if !rig.interface.GetMagazine(data, rig.weaponSlot, !magAttach || rig.magazine.visible):
+	if !rig.interface.GetMagazine(data, rig.weaponSlot, rig.magazine.visible):
 		return
 
-	rig.UpdateBullets()
 	if magAttach:
 		_show_mag_delayed(rig)
+		rig.UpdateBullets()
+	else:
+		_update_bullets_delayed(rig)
 	await _play_reload(anim_state, audio_event)
 	slotData.chamber = true
 	slotData.set_meta("cocked", true)
@@ -200,3 +202,10 @@ func _show_mag_delayed(rig):
 	await rig.get_tree().create_timer(0.1, false).timeout;
 	if is_instance_valid(rig):
 		rig.magazine.show()
+
+
+func _update_bullets_delayed(rig):
+	await rig.get_tree().create_timer(1.2, false).timeout;
+	if is_instance_valid(rig):
+		rig.UpdateBullets()
+
