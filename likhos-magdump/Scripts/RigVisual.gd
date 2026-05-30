@@ -132,7 +132,7 @@ func on_ready_post() -> void:
 	_resolve_pointer(rig, false)
 
 
-func on_update_rig_pre() -> void:
+func on_update_rig_pre(_animate = false) -> void:
 	var rm = _lib._caller
 	if !rm || rm.get_child_count() == 0:
 		return
@@ -140,11 +140,27 @@ func on_update_rig_pre() -> void:
 	if !rig || !rig.has_meta(OVERLAYS_KEY):
 		return
 	# Detach path needs `magazine.visible == true` for the drop animation to
-	# play, so we leave the pointer alone there. On attach / cross-swap we
-	# transfer visibility so the new mesh appears (or stays hidden) in lockstep.
+	# play, so we leave the pointer alone there.
 	if _get_loaded_mag_file(rig).is_empty():
 		return
-	_resolve_pointer(rig, true)
+
+	var native = rig.get_meta(NATIVE_KEY)
+	var overlays: Dictionary = rig.get_meta(OVERLAYS_KEY)
+	var mag_file := _get_loaded_mag_file(rig)
+	var target = overlays.get(mag_file, native)
+	if !target || rig.magazine == target:
+		return
+
+	# Inventory drag-drop reloads route through here instead of GetMagazine, so
+	# mirror the bind-path refresh semantics. A currently visible magazine means
+	# a swap (old mag still on screen mid-animation): defer the mesh switch until
+	# the reload animation completes, matching refresh_after_cross_swap. A hidden
+	# magazine means attach: switch the pointer now so the vanilla magazine.show()
+	# at the animation tail reveals the overlay, matching refresh_after_attach.
+	if rig.magazine && rig.magazine.visible:
+		_await_then_resolve(rig)
+	else:
+		_resolve_pointer(rig, false)
 
 
 func refresh_after_cross_swap(iface) -> void:
