@@ -182,12 +182,12 @@ func _do_reload(ammoCheck: bool = false) -> void:
 	if !rig.interface.GetMagazine(data, rig.weaponSlot, !magAttach || rig.magazine.visible):
 		return
 
+	rig.UpdateBullets()
 	if magAttach:
 		_show_mag_delayed(rig)
 	await _play_reload(anim_state, audio_event)
 	slotData.chamber = true
 	slotData.set_meta("cocked", true)
-	rig.UpdateBullets()
 
 
 func _play_reload(animation_state: String, audio_event, wait_offset: float = -0.5) -> void:
