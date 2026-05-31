@@ -14,6 +14,7 @@ const Optic = preload("./Optic.gd")
 const Laser = preload("./Laser.gd")
 const Flashlight = preload("./Flashlight.gd")
 const ScopeCatalog = preload("./ScopeCatalog.gd")
+const RigOpticPatches = preload("./RigOpticPatches.gd")
 const Tooltip = preload("./Tooltip.gd")
 const Interactor = preload("./Interactor.gd")
 
@@ -39,6 +40,7 @@ var _item
 func setup(lib):
 
 	ScopeCatalog.apply(lib)
+	RigOpticPatches.apply(lib)
 
 	var preferences = Preferences.Load()
 
