@@ -26,9 +26,10 @@ var _idle_offsets := {
 }
 var _current_idle_category: int = IdleCategory.Default
 const _SECONDARY_OPTIC_ROT_OFFSET := Vector3(-15.0, 0.0, 0)
-const _BODY_OFFSET := 0.2
-const _SHORT_STOCK_THRESHOLD := 0.05
+const _BODY_OFFSET := 0.22
+const _LOP_SHORT_THRESHOLD := 0.15
 var _rear_z_cache := {}
+var _trigger_z_cache := {}
 const _ANCHOR_PITCH := -10.0
 const _LOOK_DOWN_PITCH := -45.0
 const _LOOK_DOWN_POS := Vector3(0.2, -0.28, -0.25)
@@ -340,10 +341,14 @@ func _eye_anchor_z(rig, data) -> float:
 	if is_nan(rear_z):
 		return data.aimPosition.z
 
-	var stock_span: float = data.aimPosition.z - rear_z
-	Out.debug("gun geometry [%s] rear_z: %.3f stock_span: %.3f" % [String(data.file), rear_z, stock_span])
+	var trigger_z := _trigger_z(rig)
+	if is_nan(trigger_z):
+		return data.aimPosition.z
 
-	if stock_span < _SHORT_STOCK_THRESHOLD:
+	var lop: float = trigger_z - rear_z
+	Out.debug("gun geometry [%s] rear_z: %.3f trigger_z: %.3f lop: %.3f" % [String(data.file), rear_z, trigger_z, lop])
+
+	if lop < _LOP_SHORT_THRESHOLD:
 		return data.aimPosition.z
 
 	return rear_z + _BODY_OFFSET
@@ -360,22 +365,35 @@ func _buttstock_rear_z(rig) -> float:
 		return NAN
 
 	var aabb: AABB = body.get_aabb()
-	var rear_local: Vector3 = body.transform * Vector3(0.0, 0.0, aabb.position.z)
-	var rear_z: float = rear_local.z
+	var rear_z: float = (body.transform * Vector3(0.0, 0.0, aabb.position.z)).z
 	_rear_z_cache[key] = rear_z
 	return rear_z
+
+
+func _trigger_z(rig) -> float:
+	var key := String(rig.data.file)
+	if _trigger_z_cache.has(key):
+		return _trigger_z_cache[key]
+
+	var skeleton = rig.skeleton
+	if !skeleton:
+		Out.warning("no skeleton for", key)
+		return NAN
+
+	for i in skeleton.get_bone_count():
+		if String(skeleton.get_bone_name(i)).ends_with("_Trigger"):
+			var trigger_z: float = skeleton.get_bone_global_rest(i).origin.z
+			_trigger_z_cache[key] = trigger_z
+			return trigger_z
+
+	Out.warning("could not find trigger bone for", key)
+	return NAN
 
 
 func _find_body_mesh(rig):
 	if !rig.skeleton:
 		return null
-	var excluded := [rig.arms, rig.cartridge, rig.magazine]
-	var fallback = null
 	for child in rig.skeleton.get_children():
-		if !(child is MeshInstance3D) || child in excluded:
-			continue
-		if String(child.name).ends_with("Body"):
+		if child is MeshInstance3D && String(child.name).ends_with("Body"):
 			return child
-		if !fallback:
-			fallback = child
-	return fallback
+	return null
