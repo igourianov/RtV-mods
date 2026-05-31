@@ -56,25 +56,22 @@ static func get_mag_range(key: String) -> Array:
 	var entry: Dictionary = DATA.get(key, {})
 	var field := "mag_range"
 	match ModConfig.mag_schema:
-		&"discrete":
-			field = "mag_range_discrete"
-		&"normalized":
-			field = "mag_range_normalized"
+		&"discrete": field = "mag_range_discrete"
+		&"normalized": field = "mag_range_normalized"
 	return entry.get(field, entry.get("mag_range", _FALLBACK_MAG))
 
 
 static func get_optic_geometry(optic) -> Dictionary:
 	if !optic:
 		return {"lens_center": Vector3.ZERO, "lens_radius": 0.0, "eye_relief": Vector2.ZERO, "isFFP": false}
+
 	var key := String(optic.attachmentData.file)
 	var entry: Dictionary = DATA.get(key, {})
-	var eye_relief_raw = entry.get("eye_relief")
-	var eye_relief: Vector2 = eye_relief_raw * 0.01 if eye_relief_raw is Vector2 else Vector2.ZERO
-
 	var lens_center: Vector3 = entry.get("lens_center", Vector3.ZERO)
 	var lens_radius: float = entry.get("lens_radius", 0.0)
+
 	if lens_center == Vector3.ZERO || lens_radius <= 0.0:
-		var geom = _ensure_lens_geometry(optic, key)
+		var geom := _measure_lens(optic, key)
 		if lens_center == Vector3.ZERO:
 			lens_center = geom.center
 		if lens_radius <= 0.0:
@@ -83,16 +80,16 @@ static func get_optic_geometry(optic) -> Dictionary:
 	return {
 		"lens_center": lens_center,
 		"lens_radius": lens_radius,
-		"eye_relief": eye_relief,
+		"eye_relief": entry.get("eye_relief", Vector2.ZERO) * 0.01,
 		"isFFP": entry.get("isFFP", false),
 	}
 
 
 static func compute_shadow(lens_distance: float, eye_relief: Vector2) -> float:
-	var slack: float = 0.03
+	var slack := 0.03
 	if lens_distance < eye_relief.x:
 		return clampf((eye_relief.x - lens_distance) / slack, 0.0, 1.0)
-	elif lens_distance > eye_relief.y:
+	if lens_distance > eye_relief.y:
 		return clampf((lens_distance - eye_relief.y) / slack, 0.0, 1.0)
 	return 0.0
 
@@ -103,9 +100,10 @@ static func compute_angle(lens_radius: float, lens_distance: float) -> float:
 	return 0.0
 
 
-static func _ensure_lens_geometry(optic, key: String) -> Dictionary:
+static func _measure_lens(optic, key: String) -> Dictionary:
 	if _lens_geometry_cache.has(key):
 		return _lens_geometry_cache[key]
+
 	var result := {"center": Vector3.ZERO, "radius": 0.0}
 	if optic.mesh == null || optic.mesh.mesh == null:
 		return result
@@ -115,23 +113,22 @@ static func _ensure_lens_geometry(optic, key: String) -> Dictionary:
 	var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 	if verts.is_empty():
 		return result
+
 	var t = optic.mesh.transform
-	var sum := Vector3.ZERO
+	var center := Vector3.ZERO
 	for v in verts:
-		sum += t * v
-	var center: Vector3 = sum / verts.size()
-	var max_r_sq: float = 0.0
+		center += t * v
+	center /= verts.size()
+
+	var max_r_sq := 0.0
 	for v in verts:
-		var p = t * v
-		var dx: float = p.x - center.x
-		var dy: float = p.y - center.y
-		var r_sq: float = dx * dx + dy * dy
-		if r_sq > max_r_sq:
-			max_r_sq = r_sq
-	result["center"] = center
-	result["radius"] = sqrt(max_r_sq)
+		var p: Vector3 = t * v
+		max_r_sq = max(max_r_sq, (p.x - center.x) ** 2 + (p.y - center.y) ** 2)
+
+	result.center = center
+	result.radius = sqrt(max_r_sq)
 	_lens_geometry_cache[key] = result
-	Out.debug("extracted lens geometry for", key, "center:", center, "radius:", result["radius"])
+	Out.debug("extracted lens geometry for", key, "center:", center, "radius:", result.radius)
 	return result
 
 
