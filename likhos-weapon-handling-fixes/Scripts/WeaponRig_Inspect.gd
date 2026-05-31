@@ -1,7 +1,5 @@
 extends "./WeaponRig_Base.gd"
 
-const ScopeCatalog = preload("./ScopeCatalog.gd")
-
 const FPS_LIGHT_PATH := "/root/Map/Core/Camera/Flashlight/FPS"
 const INSPECT_LIGHT_POSITION := Vector3(0, 0.15, 0.2)
 const LIGHT_LERP_SPEED := 10.0
@@ -60,12 +58,10 @@ func _input(event) -> void:
 		if zoomIn && optic.position.z < optic.maxPosition:
 			optic.position.z += 0.01
 			rig.slotData.position += 0.01
-			ScopeCatalog.update_optic_cache(rig, optic)
 			rig.PlayRailMove()
 		elif zoomOut && optic.position.z > optic.minPosition:
 			optic.position.z -= 0.01
 			rig.slotData.position -= 0.01
-			ScopeCatalog.update_optic_cache(rig, optic)
 			rig.PlayRailMove()
 		return
 

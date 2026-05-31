@@ -1,4 +1,5 @@
 * fixed mag showing empty on reload
+* fixed aiming camera position for very long/short guns (math now relies on buttstock rear instead of gun's center point)
 
 # 2.10.1407
 * made tooltip override code less aggressive to improve compat with other mods

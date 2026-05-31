@@ -1,7 +1,6 @@
 extends RefCounted
 
 const ModConfig = preload("./ModConfig.gd")
-const ScopeCatalog = preload("./ScopeCatalog.gd")
 const Out = preload("../Lib/Out.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
@@ -27,6 +26,9 @@ var _idle_offsets := {
 }
 var _current_idle_category: int = IdleCategory.Default
 const _SECONDARY_OPTIC_ROT_OFFSET := Vector3(-15.0, 0.0, 0)
+const _BODY_OFFSET := 0.2
+const _SHORT_STOCK_THRESHOLD := 0.05
+var _rear_z_cache := {}
 const _ANCHOR_PITCH := -10.0
 const _LOOK_DOWN_PITCH := -45.0
 const _LOOK_DOWN_POS := Vector3(0.2, -0.28, -0.25)
@@ -200,7 +202,7 @@ func _process_handling_state(h) -> void:
 
 		var aim_z = data.aimPosition.z - 0.1 # vanilla logic
 		if optic && gameData.isScoped && gameData.PIP:
-			aim_z = rig.get_meta("opticAimZ", 0.0)
+			aim_z = rig.get_meta("eyeAnchorZ", data.aimPosition.z)
 
 		h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z) if optic else data.aimPosition
 		h.targetRotation = data.aimRotation
@@ -311,8 +313,9 @@ func on_rig_update_post(_animate) -> void:
 		gameData.secondaryOptic = false
 		Out.bugfix("reset gameData.secondaryOptic flag")
 
-	if rig:
-		ScopeCatalog.update_optic_cache(rig, optic)
+	if rig && rig.data:
+		var eye_z := _eye_anchor_z(rig, rig.data)
+		rig.set_meta("eyeAnchorZ", eye_z)
 
 	# fold/unfold iron sights based on optic presence
 	var data = rig.data if rig else null
@@ -327,3 +330,52 @@ func on_rig_update_post(_animate) -> void:
 	# true up cocked state if mag was loaded from inventory
 	if rig && rig.slotData:
 		rig.slotData.set_meta("cocked", rig.slotData.chamber)
+
+
+func _eye_anchor_z(rig, data) -> float:
+	if data.weaponType == "Pistol":
+		return data.aimPosition.z
+
+	var rear_z := _buttstock_rear_z(rig)
+	if is_nan(rear_z):
+		return data.aimPosition.z
+
+	var stock_span: float = data.aimPosition.z - rear_z
+	Out.debug("gun geometry [%s] rear_z: %.3f stock_span: %.3f" % [String(data.file), rear_z, stock_span])
+
+	if stock_span < _SHORT_STOCK_THRESHOLD:
+		return data.aimPosition.z
+
+	return rear_z + _BODY_OFFSET
+
+
+func _buttstock_rear_z(rig) -> float:
+	var key := String(rig.data.file)
+	if _rear_z_cache.has(key):
+		return _rear_z_cache[key]
+
+	var body = _find_body_mesh(rig)
+	if !body:
+		Out.warning("could not find body mesh for", key)
+		return NAN
+
+	var aabb: AABB = body.get_aabb()
+	var rear_local: Vector3 = body.transform * Vector3(0.0, 0.0, aabb.position.z)
+	var rear_z: float = rear_local.z
+	_rear_z_cache[key] = rear_z
+	return rear_z
+
+
+func _find_body_mesh(rig):
+	if !rig.skeleton:
+		return null
+	var excluded := [rig.arms, rig.cartridge, rig.magazine]
+	var fallback = null
+	for child in rig.skeleton.get_children():
+		if !(child is MeshInstance3D) || child in excluded:
+			continue
+		if String(child.name).ends_with("Body"):
+			return child
+		if !fallback:
+			fallback = child
+	return fallback

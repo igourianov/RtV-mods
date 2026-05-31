@@ -19,11 +19,6 @@ func on_ready_post() -> void:
 	if !rig:
 		return
 	Out.debug("WeaponRig: injecting handlers")
-	rig.set_meta("lensDistance", 0.0)
-	rig.set_meta("opticAimZ", 0.0)
-	rig.set_meta("scopeShadow", 0.0)
-	rig.set_meta("opticAngle", 0.0)
-	rig.set_meta("opticIsFFP", false)
 	_inject_handler(rig, WeaponRig_Fire, "Likho_WeaponRig_Fire")
 	_inject_handler(rig, WeaponRig_Reload, "Likho_WeaponRig_Reload")
 	_inject_handler(rig, WeaponRig_ManualReload, "Likho_WeaponRig_ManualReload")

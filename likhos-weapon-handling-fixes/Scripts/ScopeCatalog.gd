@@ -22,14 +22,12 @@ const DATA := {
 		"mag_range": [2.0, 3.5, 6.0],
 		"mag_range_discrete": [2.0, 3.0, 4.0, 5.0, 6.0],
 		"eye_relief": Vector2(6.5, 9.0),
-		"force_z_pos": true,
 		"lens_radius": 0.012,
 		"lens_center": Vector3(0.0, 0.0, -0.078),
 	},
 	"PU": {
 		"mag_range": [3.5],
 		"eye_relief": Vector2(6.5, 8.5),
-		"force_z_pos": true,
 		"lens_radius": 0.0115,
 		"lens_center": Vector3(0.0, 0.0, -0.081),
 	},
@@ -65,14 +63,9 @@ static func get_mag_range(key: String) -> Array:
 	return entry.get(field, entry.get("mag_range", _FALLBACK_MAG))
 
 
-static func update_optic_cache(rig, optic) -> void:
-	if !optic || !rig.data:
-		rig.set_meta("lensDistance", 0.0)
-		rig.set_meta("opticAimZ", 0.0)
-		rig.set_meta("scopeShadow", 0.0)
-		rig.set_meta("opticAngle", 0.0)
-		rig.set_meta("opticIsFFP", false)
-		return
+static func get_optic_geometry(optic) -> Dictionary:
+	if !optic:
+		return {"lens_center": Vector3.ZERO, "lens_radius": 0.0, "eye_relief": Vector2.ZERO, "isFFP": false}
 	var key := String(optic.attachmentData.file)
 	var entry: Dictionary = DATA.get(key, {})
 	var eye_relief_raw = entry.get("eye_relief")
@@ -83,34 +76,31 @@ static func update_optic_cache(rig, optic) -> void:
 	if lens_center == Vector3.ZERO || lens_radius <= 0.0:
 		var geom = _ensure_lens_geometry(optic, key)
 		if lens_center == Vector3.ZERO:
-			lens_center = geom.get("center", Vector3.ZERO)
+			lens_center = geom.center
 		if lens_radius <= 0.0:
-			lens_radius = geom.get("radius", 0.0)
-	var lens_local: Vector3 = optic.transform * lens_center
+			lens_radius = geom.radius
 
-	var lens_distance: float
-	var optic_aim_z: float
-	if entry.get("force_z_pos", false) && eye_relief_raw is Vector2:
-		lens_distance = eye_relief.x
-		optic_aim_z = lens_local.z - eye_relief.x
-	else:
-		optic_aim_z = rig.data.aimPosition.z + 0.075
-		lens_distance = lens_local.z - optic_aim_z
+	return {
+		"lens_center": lens_center,
+		"lens_radius": lens_radius,
+		"eye_relief": eye_relief,
+		"isFFP": entry.get("isFFP", false),
+	}
 
+
+static func compute_shadow(lens_distance: float, eye_relief: Vector2) -> float:
 	var slack: float = 0.03
-	var shadow: float = 0.0
 	if lens_distance < eye_relief.x:
-		shadow = clampf((eye_relief.x - lens_distance) / slack, 0.0, 1.0)
+		return clampf((eye_relief.x - lens_distance) / slack, 0.0, 1.0)
 	elif lens_distance > eye_relief.y:
-		shadow = clampf((lens_distance - eye_relief.y) / slack, 0.0, 1.0)
+		return clampf((lens_distance - eye_relief.y) / slack, 0.0, 1.0)
+	return 0.0
 
-	var angle: float = 2.0 * atan(lens_radius / lens_distance) if (lens_radius > 0.0 && lens_distance > 0.0) else 0.0
 
-	rig.set_meta("lensDistance", lens_distance)
-	rig.set_meta("opticAimZ", optic_aim_z)
-	rig.set_meta("scopeShadow", shadow)
-	rig.set_meta("opticAngle", angle)
-	rig.set_meta("opticIsFFP", entry.get("isFFP", false))
+static func compute_angle(lens_radius: float, lens_distance: float) -> float:
+	if lens_radius > 0.0 && lens_distance > 0.0:
+		return 2.0 * atan(lens_radius / lens_distance)
+	return 0.0
 
 
 static func _ensure_lens_geometry(optic, key: String) -> Dictionary:

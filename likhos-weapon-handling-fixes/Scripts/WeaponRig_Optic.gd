@@ -94,10 +94,11 @@ func _handle_ads(delta: float) -> void:
 		return
 
 	var att = optic.attachmentData
+	var metrics := _optic_metrics(rig, optic)
 
 	if !gameData.isAiming || gameData.isColliding:
 		rig.ocularOpacity = move_toward(rig.ocularOpacity, 0.0 if (att.scope || att.variable) else 1.0, delta * 5.0)
-		_update_reticle(rig, optic)
+		_update_reticle(rig, optic, metrics.shadow)
 		return
 
 	rig.ocularOpacity = move_toward(rig.ocularOpacity, 0.0 if (att.scope && gameData.secondaryOptic) else 1.0, delta * 5.0)
@@ -106,7 +107,7 @@ func _handle_ads(delta: float) -> void:
 		var sizes = att.reticleSizeP if gameData.PIP else att.reticleSize
 		var mags = ScopeCatalog.get_mag_range(att.file)
 		ModConfig.current_scope_mag = mags[clamp(rig.slotData.zoom, 1, mags.size()) - 1]
-		if mags.size() > 1 && rig.get_meta("opticIsFFP", false):
+		if mags.size() > 1 && metrics.isFFP:
 			var t = clampf(inverse_lerp(mags[0], mags[-1], ModConfig.current_scope_mag), 0.0, 1.0)
 			rig.reticleSize = lerp(rig.reticleSize, lerp(sizes.x, sizes.z, t), delta * 10.0)
 		else:
@@ -120,12 +121,24 @@ func _handle_ads(delta: float) -> void:
 		rig.reticleSize = att.reticleSize.x
 
 	if gameData.PIP && gameData.isScoped:
-		_update_optic_camera(optic, delta)
+		_update_optic_camera(optic, delta, metrics.angle)
 
-	_update_reticle(rig, optic)
+	_update_reticle(rig, optic, metrics.shadow)
 
 
-func _update_optic_camera(optic, delta: float) -> void:
+func _optic_metrics(rig, optic) -> Dictionary:
+	var geom = ScopeCatalog.get_optic_geometry(optic)
+	var eye_z: float = rig.get_meta("eyeAnchorZ", rig.data.aimPosition.z)
+	var lens_local: Vector3 = optic.transform * geom.lens_center
+	var lens_distance: float = lens_local.z - eye_z
+	return {
+		"shadow": ScopeCatalog.compute_shadow(lens_distance, geom.eye_relief),
+		"angle": ScopeCatalog.compute_angle(geom.lens_radius, lens_distance),
+		"isFFP": geom.isFFP,
+	}
+
+
+func _update_optic_camera(optic, delta: float, optic_angle: float) -> void:
 	var camera = optic.get_viewport().get_camera_3d()
 	if !camera:
 		return
@@ -133,8 +146,6 @@ func _update_optic_camera(optic, delta: float) -> void:
 	if camera.near > 0.01:
 		camera.near = 0.01
 
-	var rig = get_parent()
-	var optic_angle: float = rig.get_meta("opticAngle", 0.0)
 	if optic_angle <= 0.0:
 		return
 
@@ -142,16 +153,16 @@ func _update_optic_camera(optic, delta: float) -> void:
 	optic.camera.fov = lerp(optic.camera.fov, target_fov, delta * 10.0)
 
 
-func _update_reticle(rig, optic) -> void:
+func _update_reticle(rig, optic, shadow: float) -> void:
 	if !optic.reticle:
 		return
 	var att = optic.attachmentData
 	if att && (att.scope || att.variable):
 		if !("shader_parameter/shadow" in optic.reticle):
 			optic.reticle.shader = _RETICLE_SHADER
-		optic.reticle.set_shader_parameter("shadow", rig.get_meta("scopeShadow", 0.0))
+		optic.reticle.set_shader_parameter("shadow", shadow)
 	optic.reticle.set_shader_parameter("size", rig.reticleSize)
 	optic.reticle.set_shader_parameter("opacity", rig.ocularOpacity)
 
-	if gameData.isAiming && gameData.isScoped && rig.get_meta("scopeShadow", 0.0) > 0.5:
+	if gameData.isAiming && gameData.isScoped && shadow > 0.5:
 		Out.protip("scope-shadow", "Adjust scope position on the rail to reduce scope shadow")
