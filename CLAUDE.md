@@ -47,6 +47,11 @@ Key facts when reading `src/`:
 - Global groups and other engine config live in `src/project.godot`.
 - `.gd.uid` files are Godot's UID sidecars, keep them paired with their `.gd` when referenced.
 
+### Reading source files
+* Always ask permission to read .tscn files. They're huge - reading them burns ungodly amount of tokens.
+* If you have to read them, and I give permission - grep them for specific lines instead fo reading whole file. 
+
+
 ## `vostok-mod-loader/` holds the loader source + docs (read-only reference)
 
 A clone of the Metro Mod Loader repo lives at `vostok-mod-loader/`. This mod loader is what is used to inject mods into the game.
