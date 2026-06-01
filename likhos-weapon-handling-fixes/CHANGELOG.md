@@ -3,6 +3,7 @@
 * POSP can now move on the dovetail rail same way other scopes move on the picatinny rail
 * fixed PU position on Mosin (it was too far forward)
 * fixed several vanilla bugs with optic positioning outside of declared min/max rail ranges (HAMR and ACOG on M78 and T2 on M4A1)
+* fixed vanilla bug with floating point math when checking rail movement constraints allowing scopes sometimes to move further/less than was intended
 
 # 2.10.1407
 * made tooltip override code less aggressive to improve compat with other mods

@@ -55,15 +55,15 @@ func _input(event) -> void:
 	var zoomOut = event.is_action_pressed("optic_zoom_out", true)
 
 	if (zoomIn || zoomOut) && optic && optic.railMovement:
-		if zoomIn && optic.position.z < optic.maxPosition:
-			optic.position.z += 0.01
-			rig.slotData.position += 0.01
+		var min_val = roundi(optic.minPosition * 100)
+		var max_val = roundi(optic.maxPosition * 100)
+		var new_z = roundi(optic.position.z * 100) + (1 if zoomIn else -1)
+
+		if new_z >= min_val && new_z <= max_val:
+			rig.slotData.position += 0.01 if zoomIn else -0.01
+			optic.position.z = optic.defaultPosition + rig.slotData.position
 			rig.PlayRailMove()
-		elif zoomOut && optic.position.z > optic.minPosition:
-			optic.position.z -= 0.01
-			rig.slotData.position -= 0.01
-			rig.PlayRailMove()
-		return
+
 
 
 func _inspect_toggle():
