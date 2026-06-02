@@ -1,5 +1,7 @@
 * fixed Mosin missing animation for ejecting live round on reload
 * fixed Mosin missing animation for ejection of both casing an live round on opening bolt for insertion
+* added self damage when trying to aim with optic mounted too close
+* reworked handling speed to apply both in and out of the state, added slowed admin speed for Inspecing/Ammo Check/Insert
 * tooltip code refactoring
 
 # 2.11.1481
