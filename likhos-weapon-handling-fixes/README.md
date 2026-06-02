@@ -49,6 +49,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 * Fixed HAMR causing major flickering when toggling secondary on M4A1 (bug with foldable iron sights)
 * Fixed laser ray misaligned with collision dot. You may notice that bullet holes are now very slightly offset from the laser dot - that's how real lasers work.
 * Fixed flashlight draining battery while the game world is frozen
+* Fixed bugs with optic rail movement due to incorrect limits and bugs with floating point math
 
 ## More details
 
@@ -63,12 +64,13 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 !!!
 
 !!! Optics
-* All optics now have eye relief values and create scope shadow if mounted outside ideal eye relief
+* All optics now have eye relief values and create scope shadow if mounted outside ideal eye relief (ACOG will suck on comblock rifles!)
 * Changed Mark 8 ("Leopard") to 1.1-8x zoom and fixed reticle size at 1x
 * Changed Vudu to 1-10x zoom and made it legendary rarity
 * Changed POSP to be the 2-6x variant and fixed reticle size
+* Allowed POSP to move on the dovetail
 * HAMR is now legendary
-* PU: 3.5x zoom
+* PU moved back on the gun and it is now real 3.5x zoom
 * Input acceleration for zoom bindings to quick flick from min to max or vice versa
 * MCM setting for magnification control schema
 	- *Short:* 3 zoom level spread evenly along scope's magnification range - like vanilla but mid-point is visually middle. Choose this if you're more CoD than Tarkov guy.

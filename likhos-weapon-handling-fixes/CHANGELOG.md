@@ -1,7 +1,8 @@
+# 2.11.1481
 * fixed mag showing empty on reload
-* fixed aiming camera position for very long/short guns
+* fixed aiming camera position for a number of guns (in PIP mode only)
 * POSP can now move on the dovetail rail same way other scopes move on the picatinny rail
-* fixed PU position on Mosin (it was too far forward)
+* fixed PU position on Mosin (it was way too far forward)
 * fixed several vanilla bugs with optic positioning outside of declared min/max rail ranges (HAMR and ACOG on M78 and T2 on M4A1)
 * fixed vanilla bug with floating point math when checking rail movement constraints allowing scopes sometimes to move further/less than was intended
 
