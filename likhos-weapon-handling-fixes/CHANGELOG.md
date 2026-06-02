@@ -1,3 +1,7 @@
+* fixed Mosin missing animation for ejecting live round on reload
+* fixed Mosin missing animation for ejection of both casing an live round on opening bolt for insertion
+* tooltip code refactoring
+
 # 2.11.1481
 * fixed mag showing empty on reload
 * fixed aiming camera position for a number of guns (in PIP mode only)

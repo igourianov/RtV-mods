@@ -13,6 +13,35 @@ var _manual_load_state := ManualLoadState.NONE
 
 func _ready() -> void:
 	set_process_input(true)
+	_inject_mosin_casing_eject() # BUGFIX for Mosin not plaing casing animation wehn opening bolt for insertion
+
+
+func _inject_mosin_casing_eject() -> void:
+	var rig = get_parent()
+	if rig.data.file != "Mosin":
+		return
+
+	var player = rig.animations
+	var tree = rig.animator
+	if !player || !tree:
+		return
+
+	var anim_name = "Mosin_Insert_Start"
+	if !player.has_animation(anim_name):
+		return
+
+	var anim = player.get_animation(anim_name)
+	if anim.has_meta("likho_eject_injected"):
+		return
+
+	var base = tree.get_node(tree.root_node)
+	if !base:
+		return
+
+	var track = anim.add_track(Animation.TYPE_METHOD)
+	anim.track_set_path(track, base.get_path_to(rig))
+	anim.track_insert_key(track, 0.9, {"method": &"CasingEject", "args": []})
+	anim.set_meta("likho_eject_injected", true)
 
 
 func _input(event) -> void:
@@ -36,16 +65,16 @@ func _do_insert():
 
 	gameData.isInserting = true
 
+	if rig.data.weaponType == "Bolt" && rig.slotData.chamber: # hack - injected method track only checks slotData.casing==true
+		rig.slotData.chamber = false
+		rig.slotData.casing = true
+
 	_manual_load_state = ManualLoadState.OPEN
 	await play("Insert_Start", rig.data.insertStart)
 	if !is_instance_valid(self):
 		return
 	if _manual_load_state == ManualLoadState.OPEN:
 		_manual_load_state = ManualLoadState.IDLE
-
-	if rig.data.weaponType == "Bolt":
-		rig.slotData.chamber = false
-		rig.slotData.casing = false
 
 	Out.protip("ammo-manual-insert", "Press [%s] to start reloading" % Inputs.get_binding("fire"))
 
