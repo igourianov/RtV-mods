@@ -67,6 +67,7 @@ var _preferences: Preferences
 var _handlingMode = HandlingMode.Default
 var _aim_intent := false
 var _cant_intent := false
+var _aim_priority := true
 var _free_look := true
 var _anchored := false
 var _manager_local_baseline: Transform3D
@@ -77,8 +78,6 @@ var _anchor_pitch: float = 0.0
 var _smoothed_pitch: float = 0.0
 
 
-
-
 func _init(lib, preferences: Preferences) -> void:
 	_lib = lib
 	_preferences = preferences
@@ -87,57 +86,23 @@ func _init(lib, preferences: Preferences) -> void:
 func on_input(evt) -> void:
 	_lib.skip_super()
 
-	var aimToggle = gameData.aimMode == 2
-	var cantToggle = false
+	var aimToggle: bool = gameData.aimMode == 2
+	var cantToggle := false
 	if ModConfig.cant_mode == &"default":
 		cantToggle = aimToggle
 	elif ModConfig.cant_mode == &"toggle":
 		cantToggle = true
 
-	if !gameData.freeze && evt.is_action_pressed("aim"):
+	if evt.is_action_pressed("aim"):
 		_aim_intent = !_aim_intent if aimToggle else true
-		_resolve_intent(true)
-	elif !gameData.freeze && evt.is_action_pressed("canted"):
+		_aim_priority = true
+	elif evt.is_action_pressed("canted"):
 		_cant_intent = !_cant_intent if cantToggle else true
-		_resolve_intent(false)
-	elif evt.is_action_released("aim") && !aimToggle:
+		_aim_priority = false
+	elif !aimToggle && evt.is_action_released("aim"):
 		_aim_intent = false
-		_resolve_intent(true)
-	elif evt.is_action_released("canted") && !cantToggle:
+	elif !cantToggle && evt.is_action_released("canted"):
 		_cant_intent = false
-		_resolve_intent(false)
-
-
-func _debug_adjust_target(evt) -> void:
-
-	if !(evt is InputEventKey) || !evt.pressed || evt.echo:
-		return
-
-	var axis_idx = -1
-	match evt.keycode:
-		KEY_F7: axis_idx = 0
-		KEY_F8: axis_idx = 1
-		KEY_F9: axis_idx = 2
-		_: return
-
-	var entry = _idle_offsets[_current_idle_category]
-	if evt.ctrl_pressed:
-		var step = -5.0 if evt.shift_pressed else 5.0
-		entry["rot"][axis_idx] += step
-	else:
-		var step = -0.01 if evt.shift_pressed else 0.01
-		entry["pos"][axis_idx] += step
-
-	Out.debug("[%s] pos:" % IdleCategory.keys()[_current_idle_category], entry["pos"], "rot:", entry["rot"])
-
-
-func _resolve_intent(aim_changed: bool) -> void:
-	if aim_changed:
-		gameData.isAiming = _aim_intent
-		gameData.isCanted = false if _aim_intent else _cant_intent
-	else:
-		gameData.isCanted = _cant_intent
-		gameData.isAiming = false if _cant_intent else _aim_intent
 
 
 func on_weapon_handling(delta: float) -> void:
@@ -145,6 +110,8 @@ func on_weapon_handling(delta: float) -> void:
 	if !h:
 		return
 	_lib.skip_super()
+
+	_resolve_intent()
 
 	if gameData.freeze:
 		return
@@ -157,6 +124,21 @@ func on_weapon_handling(delta: float) -> void:
 	_process_handling_state(h)
 	_apply_target(h, delta)
 	#Out.debug("pos:", h.targetPosition, "rot:", h.targetRotation)
+
+
+func _resolve_intent() -> void:
+
+	if gameData.freeze || gameData.isInspecting || gameData.isChecking:
+		gameData.isAiming = false
+		gameData.isCanted = false
+		return
+
+	if _aim_priority:
+		gameData.isAiming = _aim_intent
+		gameData.isCanted = false if _aim_intent else _cant_intent
+	else:
+		gameData.isCanted = _cant_intent
+		gameData.isAiming = false if _cant_intent else _aim_intent
 
 
 func _process_handling_state(h) -> void:
