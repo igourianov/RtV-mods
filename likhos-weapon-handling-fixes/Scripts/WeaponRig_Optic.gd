@@ -107,6 +107,10 @@ func _handle_ads(delta: float) -> void:
 
 	rig.ocularOpacity = move_toward(rig.ocularOpacity, 0.0 if (att.scope && gameData.secondaryOptic) else 1.0, delta * 5.0)
 
+	if gameData.isAiming && !_validate_lens_distance(lens_distance):
+		gameData.isAiming = false
+		return
+
 	if (att.scope && !gameData.secondaryOptic) || att.variable:
 		var sizes = att.reticleSizeP if gameData.PIP else att.reticleSize
 		var mags = ScopeCatalog.get_mag_range(att.file)
@@ -129,6 +133,15 @@ func _handle_ads(delta: float) -> void:
 
 	_update_reticle(rig, optic, shadow)
 
+
+func _validate_lens_distance(lens_distance: float) -> bool:
+	if lens_distance >= 0.02:
+		return true
+	gameData.impact = true
+	gameData.damage = true
+	gameData.health -= 2.0
+	Out.protip(&"optic-too-close", "The optic is mounted too close! You gave yourself a shiner by trying to ADS, you dummy.")
+	return false
 
 func _update_optic_camera(optic, delta: float, optic_angle: float) -> void:
 	var camera = optic.get_viewport().get_camera_3d()
