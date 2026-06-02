@@ -26,15 +26,10 @@ var _idle_offsets := {
 }
 var _current_idle_category: int = IdleCategory.Default
 const _SECONDARY_OPTIC_ROT_OFFSET := Vector3(-15.0, 0.0, 0)
-const _BODY_OFFSET := 0.22
-const _LOP_SHORT_THRESHOLD := 0.15
-var _rear_z_cache := {}
-var _trigger_z_cache := {}
 const _ANCHOR_PITCH := -10.0
 const _LOOK_DOWN_PITCH := -45.0
 const _LOOK_DOWN_POS := Vector3(0.2, -0.28, -0.25)
 const _LOOK_DOWN_ROT := Vector3(45, -0.5, 10)
-
 
 # the handling speed modifier - read as % of base
 enum HandlingMode {
@@ -42,6 +37,28 @@ enum HandlingMode {
 	RDS = 115,
 	Cant = 130,
 	ScopeZoom = 80
+}
+
+const _AIM_POS_OVERRIDE := {
+	"SVD": -0.08,
+	"M78": -0.09,
+	"AKM": -0.07,
+	"AK_12": -0.04,
+	"AKS_74U": -0.1,
+	"VSS": -0.08,
+	"MP5SD": -0.1,
+	"MP5K": -0.1,
+	"MP5": -0.1,
+	"RK_95": -0.06,
+	"RK_62": -0.06,
+	"RK_62M": -0.06,
+	"M4A1": -0.07,
+	"MK18": -0.06,
+	"HK416": -0.06,
+	"KAR_21_223": -0.12,
+	"KAR_21_308": -0.12,
+	"MP7": -0.16,
+	"Mosin": -0.22,
 }
 
 
@@ -60,6 +77,8 @@ var _anchor_pitch: float = 0.0
 var _smoothed_pitch: float = 0.0
 
 
+
+
 func _init(lib, preferences: Preferences) -> void:
 	_lib = lib
 	_preferences = preferences
@@ -67,8 +86,6 @@ func _init(lib, preferences: Preferences) -> void:
 
 func on_input(evt) -> void:
 	_lib.skip_super()
-
-	#_debug_adjust_target(evt)
 
 	var aimToggle = gameData.aimMode == 2
 	var cantToggle = false
@@ -145,6 +162,7 @@ func on_weapon_handling(delta: float) -> void:
 func _process_handling_state(h) -> void:
 	var data = h.data
 	var rig = h.get_parent()
+	var optic = rig.activeOptic
 
 	if gameData.isClearing || gameData.isColliding:
 		h.targetPosition = data.collisionPosition
@@ -184,7 +202,6 @@ func _process_handling_state(h) -> void:
 
 	if gameData.isCanted:
 		_handlingMode = HandlingMode.Cant
-		var optic = rig.activeOptic
 		h.targetPosition = data.cantedPosition + Vector3(0.0, -0.03, 0.0)
 		if optic && (optic.attachmentData.variable || optic.attachmentData.scope):
 			h.targetRotation = data.cantedRotation + Vector3(0.0, 0.0, -20.0)
@@ -193,7 +210,6 @@ func _process_handling_state(h) -> void:
 		return
 
 	if gameData.isAiming:
-		var optic = rig.activeOptic
 		if optic && optic.attachmentData.scope && !gameData.secondaryOptic:
 			_handlingMode = HandlingMode.ScopeZoom
 		elif optic && optic.attachmentData.variable && ModConfig.current_scope_mag >= 1.5:
@@ -201,11 +217,15 @@ func _process_handling_state(h) -> void:
 		elif optic:
 			_handlingMode = HandlingMode.RDS
 
-		var aim_z = data.aimPosition.z - 0.1 # vanilla logic
-		if optic && gameData.isScoped && gameData.PIP:
-			aim_z = rig.get_meta("eyeAnchorZ", data.aimPosition.z)
+		if !optic:
+			h.targetPosition = data.aimPosition
+		elif gameData.PIP && gameData.isScoped:
+			h.targetPosition = Vector3(0.0, -rig.aimOffset, _AIM_POS_OVERRIDE.get(data.file, data.aimPosition.z * 0.67))
+		elif !gameData.PIP && gameData.isScoped:
+			h.targetPosition = Vector3(0.0, -rig.aimOffset, data.aimPosition.z - 0.1)
+		else:
+			h.targetPosition = Vector3(0.0, -rig.aimOffset, data.aimPosition.z)
 
-		h.targetPosition = Vector3(0.0, -rig.aimOffset, aim_z) if optic else data.aimPosition
 		h.targetRotation = data.aimRotation
 		return
 
@@ -314,10 +334,6 @@ func on_rig_update_post(_animate) -> void:
 		gameData.secondaryOptic = false
 		Out.bugfix("reset gameData.secondaryOptic flag")
 
-	if rig && rig.data:
-		var eye_z := _eye_anchor_z(rig, rig.data)
-		rig.set_meta("eyeAnchorZ", eye_z)
-
 	# fold/unfold iron sights based on optic presence
 	var data = rig.data if rig else null
 	if data && data.foldSights:
@@ -331,69 +347,3 @@ func on_rig_update_post(_animate) -> void:
 	# true up cocked state if mag was loaded from inventory
 	if rig && rig.slotData:
 		rig.slotData.set_meta("cocked", rig.slotData.chamber)
-
-
-func _eye_anchor_z(rig, data) -> float:
-	if data.weaponType == "Pistol":
-		return data.aimPosition.z
-
-	var rear_z := _buttstock_rear_z(rig)
-	if is_nan(rear_z):
-		return data.aimPosition.z
-
-	var trigger_z := _trigger_z(rig)
-	if is_nan(trigger_z):
-		return data.aimPosition.z
-
-	var lop: float = trigger_z - rear_z
-	Out.debug("gun geometry [%s] rear_z: %.3f trigger_z: %.3f lop: %.3f" % [String(data.file), rear_z, trigger_z, lop])
-
-	if lop < _LOP_SHORT_THRESHOLD:
-		return data.aimPosition.z
-
-	return rear_z + _BODY_OFFSET
-
-
-func _buttstock_rear_z(rig) -> float:
-	var key := String(rig.data.file)
-	if _rear_z_cache.has(key):
-		return _rear_z_cache[key]
-
-	var body = _find_body_mesh(rig)
-	if !body:
-		Out.warning("could not find body mesh for", key)
-		return NAN
-
-	var aabb: AABB = body.get_aabb()
-	var rear_z: float = (body.transform * Vector3(0.0, 0.0, aabb.position.z)).z
-	_rear_z_cache[key] = rear_z
-	return rear_z
-
-
-func _trigger_z(rig) -> float:
-	var key := String(rig.data.file)
-	if _trigger_z_cache.has(key):
-		return _trigger_z_cache[key]
-
-	var skeleton = rig.skeleton
-	if !skeleton:
-		Out.warning("no skeleton for", key)
-		return NAN
-
-	for i in skeleton.get_bone_count():
-		if String(skeleton.get_bone_name(i)).ends_with("_Trigger"):
-			var trigger_z: float = skeleton.get_bone_global_rest(i).origin.z
-			_trigger_z_cache[key] = trigger_z
-			return trigger_z
-
-	Out.warning("could not find trigger bone for", key)
-	return NAN
-
-
-func _find_body_mesh(rig):
-	if !rig.skeleton:
-		return null
-	for child in rig.skeleton.get_children():
-		if child is MeshInstance3D && String(child.name).ends_with("Body"):
-			return child
-	return null
