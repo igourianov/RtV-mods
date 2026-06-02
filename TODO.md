@@ -5,8 +5,6 @@
 - in inspect attach ammo to the magazine and hide it if no mag
 - stowing away weapon: delays and interactions
 - move manufacturer name into another field out of title
-- punch yourself in the eye with optic too close
-- cleanup debugs and bugfix prints
 - split Scripts into Scripts and Hooks
 
 # Closed
@@ -31,3 +29,5 @@
 - sway - done
 - precalc optic maths - done
 - move scope shadown behind reticle - done
+- punch yourself in the eye with optic too close - done
+- cleanup debugs and bugfix prints - done
