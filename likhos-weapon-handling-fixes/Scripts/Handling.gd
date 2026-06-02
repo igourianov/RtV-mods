@@ -36,7 +36,8 @@ enum HandlingMode {
 	Default = 100,
 	RDS = 115,
 	Cant = 130,
-	ScopeZoom = 80
+	ScopeZoom = 80,
+	Admin = 50,
 }
 
 const _AIM_POS_OVERRIDE := {
@@ -118,7 +119,7 @@ func on_weapon_handling(delta: float) -> void:
 
 	gameData.isColliding = h.collision.is_colliding()
 
-	_handlingMode = HandlingMode.Default
+	#_handlingMode = HandlingMode.Default
 	_free_look = false
 	_anchored = false
 	_process_handling_state(h)
@@ -147,23 +148,27 @@ func _process_handling_state(h) -> void:
 	var optic = rig.activeOptic
 
 	if gameData.isClearing || gameData.isColliding:
+		_handlingMode = HandlingMode.Default
 		h.targetPosition = data.collisionPosition
 		h.targetRotation = data.collisionRotation
 		return
 
 	if gameData.isInspecting:
+		_handlingMode = HandlingMode.Admin
 		gameData.weaponPosition = 1
 		h.targetPosition = data.inspectPosition
 		h.targetRotation = data.inspectRotation
 		return
 
 	if gameData.isInserting:
+		_handlingMode = HandlingMode.Admin
 		gameData.weaponPosition = 1
 		h.targetPosition = data.lowPosition
 		h.targetRotation = data.lowRotation
 		return
 
 	if (gameData.isChecking && ModConfig.ammo_check_view) || (gameData.isReloading && data.weaponAction != "Manual"):
+		_handlingMode = HandlingMode.Admin
 		h.targetPosition = data.lowPosition + (Vector3.ZERO if gameData.isReloading else Vector3(0, 0.05, 0))
 		h.targetRotation = data.lowRotation + Vector3(-20, 0, 0)
 		return
@@ -178,6 +183,7 @@ func _process_handling_state(h) -> void:
 		return
 
 	if gameData.isColliding:
+		_handlingMode = HandlingMode.Default
 		h.targetPosition = data.collisionPosition
 		h.targetRotation = data.collisionRotation
 		return
@@ -192,12 +198,12 @@ func _process_handling_state(h) -> void:
 		return
 
 	if gameData.isAiming:
-		if optic && optic.attachmentData.scope && !gameData.secondaryOptic:
-			_handlingMode = HandlingMode.ScopeZoom
-		elif optic && optic.attachmentData.variable && ModConfig.current_scope_mag >= 1.5:
+		if optic && ModConfig.current_scope_mag > 1.5:
 			_handlingMode = HandlingMode.ScopeZoom
 		elif optic:
 			_handlingMode = HandlingMode.RDS
+		else:
+			_handlingMode = HandlingMode.Default
 
 		if !optic:
 			h.targetPosition = data.aimPosition
@@ -212,6 +218,7 @@ func _process_handling_state(h) -> void:
 		return
 
 	if gameData.weaponPosition == 2:
+		_handlingMode = HandlingMode.Default
 		h.targetPosition = data.highPosition
 		h.targetRotation = data.highRotation
 		return
