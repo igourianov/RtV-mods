@@ -124,7 +124,6 @@ func on_weapon_handling(delta: float) -> void:
 	_anchored = false
 	_process_handling_state(h)
 	_apply_target(h, delta)
-	#Out.debug("pos:", h.targetPosition, "rot:", h.targetRotation)
 
 
 func _resolve_intent() -> void:
@@ -321,22 +320,21 @@ func on_rig_update_post(_animate) -> void:
 	ModConfig.current_weapon_weight = weapon.Weight() if weapon else 0.0
 	Out.debug("weapon weight: %.1fkg" % ModConfig.current_weapon_weight)
 
+	# BUGFIX
 	# Vanilla forgets to reset secondaryOptic flag when equipping another optic
 	# Causes other scopes to break in PIP mode
 	var optic = rig.activeOptic if rig else null
 	if gameData.secondaryOptic && !(optic && optic.secondary):
 		gameData.secondaryOptic = false
-		Out.bugfix("reset gameData.secondaryOptic flag")
 
 	# fold/unfold iron sights based on optic presence
+	# BUGFIX - vanilla doens't check frontSightIndex, which casues flicker on M4A1, which doens't have foldable front sight
 	var data = rig.data if rig else null
 	if data && data.foldSights:
 		var rot = Quaternion.from_euler(Vector3(data.foldSightsRotation if optic else 0.0, 0, 0))
 		rig.skeleton.set_bone_pose_rotation(rig.backSightIndex, rot)
-		if rig.frontSightIndex:
+		if rig.frontSightIndex: 
 			rig.skeleton.set_bone_pose_rotation(rig.frontSightIndex, rot)
-		else:
-			Out.bugfix("do not attempt to rotate front sight on M4A1 (flicker)")
 
 	# true up cocked state if mag was loaded from inventory
 	if rig && rig.slotData:

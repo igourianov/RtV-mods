@@ -74,7 +74,7 @@ func _handle_secondary_optic(event, optic) -> bool:
 
 	var rig = get_parent()
 	if gameData.secondaryOptic:
-		Out.bugfix("recalc secondary optic Y offset")
+		# BUGFIX: vanilla fails to factor optic.scale, which results in incorrect Y offset on several guns
 		rig.aimOffset = optic.position.y + optic.secondary.position.y * optic.scale.y
 	else:
 		rig.aimOffset = optic.position.y
