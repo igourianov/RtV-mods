@@ -42,8 +42,8 @@ Formerly `Likho's Weapon Handling Fixes`.
 * Ammo check no longer forces weapon into raised position (prior stance preserved)
 * Canted aim activation no longer blocked by interactables
 * Disabled interactable tooltip while aiming, so it doesn't blocks vision when aiming around doorways
-* Fixed Mosin ending up in weird state (mag + 0) after closing the bolt. Now both live round and spent casing are always ejected when opening bolt.
-* Fixed Mosin and 870 round/casing not ejecting when opening the bolt to load (no animation, but it is cleared)
+* Fixed Mosin ending up in weird state (mag + 0) after opening+closing the bolt
+* Fixed Mosin round/casing not ejecting when opening the bolt to reload/insert and missing animations
 * Fixed HAMR's secondary optic switch permanently killing PIP plane on other scopes (state wasn't being properly reset)
 * Fixed HAMR's secondary optic vertical offset on all AK rifles (not RK), SVD and Vintorez (missing scale calc)
 * Fixed HAMR causing major flickering when toggling secondary on M4A1 (bug with foldable iron sights)
