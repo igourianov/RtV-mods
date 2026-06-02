@@ -1,3 +1,4 @@
+# 2.12.1524
 * fixed Mosin missing animation for ejecting live round on reload
 * fixed Mosin missing animation for ejection of both casing an live round on opening bolt for insertion
 * added self damage when trying to aim with optic mounted too close
