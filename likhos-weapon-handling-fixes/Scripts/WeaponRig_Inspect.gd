@@ -37,6 +37,8 @@ func _input(event) -> void:
 	if !gameData.isInspecting:
 		return
 
+	gameData.isAiming = false
+
 	if event.is_action_pressed("canted"):
 		if gameData.inspectPosition == 1:
 			rig.PlayInspectRotate()

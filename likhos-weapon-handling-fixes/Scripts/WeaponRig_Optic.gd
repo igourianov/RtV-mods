@@ -7,6 +7,9 @@ const _RETICLE_SHADER := preload("res://mods/likhos-weapon-handling-fixes/Shader
 const _ZOOM_ACCEL_WINDOW := 175
 const _ZOOM_ACCEL_MAX := 3
 
+var audioLibrary = preload("res://Resources/AudioLibrary.tres")
+var audioInstance2D = preload("res://Resources/AudioInstance2D.tscn")
+
 var _last_zoom_msec := 0
 var _last_zoom_dir := 0
 var _zoom_accel := 1
@@ -100,14 +103,16 @@ func _handle_ads(delta: float) -> void:
 		return
 
 	var geom = ScopeCatalog.get_optic_geometry(optic)
-	var eye_z: float = -rig.get_node("Handling").position.z
-	var lens_distance: float = (optic.transform * geom.lens_center).z - eye_z
+	var handling = rig.get_node("Handling")
+	var lens_z: float = (optic.transform * geom.lens_center).z
+	var lens_distance: float = lens_z + handling.position.z
+	var target_lens_distance: float = lens_z - handling.targetPosition.z
 	var shadow: float = ScopeCatalog.compute_shadow(lens_distance, geom.eye_relief)
 	var angle: float = ScopeCatalog.compute_angle(geom.lens_radius, lens_distance)
 
 	rig.ocularOpacity = move_toward(rig.ocularOpacity, 0.0 if (att.scope && gameData.secondaryOptic) else 1.0, delta * 5.0)
 
-	if gameData.isAiming && !_validate_lens_distance(lens_distance):
+	if gameData.isAiming && !_validate_lens_distance(rig, lens_distance, target_lens_distance):
 		gameData.isAiming = false
 		return
 
@@ -134,12 +139,19 @@ func _handle_ads(delta: float) -> void:
 	_update_reticle(rig, optic, shadow)
 
 
-func _validate_lens_distance(lens_distance: float) -> bool:
-	if lens_distance >= 0.02:
+func _validate_lens_distance(rig, lens_distance: float, target_lens_distance: float) -> bool:
+	if target_lens_distance >= 0.02 || lens_distance >= 0.02:
 		return true
 	gameData.impact = true
 	gameData.damage = true
 	gameData.health -= 2.0
+
+	ModConfig.optic_shiner = true
+
+	var audio = audioInstance2D.instantiate()
+	rig.add_child(audio)
+	audio.PlayInstance(audioLibrary.damage)
+	
 	Out.protip(&"optic-too-close", "The optic is mounted too close! You gave yourself a shiner by trying to ADS, you dummy.")
 	return false
 
@@ -169,5 +181,3 @@ func _update_reticle(rig, optic, shadow: float) -> void:
 	optic.reticle.set_shader_parameter("size", rig.reticleSize)
 	optic.reticle.set_shader_parameter("opacity", rig.ocularOpacity)
 
-	if gameData.isAiming && gameData.isScoped && shadow > 0.5:
-		Out.protip("scope-shadow", "Adjust scope position on the rail to reduce scope shadow")

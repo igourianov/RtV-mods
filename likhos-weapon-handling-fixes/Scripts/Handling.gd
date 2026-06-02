@@ -134,12 +134,17 @@ func _resolve_intent() -> void:
 		gameData.isCanted = false
 		return
 
-	if _aim_priority:
-		gameData.isAiming = _aim_intent
-		gameData.isCanted = false if _aim_intent else _cant_intent
-	else:
+	if !_aim_priority:
 		gameData.isCanted = _cant_intent
 		gameData.isAiming = false if _cant_intent else _aim_intent
+	elif ModConfig.optic_shiner:
+		_aim_intent = false
+		gameData.isAiming = false
+		ModConfig.optic_shiner = false
+	else:
+		gameData.isAiming = _aim_intent
+		gameData.isCanted = false if _aim_intent else _cant_intent
+
 
 
 func _process_handling_state(h) -> void:

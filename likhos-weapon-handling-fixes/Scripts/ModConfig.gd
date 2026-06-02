@@ -5,6 +5,7 @@ static var current_weapon_weight: float = 0.0
 static var ammo_check_view := false
 static var hold_breath: bool = false
 static var hold_breath_progress: float = 0.0
+static var optic_shiner: bool = false
 
 # config vars
 static var crosshair_style: StringName
