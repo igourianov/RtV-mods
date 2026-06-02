@@ -6,6 +6,8 @@
 - stowing away weapon: delays and interactions
 - move manufacturer name into another field out of title
 - punch yourself in the eye with optic too close
+- cleanup debugs and bugfix prints
+- split Scripts into Scripts and Hooks
 
 # Closed
 - MP7 clipping in canted mode - will not fix (missing texture on the gun)
