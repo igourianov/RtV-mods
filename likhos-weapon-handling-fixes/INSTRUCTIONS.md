@@ -30,6 +30,7 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `Optic._physics_process` (pre)
 - `Laser._process` (post)
 - `Tooltip.Update` (post)
+- `Tooltip.Reset` (post)
 - `Inputs.CreateActions` (pre and post)
 - `Inputs.ResetActions` (post)
 - `Interactor._physics_process` (pre)

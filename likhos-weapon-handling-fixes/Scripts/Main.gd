@@ -79,6 +79,7 @@ func setup(lib):
 	register_hook("laser-_input", _laser.on_input)
 	register_hook("laser-_process-post", _laser.on_process_post)
 	register_hook("flashlight-_physics_process", _flashlight.on_physics_process)
+	register_hook("tooltip-reset-post", _tooltip.on_reset_post)
 	register_hook("tooltip-update-post", _tooltip.on_update_post)
 	register_hook("interactor-_physics_process-pre", _interactor.on_physics_process_pre)
 

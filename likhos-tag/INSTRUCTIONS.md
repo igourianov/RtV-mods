@@ -13,7 +13,6 @@ This mod uses the registry API through Metro Mod Loader:
 Other mods that patch the same fields on the same items will conflict. Tag is intentionally loaded late (`priority=10`) so its values win over earlier mods.
 
 **Hooks:**
-* `Tooltip._ready` (pre)
 * `Tooltip.Reset` (post)
 * `Tooltip.Update` (post)
 

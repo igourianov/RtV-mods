@@ -1,26 +1,16 @@
-extends RefCounted
+extends "../Lib/Tooltip.gd"
 
 const Out = preload("../Lib/Out.gd")
 const Catalog = preload("./Catalog.gd")
-const ROW_PATH = "Panel/Margin/Elements/"
 
-var _lib
-
-
-func _init(lib) -> void:
-	_lib = lib
-
-
-func on_ready_pre():
-	var tooltip = _lib._caller
-	_create_row(tooltip, "likho_model", "Model:")
-	_create_row(tooltip, "likho_grau", "GRAU index:")
+const ROW_MODEL = "likho_model"
+const ROW_GRAU = "likho_grau"
 
 
 func on_reset_post():
 	var tooltip = _lib._caller
-	tooltip.get_node(ROW_PATH + "likho_model").hide()
-	tooltip.get_node(ROW_PATH + "likho_grau").hide()
+	_hide_row(tooltip, ROW_MODEL)
+	_hide_row(tooltip, ROW_GRAU)
 
 
 func on_update_post(item) -> void:
@@ -65,40 +55,10 @@ func on_update_post(item) -> void:
 		tooltip.capacity.show()
 
 	if extra_data.grau_index:
-		var row = tooltip.get_node(ROW_PATH + "likho_grau")
-		row.get_child(1).text = extra_data.grau_index
-		row.show()
+		_show_row(tooltip, ROW_GRAU, "GRAU index:", extra_data.grau_index)
 
 	if extra_data.model_name:
-		var row = tooltip.get_node(ROW_PATH + "likho_model")
-		row.get_child(1).text = extra_data.model_name
-		row.show()
+		_show_row(tooltip, ROW_MODEL, "Model:", extra_data.model_name)
 
 	tooltip.panel.size = Vector2(256, 0)
 	tooltip.interface.tooltipOffset = tooltip.panel.size.y / 2.0
-
-
-func _create_row(tooltip, node_name: String, title_text: String) -> Control:
-
-	var sibling: Label = tooltip.weight
-	var parent: Node = sibling.get_parent()
-
-	var row := HBoxContainer.new()
-	row.name = node_name
-	row.add_theme_constant_override("separation", 4)
-
-	var title := Label.new()
-	title.theme = sibling.theme
-	title.add_theme_font_size_override("font_size", 12)
-	title.text = title_text
-	title.vertical_alignment = VERTICAL_ALIGNMENT_FILL
-	row.add_child(title)
-
-	var value := Label.new()
-	value.add_theme_color_override("font_color", Color.GREEN)
-	value.add_theme_font_size_override("font_size", 12)
-	value.vertical_alignment = VERTICAL_ALIGNMENT_FILL
-	row.add_child(value)
-
-	parent.add_child(row)
-	return row
