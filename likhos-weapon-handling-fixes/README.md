@@ -4,35 +4,35 @@ Comprehensive RtV overhaul that modifies weapon positions, handling mechanics, o
 
 Formerly `Likho's Weapon Handling Fixes`.
 
-## Aiming & Optics
-
-* Reworked the PIP scope mode for realism. Recommended to pair with [ExitPupil](https://modworkshop.net/mod/56890) PIP reshader mod.
-* Reworked all optics with real eye relief and magnification values.
-* Hold breath function to steady aim (hold Sprint while aiming)
-* Canted aim is now an independent action from aim with optional laser auto-activation
-* Mouse sensitivity scales with stance and progressively with zoom level
-* LPVO zoom is now accessible without aiming - gated by the Rail movement modifier by default to avoid collision with lower/raise weapon (change in MCM)
-* Ability to toggle the secondary optic out of aim, with a visual cue of the toggle
-* Added explicit bindings to the base game settings for optic zoom in/out (it was hardcoded to mouse wheel)
-
 ## Weapons & Handling
 
 * Reworked lowered weapon mode into *Adaptive Free Look* mode (disable in MCM). Recommended to use with [FP Body](https://modworkshop.net/mod/56744) mod.
+* Hold breath function to steady aim (hold Sprint while aiming)
+* Canted aim is now an action independent from aim with optional laser auto-activation (recommend using mouse side button for it)
 * Weapon handling speed (how fast you transition into the desired state) now scales with stance and optic: red dot `115%`, canted `130%`, magnified scope `80%`
-* Reworked reload, insert and ammo check mechanics.
-* Reworked the inspect mode and associated bindings.
-* Mosin and 870 can now cycle the bolt on a full or empty mag like real guns (you will lose ammo)
-* Cocked state and dry fire click for manual action guns
+* Reworked insert and ammo check mechanics to use hold action instead of toggle + can now reload directly from ammo check
+* Reworked the inspect mode and associated bindings + QoL flashlight fix
+* Reworked manual action guns reload animations to be more fluid (reduced animation lock out time)
+* Mosin and 870 can now cycle the bolt on both full and empty mag, like the real guns do (you will lose ammo) + dry fire click on empty chamber
+
+## Aiming & Optics
+
+* Mouse sensitivity scales with stance and progressively with zoom level
+* Ability to toggle the secondary optic out of aim, with a visual cue of the toggle
+* Reworked the PIP scope mode for realism. Recommended to pair with [ExitPupil](https://modworkshop.net/mod/56890) PIP reshader mod.
+* Reworked all optics with real eye relief (only in PIP) and magnification values.
+* LPVO zoom is now accessible without aiming - gated by the Rail movement modifier by default to avoid collision with lower/raise weapon (change in MCM)
+* Added explicit bindings to the base game settings for optic zoom in/out (it was hardcoded to mouse wheel)
 
 ## Movement & Stamina
 
-* Reworked arm and leg stamina mechanics to be based on vitals and weight.
-* Changed movement speed Crouch/walk/sprint from vanilla `1 / 2.5 / 5` to `0.7 / 3 / 7` (editable in MCM)
-* New movement breakpoints walk-canted/walk-aiming-1×/walk-scoped as multiplier of the walk speed `0.6 / 0.75 / 0.3` (editable in MCM)
+* Reworked arm and leg stamina mechanics to drain based on weight and recover based on vitals.
+* Changed movement speed Crouch/walk/sprint from vanilla *1 / 2.5 / 5* to *0.7 / 3 / 7* (editable in MCM)
+* New movement breakpoints walk-canted/walk-aiming-1×/walk-scoped as multiplier of the walk speed *0.6 / 0.75 / 0.3* (editable in MCM)
 
 ## Controls & HUD
 
-* Reworked input priority for Crouch/Sprint/Aim/Canted actions. Last action wins instead of following hardcoded order (exception: sprint while aiming)
+* Reworked input priority for Crouch/Sprint/Aim/Canted actions. Last action wins instead of following hardcoded order (exception: sprint while aiming = hold breath)
 * Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in MCM)
 * Flashlight now supports both toggle and hold actions on the same binding, and will shine the light on the inspected weapon. Recommended for use with [LootLight](https://modworkshop.net/mod/56422) mod.
 * Likho's protips in-game to make the user aware of the changed bindings
@@ -41,7 +41,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 
 * Ammo check no longer forces weapon into raised position (prior stance preserved)
 * Canted aim activation no longer blocked by interactables
-* Interactable tooltip no longer blocks vision when aiming around doorways
+* Disabled interactable tooltip while aiming, so it doesn't blocks vision when aiming around doorways
 * Fixed Mosin ending up in weird state (mag + 0) after closing the bolt. Now both live round and spent casing are always ejected when opening bolt.
 * Fixed Mosin and 870 round/casing not ejecting when opening the bolt to load (no animation, but it is cleared)
 * Fixed HAMR's secondary optic switch permanently killing PIP plane on other scopes (state wasn't being properly reset)
@@ -49,7 +49,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 * Fixed HAMR causing major flickering when toggling secondary on M4A1 (bug with foldable iron sights)
 * Fixed laser ray misaligned with collision dot. You may notice that bullet holes are now very slightly offset from the laser dot - that's how real lasers work.
 * Fixed flashlight draining battery while the game world is frozen
-* Fixed bugs with optic rail movement due to incorrect limits and bugs with floating point math
+* Fixed bugs with optic rail movement due to incorrect limits and errors in floating point math
 
 ## More details
 
@@ -93,7 +93,7 @@ Both stamina bars are now dynamic and much more realistic.
 !!! Inspect mode
 * Fixed and rewrote several overlapping and dangling key bindings and states.
 * Rail movement now works only in inspect mode. Rail movement binding is now unused.
-* Weapon rotation in inspect mode is now done with the Canted aim binding.
+* Weapon rotation in inspect mode is now done with the Canted aim binding instead of mouse wheel.
 * Stamina drain removed
 * Added ammo and attachment cards to the inspect mode (disable via MCM menu)
 * Flashlight will now shine on the weapon while inspecting
