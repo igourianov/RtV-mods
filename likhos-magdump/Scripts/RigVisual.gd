@@ -8,7 +8,7 @@ const OVERLAYS_KEY = &"likho_magdump_overlays"
 const SWAP_DELAY := 1.2
 
 var _lib
-# gun_file -> { mag_file: {mesh: ArrayMesh, material: Material, bullet_local: Vector3} }
+# gun_file -> { mag_file: {mesh: Mesh, material: Material, bullet_xform: Transform3D, bullet_stagger: Vector3} }
 var _table: Dictionary = {}
 
 
@@ -36,9 +36,9 @@ func _build_table(compat: Dictionary, pickups: Dictionary) -> void:
 
 
 
-# Pickup .tscn carries LOD0/LOD1 meshes plus a Bullets/Cartridge_Rifle child
-# positioned at the topmost-round point in mesh-local frame. We extract the
-# mesh, material and bullet position in one pass.
+# Pickup .tscn carries LOD0/LOD1 meshes plus a Bullets/Cartridge_Rifle(_2) pair
+# at the topmost staggered rounds in mesh-local frame. We extract the mesh,
+# material, top-round pose and the stagger vector (mag width) in one pass.
 func _extract_pickup_data(pickup_path: String) -> Dictionary:
 	if !ResourceLoader.exists(pickup_path):
 		Out.warning("pickup missing: %s" % pickup_path)
@@ -58,11 +58,19 @@ func _extract_pickup_data(pickup_path: String) -> Dictionary:
 		Out.warning("no Bullets/Cartridge_Rifle in %s" % pickup_path)
 	var bullet_xform := Transform3D.IDENTITY
 	if cartridge:
-		bullet_xform = Transform3D(cartridge.basis.orthonormalized(), cartridge.position)
+		bullet_xform = cartridge.transform
+	# Vector between the staggered top pair encodes the mag's width. Used to scale
+	# the overlay along its width axis so a narrower/wider foreign mag still fills
+	# the host magwell and lines up with the host's rounds.
+	var bullet_stagger := Vector3.ZERO
+	var cartridge2 = instance.get_node_or_null("Bullets/Cartridge_Rifle_2")
+	if cartridge && cartridge2:
+		bullet_stagger = cartridge2.position - cartridge.position
 	var data := {
 		"mesh": lod0.mesh,
 		"material": lod0.get_surface_override_material(0),
 		"bullet_xform": bullet_xform,
+		"bullet_stagger": bullet_stagger,
 	}
 	instance.free()
 	return data
@@ -86,17 +94,21 @@ func on_ready_post() -> void:
 		Out.warning("bone %s missing in skeleton of %s" % [bone_name, gun_file])
 		return
 
-	# Anchor by topmost-round full pose. The host rig has Bullets/Cartridge_Rifle
-	# in mag-bone-local frame, marking the chamber feed point + orientation. Each
-	# foreign mag's pickup carries the same node in mesh-local frame. We align the
-	# overlay so the two cartridge poses coincide; this handles both translation
-	# (works regardless of mag length) and rotation (mags authored "straight" in
-	# their pickup get tilted to match a rig whose mag bone is tilted, e.g.
-	# AKM mag overlaying RK-62's angled magwell).
+	# Anchor by topmost-round full pose, scale included. The host rig has
+	# Bullets/Cartridge_Rifle in mag-bone-local frame, marking the chamber feed
+	# point, orientation and scale. Each foreign mag's pickup carries the same node
+	# in mesh-local frame. We align the overlay so the two cartridge poses coincide.
+	# This handles translation (works regardless of mag length), rotation (rotated
+	# magwells) and scale: the cartridge is a shared scene, so its per-gun scale
+	# (e.g. 1.2 in KAR-21 vs 1.1 in MK18) is the exact factor needed to re-fit a
+	# foreign mag mesh into a host gun modelled at a different scale.
 	var host_xform := Transform3D.IDENTITY
+	var host_stagger := Vector3.ZERO
 	if rig.bullets && rig.bullets.get_child_count() > 0:
 		var host_cart = rig.bullets.get_child(0)
-		host_xform = Transform3D(host_cart.basis.orthonormalized(), host_cart.position)
+		host_xform = host_cart.transform
+		if rig.bullets.get_child_count() > 1:
+			host_stagger = rig.bullets.get_child(1).position - host_cart.position
 	else:
 		Out.warning("no bullets node for %s, falling back to identity anchor" % gun_file)
 
@@ -119,7 +131,23 @@ func on_ready_post() -> void:
 		if data["material"]:
 			mesh_node.set_surface_override_material(0, data["material"])
 		var basis := host_xform.basis * foreign_xform.basis.inverse()
-		var origin := host_xform.origin - basis * foreign_xform.origin
+		# Match the mag's width without rolling it. Scale only along the host's
+		# lateral axis (perpendicular to round-forward and to the mag's length) by the
+		# ratio of the staggered rounds' lateral spacing. Scaling along the raw stagger
+		# vector instead would stretch along a diagonal and shear the mesh, which reads
+		# as a spurious tilt/offset.
+		var foreign_stagger: Vector3 = data["bullet_stagger"]
+		var v := basis * foreign_stagger
+		var lat := host_xform.basis.x.normalized()
+		var v_lat := absf(v.dot(lat))
+		var d_lat := absf(host_stagger.dot(lat))
+		if v_lat > 0.0001 && d_lat > 0.0001:
+			basis = _scale_along_axis(lat, d_lat / v_lat) * basis
+		# Anchor on the midpoint of the staggered pair, not a single round, so the
+		# mag centres on the magwell instead of biasing toward one side.
+		var foreign_mid := foreign_xform.origin + foreign_stagger * 0.5
+		var host_mid := host_xform.origin + host_stagger * 0.5
+		var origin := host_mid - basis * foreign_mid
 		mesh_node.transform = Transform3D(basis, origin)
 		mesh_node.visible = false
 		attachment.add_child(mesh_node)
@@ -215,6 +243,16 @@ func _resolve_pointer(rig, transfer_visibility: bool) -> void:
 	rig.magazine = target
 	if transfer_visibility && was_visible:
 		target.show()
+
+
+# Non-uniform scale of factor k along unit axis n: I + (k-1) * (n outer n).
+func _scale_along_axis(n: Vector3, k: float) -> Basis:
+	var m := k - 1.0
+	return Basis(
+		Vector3(1.0 + m * n.x * n.x, m * n.x * n.y, m * n.x * n.z),
+		Vector3(m * n.x * n.y, 1.0 + m * n.y * n.y, m * n.y * n.z),
+		Vector3(m * n.x * n.z, m * n.y * n.z, 1.0 + m * n.z * n.z)
+	)
 
 
 func _find_mag_bone(skeleton: Skeleton3D) -> String:
