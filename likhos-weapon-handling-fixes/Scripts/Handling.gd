@@ -213,8 +213,6 @@ func _process_handling_state(h) -> void:
 			h.targetPosition = data.aimPosition
 		elif gameData.PIP && gameData.isScoped:
 			h.targetPosition = Vector3(0.0, -rig.aimOffset, _AIM_POS_OVERRIDE.get(data.file, data.aimPosition.z * 0.67))
-		elif !gameData.PIP && gameData.isScoped:
-			h.targetPosition = Vector3(0.0, -rig.aimOffset, data.aimPosition.z - 0.1)
 		else:
 			h.targetPosition = Vector3(0.0, -rig.aimOffset, data.aimPosition.z)
 
