@@ -9,7 +9,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 * Reworked lowered weapon mode into *Adaptive Free Look* mode (disable in MCM). Recommended to use with [FP Body](https://modworkshop.net/mod/56744) mod.
 * Hold breath function to steady aim (hold Sprint while aiming)
 * Canted aim is now an action independent from aim with optional laser auto-activation (recommend using mouse side button for it)
-* Weapon handling speed (how fast you transition into the desired state) now scales with stance and optic: red dot `115%`, canted `130%`, magnified scope `80%`
+* Weapon handling speed (how fast you transition into the desired state) now scales with stance and optic: red dot and LPVO 1x **115%**, canted **130%**, magnified scope **80%**
 * Reworked insert and ammo check mechanics to use hold action instead of toggle + can now reload directly from ammo check
 * Reworked the inspect mode and associated bindings + QoL flashlight fix
 * Reworked manual action guns reload animations to be more fluid (reduced animation lock out time)
@@ -27,8 +27,8 @@ Formerly `Likho's Weapon Handling Fixes`.
 ## Movement & Stamina
 
 * Reworked arm and leg stamina mechanics to drain based on weight and recover based on vitals.
-* Changed movement speed Crouch/walk/sprint from vanilla *1 / 2.5 / 5* to *0.7 / 3 / 7* (editable in MCM)
-* New movement breakpoints walk-canted/walk-aiming-1×/walk-scoped as multiplier of the walk speed *0.6 / 0.75 / 0.3* (editable in MCM)
+* Changed movement speed Crouch/walk/sprint from vanilla **1 / 2.5 / 5** to **0.7 / 3 / 7** (editable in MCM)
+* New movement breakpoints walk-canted/walk-aiming-1×/walk-scoped as multiplier of the walk speed **0.6 / 0.75 / 0.3** (editable in MCM)
 
 ## Controls & HUD
 
