@@ -31,7 +31,7 @@ const _ANCHOR_PITCH := -10.0
 const _LOOK_DOWN_PITCH := -45.0
 const _LOOK_DOWN_POS := Vector3(0.2, -0.28, -0.25)
 const _LOOK_DOWN_ROT := Vector3(45, -0.5, 10)
-const _LOOK_DOWN_HOLD := 2.0
+const _LOOK_DOWN_HOLD := 1.0
 
 # the handling speed modifier - read as % of base
 enum HandlingMode {
@@ -120,7 +120,9 @@ func on_weapon_handling(delta: float) -> void:
 	if gameData.freeze:
 		return
 
-	if _camera_pitch_deg < _LOOK_DOWN_PITCH || gameData.interaction:
+	if gameData.isAiming || gameData.isCanted:
+		_look_down_hold = 0.0
+	elif _camera_pitch_deg < _LOOK_DOWN_PITCH || gameData.interaction:
 		_look_down_hold = _LOOK_DOWN_HOLD
 	else:
 		_look_down_hold = max(0.0, _look_down_hold - delta)
@@ -150,7 +152,6 @@ func _resolve_intent() -> void:
 	else:
 		gameData.isAiming = _aim_intent
 		gameData.isCanted = false if _aim_intent else _cant_intent
-
 
 
 func _process_handling_state(h) -> void:
@@ -244,6 +245,7 @@ func _set_target_idle(h) -> void:
 		return
 
 	if _look_down_hold > 0.0:
+		_handlingMode = HandlingMode.Admin
 		h.targetPosition = _LOOK_DOWN_POS
 		h.targetRotation = _LOOK_DOWN_ROT
 		return
