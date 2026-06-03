@@ -6,9 +6,6 @@ prefix="[likho-keymod]"
 description="Likho's micro mod adding loot room keys to traders"
 debug=false
 
-[hooks]
-"res://Scripts/Trader.gd"="FillTraderBucket"
-
 [autoload]
 LikhosKeymod="res://mods/likhos-keymod/Scripts/Main.gd"
 
