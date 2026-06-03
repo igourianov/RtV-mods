@@ -31,7 +31,7 @@ const _ANCHOR_PITCH := -10.0
 const _LOOK_DOWN_PITCH := -45.0
 const _LOOK_DOWN_POS := Vector3(0.2, -0.28, -0.25)
 const _LOOK_DOWN_ROT := Vector3(45, -0.5, 10)
-const _LOOK_DOWN_HOLD := 1.0
+const _LOOK_DOWN_HOLD := 2.0
 
 # the handling speed modifier - read as % of base
 enum HandlingMode {
