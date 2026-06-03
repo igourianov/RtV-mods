@@ -133,7 +133,7 @@ func _handle_ads(delta: float) -> void:
 	if gameData.PIP && gameData.isScoped:
 		_update_optic_camera(optic, delta, angle)
 
-	_update_reticle(rig, optic, shadow)
+	_update_reticle(rig, optic, shadow if gameData.PIP else 0.0)
 
 
 func _validate_lens_distance(rig, lens_distance: float, target_lens_distance: float) -> bool:

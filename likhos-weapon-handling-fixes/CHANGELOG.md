@@ -1,4 +1,5 @@
 * mouse sensitivity transition now lerp() gracefully instead of snapping
+* fixed scope shadow in non-PIP mode
 
 # 2.12.1524
 * fixed Mosin missing animation for ejecting live round on reload
