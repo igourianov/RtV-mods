@@ -1,6 +1,7 @@
 extends RefCounted
 
 const ModConfig = preload("./ModConfig.gd")
+const ScopeCatalog = preload("./ScopeCatalog.gd")
 const Out = preload("../Lib/Out.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
@@ -119,7 +120,6 @@ func on_weapon_handling(delta: float) -> void:
 
 	gameData.isColliding = h.collision.is_colliding()
 
-	#_handlingMode = HandlingMode.Default
 	_free_look = false
 	_anchored = false
 	_process_handling_state(h)
@@ -326,6 +326,8 @@ func on_rig_update_post(_animate) -> void:
 	var optic = rig.activeOptic if rig else null
 	if gameData.secondaryOptic && !(optic && optic.secondary):
 		gameData.secondaryOptic = false
+
+	gameData.isScoped = ScopeCatalog.is_magnified(optic) && !gameData.secondaryOptic
 
 	# fold/unfold iron sights based on optic presence
 	# BUGFIX - vanilla doens't check frontSightIndex, which casues flicker on M4A1, which doens't have foldable front sight

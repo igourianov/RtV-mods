@@ -71,6 +71,7 @@ func _handle_secondary_optic(event, optic) -> bool:
 		return false
 
 	gameData.secondaryOptic = !gameData.secondaryOptic
+	gameData.isScoped = ScopeCatalog.is_magnified(optic) && !gameData.secondaryOptic
 
 	var rig = get_parent()
 	if gameData.secondaryOptic:
@@ -92,7 +93,6 @@ func _handle_ads(delta: float) -> void:
 	var att = optic.attachmentData if optic else null
 	ModConfig.current_scope_mag = 1.0
 	gameData.aimFOV = gameData.baseFOV
-	gameData.isScoped = false
 
 	if !optic || !att:
 		return
@@ -125,11 +125,8 @@ func _handle_ads(delta: float) -> void:
 			rig.reticleSize = lerp(rig.reticleSize, lerp(sizes.x, sizes.z, t), delta * 10.0)
 		else:
 			rig.reticleSize = sizes.x
-		if gameData.PIP:
-			gameData.isScoped = true
-		else:
+		if !gameData.PIP:
 			gameData.aimFOV = gameData.baseFOV / ModConfig.current_scope_mag
-			gameData.isScoped = ModConfig.current_scope_mag > 1.0
 	else:
 		rig.reticleSize = att.reticleSize.x
 

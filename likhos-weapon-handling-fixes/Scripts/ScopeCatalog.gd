@@ -61,6 +61,10 @@ static func get_mag_range(key: String) -> Array:
 	return entry.get(field, entry.get("mag_range", _FALLBACK_MAG))
 
 
+static func is_magnified(optic) -> bool:
+	return optic && (optic.attachmentData.scope || optic.attachmentData.variable)
+
+
 static func get_optic_geometry(optic) -> Dictionary:
 	if !optic:
 		return {"lens_center": Vector3.ZERO, "lens_radius": 0.0, "eye_relief": Vector2.ZERO, "isFFP": false}
