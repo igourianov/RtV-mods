@@ -1,7 +1,6 @@
 # TODO
 - food and sleep rework
 - spawn new event after 30 minutes on the map
-- lerp() sensitivity on aim
 - in inspect attach ammo to the magazine and hide it if no mag
 - stowing away weapon: delays and interactions
 - move manufacturer name into another field out of title
@@ -31,3 +30,4 @@
 - move scope shadown behind reticle - done
 - punch yourself in the eye with optic too close - done
 - cleanup debugs and bugfix prints - done
+- lerp() sensitivity on aim - done

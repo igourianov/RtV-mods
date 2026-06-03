@@ -6,10 +6,12 @@ const Out = preload("../Lib/Out.gd")
 var gameData = preload("res://Resources/GameData.tres")
 var _lib
 var _sprint_intent: bool = false
+var _current_sensitivity: float
 
 
 func _init(lib) -> void:
 	_lib = lib
+	_current_sensitivity = gameData.lookSensitivity
 
 
 func on_movement_states(delta: float) -> void:
@@ -110,22 +112,26 @@ func _mouse_input(ctrl, evt) -> void:
 	if gameData.freeze || gameData.isCaching:
 		return
 
-	var sensitivity: float
-	if gameData.isCanted:
-		sensitivity = gameData.aimSensitivity
-	elif gameData.isAiming && gameData.isScoped:
-		sensitivity = gameData.scopeSensitivity / ModConfig.current_scope_mag
-	elif gameData.isAiming:
-		sensitivity = gameData.aimSensitivity
-	else:
-		sensitivity = gameData.lookSensitivity
-
-	var factor = deg_to_rad(clampf(sensitivity, 0.1, 2.0) / 10.0)
+	var factor = deg_to_rad(clampf(_current_sensitivity, 0.1, 2.0) / 10.0)
 	var y_sign = 1.0 if gameData.mouseMode == 2 else -1.0
 
 	ctrl.rotate_y(-evt.relative.x * factor)
 	ctrl.head.rotate_x(y_sign * evt.relative.y * factor)
 	ctrl.head.rotation.x = clamp(ctrl.head.rotation.x, -deg_to_rad(75.0), PI / 2)
+
+
+func _target_sensitivity() -> float:
+	if gameData.isCanted:
+		return gameData.aimSensitivity
+	if gameData.isAiming && gameData.isScoped:
+		return gameData.scopeSensitivity / ModConfig.current_scope_mag
+	if gameData.isAiming:
+		return gameData.aimSensitivity
+	return gameData.lookSensitivity
+
+
+func on_physics_process_post(delta: float) -> void:
+	_current_sensitivity = lerp(_current_sensitivity, _target_sensitivity(), delta * 5.0)
 
 
 func on_crouch(delta: float) -> void:

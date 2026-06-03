@@ -67,6 +67,7 @@ func setup(lib):
 	register_hook("weaponrig-_input", _handling.on_input)
 	register_hook("camera-scopedof", _camera.on_scope_dof)
 	register_hook("controller-movementstates", _controller.on_movement_states)
+	register_hook("controller-_physics_process-post", _controller.on_physics_process_post)
 	register_hook("controller-_input", _controller.on_input)
 	register_hook("controller-crouch", _controller.on_crouch)
 	register_hook("noise-_physics_process-post", _noise.on_physics_process_post)

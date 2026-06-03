@@ -1,7 +1,7 @@
 [mod]
 name="Likho's VosTac"
 id="likhos-weapon-handling-fixes"
-version="2.12.1524"
+version="2.12.1526"
 prefix="[likho-vostac]"
 description="Likho's collection of game fixes and realism improvements"
 debug=false
@@ -10,7 +10,7 @@ debug=false
 "res://Scripts/Handling.gd"="WeaponHandling"
 "res://Scripts/WeaponRig.gd"="ADS, _physics_process, _input, _ready"
 "res://Scripts/Camera.gd"="ScopeDOF"
-"res://Scripts/Controller.gd"="MovementStates, _input, Crouch"
+"res://Scripts/Controller.gd"="MovementStates, Crouch, _physics_process, _input"
 "res://Scripts/Noise.gd"="_physics_process"
 "res://Scripts/Tilt.gd"="_physics_process"
 "res://Scripts/HUD.gd"="_ready,_physics_process"

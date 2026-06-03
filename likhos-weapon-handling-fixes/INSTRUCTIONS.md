@@ -24,6 +24,7 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 
 - `RigManager.UpdateRig` (post)
 - `Recoil.ApplyRecoil` (post)
+- `Controller._physics_process` (post)
 - `Noise._physics_process` (post)
 - `Tilt._physics_process` (pre)
 - `HUD._ready` (post)

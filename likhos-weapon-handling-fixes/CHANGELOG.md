@@ -1,3 +1,5 @@
+* mouse sensitivity transition now lerp() gracefully instead of snapping
+
 # 2.12.1524
 * fixed Mosin missing animation for ejecting live round on reload
 * fixed Mosin missing animation for ejection of both casing an live round on opening bolt for insertion

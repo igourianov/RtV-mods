@@ -17,7 +17,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 
 ## Aiming & Optics
 
-* Mouse sensitivity scales with stance and progressively with zoom level
+* Mouse sensitivity scales with stance and progressively with zoom level + lerp() on transition instead of snapping
 * Ability to toggle the secondary optic out of aim, with a visual cue of the toggle
 * Reworked the PIP scope mode for realism. Recommended to pair with [ExitPupil](https://modworkshop.net/mod/56890) PIP reshader mod.
 * Reworked all optics with real eye relief (only in PIP) and magnification values.
