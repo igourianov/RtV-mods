@@ -31,6 +31,7 @@ const _ANCHOR_PITCH := -10.0
 const _LOOK_DOWN_PITCH := -45.0
 const _LOOK_DOWN_POS := Vector3(0.2, -0.28, -0.25)
 const _LOOK_DOWN_ROT := Vector3(45, -0.5, 10)
+const _LOOK_DOWN_HOLD := 2.0
 
 # the handling speed modifier - read as % of base
 enum HandlingMode {
@@ -78,6 +79,7 @@ var _handling_speed: float = 7.5
 var _camera_pitch_deg: float = 0.0
 var _anchor_pitch: float = 0.0
 var _smoothed_pitch: float = 0.0
+var _look_down_hold: float = 0.0
 
 
 func _init(lib, preferences: Preferences) -> void:
@@ -117,6 +119,11 @@ func on_weapon_handling(delta: float) -> void:
 
 	if gameData.freeze:
 		return
+
+	if _camera_pitch_deg < _LOOK_DOWN_PITCH || gameData.interaction:
+		_look_down_hold = _LOOK_DOWN_HOLD
+	else:
+		_look_down_hold = max(0.0, _look_down_hold - delta)
 
 	gameData.isColliding = h.collision.is_colliding()
 
@@ -236,7 +243,7 @@ func _set_target_idle(h) -> void:
 		h.targetRotation = data.lowRotation
 		return
 
-	if _camera_pitch_deg < _LOOK_DOWN_PITCH:
+	if _look_down_hold > 0.0:
 		h.targetPosition = _LOOK_DOWN_POS
 		h.targetRotation = _LOOK_DOWN_ROT
 		return
