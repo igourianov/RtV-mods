@@ -2,6 +2,9 @@ extends RefCounted
 
 var gameData = preload("res://Resources/GameData.tres")
 
+# local-space offset from the bone-tracked anchor toward the magazine body center
+const _MAG_CENTER_OFFSET := Vector3(0, -0.05, 0)
+
 var _lib
 var _rig_manager: Node3D
 
@@ -10,7 +13,7 @@ func _init(lib) -> void:
 	_lib = lib
 
 
-# center the magazine ammo tooltip on the detachable magazine while inspecting
+# center the magazine ammo tooltip on the magazine body while inspecting
 func on_physics_process_post(_delta) -> void:
 	var node = _lib._caller
 	if !is_instance_valid(node) || node.type != node.Type.Magazine || !node.target:
@@ -24,6 +27,5 @@ func on_physics_process_post(_delta) -> void:
 	if !(rig is WeaponRig) || !rig.magazine || !rig.magazine.visible:
 		return
 
-	var mag = rig.magazine
-	var center = mag.global_transform * mag.get_aabb().get_center()
-	node.target.global_position = node.camera.unproject_position(center)
+	var anchor = node.global_position + node.global_transform.basis * _MAG_CENTER_OFFSET
+	node.target.global_position = node.camera.unproject_position(anchor)
