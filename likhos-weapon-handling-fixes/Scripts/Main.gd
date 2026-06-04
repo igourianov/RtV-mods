@@ -17,6 +17,7 @@ const ScopeCatalog = preload("./ScopeCatalog.gd")
 const RigOpticPatches = preload("./RigOpticPatches.gd")
 const Tooltip = preload("./Tooltip.gd")
 const Interactor = preload("./Interactor.gd")
+const UIPosition = preload("./UIPosition.gd")
 
 
 var _handling
@@ -34,6 +35,7 @@ var _laser
 var _flashlight
 var _tooltip
 var _interactor
+var _uiposition
 var _item
 
 
@@ -58,6 +60,7 @@ func setup(lib):
 	_flashlight = Flashlight.new(lib)
 	_tooltip = Tooltip.new(lib)
 	_interactor = Interactor.new(lib)
+	_uiposition = UIPosition.new(lib)
 
 	register_hook("handling-weaponhandling", _handling.on_weapon_handling)
 	register_hook("rigmanager-updaterig-post", _handling.on_rig_update_post)
@@ -83,6 +86,7 @@ func setup(lib):
 	register_hook("tooltip-reset-post", _tooltip.on_reset_post)
 	register_hook("tooltip-update-post", _tooltip.on_update_post)
 	register_hook("interactor-_physics_process-pre", _interactor.on_physics_process_pre)
+	register_hook("uiposition-_physics_process-post", _uiposition.on_physics_process_post)
 
 	register_action("optic_zoom_in", "Optic Zoom In", _create_mouse_input(MOUSE_BUTTON_WHEEL_UP))
 	register_action("optic_zoom_out", "Optic Zoom Out", _create_mouse_input(MOUSE_BUTTON_WHEEL_DOWN))
