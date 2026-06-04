@@ -1,4 +1,5 @@
 * hide crosshair on the zone transition prompt (so it doesn't overlap)
+* disable weapon stow on transition prompt
 
 # 2.12.1534
 * tweaks for free look mode for smoother, more fluid interactions

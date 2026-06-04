@@ -122,7 +122,7 @@ func on_weapon_handling(delta: float) -> void:
 
 	if gameData.isAiming || gameData.isCanted:
 		_look_down_hold = 0.0
-	elif _camera_pitch_deg < _LOOK_DOWN_PITCH || gameData.interaction:
+	elif _camera_pitch_deg < _LOOK_DOWN_PITCH || (gameData.interaction && !gameData.transition):
 		_look_down_hold = _LOOK_DOWN_HOLD
 	else:
 		_look_down_hold = max(0.0, _look_down_hold - delta)
