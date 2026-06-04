@@ -25,8 +25,6 @@ const _ATT_MIN_H := 24.0
 const _ATT_FONT_SIZE := 16
 
 var _att_tooltips: Dictionary = {}
-var _att_labels: Dictionary = {}
-var _att_last_text: Dictionary = {}
 var _camera: Camera3D
 var _rig_manager: Node3D
 
@@ -51,8 +49,6 @@ func _setup_attachment_tooltips(hud) -> void:
 	if !stale:
 		return
 	_att_tooltips.clear()
-	_att_labels.clear()
-	_att_last_text.clear()
 	_create_attachment_tooltips(hud)
 
 
@@ -104,7 +100,7 @@ func _draw_arms(c: Control, center: Vector2, color: Color) -> void:
 
 
 func _create_attachment_tooltips(hud) -> void:
-	if hud.magazine == null:
+	if !hud.magazine:
 		return
 	for subtype in _ATTACHMENT_SUBTYPES:
 		var clone: Control = hud.magazine.duplicate()
@@ -116,8 +112,6 @@ func _create_attachment_tooltips(hud) -> void:
 		clone.hide()
 		hud.add_child(clone)
 		_att_tooltips[subtype] = clone
-		_att_labels[subtype] = label
-		_att_last_text[subtype] = ""
 
 
 func on_physics_process_post(delta: float) -> void:
@@ -175,17 +169,13 @@ func _update_attachment_tooltips(hud) -> void:
 			tt.hide()
 		return
 
-	if _camera == null || !is_instance_valid(_camera):
+	if !_camera || !is_instance_valid(_camera):
 		_camera = hud.get_tree().current_scene.get_node_or_null("/root/Map/Core/Camera")
-	if _rig_manager == null || !is_instance_valid(_rig_manager):
+	if !_rig_manager || !is_instance_valid(_rig_manager):
 		_rig_manager = hud.get_tree().current_scene.get_node_or_null("/root/Map/Core/Camera/Manager")
-	if _camera == null || _rig_manager == null || _rig_manager.get_child_count() == 0:
-		for tt in _att_tooltips.values():
-			tt.hide()
-		return
 
-	var rig = _rig_manager.get_child(0)
-	if !(rig is WeaponRig) || rig.slotData == null || rig.attachments == null:
+	var rig = _rig_manager.get_child(0) if _rig_manager && _rig_manager.get_child_count() > 0 else null
+	if !_camera || !(rig is WeaponRig) || !rig.slotData || !rig.attachments:
 		for tt in _att_tooltips.values():
 			tt.hide()
 		return
@@ -198,23 +188,18 @@ func _update_attachment_tooltips(hud) -> void:
 	for subtype in _ATTACHMENT_SUBTYPES:
 		var tooltip: Control = _att_tooltips[subtype]
 		var item = by_subtype.get(subtype, null)
-		if item == null:
-			tooltip.hide()
-			continue
-		var attachment = rig.attachments.get_node_or_null(item.file)
-		if attachment == null || !is_instance_valid(attachment) || !attachment.visible:
+		var attachment = rig.attachments.get_node_or_null(item.file) if item else null
+		if !item || !attachment || !is_instance_valid(attachment) || !attachment.visible:
 			tooltip.hide()
 			continue
 
-		var label: Label = _att_labels[subtype]
-		var new_text = str(item.name)
-		if new_text != _att_last_text.get(subtype, ""):
-			label.text = new_text
-			_att_last_text[subtype] = new_text
+		var panel = tooltip.get_child(0)
+		var label: Label = panel.get_child(0)
+		if item.name != label.text:
+			label.text = item.name
 			var min_size = label.get_minimum_size()
 			var w = max(min_size.x + _ATT_PAD_X * 2.0, _ATT_MIN_W)
 			var h = max(min_size.y + _ATT_PAD_Y * 2.0, _ATT_MIN_H)
-			var panel = tooltip.get_child(0)
 			panel.offset_left = -w / 2.0
 			panel.offset_top = -h / 2.0
 			panel.offset_right = w / 2.0
