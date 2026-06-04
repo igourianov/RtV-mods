@@ -151,9 +151,23 @@ func _update_interaction_tooltip(hud) -> void:
 		hud.tooltip.visible = false
 
 
+func _active_rig(hud) -> WeaponRig:
+	if !_rig_manager || !is_instance_valid(_rig_manager):
+		_rig_manager = hud.get_tree().current_scene.get_node_or_null("/root/Map/Core/Camera/Manager")
+	var rig = _rig_manager.get_child(0) if _rig_manager && _rig_manager.get_child_count() > 0 else null
+	return rig if rig is WeaponRig else null
+
+
+func _magazine_attached(hud) -> bool:
+	var rig = _active_rig(hud)
+	if !rig || !rig.magazine:
+		return true
+	return rig.magazine.visible
+
+
 func _update_ammo_overlays(hud) -> void:
 	if gameData.isInspecting && ModConfig.ammo_tooltips:
-		hud.magazine.visible = true
+		hud.magazine.visible = _magazine_attached(hud)
 		hud.chamber.visible = true
 	elif gameData.isChecking:
 		hud.magazine.visible = ModConfig.ammo_check_view
@@ -174,11 +188,9 @@ func _update_attachment_tooltips(hud) -> void:
 
 	if !_camera || !is_instance_valid(_camera):
 		_camera = hud.get_tree().current_scene.get_node_or_null("/root/Map/Core/Camera")
-	if !_rig_manager || !is_instance_valid(_rig_manager):
-		_rig_manager = hud.get_tree().current_scene.get_node_or_null("/root/Map/Core/Camera/Manager")
 
-	var rig = _rig_manager.get_child(0) if _rig_manager && _rig_manager.get_child_count() > 0 else null
-	if !_camera || !(rig is WeaponRig) || !rig.slotData || !rig.attachments:
+	var rig = _active_rig(hud)
+	if !_camera || !rig || !rig.slotData || !rig.attachments:
 		for tt in _att_tooltips.values():
 			tt.hide()
 		return
@@ -208,8 +220,39 @@ func _update_attachment_tooltips(hud) -> void:
 			panel.offset_right = w / 2.0
 			panel.offset_bottom = h / 2.0
 
-		tooltip.global_position = _camera.unproject_position(attachment.global_position)
+		tooltip.global_position = _camera.unproject_position(_world_center(attachment))
 		tooltip.show()
+
+
+static var _local_center_cache: Dictionary = {}
+
+
+# the subtree is rigid relative to its root, so the local-space center is computed once
+# and only the per-frame transform is applied
+static func _world_center(node: Node3D) -> Vector3:
+	var id := node.get_instance_id()
+	if !_local_center_cache.has(id):
+		_local_center_cache[id] = _compute_local_center(node)
+	return node.global_transform * _local_center_cache[id]
+
+
+static func _compute_local_center(node: Node3D) -> Vector3:
+	var inv := node.global_transform.affine_inverse()
+	var merged: AABB
+	var found := false
+	var stack: Array = [node]
+	while !stack.is_empty():
+		var n = stack.pop_back()
+		if n.name == "Laser":
+			continue
+		if n is VisualInstance3D:
+			var local: AABB = (inv * n.global_transform) * n.get_aabb()
+			merged = merged.merge(local) if found else local
+			found = true
+		for child in n.get_children():
+			if child is Node3D:
+				stack.append(child)
+	return merged.get_center() if found else Vector3.ZERO
 
 
 func _is_interaction_blocked() -> bool:
