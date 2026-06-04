@@ -1,3 +1,4 @@
+* adjusted position of ammo/attachment cards in inspect mode
 * hide crosshair on the zone transition prompt (so it doesn't overlap)
 * disable weapon stow on transition prompt
 * fixed zone transition prompt showing up while in inspect mode
