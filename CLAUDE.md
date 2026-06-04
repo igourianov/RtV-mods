@@ -13,6 +13,7 @@ Mods for the Godot game **Road to Vostok** (`config/name="Road to Vostok"`, vers
 * Enforce two empty lines befween functions
 * Enforce Tab identation
 * Use `!obj` style for `null` checks instead of `obj == null`
+* Do not mix `elif` condition trees with early returns - pick one approach
 
 ## Mods
 
