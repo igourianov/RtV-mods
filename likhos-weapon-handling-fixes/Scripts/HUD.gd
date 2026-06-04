@@ -136,7 +136,7 @@ func _update_crosshair_visibility(hud, delta: float) -> void:
 	var cantedHidden = gameData.isCanted && !ModConfig.crosshair_while_canted
 	var runningHidden = gameData.isRunning && !ModConfig.crosshair_while_running
 	var raisedHidden = gameData.weaponPosition == 2 && !ModConfig.crosshair_while_raised
-	var shouldShow = !gameData.isAiming && !cantedHidden && !runningHidden && !raisedHidden && !_is_interaction_blocked() && ModConfig.crosshair_style != "off"
+	var shouldShow = !gameData.transition && !gameData.isAiming && !cantedHidden && !runningHidden && !raisedHidden && !_is_interaction_blocked() && ModConfig.crosshair_style != "off"
 
 	var target := 0.0
 	if shouldShow:

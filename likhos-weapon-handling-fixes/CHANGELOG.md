@@ -1,3 +1,5 @@
+* hide crosshair on the zone transition prompt (so it doesn't overlap)
+
 # 2.12.1534
 * tweaks for free look mode for smoother, more fluid interactions
 * mouse sensitivity transition now lerp() gracefully instead of snapping
