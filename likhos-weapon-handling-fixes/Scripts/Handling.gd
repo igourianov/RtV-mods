@@ -30,7 +30,7 @@ const _SECONDARY_OPTIC_ROT_OFFSET := Vector3(-15.0, 0.0, 0)
 const _ANCHOR_PITCH := -10.0
 const _LOOK_DOWN_PITCH := -45.0
 const _LOOK_DOWN_POS := Vector3(0.2, -0.28, -0.25)
-const _LOOK_DOWN_ROT := Vector3(45, -0.5, 10)
+const _LOOK_DOWN_ROT := Vector3(45, 0, 10)
 const _LOOK_DOWN_HOLD := 2.0
 
 # the handling speed modifier - read as % of base
@@ -118,22 +118,24 @@ func on_weapon_handling(delta: float) -> void:
 		return
 	_lib.skip_super()
 
+	gameData.isColliding = h.collision.is_colliding()
 	_resolve_intent()
+	_free_look = false
+	_anchored = false
 
 	if gameData.freeze:
+		_look_down_hold = _LOOK_DOWN_HOLD
+		_set_target_idle(h)
+		_apply_target(h, delta)
 		return
 
 	if gameData.isAiming || gameData.isCanted:
 		_look_down_hold = 0.0
-	elif _camera_pitch_deg < _LOOK_DOWN_PITCH || (gameData.interaction && !gameData.transition):
+	elif _camera_pitch_deg < _LOOK_DOWN_PITCH:
 		_look_down_hold = _LOOK_DOWN_HOLD
 	else:
 		_look_down_hold = max(0.0, _look_down_hold - delta)
 
-	gameData.isColliding = h.collision.is_colliding()
-
-	_free_look = false
-	_anchored = false
 	_process_handling_state(h)
 	_apply_target(h, delta)
 
@@ -242,6 +244,9 @@ func _process_handling_state(h) -> void:
 func _set_target_idle(h) -> void:
 	var data = h.data
 
+	_free_look = _camera_pitch_deg >= _ANCHOR_PITCH
+	_anchored = !_free_look
+
 	if data.type != "Weapon" || !ModConfig.enable_free_look:
 		h.targetPosition = data.lowPosition
 		h.targetRotation = data.lowRotation
@@ -252,9 +257,6 @@ func _set_target_idle(h) -> void:
 		h.targetPosition = _LOOK_DOWN_POS
 		h.targetRotation = _LOOK_DOWN_ROT
 		return
-
-	_free_look = _camera_pitch_deg >= _ANCHOR_PITCH
-	_anchored = !_free_look
 
 	if data.weaponType == "Pistol":
 		_current_idle_category = IdleCategory.Pistol
