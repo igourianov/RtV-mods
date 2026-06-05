@@ -1,3 +1,5 @@
+# 2.12.1599
+* adjustments for **Adaptive Free Look** to be more fluid / less jumpy
 * fixed aim toggling on right click from inentory
 
 # 2.12.1548
