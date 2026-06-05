@@ -90,6 +90,9 @@ func _init(lib, preferences: Preferences) -> void:
 func on_input(evt) -> void:
 	_lib.skip_super()
 
+	if gameData.freeze:
+		return
+		
 	var aimToggle: bool = gameData.aimMode == 2
 	var cantToggle := false
 	if ModConfig.cant_mode == &"default":
@@ -137,7 +140,7 @@ func on_weapon_handling(delta: float) -> void:
 
 func _resolve_intent() -> void:
 
-	if gameData.freeze || gameData.isInspecting || gameData.isChecking:
+	if gameData.isInspecting || gameData.isChecking:
 		gameData.isAiming = false
 		gameData.isCanted = false
 		return
