@@ -29,9 +29,9 @@ var _current_idle_category: int = IdleCategory.Default
 const _SECONDARY_OPTIC_ROT_OFFSET := Vector3(-15.0, 0.0, 0)
 const _ANCHOR_PITCH := -10.0
 const _LOOK_DOWN_PITCH := -45.0
-const _LOOK_DOWN_POS := Vector3(0.2, -0.28, -0.25)
-const _LOOK_DOWN_ROT := Vector3(45, 0, 10)
-const _LOOK_DOWN_HOLD := 2.0
+const _STOW_POS_OFFSET := Vector3(0.2, -0.2, 0.3)
+const _STOW_ROT := Vector3(90, 0, -10)
+const _STOW_HOLD := 1.0
 
 # the handling speed modifier - read as % of base
 enum HandlingMode {
@@ -79,7 +79,7 @@ var _handling_speed: float = 7.5
 var _camera_pitch_deg: float = 0.0
 var _anchor_pitch: float = 0.0
 var _smoothed_pitch: float = 0.0
-var _look_down_hold: float = 0.0
+var _stow_hold: float = 0.0
 
 
 func _init(lib, preferences: Preferences) -> void:
@@ -124,17 +124,17 @@ func on_weapon_handling(delta: float) -> void:
 	_anchored = false
 
 	if gameData.freeze:
-		_look_down_hold = _LOOK_DOWN_HOLD
+		_stow_hold = _STOW_HOLD
 		_set_target_idle(h)
 		_apply_target(h, delta)
 		return
 
 	if gameData.isAiming || gameData.isCanted:
-		_look_down_hold = 0.0
+		_stow_hold = 0.0
 	elif _camera_pitch_deg < _LOOK_DOWN_PITCH:
-		_look_down_hold = _LOOK_DOWN_HOLD
+		_stow_hold = _STOW_HOLD
 	else:
-		_look_down_hold = max(0.0, _look_down_hold - delta)
+		_stow_hold = max(0.0, _stow_hold - delta)
 
 	_process_handling_state(h)
 	_apply_target(h, delta)
@@ -252,10 +252,12 @@ func _set_target_idle(h) -> void:
 		h.targetRotation = data.lowRotation
 		return
 
-	if _look_down_hold > 0.0:
+	if _stow_hold > 0.0:
+		_free_look = true
+		_anchored = false
 		_handlingMode = HandlingMode.Admin
-		h.targetPosition = _LOOK_DOWN_POS
-		h.targetRotation = _LOOK_DOWN_ROT
+		h.targetPosition = data.lowPosition + _STOW_POS_OFFSET
+		h.targetRotation = _STOW_ROT
 		return
 
 	if data.weaponType == "Pistol":
