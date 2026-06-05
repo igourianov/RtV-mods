@@ -32,6 +32,8 @@ const _LOOK_DOWN_PITCH := -45.0
 const _STOW_POS_OFFSET := Vector3(0.2, -0.2, 0.3)
 const _STOW_ROT := Vector3(90, 0, -10)
 const _STOW_HOLD := 1.0
+const _LEFT_ARM_BONE := "Arm_Upper_L"
+const _STOW_ARM_SCALE := Vector3(0.001, 0.001, 0.001)
 
 # the handling speed modifier - read as % of base
 enum HandlingMode {
@@ -80,6 +82,7 @@ var _camera_pitch_deg: float = 0.0
 var _anchor_pitch: float = 0.0
 var _smoothed_pitch: float = 0.0
 var _stow_hold: float = 0.0
+var _left_arm_hidden := false
 
 
 func _init(lib, preferences: Preferences) -> void:
@@ -127,6 +130,7 @@ func on_weapon_handling(delta: float) -> void:
 		_stow_hold = _STOW_HOLD
 		_set_target_idle(h)
 		_apply_target(h, delta)
+		_apply_left_arm(h)
 		return
 
 	if gameData.isAiming || gameData.isCanted:
@@ -138,6 +142,25 @@ func on_weapon_handling(delta: float) -> void:
 
 	_process_handling_state(h)
 	_apply_target(h, delta)
+	_apply_left_arm(h)
+
+
+func _apply_left_arm(h) -> void:
+	var rig = h.get_parent()
+	if !rig || !rig.skeleton:
+		return
+
+	var arm_idx = rig.skeleton.find_bone(_LEFT_ARM_BONE)
+	if arm_idx == -1:
+		return
+
+	# collapse the left support arm while stowed (hacky: zero-scale the shoulder bone)
+	if _stow_hold > 0.0:
+		rig.skeleton.set_bone_pose_scale(arm_idx, _STOW_ARM_SCALE)
+	elif _left_arm_hidden:
+		rig.skeleton.set_bone_pose_scale(arm_idx, Vector3.ONE)
+
+	_left_arm_hidden = _stow_hold > 0.0
 
 
 func _resolve_intent() -> void:
