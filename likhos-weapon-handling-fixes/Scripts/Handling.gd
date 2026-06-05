@@ -29,8 +29,7 @@ var _current_idle_category: int = IdleCategory.Default
 const _SECONDARY_OPTIC_ROT_OFFSET := Vector3(-15.0, 0.0, 0)
 const _ANCHOR_PITCH := -10.0
 const _LOOK_DOWN_PITCH := -45.0
-const _STOW_POS_OFFSET := Vector3(0.2, -0.2, 0.3)
-const _STOW_ROT := Vector3(90, 0, -10)
+const _STOW_POS_OFFSET := Vector3(0.15, -0.25, 0.3)
 const _STOW_HOLD := 1.0
 const _LEFT_ARM_BONE := "Arm_Upper_L"
 const _STOW_ARM_SCALE := Vector3(0.001, 0.001, 0.001)
@@ -42,6 +41,7 @@ enum HandlingMode {
 	Cant = 130,
 	ScopeZoom = 80,
 	Admin = 50,
+	Stow = 35,
 }
 
 const _AIM_POS_OVERRIDE := {
@@ -83,11 +83,13 @@ var _anchor_pitch: float = 0.0
 var _smoothed_pitch: float = 0.0
 var _stow_hold: float = 0.0
 var _left_arm_hidden := false
+var _stow_rot: Vector3
 
 
 func _init(lib, preferences: Preferences) -> void:
 	_lib = lib
 	_preferences = preferences
+	_stow_rot = _stow_rotation()
 
 
 func on_input(evt) -> void:
@@ -278,9 +280,9 @@ func _set_target_idle(h) -> void:
 	if _stow_hold > 0.0:
 		_free_look = true
 		_anchored = false
-		_handlingMode = HandlingMode.Admin
+		_handlingMode = HandlingMode.Stow
 		h.targetPosition = data.lowPosition + _STOW_POS_OFFSET
-		h.targetRotation = _STOW_ROT
+		h.targetRotation = _stow_rot
 		return
 
 	if data.weaponType == "Pistol":
@@ -300,6 +302,14 @@ func _set_target_idle(h) -> void:
 
 	h.targetPosition = data.lowPosition + pos_offset
 	h.targetRotation = data.lowRotation + rot_offset
+
+
+# a basic rotation vector wont work here bacause at steep pitch - Y rotation stops working
+func _stow_rotation() -> Vector3:
+	var pitch := Basis.from_euler(Vector3(deg_to_rad(80.0), 0.0, deg_to_rad(10.0)))
+	var kick := Basis(Vector3.FORWARD, deg_to_rad(20.0))
+	var e := (kick * pitch).get_euler()
+	return Vector3(rad_to_deg(e.x), rad_to_deg(e.y), rad_to_deg(e.z))
 
 
 func _apply_target(h, delta: float):
