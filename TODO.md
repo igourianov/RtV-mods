@@ -5,6 +5,7 @@
 - split Scripts into Scripts and Hooks
 - show approx ammo counts
 - binoculars
+- flashlight auto-on on PEQ15, similar to laser
 
 # Closed
 - MP7 clipping in canted mode - will not fix (missing texture on the gun)
