@@ -1,9 +1,10 @@
 # TODO
 - food and sleep rework
 - spawn new event after 30 minutes on the map
-- in inspect attach ammo to the magazine and hide it if no mag
 - move manufacturer name into another field out of title
 - split Scripts into Scripts and Hooks
+- show approx ammo counts
+- binoculars
 
 # Closed
 - MP7 clipping in canted mode - will not fix (missing texture on the gun)
@@ -31,4 +32,4 @@
 - cleanup debugs and bugfix prints - done
 - lerp() sensitivity on aim - done
 - stowing away weapon: delays and interactions - done
-
+- in inspect attach ammo to the magazine and hide it if no mag - done
