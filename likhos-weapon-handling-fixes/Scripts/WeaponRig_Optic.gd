@@ -46,7 +46,7 @@ func _handle_zoom(event, optic) -> bool:
 	var max_zoom = ScopeCatalog.get_mag_range(optic.attachmentData.file).size()
 	var dir := 1 if zoomIn else -1
 
-	var new_zoom := _zoom.step(dir, rig.slotData.zoom, max_zoom)
+	var new_zoom := _zoom.step(dir, rig.slotData.zoom - 1, max_zoom) + 1
 	if new_zoom != rig.slotData.zoom:
 		rig.slotData.zoom = new_zoom
 		rig.PlayRailMove()

@@ -32,7 +32,7 @@ var _mat: ShaderMaterial
 var _camera: Camera3D
 var _state := State.INACTIVE
 var _progress := 0.0
-var _index := 1
+var _index := 0
 var _zoom := ZoomAccelerator.new()
 var _base_fov := 70.0
 var _current_fov := 70.0
@@ -125,12 +125,8 @@ func _change_zoom(dir: int) -> void:
 	var next := _zoom.step(dir, _index, _MAGS.size())
 	if next != _index:
 		_index = next
-		ModConfig.binoculars_mag = _current_mag()
+		ModConfig.binoculars_mag = _MAGS[_index]
 		_click_channel.play_event(_audio_library.UIClick)
-
-
-func _current_mag() -> float:
-	return _MAGS[_index - 1]
 
 
 func _can_raise() -> bool:
@@ -145,7 +141,7 @@ func _can_raise() -> bool:
 func _activate() -> void:
 	_base_fov = gameData.baseFOV
 	_current_fov = _camera.fov
-	ModConfig.binoculars_mag = _current_mag()
+	ModConfig.binoculars_mag = _MAGS[_index]
 	ModConfig.binoculars_active = true
 	gameData.isOccupied = true
 
@@ -192,7 +188,7 @@ func _apply(t: float, delta: float) -> void:
 	_mat.set_shader_parameter("separation", lerp(_START_SEP, _END_SEP, t))
 	_mat.set_shader_parameter("center_y", lerp(_START_CY, _END_CY, t))
 
-	var eff_mag: float = lerp(1.0, _current_mag(), t)
+	var eff_mag: float = lerp(1.0, _MAGS[_index], t)
 	var target_fov := rad_to_deg(2.0 * atan(tan(deg_to_rad(_base_fov) * 0.5) / eff_mag))
 	_current_fov = lerp(_current_fov, target_fov, clampf(delta * _FOV_LERP_SPEED, 0.0, 1.0))
 	_camera.fov = _current_fov

@@ -16,4 +16,4 @@ func step(dir: int, current: int, count: int) -> int:
 		_accel = 1
 	_last_dir = dir
 	_last_msec = now
-	return clampi(current + dir * _accel, 1, count)
+	return clampi(current + dir * _accel, 0, count - 1)
