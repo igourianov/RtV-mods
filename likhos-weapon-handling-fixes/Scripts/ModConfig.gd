@@ -7,6 +7,7 @@ static var hold_breath: bool = false
 static var hold_breath_progress: float = 0.0
 static var optic_shiner: bool = false
 static var binoculars_active: bool = false
+static var binoculars_mag: float = 6.0
 
 # config vars
 static var crosshair_style: StringName
