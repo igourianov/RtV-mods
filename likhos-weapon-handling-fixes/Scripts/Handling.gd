@@ -82,7 +82,7 @@ var _camera_pitch_deg: float = 0.0
 var _anchor_pitch: float = 0.0
 var _smoothed_pitch: float = 0.0
 var _stow_hold: float = 0.0
-var _left_arm_hidden := false
+var _stow_active := false
 var _stow_rot: Vector3
 
 
@@ -127,6 +127,7 @@ func on_weapon_handling(delta: float) -> void:
 	_resolve_intent()
 	_free_look = false
 	_anchored = false
+	_stow_active = false
 
 	if gameData.freeze:
 		_stow_hold = _STOW_HOLD
@@ -157,12 +158,10 @@ func _apply_left_arm(h) -> void:
 		return
 
 	# collapse the left support arm while stowed (hacky: zero-scale the shoulder bone)
-	if _stow_hold > 0.0:
+	if _stow_active:
 		rig.skeleton.set_bone_pose_scale(arm_idx, _STOW_ARM_SCALE)
-	elif _left_arm_hidden:
+	else:
 		rig.skeleton.set_bone_pose_scale(arm_idx, Vector3.ONE)
-
-	_left_arm_hidden = _stow_hold > 0.0
 
 
 func _resolve_intent() -> void:
@@ -280,6 +279,7 @@ func _set_target_idle(h) -> void:
 	if _stow_hold > 0.0:
 		_free_look = true
 		_anchored = false
+		_stow_active = true
 		_handlingMode = HandlingMode.Stow
 		h.targetPosition = data.lowPosition + _STOW_POS_OFFSET
 		h.targetRotation = _stow_rot

@@ -1,11 +1,12 @@
 * added zoom acceleration and click sound to the binos
+* fixed reloading while looking down missing left arm
 
 # 2.13.1667
 * Binoculars!!! (hold B)
 
 # 2.12.1599
 * adjustments for **Adaptive Free Look** to be more fluid / less jumpy
-* fixed aim toggling on right click from inentory
+* fixed aim toggling on right click from inventory
 
 # 2.12.1548
 * adjusted position of ammo/attachment cards in inspect mode
@@ -20,9 +21,9 @@
 
 # 2.12.1524
 * fixed Mosin missing animation for ejecting live round on reload
-* fixed Mosin missing animation for ejection of both casing an live round on opening bolt for insertion
+* fixed Mosin missing animation for ejection of both casing and live round on opening bolt for insertion
 * added self damage when trying to aim with optic mounted too close
-* reworked handling speed to apply both in and out of the state, added slowed admin speed for Inspecing/Ammo Check/Insert
+* reworked handling speed to apply both in and out of the state, added slowed admin speed for Inspecting/Ammo Check/Insert
 * tooltip code refactoring
 
 # 2.11.1481
