@@ -1,4 +1,5 @@
 * added zoom acceleration and click sound to the binos
+* compressed binos grime image to reduce mod size
 * fixed reloading while looking down missing left arm
 * PEQ-15 laser is now red instead of green
 
