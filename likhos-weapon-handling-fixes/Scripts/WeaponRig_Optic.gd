@@ -2,17 +2,13 @@ extends "./WeaponRig_Base.gd"
 
 const ModConfig = preload("./ModConfig.gd")
 const ScopeCatalog = preload("./ScopeCatalog.gd")
+const ZoomAccelerator = preload("./ZoomAccelerator.gd")
 const _RETICLE_SHADER := preload("res://mods/likhos-weapon-handling-fixes/Shaders/Reticle.gdshader")
-
-const _ZOOM_ACCEL_WINDOW := 175
-const _ZOOM_ACCEL_MAX := 3
 
 var audioLibrary = preload("res://Resources/AudioLibrary.tres")
 var audioInstance2D = preload("res://Resources/AudioInstance2D.tscn")
 
-var _last_zoom_msec := 0
-var _last_zoom_dir := 0
-var _zoom_accel := 1
+var _zoom := ZoomAccelerator.new()
 
 
 func _ready() -> void:
@@ -49,17 +45,8 @@ func _handle_zoom(event, optic) -> bool:
 	var rig = get_parent()
 	var max_zoom = ScopeCatalog.get_mag_range(optic.attachmentData.file).size()
 	var dir := 1 if zoomIn else -1
-	var now := Time.get_ticks_msec()
 
-	if dir == _last_zoom_dir && now - _last_zoom_msec <= _ZOOM_ACCEL_WINDOW:
-		_zoom_accel = min(_zoom_accel + 1, _ZOOM_ACCEL_MAX)
-	else:
-		_zoom_accel = 1
-
-	_last_zoom_dir = dir
-	_last_zoom_msec = now
-
-	var new_zoom: int = clamp(rig.slotData.zoom + dir * _zoom_accel, 1, max_zoom)
+	var new_zoom := _zoom.step(dir, rig.slotData.zoom, max_zoom)
 	if new_zoom != rig.slotData.zoom:
 		rig.slotData.zoom = new_zoom
 		rig.PlayRailMove()

@@ -2,21 +2,22 @@ extends CanvasLayer
 
 const ModConfig = preload("./ModConfig.gd")
 const Out = preload("../Lib/Out.gd")
+const ZoomAccelerator = preload("./ZoomAccelerator.gd")
 const _SHADER = preload("res://mods/likhos-weapon-handling-fixes/Shaders/Binoculars.gdshader")
 const _RETICLE_PATH = "res://mods/likhos-weapon-handling-fixes/Textures/binos_reticle.png"
 const _GRIME_PATH = "res://mods/likhos-weapon-handling-fixes/Textures/binos_grime.png"
 const _CAMERA_PATH = "/root/Map/Core/Camera"
 const _HUD_PATH = "/root/Map/Core/UI/HUD"
+const _AUDIO_INSTANCE = preload("res://Resources/AudioInstance2D.tscn")
 
 var gameData = preload("res://Resources/GameData.tres")
+var _audio_library = preload("res://Resources/AudioLibrary.tres")
 
 enum State { INACTIVE, RAISING, ACTIVE, LOWERING }
 
 const _RAISE_TIME := 0.3
 const _FOV_LERP_SPEED := 12.0
-const _MIN_MAG := 6.0
-const _MAX_MAG := 12.0
-const _ZOOM_STEP := 2.0
+const _MAGS := [6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0] #[6.0, 8.0, 10.0, 12.0]
 
 const _START_RADIUS := 0.12
 const _END_RADIUS := 0.60
@@ -30,7 +31,8 @@ var _mat: ShaderMaterial
 var _camera: Camera3D
 var _state := State.INACTIVE
 var _progress := 0.0
-var _mag := _MIN_MAG
+var _index := 1
+var _zoom := ZoomAccelerator.new()
 var _base_fov := 70.0
 var _current_fov := 70.0
 
@@ -97,9 +99,9 @@ func _unhandled_input(event) -> void:
 		return
 
 	if event.is_action_pressed("optic_zoom_in"):
-		_set_mag(_mag + _ZOOM_STEP)
+		_change_zoom(1)
 	elif event.is_action_pressed("optic_zoom_out"):
-		_set_mag(_mag - _ZOOM_STEP)
+		_change_zoom(-1)
 
 
 func _raise() -> void:
@@ -115,9 +117,22 @@ func _lower() -> void:
 		_state = State.LOWERING
 
 
-func _set_mag(value: float) -> void:
-	_mag = clampf(value, _MIN_MAG, _MAX_MAG)
-	ModConfig.binoculars_mag = _mag
+func _change_zoom(dir: int) -> void:
+	var next := _zoom.step(dir, _index, _MAGS.size())
+	if next != _index:
+		_index = next
+		ModConfig.binoculars_mag = _current_mag()
+		_play_click()
+
+
+func _current_mag() -> float:
+	return _MAGS[_index - 1]
+
+
+func _play_click() -> void:
+	var click = _AUDIO_INSTANCE.instantiate()
+	add_child(click)
+	click.PlayInstance(_audio_library.UIClick)
 
 
 func _can_raise() -> bool:
@@ -132,7 +147,7 @@ func _can_raise() -> bool:
 func _activate() -> void:
 	_base_fov = gameData.baseFOV
 	_current_fov = _camera.fov
-	_set_mag(_mag)
+	ModConfig.binoculars_mag = _current_mag()
 	ModConfig.binoculars_active = true
 	gameData.isOccupied = true
 
@@ -179,7 +194,7 @@ func _apply(t: float, delta: float) -> void:
 	_mat.set_shader_parameter("separation", lerp(_START_SEP, _END_SEP, t))
 	_mat.set_shader_parameter("center_y", lerp(_START_CY, _END_CY, t))
 
-	var eff_mag: float = lerp(1.0, _mag, t)
+	var eff_mag: float = lerp(1.0, _current_mag(), t)
 	var target_fov := rad_to_deg(2.0 * atan(tan(deg_to_rad(_base_fov) * 0.5) / eff_mag))
 	_current_fov = lerp(_current_fov, target_fov, clampf(delta * _FOV_LERP_SPEED, 0.0, 1.0))
 	_camera.fov = _current_fov
