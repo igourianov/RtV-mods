@@ -39,14 +39,12 @@ void fragment() {
 	col = mix(col, grime_color.rgb, grime_mask);
 	a = max(a, grime_mask * grime_opacity * grime_color.a);
 
-	a = max(a, vig * 0.85);
-
 	col = mix(col, reticle_color.rgb, ret.a);
 	a = max(a, ret.a * reticle_color.a);
 
 	a *= inside;
 
-	a = max(a, exterior);
+	a = max(a, max(vig * 0.85, exterior));
 	col = mix(col, vec3(0.0), exterior);
 
 	COLOR = vec4(col, a);

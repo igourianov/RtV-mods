@@ -16,7 +16,7 @@ const _RAISE_TIME := 0.45
 const _FOV_LERP_SPEED := 12.0
 const _MIN_MAG := 6.0
 const _MAX_MAG := 12.0
-const _ZOOM_STEP := 1.0
+const _ZOOM_STEP := 2.0
 
 const _START_RADIUS := 0.12
 const _END_RADIUS := 0.60
