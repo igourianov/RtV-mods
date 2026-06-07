@@ -6,12 +6,12 @@ Formerly `Likho's Weapon Handling Fixes`.
 
 ## Novel features
 
-* **Binoculars!** Added tactical 6-12x binos for observation. Hold 'B' to activate (remap in game's vanilla bindings)
-* **Hold breath** Function to steady aim at expense of stamin drain (hold Sprint while aiming)
+* **Binoculars!** Added tactical [6-12x binos](https://www.youtube.com/watch?v=6d0zPQRmM3s) for observation. Hold 'B' to activate (remap in game's vanilla bindings)
+* **Hold breath** Function to steady aim at the expense of increased stamina drain (hold Sprint while aiming)
 
 ## Weapons & Handling
 
-* Reworked lowered weapon mode into *Adaptive Free Look* mode (disable in MCM). Recommended to use with [FP Body](https://modworkshop.net/mod/56744) mod.
+* Reworked lowered weapon mode into [Adaptive Free Look](https://www.youtube.com/watch?v=I1lY93vEe-s) mode (disable in MCM). Recommended to use with [FP Body](https://modworkshop.net/mod/56744) mod.
 * Canted aim is now an action independent from aim with optional laser auto-activation (recommend using mouse side button for it)
 * Weapon handling speed (how fast you transition into the desired state) now scales with stance and optic: red dot and LPVO 1x **115%**, canted **130%**, magnified scope **80%**
 * Reworked insert and ammo check mechanics to use hold action instead of toggle + can now reload directly from ammo check
