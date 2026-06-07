@@ -18,6 +18,7 @@ const RigOpticPatches = preload("./RigOpticPatches.gd")
 const Tooltip = preload("./Tooltip.gd")
 const Interactor = preload("./Interactor.gd")
 const UIPosition = preload("./UIPosition.gd")
+const BinocularsOverlay = preload("./BinocularsOverlay.gd")
 
 
 var _handling
@@ -36,6 +37,7 @@ var _flashlight
 var _tooltip
 var _interactor
 var _uiposition
+var _binoculars
 var _item
 
 
@@ -90,8 +92,12 @@ func setup(lib):
 
 	register_action("optic_zoom_in", "Optic Zoom In", _create_mouse_input(MOUSE_BUTTON_WHEEL_UP))
 	register_action("optic_zoom_out", "Optic Zoom Out", _create_mouse_input(MOUSE_BUTTON_WHEEL_DOWN))
+	register_action("binoculars", "Binoculars", _create_key_input(KEY_B))
 	remove_action("ammo_check")
 	remove_action("insert")
+
+	_binoculars = BinocularsOverlay.new()
+	add_child(_binoculars)
 
 
 func _noop(_arg = null) -> void:
@@ -101,6 +107,13 @@ func _noop(_arg = null) -> void:
 func _create_mouse_input(button: int) -> InputEventMouseButton:
 	var input = InputEventMouseButton.new()
 	input.button_index = button
+	input.pressed = true
+	return input
+
+
+func _create_key_input(keycode: int) -> InputEventKey:
+	var input = InputEventKey.new()
+	input.physical_keycode = keycode
 	input.pressed = true
 	return input
 
