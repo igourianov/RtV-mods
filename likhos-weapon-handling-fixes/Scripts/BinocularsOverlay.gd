@@ -12,7 +12,7 @@ var gameData = preload("res://Resources/GameData.tres")
 
 enum State { INACTIVE, RAISING, ACTIVE, LOWERING }
 
-const _RAISE_TIME := 0.45
+const _RAISE_TIME := 0.3
 const _FOV_LERP_SPEED := 12.0
 const _MIN_MAG := 6.0
 const _MAX_MAG := 12.0

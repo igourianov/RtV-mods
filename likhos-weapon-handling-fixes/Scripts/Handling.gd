@@ -95,7 +95,7 @@ func _init(lib, preferences: Preferences) -> void:
 func on_input(evt) -> void:
 	_lib.skip_super()
 
-	if gameData.freeze || ModConfig.binoculars_active:
+	if gameData.freeze:
 		return
 		
 	var aimToggle: bool = gameData.aimMode == 2
@@ -128,11 +128,7 @@ func on_weapon_handling(delta: float) -> void:
 	_free_look = false
 	_anchored = false
 
-	if gameData.freeze || ModConfig.binoculars_active:
-		gameData.isAiming = false
-		gameData.isCanted = false
-		_aim_intent = false
-		_cant_intent = false
+	if gameData.freeze:
 		_stow_hold = _STOW_HOLD
 		_set_target_idle(h)
 		_apply_target(h, delta)
@@ -171,7 +167,7 @@ func _apply_left_arm(h) -> void:
 
 func _resolve_intent() -> void:
 
-	if gameData.isInspecting || gameData.isChecking:
+	if gameData.isInspecting || gameData.isChecking || ModConfig.binoculars_active:
 		gameData.isAiming = false
 		gameData.isCanted = false
 		return
