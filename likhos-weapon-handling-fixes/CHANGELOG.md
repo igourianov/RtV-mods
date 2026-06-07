@@ -1,4 +1,4 @@
-* added zoom zcceleration and click sound to the binos
+* added zoom acceleration and click sound to the binos
 
 # 2.13.1667
 * Binoculars!!! (hold B)
