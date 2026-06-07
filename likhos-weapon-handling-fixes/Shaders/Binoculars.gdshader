@@ -9,6 +9,8 @@ uniform float vignette : hint_range(0.0, 1.0) = 0.45;
 uniform float grime_opacity : hint_range(0.0, 1.0) = 0.2;
 uniform float ca_strength = 0.004;
 uniform float blur_px = 5.0;
+uniform vec4 lens_tint : source_color = vec4(1.0, 0.82, 0.5, 1.0);
+uniform float tint_strength : hint_range(0.0, 1.0) = 0.2;
 uniform vec4 grime_color : source_color = vec4(0.0, 0.0, 0.0, 1.0);
 uniform vec4 reticle_color : source_color = vec4(0.0, 0.0, 0.0, 0.9);
 uniform sampler2D grime_tex : source_color, filter_linear, hint_default_white;
@@ -66,6 +68,7 @@ void fragment() {
 	vec4 ret = texture(reticle_tex, luv);
 
 	vec3 col = world;
+	col *= mix(vec3(1.0), lens_tint.rgb, tint_strength);
 	col = mix(col, grime_color.rgb, grime_mask * grime_opacity * grime_color.a);
 	col = mix(col, reticle_color.rgb, ret.a * reticle_color.a);
 	col = mix(col, vec3(0.0), vig * 0.85);
