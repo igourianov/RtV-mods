@@ -6,7 +6,7 @@ const _SHADER = preload("res://mods/likhos-weapon-handling-fixes/Shaders/Binocul
 const _RETICLE_PATH = "res://mods/likhos-weapon-handling-fixes/Textures/binos_reticle.png"
 const _GRIME_PATH = "res://mods/likhos-weapon-handling-fixes/Textures/binos_grime.png"
 const _CAMERA_PATH = "/root/Map/Core/Camera"
-const _UI_PATH = "/root/Map/Core/UI"
+const _HUD_PATH = "/root/Map/Core/UI/HUD"
 
 var gameData = preload("res://Resources/GameData.tres")
 
@@ -70,10 +70,19 @@ func _resolve_camera() -> bool:
 	_camera = scene.get_node_or_null(_CAMERA_PATH)
 	if !is_instance_valid(_camera):
 		return false
-	var ui = scene.get_node_or_null(_UI_PATH)
-	if ui is CanvasLayer:
-		layer = ui.layer - 1
+	_apply_layer(scene)
 	return true
+
+
+func _apply_layer(scene) -> void:
+	var effective := 0
+	var n = scene.get_node_or_null(_HUD_PATH)
+	while n:
+		if n is CanvasLayer:
+			effective = n.layer
+			break
+		n = n.get_parent()
+	layer = effective - 1
 
 
 func _unhandled_input(event) -> void:
