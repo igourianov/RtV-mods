@@ -1,5 +1,6 @@
 * added zoom acceleration and click sound to the binos
 * fixed reloading while looking down missing left arm
+* PEQ-15 laser is now red instead of green
 
 # 2.13.1667
 * Binoculars!!! (hold B)
