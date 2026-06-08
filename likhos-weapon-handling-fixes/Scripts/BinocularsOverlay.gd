@@ -42,7 +42,7 @@ func _ready() -> void:
 	layer = 1
 	process_priority = 500
 	_build_overlay()
-	_set_visible(false)
+	_rect.visible = false
 
 
 func _build_overlay() -> void:
@@ -92,33 +92,21 @@ func _apply_layer(scene) -> void:
 
 
 func _unhandled_input(event) -> void:
-	if event.is_action_pressed("binoculars"):
-		_raise()
-		return
-	if event.is_action_released("binoculars"):
-		_lower()
+	if event.is_action_pressed("binoculars") && (_state == State.INACTIVE || _state == State.LOWERING) && _can_raise():
+		_state = State.RAISING
 		return
 
-	if _state == State.INACTIVE:
+	if event.is_action_released("binoculars") && (_state == State.RAISING || _state == State.ACTIVE):
+		_state = State.LOWERING
+		return
+
+	if _state != State.RAISING && _state != State.ACTIVE:
 		return
 
 	if event.is_action_pressed("optic_zoom_in"):
 		_change_zoom(1)
 	elif event.is_action_pressed("optic_zoom_out"):
 		_change_zoom(-1)
-
-
-func _raise() -> void:
-	if _state == State.LOWERING:
-		_state = State.RAISING
-	elif _state == State.INACTIVE && _can_raise():
-		_activate()
-		_state = State.RAISING
-
-
-func _lower() -> void:
-	if _state == State.RAISING || _state == State.ACTIVE:
-		_state = State.LOWERING
 
 
 func _change_zoom(dir: int) -> void:
@@ -138,49 +126,36 @@ func _can_raise() -> bool:
 		|| gameData.isTransitioning)
 
 
-func _activate() -> void:
-	_base_fov = gameData.baseFOV
-	_current_fov = _camera.fov
-	ModConfig.binoculars_mag = _MAGS[_index]
-	ModConfig.binoculars_active = true
-	gameData.isOccupied = true
-
-
-func _deactivate() -> void:
-	ModConfig.binoculars_active = false
-	gameData.isOccupied = false
-
-
 func _process(delta: float) -> void:
 	if _state == State.INACTIVE:
 		return
 
-	if !_resolve_camera() || gameData.isDead || gameData.menu || gameData.freeze:
-		_abort()
+	if _state == State.LOWERING:
+		_progress -= delta / _RAISE_TIME
+
+	if !_resolve_camera() || gameData.isDead || gameData.menu || gameData.freeze || _progress < 0.0:
+		_state = State.INACTIVE
+		_progress = 0.0
+		_rect.visible = false
+		ModConfig.binoculars_active = false
+		gameData.isOccupied = false
 		return
 
-	match _state:
-		State.RAISING:
-			_progress = min(_progress + delta / _RAISE_TIME, 1.0)
-			if _progress >= 1.0:
-				_state = State.ACTIVE
-		State.LOWERING:
-			_progress = max(_progress - delta / _RAISE_TIME, 0.0)
-			if _progress <= 0.0:
-				_state = State.INACTIVE
-				_deactivate()
-				_set_visible(false)
-				return
+	if !ModConfig.binoculars_active:
+		_progress = 0.0
+		_rect.visible = true
+		_base_fov = gameData.baseFOV
+		_current_fov = _camera.fov
+		ModConfig.binoculars_mag = _MAGS[_index]
+		ModConfig.binoculars_active = true
+		gameData.isOccupied = true
 
-	_set_visible(true)
+	if _state == State.RAISING:
+		_progress = min(_progress + delta / _RAISE_TIME, 1.0)
+		if _progress >= 1.0:
+			_state = State.ACTIVE
+
 	_apply(smoothstep(0.0, 1.0, _progress), delta)
-
-
-func _abort() -> void:
-	_state = State.INACTIVE
-	_progress = 0.0
-	_deactivate()
-	_set_visible(false)
 
 
 func _apply(t: float, delta: float) -> void:
@@ -192,8 +167,3 @@ func _apply(t: float, delta: float) -> void:
 	var target_fov := rad_to_deg(2.0 * atan(tan(deg_to_rad(_base_fov) * 0.5) / eff_mag))
 	_current_fov = lerp(_current_fov, target_fov, clampf(delta * _FOV_LERP_SPEED, 0.0, 1.0))
 	_camera.fov = _current_fov
-
-
-func _set_visible(value: bool) -> void:
-	if _rect:
-		_rect.visible = value
