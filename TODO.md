@@ -3,8 +3,6 @@
 - spawn new event after 30 minutes on the map
 - move manufacturer name into another field out of title
 - split Scripts into Scripts and Hooks
-- show approx ammo counts
-- binoculars
 - flashlight auto-on on PEQ15, similar to laser
 
 # Closed
@@ -34,3 +32,5 @@
 - lerp() sensitivity on aim - done
 - stowing away weapon: delays and interactions - done
 - in inspect attach ammo to the magazine and hide it if no mag - done
+- binoculars - done
+- show approx ammo counts - another mods will handle it
