@@ -15,6 +15,10 @@ Mods for the Godot game **Road to Vostok** (`config/name="Road to Vostok"`, vers
 * Use `!obj` style for `null` checks instead of `obj == null`
 * Do not mix `elif` condition trees with early returns - pick one approach
 
+## Code guide
+
+`CODE_GUIDE.md` at the repo root is a guide to code architecture, state machines, function/variable definitions and guards. Consult and follow it when authoring or reviewing state-driven `_process`/`_input` logic.
+
 ## Mods
 
 Mods live at the repo root, one folder per mod. Can be identified by having `mod.txt` at the root of the mod folder.
