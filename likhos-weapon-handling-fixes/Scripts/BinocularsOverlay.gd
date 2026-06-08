@@ -149,6 +149,7 @@ func _process(delta: float) -> void:
 		ModConfig.binoculars_mag = _MAGS[_index]
 		ModConfig.binoculars_active = true
 		gameData.isOccupied = true
+		gameData.isFiring = false
 
 	if _state == State.RAISING:
 		_progress = min(_progress + delta / _RAISE_TIME, 1.0)

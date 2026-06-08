@@ -1,3 +1,6 @@
+* fixed camera shake if entering binos while firing
+* binos state machine refactoring
+
 # 2.13.1672
 * added zoom acceleration and click sound to the binos
 * compressed binos grime image to reduce mod size
