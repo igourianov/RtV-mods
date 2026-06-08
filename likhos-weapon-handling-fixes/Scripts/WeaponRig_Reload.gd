@@ -4,6 +4,7 @@ const ModConfig = preload("./ModConfig.gd")
 
 const _HOLD_THRESHOLD = 300
 const _AMMO_CHECK_INTRO_TIME_DEFAULT = 1.0
+const _VIEW_DELAY = 0.5
 
 const AMMO_CHECK_INTRO_TIMES = {
 	"AKM": 1.65,
@@ -33,20 +34,29 @@ const AMMO_CHECK_INTRO_TIMES = {
 	"Colt_1911": 1.15,
 }
 
-enum AmmoCheckState {
+enum State {
 	NONE,
-	PENDING,
-	PULL,
-	PAUSED,
+	PENDING_CHECK,
+	CHECK_PULL,
+	CHECK_PULL_RELEASED,
+	CHECK_PAUSED,
+	RELOAD_FROM_CHECK,
 	RETURN,
-	RELOAD,
+	BUSY,
 }
 
-var _ammo_check_state: AmmoCheckState = AmmoCheckState.NONE
+var _state: State = State.NONE
+var _timer: float = 0.0
+var _audio: AudioStreamPlayer = null
 
 
 func _ready() -> void:
 	set_process_input(true)
+	set_process(true)
+
+
+func _exit_tree() -> void:
+	_cleanup()
 
 
 func _input(event) -> void:
@@ -55,110 +65,102 @@ func _input(event) -> void:
 
 	var rig = get_parent()
 
-	if _ammo_check_state == AmmoCheckState.NONE && event.is_action_pressed("reload"):
-		_ammo_check_state = AmmoCheckState.PENDING
+	if _state == State.NONE && event.is_action_pressed("reload"):
 		if rig.magazine.visible || rig.data.weaponAction == "Manual":
-			_do_ammo_check()
-	elif _ammo_check_state == AmmoCheckState.PENDING && event.is_action_released("reload"):
-		_ammo_check_state = AmmoCheckState.NONE
+			_state = State.PENDING_CHECK
+			_timer = _HOLD_THRESHOLD / 1000.0
+			gameData.isFiring = false
+		else:
+			_do_reload()
+	elif _state == State.PENDING_CHECK && event.is_action_released("reload"):
 		_do_reload()
-	elif _ammo_check_state in [AmmoCheckState.PULL, AmmoCheckState.PAUSED] && event.is_action_released("reload"):
-		_ammo_check_state = AmmoCheckState.RETURN
-	elif _ammo_check_state == AmmoCheckState.PAUSED && event.is_action_pressed("fire") && rig.data.weaponAction != "Manual":
-		_ammo_check_state = AmmoCheckState.RELOAD
+	elif _state == State.CHECK_PULL && event.is_action_released("reload"):
+		_state = State.CHECK_PULL_RELEASED
+	elif _state == State.CHECK_PAUSED && event.is_action_released("reload"):
+		_state = State.RETURN
+	elif _state == State.CHECK_PAUSED && event.is_action_pressed("fire") && rig.data.weaponAction != "Manual":
+		_state = State.RELOAD_FROM_CHECK
 
 
-# wrapper to cleanup after multiple exits
-func _do_ammo_check() -> void:
-	await _do_ammo_check_inner()
-	gameData.isChecking = false
-	ModConfig.ammo_check_view = false
-	_ammo_check_state = AmmoCheckState.NONE
-
-
-func _do_ammo_check_inner() -> void:
+func _process(delta: float) -> void:
+	_timer -= delta
+	var timer_expired: bool = _timer <= 0.0
 	var rig = get_parent()
 
-	gameData.isFiring = false
-
-	var hold_start := Time.get_ticks_msec()
-	while Time.get_ticks_msec() - hold_start < _HOLD_THRESHOLD:
-		if _ammo_check_state != AmmoCheckState.PENDING || !is_instance_valid(self):
-			return
-		await get_tree().process_frame
-
-	_ammo_check_state = AmmoCheckState.PULL
-	gameData.isChecking = true
-	ModConfig.ammo_check_view = false
-
-	rig.UpdateBullets()
-	rig.UpdateHUD()
-
-	start_animation("Ammo_Check")
-	var audio = start_audio(rig.data.ammoCheck)
-
-	var pull_time: float = AMMO_CHECK_INTRO_TIMES.get(rig.data.file, _AMMO_CHECK_INTRO_TIME_DEFAULT)
-	await get_tree().create_timer(pull_time * 0.6, false).timeout
-	if !is_instance_valid(self):
+	if _state == State.PENDING_CHECK && timer_expired:
+		_state = State.CHECK_PULL
+		gameData.isChecking = true
+		ModConfig.ammo_check_view = false
+		_set_view_delayed(true)
+		rig.UpdateBullets()
+		rig.UpdateHUD()
+		start_animation("Ammo_Check")
+		_audio = start_audio(rig.data.ammoCheck)
+		_timer = AMMO_CHECK_INTRO_TIMES.get(rig.data.file, _AMMO_CHECK_INTRO_TIME_DEFAULT)
 		return
 
-	ModConfig.ammo_check_view = true
-	await get_tree().create_timer(pull_time * 0.4, false).timeout
-	if !is_instance_valid(self):
+	if _state == State.CHECK_PULL_RELEASED && timer_expired:
+		_state = State.RETURN
 		return
 
-	if _ammo_check_state == AmmoCheckState.PULL:
-		_ammo_check_state = AmmoCheckState.PAUSED
+	if _state == State.CHECK_PULL && timer_expired:
+		_state = State.CHECK_PAUSED
 		rig.animator.process_mode = Node.PROCESS_MODE_DISABLED
-		audio.stream_paused = true
+		_audio.stream_paused = true
 		if rig.data.weaponAction != "Manual":
 			Out.protip("ammo-check-reload", "Press [%s] to reload" % Inputs.get_binding("fire"))
-
-	while _ammo_check_state == AmmoCheckState.PAUSED:
-		await get_tree().process_frame
-		if !is_instance_valid(self):
-			return
-
-	rig.animator.process_mode = Node.PROCESS_MODE_INHERIT
-	audio.stream_paused = false
-
-	await get_tree().create_timer(0.5, false).timeout
-	if !is_instance_valid(self):
 		return
-	ModConfig.ammo_check_view = false
 
-	if _ammo_check_state == AmmoCheckState.RETURN:
+	if _state == State.RETURN:
+		_state = State.BUSY
+		rig.animator.process_mode = Node.PROCESS_MODE_INHERIT
+		_audio.stream_paused = false
+		_set_view_delayed(false)
 		await await_animation(-0.5)
-	elif _ammo_check_state == AmmoCheckState.RELOAD:
-		await _do_reload(true)
+		if is_instance_valid(self):
+			_cleanup()
+		return
+
+	if _state == State.RELOAD_FROM_CHECK:
+		rig.animator.process_mode = Node.PROCESS_MODE_INHERIT
+		_audio.stop()
+		ModConfig.ammo_check_view = false
+		_do_reload(true)
+		return
 
 
-func _do_reload(ammoCheck: bool = false) -> void:
+func _set_view_delayed(shown: bool) -> void:
+	await get_tree().create_timer(_VIEW_DELAY, false).timeout
+	if is_instance_valid(self):
+		ModConfig.ammo_check_view = shown
+
+
+func _do_reload(ammo_check: bool = false) -> void:
+	if is_engine_busy() || gameData.isInspecting || gameData.isInserting || gameData.isClearing || gameData.isReloading:
+		_cleanup()
+		return
+
+	_state = State.BUSY
 	var rig = get_parent()
 	var data = rig.data
 	var slotData = rig.slotData
-	var magAttach = ammoCheck || !rig.magazine.visible
-
-	# repeat state collision check since _do_reload() can be called from inside Ammo Check await
-	if is_engine_busy() || gameData.isInspecting || gameData.isInserting || gameData.isClearing || gameData.isReloading:
-		return
+	var magAttach: bool = ammo_check || !rig.magazine.visible
 
 	gameData.isFiring = false
 
 	if slotData.state == "Jammed":
-		if !gameData.isClearing:
-			gameData.isClearing = true
-			start_audio(rig.audioLibrary.malfunctionClearRifle)
-			await get_tree().create_timer(2.0, false).timeout
-			gameData.isClearing = false
-			slotData.state = ""
+		gameData.isClearing = true
+		start_audio(rig.audioLibrary.malfunctionClearRifle)
+		await get_tree().create_timer(2.0, false).timeout
+		gameData.isClearing = false
+		slotData.state = ""
+		_cleanup()
 		return
 
 	if data.weaponAction == "Manual":
-		if slotData.chamber: # hack - animation only checks slotData.casing==true
+		if slotData.chamber:
 			slotData.chamber = false
 			slotData.casing = true
-
 		await _play_reload("Reload", data.reload, -0.2)
 		slotData.casing = false
 		slotData.set_meta("cocked", true)
@@ -166,9 +168,11 @@ func _do_reload(ammoCheck: bool = false) -> void:
 			slotData.chamber = true
 			slotData.amount -= 1
 		rig.UpdateBullets()
+		_cleanup()
 		return
 
 	if !magAttach && !rig.magazine.visible:
+		_cleanup()
 		return
 
 	var empty: bool = !slotData.chamber
@@ -183,6 +187,7 @@ func _do_reload(ammoCheck: bool = false) -> void:
 		audio_event = data.reloadEmpty if empty else data.reloadTactical
 
 	if !rig.interface.GetMagazine(data, rig.weaponSlot, rig.magazine.visible):
+		_cleanup()
 		return
 
 	if magAttach:
@@ -190,9 +195,11 @@ func _do_reload(ammoCheck: bool = false) -> void:
 		rig.UpdateBullets()
 	else:
 		_update_bullets_delayed(rig)
+
 	await _play_reload(anim_state, audio_event)
 	slotData.chamber = true
 	slotData.set_meta("cocked", true)
+	_cleanup()
 
 
 func _play_reload(animation_state: String, audio_event, wait_offset: float = -0.5) -> void:
@@ -201,14 +208,20 @@ func _play_reload(animation_state: String, audio_event, wait_offset: float = -0.
 	gameData.isReloading = false
 
 
-func _show_mag_delayed(rig):
-	await rig.get_tree().create_timer(0.1, false).timeout;
+func _show_mag_delayed(rig) -> void:
+	await rig.get_tree().create_timer(0.1, false).timeout
 	if is_instance_valid(rig):
 		rig.magazine.show()
 
 
-func _update_bullets_delayed(rig):
-	await rig.get_tree().create_timer(1.2, false).timeout;
+func _update_bullets_delayed(rig) -> void:
+	await rig.get_tree().create_timer(1.2, false).timeout
 	if is_instance_valid(rig):
 		rig.UpdateBullets()
 
+
+func _cleanup() -> void:
+	gameData.isChecking = false
+	gameData.isReloading = false
+	ModConfig.ammo_check_view = false
+	_state = State.NONE
