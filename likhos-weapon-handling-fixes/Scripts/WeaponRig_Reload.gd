@@ -59,7 +59,7 @@ func _exit_tree() -> void:
 	_cleanup()
 
 
-func _input(event) -> void:
+func _input(event: InputEvent) -> void:
 	if is_engine_busy() || gameData.isInspecting || gameData.isInserting || gameData.isClearing || gameData.isReloading:
 		return
 

@@ -13,7 +13,7 @@ var _manual_load_state := ManualLoadState.NONE
 
 func _ready() -> void:
 	set_process_input(true)
-	_inject_mosin_casing_eject() # BUGFIX for Mosin not plaing casing animation wehn opening bolt for insertion
+	_inject_mosin_casing_eject() # BUGFIX for Mosin not playing casing animation when opening bolt for insertion
 
 
 func _inject_mosin_casing_eject() -> void:
@@ -26,7 +26,7 @@ func _inject_mosin_casing_eject() -> void:
 	if !player || !tree:
 		return
 
-	var anim_name = "Mosin_Insert_Start"
+	var anim_name := "Mosin_Insert_Start"
 	if !player.has_animation(anim_name):
 		return
 
@@ -44,7 +44,7 @@ func _inject_mosin_casing_eject() -> void:
 	anim.set_meta("likho_eject_injected", true)
 
 
-func _input(event) -> void:
+func _input(event: InputEvent) -> void:
 	if is_engine_busy() || gameData.isInspecting || gameData.isClearing || gameData.isReloading || gameData.isChecking:
 		return
 
@@ -60,7 +60,7 @@ func _input(event) -> void:
 		_manual_load_state = ManualLoadState.CLOSE
 
 
-func _do_insert():
+func _do_insert() -> void:
 	var rig = get_parent()
 
 	gameData.isInserting = true

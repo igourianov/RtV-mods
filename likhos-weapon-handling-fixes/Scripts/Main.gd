@@ -118,9 +118,9 @@ func _create_key_input(keycode: int) -> InputEventKey:
 	return input
 
 
-func load_config(config: ConfigFile):
+func load_config(config: ConfigFile) -> void:
 	ModConfig.apply_config(config)
 
 
-func create_config(config: ConfigFile):
+func create_config(config: ConfigFile) -> void:
 	ModConfig.create_template(config)

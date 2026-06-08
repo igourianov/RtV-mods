@@ -68,7 +68,6 @@ func _check_low_ammo_protip(rig) -> void:
 		Out.protip("low-internal-ammo", "Hold [%s] to load more ammo" % Inputs.get_binding("prepare"))
 
 
-
 func _play_dry_click(rig) -> void:
 	Out.debug("_play_dry_click")
 	if !is_instance_valid(_dry_click_sound):

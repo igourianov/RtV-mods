@@ -64,7 +64,8 @@ static func _get_config_value(config: ConfigFile, section: String, key: String, 
 		value = value.substr(1)
 	return value
 
-static func apply_config(config: ConfigFile):
+
+static func apply_config(config: ConfigFile) -> void:
 	Out.show_protips = _get_config_value(config, "Bool", "show_protips", DEFAULT_ENABLED)
 	Out.debug_enabled = _get_config_value(config, "Bool", "debug_enabled", !DEFAULT_ENABLED)
 	crosshair_style = _get_config_value(config, "Dropdown", "crosshair", DEFAULT_CROSSHAIR)
@@ -91,7 +92,7 @@ static func apply_config(config: ConfigFile):
 	enable_free_look = _get_config_value(config, "Bool", "enableFreeLook", DEFAULT_ENABLED)
 
 
-static func _next_pos():
+static func _next_pos() -> int:
 	_menu_pos_auto += 1
 	return _menu_pos_auto
 
@@ -109,7 +110,7 @@ static func _set_config_entry(config: ConfigFile, section: String, category: Str
 	config.set_value(section, key, value)
 
 
-static func create_template(config: ConfigFile):
+static func create_template(config: ConfigFile) -> void:
 	config.set_value("Category", "General", { "menu_pos": 0 })
 	config.set_value("Category", "Crosshair", { "menu_pos": 1 })
 	config.set_value("Category", "Canted mode", { "menu_pos": 2 })

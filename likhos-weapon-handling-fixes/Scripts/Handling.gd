@@ -92,12 +92,12 @@ func _init(lib, preferences: Preferences) -> void:
 	_stow_rot = _stow_rotation()
 
 
-func on_input(evt) -> void:
+func on_input(evt: InputEvent) -> void:
 	_lib.skip_super()
 
 	if gameData.freeze:
 		return
-		
+
 	var aimToggle: bool = gameData.aimMode == 2
 	var cantToggle := false
 	if ModConfig.cant_mode == &"default":
@@ -223,12 +223,6 @@ func _process_handling_state(h) -> void:
 		_set_target_idle(h)
 		return
 
-	if gameData.isColliding:
-		_handlingMode = HandlingMode.Default
-		h.targetPosition = data.collisionPosition
-		h.targetRotation = data.collisionRotation
-		return
-
 	if gameData.isCanted:
 		_handlingMode = HandlingMode.Cant
 		h.targetPosition = data.cantedPosition + Vector3(0.0, -0.03, 0.0)
@@ -312,7 +306,7 @@ func _stow_rotation() -> Vector3:
 	return Vector3(rad_to_deg(e.x), rad_to_deg(e.y), rad_to_deg(e.z))
 
 
-func _apply_target(h, delta: float):
+func _apply_target(h, delta: float) -> void:
 	_handling_speed = h.handlingSpeed * (_handlingMode / 100.0)
 	var t := delta * _handling_speed
 
@@ -351,7 +345,7 @@ func _apply_target(h, delta: float):
 
 func on_rig_update_post(_animate) -> void:
 	var manager = _lib._caller
-	if manager == null:
+	if !manager:
 		return
 
 	if !_baseline_captured:

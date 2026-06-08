@@ -21,7 +21,7 @@ func _init(lib, preferences: Preferences) -> void:
 
 func on_physics_process_post(delta: float) -> void:
 	var noise = _lib._caller
-	if noise == null:
+	if !noise:
 		return
 
 	var gd = noise.gameData

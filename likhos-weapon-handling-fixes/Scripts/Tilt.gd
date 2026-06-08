@@ -9,7 +9,7 @@ func _init(lib) -> void:
 
 func on_physics_process_pre(_delta: float) -> void:
 	var tilt = _lib._caller
-	if tilt == null:
+	if !tilt:
 		return
 
 	tilt.hipPushForward = 0.005

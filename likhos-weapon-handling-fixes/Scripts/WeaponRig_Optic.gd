@@ -16,7 +16,7 @@ func _ready() -> void:
 	set_process(true)
 
 
-func _input(event) -> void:
+func _input(event: InputEvent) -> void:
 	if is_engine_busy() || gameData.isInspecting || gameData.isInserting || gameData.isClearing || gameData.isReloading || gameData.isChecking:
 		return
 
@@ -29,8 +29,7 @@ func _input(event) -> void:
 		return
 
 
-func _handle_zoom(event, optic) -> bool:
-
+func _handle_zoom(event: InputEvent, optic) -> bool:
 	if !optic || !optic.attachmentData.variable:
 		return false
 
@@ -53,7 +52,7 @@ func _handle_zoom(event, optic) -> bool:
 	return true
 
 
-func _handle_secondary_optic(event, optic) -> bool:
+func _handle_secondary_optic(event: InputEvent, optic) -> bool:
 	if !optic || !optic.secondary || !optic.attachmentData.secondary || !event.is_action_pressed("secondary_optic"):
 		return false
 
@@ -135,9 +134,10 @@ func _validate_lens_distance(rig, lens_distance: float, target_lens_distance: fl
 	var audio = audioInstance2D.instantiate()
 	rig.add_child(audio)
 	audio.PlayInstance(audioLibrary.damage)
-	
+
 	Out.protip(&"optic-too-close", "The optic is mounted too close! You gave yourself a shiner by trying to ADS, you dummy.")
 	return false
+
 
 func _update_optic_camera(optic, delta: float, optic_angle: float) -> void:
 	var camera = optic.get_viewport().get_camera_3d()

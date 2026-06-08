@@ -30,13 +30,13 @@ func _init(lib, preferences: Preferences) -> void:
 
 func on_physics_process_pre(_delta: float) -> void:
 	var optic = _lib._caller
-	if optic == null:
+	if !optic:
 		return
 
 	var managed: bool = optic.visible && optic.attachmentData && (optic.attachmentData.scope || optic.attachmentData.variable)
 
 	var viewport: SubViewport = optic.viewport
-	if viewport != null:
+	if viewport:
 		var aa_on: bool = managed && gameData.PIP && ModConfig.pip_anti_aliasing
 		viewport.msaa_3d = _msaa_from_pref(_preferences.antialiasing) if aa_on else _VANILLA_PIP_MSAA
 		viewport.screen_space_aa = _ssaa_from_pref(_preferences.smaa) if aa_on else _VANILLA_PIP_SSAA

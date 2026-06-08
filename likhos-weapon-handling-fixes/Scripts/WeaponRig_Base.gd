@@ -27,7 +27,7 @@ func play(animation_state: String, audio_event, wait_offset: float = -0.5) -> vo
 	Out.debug("play done")
 
 
-func await_animation(wait_offset: float = 0.0, playback = null):
+func await_animation(wait_offset: float = 0.0, playback = null) -> void:
 	if !playback:
 		playback = get_parent().animator.get("parameters/playback")
 	await get_tree().create_timer(0.1, false).timeout

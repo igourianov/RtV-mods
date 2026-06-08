@@ -24,7 +24,7 @@ func _process(delta: float) -> void:
 	_fps_light.position = _fps_light.position.lerp(target, delta * LIGHT_LERP_SPEED)
 
 
-func _input(event) -> void:
+func _input(event: InputEvent) -> void:
 	if is_engine_busy() || gameData.isInserting || gameData.isClearing || gameData.isReloading || gameData.isChecking:
 		return
 
@@ -68,7 +68,7 @@ func _input(event) -> void:
 
 
 
-func _inspect_toggle():
+func _inspect_toggle() -> void:
 	var rig = get_parent()
 	gameData.isInspecting = !gameData.isInspecting
 	gameData.isFiring = false

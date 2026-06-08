@@ -16,7 +16,7 @@ func _init(lib) -> void:
 
 func on_movement_states(delta: float) -> void:
 	var ctrl = _lib._caller
-	if ctrl == null:
+	if !ctrl:
 		return
 	_lib.skip_super()
 
@@ -28,7 +28,6 @@ func on_movement_states(delta: float) -> void:
 
 
 func _update_state(ctrl) -> void:
-	
 	gameData.isMoving = ctrl.inputDirection != Vector2.ZERO
 	gameData.isIdle = !gameData.isMoving
 
@@ -45,7 +44,6 @@ func _update_state(ctrl) -> void:
 		gameData.isRunning = _sprint_intent && gameData.isMoving && !gameData.isAiming && !gameData.isCanted
 
 	gameData.isWalking = gameData.isMoving && !gameData.isRunning
-
 
 
 func _apply_speed(ctrl, delta: float) -> void:
@@ -75,9 +73,9 @@ func _apply_speed(ctrl, delta: float) -> void:
 	ctrl.currentSpeed = lerp(ctrl.currentSpeed, target, delta * rate)
 
 
-func on_input(evt) -> void:
+func on_input(evt: InputEvent) -> void:
 	var ctrl = _lib._caller
-	if ctrl == null:
+	if !ctrl:
 		return
 
 	if evt is InputEventMouseMotion:
@@ -100,7 +98,7 @@ func on_input(evt) -> void:
 		if gameData.sprintMode == 1:
 			_sprint_intent = true
 		else:
-			_sprint_intent = !_sprint_intent			
+			_sprint_intent = !_sprint_intent
 		if _sprint_intent && gameData.isCrouching && !ctrl.above.is_colliding() && !gameData.isAiming:
 			gameData.isCrouching = false
 			_set_impulse(ctrl)
@@ -108,7 +106,7 @@ func on_input(evt) -> void:
 		_sprint_intent = false
 
 
-func _mouse_input(ctrl, evt) -> void:
+func _mouse_input(ctrl, evt: InputEvent) -> void:
 	if gameData.freeze || gameData.isCaching:
 		return
 

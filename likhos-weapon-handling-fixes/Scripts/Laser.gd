@@ -30,7 +30,7 @@ func on_process_post(_delta: float) -> void:
 	__process_post(_lib._caller)
 
 
-func __input(caller, event: InputEvent):
+func __input(caller, event: InputEvent) -> void:
 	if !caller.visible:
 		return
 
@@ -43,7 +43,8 @@ func __input(caller, event: InputEvent):
 			caller.laser.hide()
 			caller.set_meta(_AUTO_ON_LATCH, gameData.isCanted)
 
-func __process_post(caller):
+
+func __process_post(caller) -> void:
 	if !caller.visible:
 		return
 
