@@ -41,7 +41,6 @@ enum HandlingMode {
 	Cant = 130,
 	ScopeZoom = 80,
 	Admin = 50,
-	Stow = 35,
 }
 
 const _AIM_POS_OVERRIDE := {
@@ -274,10 +273,13 @@ func _set_target_idle(h) -> void:
 		_free_look = true
 		_anchored = false
 		_stow_active = true
-		_handlingMode = HandlingMode.Stow
+		_handlingMode = HandlingMode.Admin
 		h.targetPosition = data.lowPosition + _STOW_POS_OFFSET
 		h.targetRotation = _stow_rot
 		return
+
+	if _anchored:
+		_handlingMode = HandlingMode.Admin
 
 	if data.weaponType == "Pistol":
 		_current_idle_category = IdleCategory.Pistol
