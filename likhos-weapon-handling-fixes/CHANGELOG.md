@@ -1,6 +1,6 @@
 * fixed camera shake if entering binos while firing
 * binos state machine refactoring
-* ammo check state machine refactoring
+* ammo check and reload state machine refactoring
 
 # 2.13.1672
 * added zoom acceleration and click sound to the binos
