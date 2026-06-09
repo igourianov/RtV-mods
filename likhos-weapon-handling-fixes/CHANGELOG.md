@@ -1,5 +1,7 @@
+* decoupled patrol mode rig position from the free look setting
 * fixed camera shake if entering binos while firing
 * fixed vertical aim smoothing introduced by the adaptive free look mode
+* fixed left arm missing in the raised weapon mode while free look enabled
 * binos state machine refactoring
 * ammo check and reload state machine refactoring
 
