@@ -1,3 +1,5 @@
+* rig stow timing tweaks
+
 # 2.15.1701
 * decoupled patrol mode rig position from the free look setting
 * modified patrol mode positions + separate branch for pistols

@@ -32,12 +32,12 @@ var _idle_offsets := {
 	},
 }
 
-var _idle_hide_left_arm := false
 const _SECONDARY_OPTIC_ROT_OFFSET := Vector3(-15.0, 0.0, 0)
 const _ANCHOR_PITCH := -10.0
 const _LOOK_DOWN_PITCH := -45.0
 const _STOW_POS_OFFSET := Vector3(0.15, -0.25, 0.3)
-const _STOW_HOLD := 1.0
+const _STOW_HOLD_INVENTORY := 1.0
+const _STOW_HOLD_LOOK_DOWN := 0.2
 const _LEFT_ARM_BONE := "Arm_Upper_L"
 const _NEAR_ZERO := Vector3(0.001, 0.001, 0.001)
 
@@ -87,6 +87,8 @@ var _target_pitch: float = 0.0
 var _stow_hold: float = 0.0
 var _stow_active := false
 var _stow_rot: Vector3
+var _idle_hide_left_arm := false
+var _rig_updated := false
 
 
 func _init(lib) -> void:
@@ -106,6 +108,8 @@ func on_rig_update_post(_animate) -> void:
 	var manager = _lib._caller
 	if !manager:
 		return
+
+	_rig_updated = true
 
 	if !_baseline_captured:
 		_manager_local_baseline = manager.transform
@@ -180,11 +184,13 @@ func on_weapon_handling(delta: float) -> void:
 
 	if gameData.freeze:
 		_stow_active = true
-		_stow_hold = _STOW_HOLD
+		_stow_hold = _STOW_HOLD_INVENTORY if !_rig_updated else 0.0
 		_set_target_idle(h)
 		_apply_target(h, delta)
 		_apply_left_arm(h)
 		return
+
+	_rig_updated = false
 
 	_set_target(h)
 	_apply_target(h, delta)
@@ -348,7 +354,7 @@ func _apply_target(h, delta: float) -> void:
 	if !_target_idle:
 		_stow_active = false
 	elif cam_pitch_deg < _LOOK_DOWN_PITCH:
-		_stow_hold = _STOW_HOLD
+		_stow_hold = _STOW_HOLD_LOOK_DOWN
 		_stow_active = true
 	elif _stow_active:
 		_stow_hold -= delta
