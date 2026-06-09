@@ -1,4 +1,5 @@
 * fixed camera shake if entering binos while firing
+* fixed vertical aim smoothing introduced by the adaptive free look mode
 * binos state machine refactoring
 * ammo check and reload state machine refactoring
 
