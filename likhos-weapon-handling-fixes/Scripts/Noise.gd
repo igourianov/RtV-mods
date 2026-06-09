@@ -7,16 +7,14 @@ const WOBBLE_MULT_HOLD_BREATH: float = 0.5
 const WOBBLE_FREQ_MULT_EXHAUSTED: float = 2.0
 
 var _lib
-var _preferences: Preferences
 
 var _wobble_frequency: float = 0.0
 var _wobble_amplitude: float = 0.0
 var _wobble_offset: Vector3 = Vector3.ZERO
 
 
-func _init(lib, preferences: Preferences) -> void:
+func _init(lib) -> void:
 	_lib = lib
-	_preferences = preferences
 
 
 func on_physics_process_post(delta: float) -> void:

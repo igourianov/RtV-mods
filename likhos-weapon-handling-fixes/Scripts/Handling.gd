@@ -67,7 +67,6 @@ const _AIM_POS_OVERRIDE := {
 
 
 var _lib
-var _preferences: Preferences
 var _handlingMode = HandlingMode.Default
 var _aim_intent := false
 var _cant_intent := false
@@ -83,9 +82,8 @@ var _stow_active := false
 var _stow_rot: Vector3
 
 
-func _init(lib, preferences: Preferences) -> void:
+func _init(lib) -> void:
 	_lib = lib
-	_preferences = preferences
 	_stow_rot = _stow_rotation()
 
 
