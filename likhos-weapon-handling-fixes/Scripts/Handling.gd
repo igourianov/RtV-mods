@@ -133,7 +133,7 @@ func on_weapon_handling(delta: float) -> void:
 		_apply_left_arm(h)
 		return
 
-	if gameData.isAiming || gameData.isCanted:
+	if gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2:
 		_stow_active = false
 	elif _camera_pitch_deg < _LOOK_DOWN_PITCH:
 		_stow_hold = _STOW_HOLD
