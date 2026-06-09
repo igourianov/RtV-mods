@@ -5,7 +5,7 @@ const ScopeCatalog = preload("./ScopeCatalog.gd")
 const Out = preload("../Lib/Out.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
-enum IdleCategory { Default, Pistol, NoGrip, SMG }
+enum IdleCategory { Default, Pistol, FuddGrip, SMG, StocklessSMG }
 
 var _idle_offsets := {
 	IdleCategory.Default: {
@@ -21,12 +21,17 @@ var _idle_offsets := {
 		"rot": Vector3(-65, -10, 0),
 		"hide_left_arm": true,
 	},
-	IdleCategory.NoGrip: {
+	IdleCategory.StocklessSMG: {
+		"pos": Vector3(0.1, -0.16, 0.1),
+		"rot": Vector3(-65, -10, 0),
+		"hide_left_arm": true,
+	},
+	IdleCategory.FuddGrip: {
 		"pos": Vector3(0, -0.06, 0.05),
 		"rot": Vector3(-5, 40, 10),
 	},
 }
-var _current_idle_category: int = IdleCategory.Default
+
 var _idle_hide_left_arm := false
 const _SECONDARY_OPTIC_ROT_OFFSET := Vector3(-15.0, 0.0, 0)
 const _ANCHOR_PITCH := -10.0
@@ -270,27 +275,21 @@ func _set_target_idle(h) -> void:
 		h.targetRotation = data.lowRotation
 		return
 
-	var entry = _idle_offsets[IdleCategory.Default]
-	var local_offset := Vector3.ZERO
+	var category = IdleCategory.Default
 	if data.file == "MP5K" || data.file == "MP7":
-		entry = _idle_offsets[IdleCategory.Pistol]
-		local_offset = Vector3(0, -0.1, 0)
+		category = IdleCategory.StocklessSMG
 	elif data.weaponType == "Pistol":
-		entry = _idle_offsets[IdleCategory.Pistol]
+		category = IdleCategory.Pistol
 	elif data.file == "Mosin" || data.file == "Remington_870":
-		entry = _idle_offsets[IdleCategory.NoGrip]
+		category = IdleCategory.FuddGrip
 	elif data.weaponType == "SMG":
-		entry = _idle_offsets[IdleCategory.SMG]
+		category = IdleCategory.SMG
 	
-
-	var pos_offset: Vector3 = entry["pos"] + local_offset
-	var rot_offset: Vector3 = entry["rot"]
+	var entry = _idle_offsets[category]
 	_idle_hide_left_arm = entry.get("hide_left_arm", false)
-	if gameData.secondaryOptic:
-		rot_offset += _SECONDARY_OPTIC_ROT_OFFSET
 
-	h.targetPosition = data.lowPosition + pos_offset
-	h.targetRotation = data.lowRotation + rot_offset
+	h.targetPosition = data.lowPosition + entry["pos"]
+	h.targetRotation = data.lowRotation + entry["rot"] + (_SECONDARY_OPTIC_ROT_OFFSET if gameData.secondaryOptic else Vector3.ZERO)
 
 
 # a basic rotation vector wont work here bacause at steep pitch - Y rotation stops working
