@@ -72,8 +72,7 @@ var _handlingMode = HandlingMode.Default
 var _aim_intent := false
 var _cant_intent := false
 var _aim_priority := true
-var _free_look := true
-var _anchored := false
+var _target_idle := false
 var _manager_local_baseline: Transform3D
 var _baseline_captured := false
 var _handling_speed: float = 7.5
@@ -124,8 +123,7 @@ func on_weapon_handling(delta: float) -> void:
 
 	gameData.isColliding = h.collision.is_colliding()
 	_resolve_intent()
-	_free_look = false
-	_anchored = false
+	_target_idle = false
 
 	if gameData.freeze:
 		_stow_active = true
@@ -261,21 +259,23 @@ func _process_handling_state(h) -> void:
 
 func _set_target_idle(h) -> void:
 	var data = h.data
+	_target_idle = true
 
-	_free_look = _camera_pitch_deg >= _ANCHOR_PITCH
-	_anchored = !_free_look
-
-	if data.type != "Weapon" || !ModConfig.enable_free_look:
+	if data.type != "Weapon":
+		_handlingMode = HandlingMode.Default
 		h.targetPosition = data.lowPosition
 		h.targetRotation = data.lowRotation
 		return
 
-	if _stow_active:
-		_free_look = true
-		_anchored = false
+	if ModConfig.free_look && _stow_active:
 		_handlingMode = HandlingMode.Admin
 		h.targetPosition = data.lowPosition + _STOW_POS_OFFSET
 		h.targetRotation = _stow_rot
+		return
+
+	if !ModConfig.patrol_position:
+		h.targetPosition = data.lowPosition
+		h.targetRotation = data.lowRotation
 		return
 
 	if data.weaponType == "Pistol":
@@ -312,7 +312,7 @@ func _apply_target(h, delta: float) -> void:
 	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), t)
 	h.rotation_degrees = lerp(h.rotation_degrees, h.targetRotation, t)
 
-	if !_baseline_captured || !ModConfig.enable_free_look:
+	if !_baseline_captured || !ModConfig.free_look:
 		return
 
 	var rig = h.get_parent()
@@ -328,12 +328,12 @@ func _apply_target(h, delta: float) -> void:
 	if _camera_pitch_deg >= _ANCHOR_PITCH:
 		_anchor_pitch = cam_euler.x
 
-	if _free_look:
-		_target_pitch = lerp(_target_pitch, 0.0, t)
-	elif _anchored:
-		_target_pitch = lerp(_target_pitch, cam_euler.x - _anchor_pitch, t)
-	else:
+	if !_target_idle:
 		_target_pitch = cam_euler.x
+	elif _stow_active || _camera_pitch_deg >= _ANCHOR_PITCH:
+		_target_pitch = lerp(_target_pitch, 0.0, t)
+	else:
+		_target_pitch = lerp(_target_pitch, cam_euler.x - _anchor_pitch, t)
 
 	var weapon_basis := Basis.from_euler(Vector3(_target_pitch, cam_euler.y, cam_euler.z))
 	manager.global_transform = Transform3D(weapon_basis, cam_xform.origin) * _manager_local_baseline
@@ -347,7 +347,7 @@ func on_rig_update_post(_animate) -> void:
 	if !_baseline_captured:
 		_manager_local_baseline = manager.transform
 		_baseline_captured = true
-	elif ModConfig.enable_free_look:
+	elif ModConfig.free_look:
 		manager.transform = _manager_local_baseline
 
 	var rig = manager.get_child(manager.get_child_count() - 1) if manager.get_child_count() else null
