@@ -76,7 +76,6 @@ var _target_idle := false
 var _manager_local_baseline: Transform3D
 var _baseline_captured := false
 var _handling_speed: float = 7.5
-var _camera_pitch_deg: float = 0.0
 var _anchor_pitch: float = 0.0
 var _target_pitch: float = 0.0
 var _stow_hold: float = 0.0
@@ -132,15 +131,6 @@ func on_weapon_handling(delta: float) -> void:
 		_apply_target(h, delta)
 		_apply_left_arm(h)
 		return
-
-	if gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2:
-		_stow_active = false
-	elif _camera_pitch_deg < _LOOK_DOWN_PITCH:
-		_stow_hold = _STOW_HOLD
-		_stow_active = true
-	else:
-		_stow_hold -= delta
-		_stow_active = _stow_hold > 0.0
 
 	_process_handling_state(h)
 	_apply_target(h, delta)
@@ -324,14 +314,23 @@ func _apply_target(h, delta: float) -> void:
 
 	var cam_xform: Transform3D = outer_cam.global_transform
 	var cam_euler := cam_xform.basis.get_euler()
-	_camera_pitch_deg = rad_to_deg(cam_euler.x)
+	var cam_pitch_deg := rad_to_deg(cam_euler.x)
 
-	if _camera_pitch_deg >= _ANCHOR_PITCH:
+	if !_target_idle:
+		_stow_active = false
+	elif cam_pitch_deg < _LOOK_DOWN_PITCH:
+		_stow_hold = _STOW_HOLD
+		_stow_active = true
+	elif _stow_active:
+		_stow_hold -= delta
+		_stow_active = _stow_hold > 0.0
+
+	if cam_pitch_deg >= _ANCHOR_PITCH:
 		_anchor_pitch = cam_euler.x
 
 	if !_target_idle:
 		_target_pitch = cam_euler.x
-	elif _stow_active || _camera_pitch_deg >= _ANCHOR_PITCH:
+	elif _stow_active || cam_pitch_deg >= _ANCHOR_PITCH:
 		_target_pitch = lerp(_target_pitch, 0.0, t)
 	else:
 		_target_pitch = lerp(_target_pitch, cam_euler.x - _anchor_pitch, t)
