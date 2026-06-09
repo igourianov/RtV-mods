@@ -127,6 +127,7 @@ func on_weapon_handling(delta: float) -> void:
 
 	if gameData.freeze:
 		_stow_active = true
+		_stow_hold = _STOW_HOLD
 		_set_target_idle(h)
 		_apply_target(h, delta)
 		_apply_left_arm(h)
