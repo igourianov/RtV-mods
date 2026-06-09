@@ -14,11 +14,12 @@ var _idle_offsets := {
 	},
 	IdleCategory.SMG: {
 		"pos": Vector3(0, -0.06, 0.04),
-		"rot": Vector3(0, 45, -20),
+		"rot": Vector3(0, 45, 0),
 	},
 	IdleCategory.Pistol: {
-		"pos": Vector3(-0.07, -0.06, 0),
-		"rot": Vector3(15, 10, 0),
+		"pos": Vector3(0.1, -0.06, 0.1),
+		"rot": Vector3(-65, -10, 0),
+		"hide_left_arm": true,
 	},
 	IdleCategory.NoGrip: {
 		"pos": Vector3(0, -0.06, 0.05),
@@ -26,13 +27,14 @@ var _idle_offsets := {
 	},
 }
 var _current_idle_category: int = IdleCategory.Default
+var _idle_hide_left_arm := false
 const _SECONDARY_OPTIC_ROT_OFFSET := Vector3(-15.0, 0.0, 0)
 const _ANCHOR_PITCH := -10.0
 const _LOOK_DOWN_PITCH := -45.0
 const _STOW_POS_OFFSET := Vector3(0.15, -0.25, 0.3)
 const _STOW_HOLD := 1.0
 const _LEFT_ARM_BONE := "Arm_Upper_L"
-const _STOW_ARM_SCALE := Vector3(0.001, 0.001, 0.001)
+const _NEAR_ZERO := Vector3(0.001, 0.001, 0.001)
 
 # the handling speed modifier - read as % of base
 enum HandlingMode {
@@ -145,8 +147,8 @@ func _apply_left_arm(h) -> void:
 		return
 
 	# collapse the left support arm while stowed (hacky: zero-scale the shoulder bone)
-	if _stow_active:
-		rig.skeleton.set_bone_pose_scale(arm_idx, _STOW_ARM_SCALE)
+	if _stow_active || (_target_idle && _idle_hide_left_arm):
+		rig.skeleton.set_bone_pose_scale(arm_idx, _NEAR_ZERO)
 	else:
 		rig.skeleton.set_bone_pose_scale(arm_idx, Vector3.ONE)
 
@@ -249,6 +251,7 @@ func _process_handling_state(h) -> void:
 func _set_target_idle(h) -> void:
 	var data = h.data
 	_target_idle = true
+	_idle_hide_left_arm = false
 
 	if data.type != "Weapon":
 		_handlingMode = HandlingMode.Default
@@ -267,18 +270,22 @@ func _set_target_idle(h) -> void:
 		h.targetRotation = data.lowRotation
 		return
 
-	if data.weaponType == "Pistol":
-		_current_idle_category = IdleCategory.Pistol
-	elif data.weaponType == "SMG":
-		_current_idle_category = IdleCategory.SMG
+	var entry = _idle_offsets[IdleCategory.Default]
+	var local_offset := Vector3.ZERO
+	if data.file == "MP5K" || data.file == "MP7":
+		entry = _idle_offsets[IdleCategory.Pistol]
+		local_offset = Vector3(0, -0.1, 0)
+	elif data.weaponType == "Pistol":
+		entry = _idle_offsets[IdleCategory.Pistol]
 	elif data.file == "Mosin" || data.file == "Remington_870":
-		_current_idle_category = IdleCategory.NoGrip
-	else:
-		_current_idle_category = IdleCategory.Default
+		entry = _idle_offsets[IdleCategory.NoGrip]
+	elif data.weaponType == "SMG":
+		entry = _idle_offsets[IdleCategory.SMG]
+	
 
-	var entry = _idle_offsets[_current_idle_category]
-	var pos_offset: Vector3 = entry["pos"]
+	var pos_offset: Vector3 = entry["pos"] + local_offset
 	var rot_offset: Vector3 = entry["rot"]
+	_idle_hide_left_arm = entry.get("hide_left_arm", false)
 	if gameData.secondaryOptic:
 		rot_offset += _SECONDARY_OPTIC_ROT_OFFSET
 
