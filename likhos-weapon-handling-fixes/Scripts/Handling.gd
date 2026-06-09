@@ -79,7 +79,7 @@ var _baseline_captured := false
 var _handling_speed: float = 7.5
 var _camera_pitch_deg: float = 0.0
 var _anchor_pitch: float = 0.0
-var _smoothed_pitch: float = 0.0
+var _target_pitch: float = 0.0
 var _stow_hold: float = 0.0
 var _stow_active := false
 var _stow_rot: Vector3
@@ -126,21 +126,22 @@ func on_weapon_handling(delta: float) -> void:
 	_resolve_intent()
 	_free_look = false
 	_anchored = false
-	_stow_active = false
 
 	if gameData.freeze:
-		_stow_hold = _STOW_HOLD
+		_stow_active = true
 		_set_target_idle(h)
 		_apply_target(h, delta)
 		_apply_left_arm(h)
 		return
 
 	if gameData.isAiming || gameData.isCanted:
-		_stow_hold = 0.0
+		_stow_active = false
 	elif _camera_pitch_deg < _LOOK_DOWN_PITCH:
 		_stow_hold = _STOW_HOLD
+		_stow_active = true
 	else:
-		_stow_hold = max(0.0, _stow_hold - delta)
+		_stow_hold -= delta
+		_stow_active = _stow_hold > 0.0
 
 	_process_handling_state(h)
 	_apply_target(h, delta)
@@ -269,17 +270,13 @@ func _set_target_idle(h) -> void:
 		h.targetRotation = data.lowRotation
 		return
 
-	if _stow_hold > 0.0:
+	if _stow_active:
 		_free_look = true
 		_anchored = false
-		_stow_active = true
 		_handlingMode = HandlingMode.Admin
 		h.targetPosition = data.lowPosition + _STOW_POS_OFFSET
 		h.targetRotation = _stow_rot
 		return
-
-	if _anchored:
-		_handlingMode = HandlingMode.Admin
 
 	if data.weaponType == "Pistol":
 		_current_idle_category = IdleCategory.Pistol
@@ -331,17 +328,14 @@ func _apply_target(h, delta: float) -> void:
 	if _camera_pitch_deg >= _ANCHOR_PITCH:
 		_anchor_pitch = cam_euler.x
 
-	var target_pitch: float
 	if _free_look:
-		target_pitch = 0.0
+		_target_pitch = lerp(_target_pitch, 0.0, t)
 	elif _anchored:
-		target_pitch = cam_euler.x - _anchor_pitch
+		_target_pitch = lerp(_target_pitch, cam_euler.x - _anchor_pitch, t)
 	else:
-		target_pitch = cam_euler.x
+		_target_pitch = cam_euler.x
 
-	_smoothed_pitch = lerp(_smoothed_pitch, target_pitch, t)
-
-	var weapon_basis := Basis.from_euler(Vector3(_smoothed_pitch, cam_euler.y, cam_euler.z))
+	var weapon_basis := Basis.from_euler(Vector3(_target_pitch, cam_euler.y, cam_euler.z))
 	manager.global_transform = Transform3D(weapon_basis, cam_xform.origin) * _manager_local_baseline
 
 
