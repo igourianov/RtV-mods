@@ -10,11 +10,11 @@ enum IdleCategory { Default, Pistol, NoGrip, SMG }
 var _idle_offsets := {
 	IdleCategory.Default: {
 		"pos": Vector3(0, -0.04, 0.02),
-		"rot": Vector3(10, 25, 10),
+		"rot": Vector3(10, 35, -20),
 	},
 	IdleCategory.SMG: {
 		"pos": Vector3(0, -0.06, 0.04),
-		"rot": Vector3(15, 20, 10),
+		"rot": Vector3(0, 45, -20),
 	},
 	IdleCategory.Pistol: {
 		"pos": Vector3(-0.07, -0.06, 0),
