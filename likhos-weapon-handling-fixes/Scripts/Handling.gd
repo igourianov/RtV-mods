@@ -94,6 +94,55 @@ func _init(lib) -> void:
 	_stow_rot = _stow_rotation()
 
 
+# a basic rotation vector wont work here bacause at steep pitch - Y rotation stops working
+func _stow_rotation() -> Vector3:
+	var pitch := Basis.from_euler(Vector3(deg_to_rad(80.0), 0.0, deg_to_rad(10.0)))
+	var kick := Basis(Vector3.FORWARD, deg_to_rad(20.0))
+	var e := (kick * pitch).get_euler()
+	return Vector3(rad_to_deg(e.x), rad_to_deg(e.y), rad_to_deg(e.z))
+
+
+func on_rig_update_post(_animate) -> void:
+	var manager = _lib._caller
+	if !manager:
+		return
+
+	if !_baseline_captured:
+		_manager_local_baseline = manager.transform
+		_baseline_captured = true
+	elif ModConfig.free_look:
+		manager.transform = _manager_local_baseline
+
+	var rig = manager.get_child(manager.get_child_count() - 1) if manager.get_child_count() else null
+
+	# save weapon weight for the handling speed calc
+	var weapon = rig.weaponSlot.get_children()[0] if rig && rig.weaponSlot else null
+	ModConfig.current_weapon_weight = weapon.Weight() if weapon else 0.0
+	Out.debug("weapon weight: %.1fkg" % ModConfig.current_weapon_weight)
+
+	# BUGFIX
+	# Vanilla forgets to reset secondaryOptic flag when equipping another optic
+	# Causes other scopes to break in PIP mode
+	var optic = rig.activeOptic if rig else null
+	if gameData.secondaryOptic && !(optic && optic.secondary):
+		gameData.secondaryOptic = false
+
+	gameData.isScoped = ScopeCatalog.is_magnified(optic) && !gameData.secondaryOptic
+
+	# fold/unfold iron sights based on optic presence
+	# BUGFIX - vanilla doens't check frontSightIndex, which casues flicker on M4A1, which doens't have foldable front sight
+	var data = rig.data if rig else null
+	if data && data.foldSights:
+		var rot = Quaternion.from_euler(Vector3(data.foldSightsRotation if optic else 0.0, 0, 0))
+		rig.skeleton.set_bone_pose_rotation(rig.backSightIndex, rot)
+		if rig.frontSightIndex: 
+			rig.skeleton.set_bone_pose_rotation(rig.frontSightIndex, rot)
+
+	# true up cocked state if mag was loaded from inventory
+	if rig && rig.slotData:
+		rig.slotData.set_meta("cocked", rig.slotData.chamber)
+
+
 func on_input(evt: InputEvent) -> void:
 	_lib.skip_super()
 
@@ -126,7 +175,7 @@ func on_weapon_handling(delta: float) -> void:
 	_lib.skip_super()
 
 	gameData.isColliding = h.collision.is_colliding()
-	_resolve_intent()
+	_resolve_aim_intent()
 	_target_idle = false
 
 	if gameData.freeze:
@@ -137,28 +186,12 @@ func on_weapon_handling(delta: float) -> void:
 		_apply_left_arm(h)
 		return
 
-	_process_handling_state(h)
+	_set_target(h)
 	_apply_target(h, delta)
 	_apply_left_arm(h)
 
 
-func _apply_left_arm(h) -> void:
-	var rig = h.get_parent()
-	if !rig || !rig.skeleton:
-		return
-
-	var arm_idx = rig.skeleton.find_bone(_LEFT_ARM_BONE)
-	if arm_idx == -1:
-		return
-
-	# collapse the left support arm while stowed (hacky: zero-scale the shoulder bone)
-	if _stow_active || (_target_idle && _idle_hide_left_arm):
-		rig.skeleton.set_bone_pose_scale(arm_idx, _NEAR_ZERO)
-	else:
-		rig.skeleton.set_bone_pose_scale(arm_idx, Vector3.ONE)
-
-
-func _resolve_intent() -> void:
+func _resolve_aim_intent() -> void:
 
 	if gameData.isInspecting || gameData.isChecking || ModConfig.binoculars_active:
 		gameData.isAiming = false
@@ -177,7 +210,7 @@ func _resolve_intent() -> void:
 		gameData.isCanted = false if _aim_intent else _cant_intent
 
 
-func _process_handling_state(h) -> void:
+func _set_target(h) -> void:
 	var data = h.data
 	var rig = h.get_parent()
 	var optic = rig.activeOptic
@@ -292,14 +325,6 @@ func _set_target_idle(h) -> void:
 	h.targetRotation = data.lowRotation + entry["rot"] + (_SECONDARY_OPTIC_ROT_OFFSET if gameData.secondaryOptic else Vector3.ZERO)
 
 
-# a basic rotation vector wont work here bacause at steep pitch - Y rotation stops working
-func _stow_rotation() -> Vector3:
-	var pitch := Basis.from_euler(Vector3(deg_to_rad(80.0), 0.0, deg_to_rad(10.0)))
-	var kick := Basis(Vector3.FORWARD, deg_to_rad(20.0))
-	var e := (kick * pitch).get_euler()
-	return Vector3(rad_to_deg(e.x), rad_to_deg(e.y), rad_to_deg(e.z))
-
-
 func _apply_target(h, delta: float) -> void:
 	_handling_speed = h.handlingSpeed * (_handlingMode / 100.0)
 	var t := delta * _handling_speed
@@ -343,42 +368,18 @@ func _apply_target(h, delta: float) -> void:
 	manager.global_transform = Transform3D(weapon_basis, cam_xform.origin) * _manager_local_baseline
 
 
-func on_rig_update_post(_animate) -> void:
-	var manager = _lib._caller
-	if !manager:
+func _apply_left_arm(h) -> void:
+	var rig = h.get_parent()
+	if !rig || !rig.skeleton:
 		return
 
-	if !_baseline_captured:
-		_manager_local_baseline = manager.transform
-		_baseline_captured = true
-	elif ModConfig.free_look:
-		manager.transform = _manager_local_baseline
+	var arm_idx = rig.skeleton.find_bone(_LEFT_ARM_BONE)
+	if arm_idx == -1:
+		return
 
-	var rig = manager.get_child(manager.get_child_count() - 1) if manager.get_child_count() else null
+	# collapse the left support arm while stowed (hacky: zero-scale the shoulder bone)
+	if _stow_active || (_target_idle && _idle_hide_left_arm):
+		rig.skeleton.set_bone_pose_scale(arm_idx, _NEAR_ZERO)
+	else:
+		rig.skeleton.set_bone_pose_scale(arm_idx, Vector3.ONE)
 
-	# save weapon weight for the handling speed calc
-	var weapon = rig.weaponSlot.get_children()[0] if rig && rig.weaponSlot else null
-	ModConfig.current_weapon_weight = weapon.Weight() if weapon else 0.0
-	Out.debug("weapon weight: %.1fkg" % ModConfig.current_weapon_weight)
-
-	# BUGFIX
-	# Vanilla forgets to reset secondaryOptic flag when equipping another optic
-	# Causes other scopes to break in PIP mode
-	var optic = rig.activeOptic if rig else null
-	if gameData.secondaryOptic && !(optic && optic.secondary):
-		gameData.secondaryOptic = false
-
-	gameData.isScoped = ScopeCatalog.is_magnified(optic) && !gameData.secondaryOptic
-
-	# fold/unfold iron sights based on optic presence
-	# BUGFIX - vanilla doens't check frontSightIndex, which casues flicker on M4A1, which doens't have foldable front sight
-	var data = rig.data if rig else null
-	if data && data.foldSights:
-		var rot = Quaternion.from_euler(Vector3(data.foldSightsRotation if optic else 0.0, 0, 0))
-		rig.skeleton.set_bone_pose_rotation(rig.backSightIndex, rot)
-		if rig.frontSightIndex: 
-			rig.skeleton.set_bone_pose_rotation(rig.frontSightIndex, rot)
-
-	# true up cocked state if mag was loaded from inventory
-	if rig && rig.slotData:
-		rig.slotData.set_meta("cocked", rig.slotData.chamber)
