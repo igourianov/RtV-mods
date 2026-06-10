@@ -1,6 +1,5 @@
 extends "./WeaponRig_Base.gd"
 
-const ModConfig = preload("./ModConfig.gd")
 const ScopeCatalog = preload("./ScopeCatalog.gd")
 const ZoomAccelerator = preload("./ZoomAccelerator.gd")
 const _RETICLE_SHADER := preload("res://mods/likhos-weapon-handling-fixes/Shaders/Reticle.gdshader")

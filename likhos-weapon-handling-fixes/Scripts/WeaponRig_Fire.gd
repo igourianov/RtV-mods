@@ -32,6 +32,9 @@ func _fire_input(rig) -> void:
 	if slotData.state == "Jammed":
 		return
 
+	if !ModConfig.allow_negligent_discharge && !gameData.weaponPosition == 2 && !gameData.isAiming && !gameData.isCanted:
+		return
+
 	var triggered := false
 	if slotData.mode == 1:
 		triggered = Input.is_action_just_pressed("fire")

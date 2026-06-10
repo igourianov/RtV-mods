@@ -35,6 +35,7 @@ static var show_protips: bool
 static var debug_enabled: bool
 static var free_look: bool
 static var patrol_position: bool
+static var allow_negligent_discharge: bool
 
 static var _menu_pos_auto: int = 0
 
@@ -92,6 +93,7 @@ static func apply_config(config: ConfigFile) -> void:
 	pip_anti_aliasing = _get_config_value(config, "Bool", "pipAntiAliasing", DEFAULT_ENABLED)
 	free_look = _get_config_value(config, "Bool", "enableFreeLook", DEFAULT_ENABLED)
 	patrol_position = _get_config_value(config, "Bool", "patrolPosition", DEFAULT_ENABLED)
+	allow_negligent_discharge = _get_config_value(config, "Bool", "allowNegligentDischarge", DEFAULT_ENABLED)
 
 
 static func _next_pos() -> int:
@@ -156,6 +158,8 @@ static func create_template(config: ConfigFile) -> void:
 	_set_config_entry(config, "Bool", "Aim tweaks", "enableFreeLook", "Adaptive free look", "Allow camera to go into free look when weapon is idle", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Bool", "Aim tweaks", "patrolPosition", "Patrol position for idle mode", "Hold the weapon in a relaxed patrol position when idle instead of the default low ready", DEFAULT_ENABLED)
+
+	_set_config_entry(config, "Bool", "Aim tweaks", "allowNegligentDischarge", "Allow negligent discharge", "Allow the weapon to fire even when not raised, aiming or canted", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Dropdown", "Aim tweaks", "lpvoOofZoom", "LPVO out-of-aim zoom", "Allow changing LPVO zoom level when not aiming. Rail movement: requires Rail Movement binding held as a modifier.", DEFAULT_LPVO_OOA_ZOOM, {
 		"options": {

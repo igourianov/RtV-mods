@@ -1,7 +1,5 @@
 extends "./WeaponRig_Base.gd"
 
-const ModConfig = preload("./ModConfig.gd")
-
 const _HOLD_THRESHOLD = 300
 const _AMMO_CHECK_INTRO_TIME_DEFAULT = 1.0
 const _VIEW_DELAY = 0.5

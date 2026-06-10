@@ -1,4 +1,5 @@
 * rig stow timing tweaks
+* added MCM toggle to disable negligent discharges (for all the butterfingers out there)
 
 # 2.15.1701
 * decoupled patrol mode rig position from the free look setting
