@@ -18,6 +18,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 * Reworked the inspect mode and associated bindings + QoL flashlight fix
 * Reworked manual action guns reload animations to be more fluid (reduced animation lock out time)
 * Mosin and 870 can now cycle the bolt on both full and empty mag, like the real guns do (you will lose ammo) + dry fire click on empty chamber
+* Negligent discharge (firing out of aim) is allowed (disable in MCM)
 
 ## Aiming & Optics
 
