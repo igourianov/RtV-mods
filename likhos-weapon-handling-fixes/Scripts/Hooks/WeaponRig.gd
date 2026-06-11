@@ -1,11 +1,11 @@
 extends RefCounted
 
-const Out = preload("../Lib/Out.gd")
-const WeaponRig_Fire = preload("./WeaponRig_Fire.gd")
-const WeaponRig_Reload = preload("./WeaponRig_Reload.gd")
-const WeaponRig_ManualReload = preload("./WeaponRig_ManualReload.gd")
-const WeaponRig_Optic = preload("./WeaponRig_Optic.gd")
-const WeaponRig_Inspect = preload("./WeaponRig_Inspect.gd")
+const Out = preload("../../Lib/Out.gd")
+const WeaponRig_Fire = preload("../Nodes/WeaponRig_Fire.gd")
+const WeaponRig_Reload = preload("../Nodes/WeaponRig_Reload.gd")
+const WeaponRig_ManualReload = preload("../Nodes/WeaponRig_ManualReload.gd")
+const WeaponRig_Optic = preload("../Nodes/WeaponRig_Optic.gd")
+const WeaponRig_Inspect = preload("../Nodes/WeaponRig_Inspect.gd")
 
 var _lib
 

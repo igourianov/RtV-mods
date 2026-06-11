@@ -1,8 +1,8 @@
 extends RefCounted
 
-const ModConfig = preload("./ModConfig.gd")
-const Out = preload("../Lib/Out.gd")
-const BreathHoldPlayer = preload("./Audio/BreathHoldPlayer.gd")
+const ModConfig = preload("../ModConfig.gd")
+const Out = preload("../../Lib/Out.gd")
+const BreathHoldPlayer = preload("../Audio/BreathHoldPlayer.gd")
 
 const STAMINA_RECOVERY: float = 100.0
 const STAMINA_RECOVERY_DELAY: float = 2.0

@@ -1,9 +1,9 @@
 extends Node
 
-const Out = preload("../Lib/Out.gd")
-const Inputs = preload("../Lib/Inputs.gd")
-const AudioEventPlayer = preload("./Audio/AudioEventPlayer.gd")
-const ModConfig = preload("./ModConfig.gd")
+const Out = preload("../../Lib/Out.gd")
+const Inputs = preload("../../Lib/Inputs.gd")
+const AudioEventPlayer = preload("../Audio/AudioEventPlayer.gd")
+const ModConfig = preload("../ModConfig.gd")
 
 
 var gameData = preload("res://Resources/GameData.tres")

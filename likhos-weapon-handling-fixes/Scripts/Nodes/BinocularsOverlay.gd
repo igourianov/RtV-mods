@@ -1,14 +1,14 @@
 extends CanvasLayer
 
-const ModConfig = preload("./ModConfig.gd")
-const Out = preload("../Lib/Out.gd")
-const ZoomAccelerator = preload("./ZoomAccelerator.gd")
+const ModConfig = preload("../ModConfig.gd")
+const Out = preload("../../Lib/Out.gd")
+const ZoomAccelerator = preload("../ZoomAccelerator.gd")
 const _SHADER = preload("res://mods/likhos-weapon-handling-fixes/Shaders/Binoculars.gdshader")
 const _RETICLE_PATH = "res://mods/likhos-weapon-handling-fixes/Textures/binos_reticle.png"
 const _GRIME_PATH = "res://mods/likhos-weapon-handling-fixes/Textures/binos_grime.jpg"
 const _CAMERA_PATH = "/root/Map/Core/Camera"
 const _HUD_PATH = "/root/Map/Core/UI/HUD"
-const UIClickPlayer = preload("./Audio/UIClickPlayer.gd")
+const UIClickPlayer = preload("../Audio/UIClickPlayer.gd")
 
 var gameData = preload("res://Resources/GameData.tres")
 var _click_audio: UIClickPlayer

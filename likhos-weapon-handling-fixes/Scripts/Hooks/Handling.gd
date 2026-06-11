@@ -1,8 +1,8 @@
 extends RefCounted
 
-const ModConfig = preload("./ModConfig.gd")
-const ScopeCatalog = preload("./ScopeCatalog.gd")
-const Out = preload("../Lib/Out.gd")
+const ModConfig = preload("../ModConfig.gd")
+const ScopeCatalog = preload("../ScopeCatalog.gd")
+const Out = preload("../../Lib/Out.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
 enum IdleCategory { Default, Pistol, FuddGrip, SMG, StocklessSMG }
@@ -139,7 +139,7 @@ func on_rig_update_post(_animate) -> void:
 	if data && data.foldSights:
 		var rot = Quaternion.from_euler(Vector3(data.foldSightsRotation if optic else 0.0, 0, 0))
 		rig.skeleton.set_bone_pose_rotation(rig.backSightIndex, rot)
-		if rig.frontSightIndex: 
+		if rig.frontSightIndex:
 			rig.skeleton.set_bone_pose_rotation(rig.frontSightIndex, rot)
 
 	# true up cocked state if mag was loaded from inventory
@@ -323,7 +323,7 @@ func _set_target_idle(h) -> void:
 		category = IdleCategory.FuddGrip
 	elif data.weaponType == "SMG":
 		category = IdleCategory.SMG
-	
+
 	var entry = _idle_offsets[category]
 	_idle_hide_left_arm = entry.get("hide_left_arm", false)
 
@@ -388,4 +388,3 @@ func _apply_left_arm(h) -> void:
 		rig.skeleton.set_bone_pose_scale(arm_idx, _NEAR_ZERO)
 	else:
 		rig.skeleton.set_bone_pose_scale(arm_idx, Vector3.ONE)
-

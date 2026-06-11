@@ -1,24 +1,24 @@
 extends "../Lib/Main.gd"
 
 const ModConfig = preload("./ModConfig.gd")
-const Handling = preload("./Handling.gd")
-const WeaponRig = preload("./WeaponRig.gd")
-const Camera = preload("./Camera.gd")
-const Controller = preload("./Controller.gd")
-const _Noise = preload("./Noise.gd") # Noise is already take by something in global scope
-const Tilt = preload("./Tilt.gd")
-const HUD = preload("./HUD.gd")
-const Recoil = preload("./Recoil.gd")
-const Character = preload("./Character.gd")
-const Optic = preload("./Optic.gd")
-const Laser = preload("./Laser.gd")
-const Flashlight = preload("./Flashlight.gd")
+const Handling = preload("./Hooks/Handling.gd")
+const WeaponRig = preload("./Hooks/WeaponRig.gd")
+const Camera = preload("./Hooks/Camera.gd")
+const Controller = preload("./Hooks/Controller.gd")
+const _Noise = preload("./Hooks/Noise.gd") # Noise is already take by something in global scope
+const Tilt = preload("./Hooks/Tilt.gd")
+const HUD = preload("./Hooks/HUD.gd")
+const Recoil = preload("./Hooks/Recoil.gd")
+const Character = preload("./Hooks/Character.gd")
+const Optic = preload("./Hooks/Optic.gd")
+const Laser = preload("./Hooks/Laser.gd")
+const Flashlight = preload("./Hooks/Flashlight.gd")
 const ScopeCatalog = preload("./ScopeCatalog.gd")
 const RigOpticPatches = preload("./RigOpticPatches.gd")
-const Tooltip = preload("./Tooltip.gd")
-const Interactor = preload("./Interactor.gd")
-const UIPosition = preload("./UIPosition.gd")
-const BinocularsOverlay = preload("./BinocularsOverlay.gd")
+const Tooltip = preload("./Hooks/Tooltip.gd")
+const Interactor = preload("./Hooks/Interactor.gd")
+const UIPosition = preload("./Hooks/UIPosition.gd")
+const BinocularsOverlay = preload("./Nodes/BinocularsOverlay.gd")
 
 
 var _handling

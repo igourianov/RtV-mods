@@ -1,6 +1,6 @@
 extends RefCounted
 
-const ModConfig = preload("./ModConfig.gd")
+const ModConfig = preload("../ModConfig.gd")
 
 const WOBBLE_MULT: float = 3.0
 const WOBBLE_MULT_HOLD_BREATH: float = 0.5
@@ -36,7 +36,7 @@ func _apply_wobble(noise, gd, delta: float) -> void:
 
 	if gd.isAiming && !gd.isFiring:
 		amplitude_mult = lerp(WOBBLE_MULT, WOBBLE_MULT_HOLD_BREATH, ModConfig.hold_breath_state)
-	
+
 	if gd.armStamina <= 0.0:
 		frequency_mult = WOBBLE_FREQ_MULT_EXHAUSTED
 		amplitude_mult *= WOBBLE_FREQ_MULT_EXHAUSTED

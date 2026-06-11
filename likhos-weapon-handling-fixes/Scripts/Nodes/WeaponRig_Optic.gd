@@ -1,7 +1,7 @@
 extends "./WeaponRig_Base.gd"
 
-const ScopeCatalog = preload("./ScopeCatalog.gd")
-const ZoomAccelerator = preload("./ZoomAccelerator.gd")
+const ScopeCatalog = preload("../ScopeCatalog.gd")
+const ZoomAccelerator = preload("../ZoomAccelerator.gd")
 const _RETICLE_SHADER := preload("res://mods/likhos-weapon-handling-fixes/Shaders/Reticle.gdshader")
 
 var audioLibrary = preload("res://Resources/AudioLibrary.tres")
@@ -163,4 +163,3 @@ func _update_reticle(rig, optic, shadow: float) -> void:
 		optic.reticle.set_shader_parameter("shadow", shadow)
 	optic.reticle.set_shader_parameter("size", rig.reticleSize)
 	optic.reticle.set_shader_parameter("opacity", rig.ocularOpacity)
-

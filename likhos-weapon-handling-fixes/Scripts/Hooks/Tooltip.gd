@@ -1,6 +1,6 @@
-extends "../Lib/Tooltip.gd"
+extends "../../Lib/Tooltip.gd"
 
-const ScopeCatalog = preload("./ScopeCatalog.gd")
+const ScopeCatalog = preload("../ScopeCatalog.gd")
 
 const ROW_MAG := "likho_mag_row"
 const ROW_EYE := "likho_eye_row"

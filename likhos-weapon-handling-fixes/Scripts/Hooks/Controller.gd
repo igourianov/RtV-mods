@@ -1,7 +1,7 @@
 extends RefCounted
 
-const ModConfig = preload("./ModConfig.gd")
-const Out = preload("../Lib/Out.gd")
+const ModConfig = preload("../ModConfig.gd")
+const Out = preload("../../Lib/Out.gd")
 
 var gameData = preload("res://Resources/GameData.tres")
 var _lib
@@ -148,4 +148,3 @@ func _set_impulse(ctrl) -> void:
 		ctrl.crouchImpulse = 0.1
 	else:
 		ctrl.standImpulse = 0.1
-

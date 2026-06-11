@@ -1,10 +1,10 @@
 
-const ModConfig = preload("./ModConfig.gd")
+const ModConfig = preload("../ModConfig.gd")
 
 const _AUTO_ON_LATCH := &"likho_laser_latch"
 const _RECOLOR_LATCH := &"likho_laser_recolor"
 const _SOUND_NODE := "LikhoLaserSound"
-const AttachmentClickPlayer = preload("./Audio/AttachmentClickPlayer.gd")
+const AttachmentClickPlayer = preload("../Audio/AttachmentClickPlayer.gd")
 const _PEQ15_NAME := &"ANPEQ"
 const _PEQ15_COLOR := Color(1, 0, 0, 1)
 

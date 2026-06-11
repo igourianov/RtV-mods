@@ -1,5 +1,5 @@
 
-const Out = preload("../Lib/Out.gd")
+const Out = preload("../../Lib/Out.gd")
 
 var _lib
 
@@ -25,7 +25,7 @@ func on_physics_process(delta: float) -> void:
 
 class FlashlightDriver extends Node:
 	const HOLD_THRESHOLD = 0.25
-	const AttachmentClickPlayer = preload("./Audio/AttachmentClickPlayer.gd")
+	const AttachmentClickPlayer = preload("../Audio/AttachmentClickPlayer.gd")
 
 	var gameData = preload("res://Resources/GameData.tres")
 	var _hold_elapsed := 0.0

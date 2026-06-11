@@ -6,8 +6,8 @@ extends RefCounted
 const BLUR_RADIUS_BASE := 3.0
 
 const _NVG_PIP_SHADER := preload("res://mods/likhos-weapon-handling-fixes/Shaders/PIP_NVG.gdshader")
-const ModConfig = preload("./ModConfig.gd")
-const Out = preload("../Lib/Out.gd")
+const ModConfig = preload("../ModConfig.gd")
+const Out = preload("../../Lib/Out.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
 # Vanilla scene defaults for the optic's SubViewport, applied when AA mirror is off.

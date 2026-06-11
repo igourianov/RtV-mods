@@ -1,6 +1,6 @@
 extends RefCounted
 
-const ModConfig = preload("./ModConfig.gd")
+const ModConfig = preload("../ModConfig.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
 var _lib
@@ -259,4 +259,3 @@ func _is_interaction_blocked() -> bool:
 	return gameData.freeze || gameData.menu \
 		|| gameData.isDead || gameData.isTransitioning || gameData.isOccupied || gameData.isPlacing \
 		|| gameData.isInspecting || gameData.isChecking || gameData.isInserting || gameData.isReloading
-

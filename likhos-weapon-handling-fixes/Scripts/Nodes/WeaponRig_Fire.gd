@@ -1,6 +1,6 @@
 extends "./WeaponRig_Base.gd"
 
-const AudioChunkPlayer = preload("./Audio/AudioChunkPlayer.gd")
+const AudioChunkPlayer = preload("../Audio/AudioChunkPlayer.gd")
 
 const _CLICK_AUDIO = preload("res://Audio/UI/Files/UI_Stack_01.wav")
 const _CLICK_START := 25

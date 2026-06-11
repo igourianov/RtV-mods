@@ -1,6 +1,6 @@
 extends RefCounted
 
-const ModConfig = preload("./ModConfig.gd")
+const ModConfig = preload("../ModConfig.gd")
 const BLUR_SPEED = 1.0
 
 var _lib
