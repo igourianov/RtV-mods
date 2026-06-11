@@ -2,7 +2,6 @@
 - food and sleep rework
 - spawn new event after 30 minutes on the map
 - move manufacturer name into another field out of title
-- split Scripts into Scripts and Hooks
 - flashlight auto-on on PEQ15, similar to laser
 
 # Closed
@@ -34,3 +33,4 @@
 - in inspect attach ammo to the magazine and hide it if no mag - done
 - binoculars - done
 - show approx ammo counts - another mods will handle it
+- split Scripts into Scripts and Hooks - done
