@@ -1,6 +1,7 @@
 * rig stow timing tweaks
 * added MCM toggle to disable negligent discharges (for all the butterfingers out there)
 * click sound refactoring - hopefully fixed missing clicks this time
+* other refactorings to simplify and improve performance
 
 # 2.15.1701
 * decoupled patrol mode rig position from the free look setting
