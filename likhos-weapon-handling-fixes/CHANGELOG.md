@@ -1,3 +1,4 @@
+# 2.15.1730
 * rig stow timing tweaks
 * added MCM toggle to disable negligent discharges (for all the butterfingers out there)
 * click sound refactoring - hopefully fixed missing clicks this time
