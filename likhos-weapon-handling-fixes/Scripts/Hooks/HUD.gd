@@ -24,7 +24,14 @@ const _ATT_MIN_W := 32.0
 const _ATT_MIN_H := 24.0
 const _ATT_FONT_SIZE := 16
 
+const _BULLET_W := 8.0
+const _BULLET_BODY_H := 10.0
+const _BULLET_TIP_H := 8.0
+const _BULLET_STAGGER := Vector2(7, 4)
+
 var _att_tooltips: Dictionary = {}
+var _firemode_card: Control
+var _firemode_mode := 0
 var _camera: Camera3D
 var _rig_manager: Node3D
 
@@ -39,6 +46,7 @@ func on_ready_post() -> void:
 		return
 	_setup_crosshair(hud)
 	_setup_attachment_tooltips(hud)
+	_setup_firemode_card(hud)
 
 
 func _setup_attachment_tooltips(hud) -> void:
@@ -114,6 +122,29 @@ func _create_attachment_tooltips(hud) -> void:
 		_att_tooltips[subtype] = clone
 
 
+func _setup_firemode_card(hud) -> void:
+	if is_instance_valid(_firemode_card) && _firemode_card.get_parent() == hud:
+		return
+	if !hud.magazine:
+		return
+	var card: Control = hud.magazine.duplicate()
+	card.name = "FiremodeCard"
+	var panel = card.get_child(0)
+	var label = panel.get_child(0)
+	label.text = ""
+	var w: float = panel.offset_right - panel.offset_left
+	var h: float = panel.offset_bottom - panel.offset_top
+	panel.offset_left = -w / 2.0
+	panel.offset_top = -h / 2.0
+	panel.offset_right = w / 2.0
+	panel.offset_bottom = h / 2.0
+	panel.draw.connect(_draw_firemode.bind(panel, label))
+	card.hide()
+	hud.add_child(card)
+	_firemode_card = card
+	_firemode_mode = 0
+
+
 func on_physics_process_post(delta: float) -> void:
 	var hud = _lib._caller
 	if !is_instance_valid(hud):
@@ -122,6 +153,7 @@ func on_physics_process_post(delta: float) -> void:
 	_update_ammo_overlays(hud)
 	_update_crosshair_visibility(hud, delta)
 	_update_attachment_tooltips(hud)
+	_update_firemode_card(hud)
 
 
 func _update_crosshair_visibility(hud, delta: float) -> void:
@@ -222,6 +254,58 @@ func _update_attachment_tooltips(hud) -> void:
 
 		tooltip.global_position = _camera.unproject_position(_world_center(attachment))
 		tooltip.show()
+
+
+func _update_firemode_card(hud) -> void:
+	if !is_instance_valid(_firemode_card):
+		return
+
+	if !ModConfig.firemode_card || !gameData.isInspecting:
+		_firemode_card.hide()
+		return
+
+	if !_camera || !is_instance_valid(_camera):
+		_camera = hud.get_tree().current_scene.get_node_or_null("/root/Map/Core/Camera")
+
+	var rig = _active_rig(hud)
+	if !_camera || !rig || !rig.skeleton || !rig.data || rig.data.weaponAction != "Semi-Auto":
+		_firemode_card.hide()
+		return
+
+	var skeleton: Skeleton3D = rig.skeleton
+	if rig.selectorIndex < 0 || rig.selectorIndex >= skeleton.get_bone_count():
+		_firemode_card.hide()
+		return
+
+	var mode = rig.slotData.mode if rig.slotData else 1
+	if mode != _firemode_mode:
+		_firemode_mode = mode
+		_firemode_card.get_child(0).queue_redraw()
+
+	var bone_origin = skeleton.get_bone_global_pose(rig.selectorIndex).origin
+	_firemode_card.global_position = _camera.unproject_position(skeleton.to_global(bone_origin))
+	_firemode_card.show()
+
+
+func _draw_firemode(panel: Control, label) -> void:
+	var color: Color = label.get_theme_color("font_color") * label.self_modulate * label.modulate
+	var center := panel.size * 0.5
+	if _firemode_mode == 2:
+		_draw_bullet(panel, center + Vector2(-_BULLET_STAGGER.x, _BULLET_STAGGER.y), color)
+		_draw_bullet(panel, center + Vector2(_BULLET_STAGGER.x, -_BULLET_STAGGER.y), color)
+	else:
+		_draw_bullet(panel, center, color)
+
+
+func _draw_bullet(c: Control, center: Vector2, color: Color) -> void:
+	var top := center.y - (_BULLET_BODY_H + _BULLET_TIP_H) * 0.5
+	c.draw_rect(Rect2(center.x - _BULLET_W * 0.5, top + _BULLET_TIP_H, _BULLET_W, _BULLET_BODY_H), color, true)
+	var tip := PackedVector2Array([
+		Vector2(center.x - _BULLET_W * 0.5, top + _BULLET_TIP_H),
+		Vector2(center.x + _BULLET_W * 0.5, top + _BULLET_TIP_H),
+		Vector2(center.x, top)
+	])
+	c.draw_colored_polygon(tip, color)
 
 
 static var _local_center_cache: Dictionary = {}

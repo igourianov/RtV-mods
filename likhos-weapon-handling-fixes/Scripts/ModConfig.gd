@@ -29,6 +29,7 @@ static var walk_cant_mult: float
 static var walk_scope_mult: float
 static var laser_auto_on: bool
 static var attachment_tooltips: bool
+static var firemode_card: bool
 static var pip_anti_aliasing: bool
 static var show_protips: bool
 static var debug_enabled: bool
@@ -89,6 +90,7 @@ static func apply_config(config: ConfigFile) -> void:
 	walk_scope_mult = _get_config_value(config, "Float", "scopeSpeedMult", DEFAULT_SCOPE_SPEED_MULT)
 	laser_auto_on = _get_config_value(config, "Bool", "laserAutoOn", DEFAULT_ENABLED)
 	attachment_tooltips = _get_config_value(config, "Bool", "attachmentTooltips", DEFAULT_ENABLED)
+	firemode_card = _get_config_value(config, "Bool", "firemodeCard", DEFAULT_ENABLED)
 	pip_anti_aliasing = _get_config_value(config, "Bool", "pipAntiAliasing", DEFAULT_ENABLED)
 	free_look = _get_config_value(config, "Bool", "enableFreeLook", DEFAULT_ENABLED)
 	patrol_position = _get_config_value(config, "Bool", "patrolPosition", DEFAULT_ENABLED)
@@ -153,6 +155,8 @@ static func create_template(config: ConfigFile) -> void:
 	_set_config_entry(config, "Bool", "Inspect", "ammoTooltips", "Show ammo cards", "Show magazine and chamber overlays while inspecting the weapon", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Bool", "Inspect", "attachmentTooltips", "Show attachment cards", "Show attachment names (optic, muzzle, laser) over the weapon while inspecting", DEFAULT_ENABLED)
+
+	_set_config_entry(config, "Bool", "Inspect", "firemodeCard", "Show fire mode card", "Show the current fire mode (semi/auto) over the fire selector while inspecting", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Bool", "Aim tweaks", "enableFreeLook", "Adaptive free look", "Allow camera to go into free look when weapon is idle", DEFAULT_ENABLED)
 
