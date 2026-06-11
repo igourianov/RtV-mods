@@ -85,12 +85,7 @@ func _init_setup():
 
 
 func register_hook(hookName: String, callback: Callable):
-	var id = _lib.hook(hookName, callback)
-	if id != -1:
-		Out.debug("hook(%s):%s registered" % [hookName, id])
-	else:
-		Out.warning("hook(%s) failed" % hookName)
-	return id
+	_hooks.append(_lib.hook(hookName, callback) as int)
 
 
 func register_action(action: String, label: String, event: InputEvent):
