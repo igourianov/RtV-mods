@@ -3,21 +3,11 @@ extends RefCounted
 const ModConfig = preload("../ModConfig.gd")
 const InspectCard = preload("../InspectCards/InspectCard.gd")
 const FireModeCard = preload("../InspectCards/FireModeCard.gd")
+const Crosshair = preload("../Nodes/Crosshair.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
 var _lib
-var _crosshair: Control
-
-const _CROSSHAIR_SHADOW := Color(0, 0, 0, 0.7)
-const _DOT_RADIUS := 1.5
-const _ARM_LENGTH := 6.0
-const _ARM_THICKNESS := 2.0
-const _CENTER_GAP := 8.0
-const _CROSSHAIR_SHOW_DELAY := 0.2
-const _CROSSHAIR_FADE := 0.3
-
-var _crosshair_alpha := 0.0
-var _crosshair_delay := 0.0
+var _crosshair: Crosshair
 
 const _ATTACHMENT_SUBTYPES := ["Optic", "Muzzle", "Laser"]
 const _ATT_FONT_SIZE := 16
@@ -60,48 +50,10 @@ func _setup_attachment_cards(hud) -> void:
 func _setup_crosshair(hud) -> void:
 	if is_instance_valid(_crosshair) && _crosshair.get_parent() == hud:
 		return
-	var crosshair := Control.new()
-	crosshair.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	crosshair.anchor_left = 0.5
-	crosshair.anchor_top = 0.5
-	crosshair.anchor_right = 0.5
-	crosshair.anchor_bottom = 0.5
-	crosshair.offset_left = -12
-	crosshair.offset_top = -12
-	crosshair.offset_right = 12
-	crosshair.offset_bottom = 12
-	crosshair.draw.connect(_draw_crosshair.bind(crosshair))
-	hud.add_child(crosshair)
-	crosshair.modulate.a = 0.0
-	crosshair.hide()
-	_crosshair = crosshair
-	_crosshair_alpha = 0.0
-	_crosshair_delay = 0.0
+	_crosshair = Crosshair.new()
+	hud.add_child(_crosshair)
 	hud.tooltip.offset_top += 32
 	hud.tooltip.offset_bottom += 32
-
-
-func _draw_crosshair(c: Control) -> void:
-	var center := c.size * 0.5
-	match ModConfig.crosshair_style:
-		&"dot":
-			c.draw_circle(center + Vector2(1, 1), _DOT_RADIUS, _CROSSHAIR_SHADOW)
-			c.draw_circle(center, _DOT_RADIUS, ModConfig.crosshair_color)
-		&"seg-cross":
-			_draw_arms(c, center + Vector2(1, 1), _CROSSHAIR_SHADOW)
-			_draw_arms(c, center, ModConfig.crosshair_color)
-		_:
-			pass
-
-
-func _draw_arms(c: Control, center: Vector2, color: Color) -> void:
-	var t := _ARM_THICKNESS
-	var l := _ARM_LENGTH
-	var g := _CENTER_GAP
-	c.draw_rect(Rect2(center.x - t * 0.5, center.y - g - l, t, l), color, true)
-	c.draw_rect(Rect2(center.x - t * 0.5, center.y + g, t, l), color, true)
-	c.draw_rect(Rect2(center.x - g - l, center.y - t * 0.5, l, t), color, true)
-	c.draw_rect(Rect2(center.x + g, center.y - t * 0.5, l, t), color, true)
 
 
 func _setup_firemode_card(hud) -> void:
@@ -122,38 +74,11 @@ func on_physics_process_post(delta: float) -> void:
 		_rig_manager = hud.get_node_or_null("/root/Map/Core/Camera/Manager")
 	var rig: WeaponRig = _rig_manager.get_child(0) as WeaponRig if _rig_manager && _rig_manager.get_child_count() > 0 else null
 
-	_update_interaction_tooltip(hud)
+	if is_instance_valid(_crosshair):
+		_crosshair.update(hud, delta)
 	_update_ammo_cards(hud, rig)
-	_update_crosshair_visibility(hud, delta)
 	_update_attachment_cards(rig)
 	_update_firemode_card(rig)
-
-
-func _update_crosshair_visibility(hud, delta: float) -> void:
-	if !is_instance_valid(_crosshair):
-		return
-	var cantedHidden = gameData.isCanted && !ModConfig.crosshair_while_canted
-	var runningHidden = gameData.isRunning && !ModConfig.crosshair_while_running
-	var raisedHidden = gameData.weaponPosition == 2 && !ModConfig.crosshair_while_raised
-	var shouldShow = !gameData.transition && !gameData.isAiming && !cantedHidden && !runningHidden && !raisedHidden && !_is_interaction_blocked() && ModConfig.crosshair_style != "off"
-
-	var target := 0.0
-	if shouldShow:
-		_crosshair_delay = min(_crosshair_delay + delta, _CROSSHAIR_SHOW_DELAY)
-		if _crosshair_delay >= _CROSSHAIR_SHOW_DELAY:
-			target = 1.0
-	else:
-		_crosshair_delay = 0.0
-
-	_crosshair_alpha = move_toward(_crosshair_alpha, target, delta / _CROSSHAIR_FADE)
-	_crosshair.modulate.a = _crosshair_alpha
-	_crosshair.visible = _crosshair_alpha > 0.0
-
-
-func _update_interaction_tooltip(hud) -> void:
-	var aimingMode = gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2
-	if aimingMode || _is_interaction_blocked():
-		hud.tooltip.visible = false
 
 
 func _update_ammo_cards(hud, rig: WeaponRig) -> void:
@@ -242,9 +167,3 @@ static func _compute_local_center(node: Node3D) -> Vector3:
 			if child is Node3D:
 				stack.append(child)
 	return merged.get_center() if found else Vector3.ZERO
-
-
-func _is_interaction_blocked() -> bool:
-	return gameData.freeze || gameData.menu \
-		|| gameData.isDead || gameData.isTransitioning || gameData.isOccupied || gameData.isPlacing \
-		|| gameData.isInspecting || gameData.isChecking || gameData.isInserting || gameData.isReloading
