@@ -52,8 +52,6 @@ func _setup_crosshair(hud) -> void:
 		return
 	_crosshair = Crosshair.new()
 	hud.add_child(_crosshair)
-	hud.tooltip.offset_top += 32
-	hud.tooltip.offset_bottom += 32
 
 
 func _setup_firemode_card(hud) -> void:

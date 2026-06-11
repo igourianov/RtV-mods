@@ -11,9 +11,11 @@ const _ARM_THICKNESS := 2.0
 const _CENTER_GAP := 8.0
 const _SHOW_DELAY := 0.2
 const _FADE := 0.3
+const _TOOLTIP_SHIFT := 32.0
 
 var _alpha := 0.0
 var _delay := 0.0
+var _tooltip_shifted := false
 
 
 func _init() -> void:
@@ -55,7 +57,7 @@ func _draw_arms(center: Vector2, color: Color) -> void:
 
 func update(hud, delta: float) -> void:
 	_update_visibility(delta)
-	_suppress_tooltip(hud)
+	_update_tooltip(hud)
 
 
 func _update_visibility(delta: float) -> void:
@@ -77,7 +79,14 @@ func _update_visibility(delta: float) -> void:
 	visible = _alpha > 0.0
 
 
-func _suppress_tooltip(hud) -> void:
+func _update_tooltip(hud) -> void:
+	var wantShift := ModConfig.crosshair_style != "off"
+	if wantShift != _tooltip_shifted:
+		var d := _TOOLTIP_SHIFT if wantShift else -_TOOLTIP_SHIFT
+		hud.tooltip.offset_top += d
+		hud.tooltip.offset_bottom += d
+		_tooltip_shifted = wantShift
+
 	var aimingMode = gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2
 	if aimingMode || _is_interaction_blocked():
 		hud.tooltip.visible = false
