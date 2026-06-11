@@ -3,8 +3,7 @@
 static var current_scope_mag: float = 1.0
 static var current_weapon_weight: float = 0.0
 static var ammo_check_view := false
-static var hold_breath: bool = false
-static var hold_breath_progress: float = 0.0
+static var hold_breath_state: float = 0.0
 static var optic_shiner: bool = false
 static var binoculars_active: bool = false
 static var binoculars_mag: float = 6.0

@@ -1,5 +1,7 @@
 extends "./WeaponRig_Base.gd"
 
+const AudioChunkPlayer = preload("./Audio/AudioChunkPlayer.gd")
+
 const _CLICK_AUDIO = preload("res://Audio/UI/Files/UI_Stack_01.wav")
 const _CLICK_START := 25
 const _CLICK_END := 55
@@ -74,6 +76,6 @@ func _check_low_ammo_protip(rig) -> void:
 func _play_dry_click(rig) -> void:
 	Out.debug("_play_dry_click")
 	if !is_instance_valid(_dry_click_sound):
-		_dry_click_sound = SoundChannel.new(&"SFX", _CLICK_VOLUME_OFFSET, _CLICK_AUDIO)
+		_dry_click_sound = AudioChunkPlayer.new(_CLICK_AUDIO, _CLICK_VOLUME_OFFSET)
 		rig.add_child(_dry_click_sound)
-	_dry_click_sound.play_stream(null, _CLICK_START / 1000.0, (_CLICK_END - _CLICK_START) / 1000.0)
+	_dry_click_sound.play_chunk(_CLICK_START / 1000.0, (_CLICK_END - _CLICK_START) / 1000.0)

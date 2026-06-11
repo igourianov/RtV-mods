@@ -8,11 +8,10 @@ const _RETICLE_PATH = "res://mods/likhos-weapon-handling-fixes/Textures/binos_re
 const _GRIME_PATH = "res://mods/likhos-weapon-handling-fixes/Textures/binos_grime.jpg"
 const _CAMERA_PATH = "/root/Map/Core/Camera"
 const _HUD_PATH = "/root/Map/Core/UI/HUD"
-const SoundChannel = preload("./SoundChannel.gd")
+const UIClickPlayer = preload("./Audio/UIClickPlayer.gd")
 
 var gameData = preload("res://Resources/GameData.tres")
-var _audio_library = preload("res://Resources/AudioLibrary.tres")
-var _click_channel: SoundChannel
+var _click_audio: UIClickPlayer
 
 enum State { INACTIVE, RAISING, ACTIVE, LOWERING }
 
@@ -44,6 +43,9 @@ func _ready() -> void:
 	_build_overlay()
 	_rect.visible = false
 
+	_click_audio = UIClickPlayer.new()
+	add_child(_click_audio)
+
 
 func _build_overlay() -> void:
 	_mat = ShaderMaterial.new()
@@ -56,9 +58,6 @@ func _build_overlay() -> void:
 	_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_rect.material = _mat
 	add_child(_rect)
-
-	_click_channel = SoundChannel.new(&"SFX")
-	add_child(_click_channel)
 
 
 func _load_texture(path: String) -> Texture2D:
@@ -114,7 +113,7 @@ func _change_zoom(dir: int) -> void:
 	if next != _index:
 		_index = next
 		ModConfig.binoculars_mag = _MAGS[_index]
-		_click_channel.play_event(_audio_library.UIClick)
+		_click_audio.click()
 
 
 func _can_raise() -> bool:

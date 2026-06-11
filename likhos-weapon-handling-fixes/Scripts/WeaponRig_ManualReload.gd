@@ -89,7 +89,7 @@ func _process(_delta: float) -> void:
 				return
 			rig.slotData.amount += 1
 		else:
-			start_audio(rig.audioLibrary.UIError)
+			_audio_player.play_event(rig.audioLibrary.UIError)
 		if _state == ManualLoadState.INSERT:
 			_state = ManualLoadState.IDLE
 		return

@@ -35,7 +35,7 @@ func _apply_wobble(noise, gd, delta: float) -> void:
 	var amplitude_mult: float = 1.0
 
 	if gd.isAiming && !gd.isFiring:
-		amplitude_mult = lerp(WOBBLE_MULT, WOBBLE_MULT_HOLD_BREATH, ModConfig.hold_breath_progress)
+		amplitude_mult = lerp(WOBBLE_MULT, WOBBLE_MULT_HOLD_BREATH, ModConfig.hold_breath_state)
 	
 	if gd.armStamina <= 0.0:
 		frequency_mult = WOBBLE_FREQ_MULT_EXHAUSTED

@@ -45,7 +45,6 @@ enum State {
 
 var _state: State = State.NONE
 var _timer: float = 0.0
-var _audio: AudioStreamPlayer = null
 
 
 func _ready() -> void:
@@ -93,7 +92,7 @@ func _process(delta: float) -> void:
 		rig.UpdateBullets()
 		rig.UpdateHUD()
 		start_animation("Ammo_Check")
-		_audio = start_audio(rig.data.ammoCheck)
+		_audio_player.play_event(rig.data.ammoCheck)
 		_timer = AMMO_CHECK_INTRO_TIMES.get(rig.data.file, _AMMO_CHECK_INTRO_TIME_DEFAULT)
 		return
 
@@ -104,7 +103,7 @@ func _process(delta: float) -> void:
 	if _state == State.CHECK_PULL && timer_expired:
 		_state = State.CHECK_PAUSED
 		rig.animator.process_mode = Node.PROCESS_MODE_DISABLED
-		_audio.stream_paused = true
+		_audio_player.stream_paused = true
 		if rig.data.weaponAction != "Manual":
 			Out.protip("ammo-check-reload", "Press [%s] to reload" % Inputs.get_binding("fire"))
 		return
@@ -112,7 +111,7 @@ func _process(delta: float) -> void:
 	if _state == State.RETURN:
 		_state = State.BUSY
 		rig.animator.process_mode = Node.PROCESS_MODE_INHERIT
-		_audio.stream_paused = false
+		_audio_player.stream_paused = false
 		_set_view_delayed(false)
 		await await_animation(-0.5)
 		if is_instance_valid(self):
@@ -121,7 +120,7 @@ func _process(delta: float) -> void:
 
 	if _state == State.RELOAD_FROM_CHECK:
 		rig.animator.process_mode = Node.PROCESS_MODE_INHERIT
-		_audio.stop()
+		_audio_player.stop()
 		ModConfig.ammo_check_view = false
 		_do_reload(true)
 		return
@@ -148,7 +147,7 @@ func _do_reload(ammo_check: bool = false) -> void:
 
 	if slotData.state == "Jammed":
 		gameData.isClearing = true
-		start_audio(rig.audioLibrary.malfunctionClearRifle)
+		_audio_player.play_event(rig.audioLibrary.malfunctionClearRifle)
 		await get_tree().create_timer(2.0, false).timeout
 		gameData.isClearing = false
 		slotData.state = ""

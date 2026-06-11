@@ -2,12 +2,17 @@ extends Node
 
 const Out = preload("../Lib/Out.gd")
 const Inputs = preload("../Lib/Inputs.gd")
-const SoundChannel = preload("./SoundChannel.gd")
+const AudioEventPlayer = preload("./Audio/AudioEventPlayer.gd")
 const ModConfig = preload("./ModConfig.gd")
 
 
 var gameData = preload("res://Resources/GameData.tres")
-var _audio_channel
+var _audio_player: AudioEventPlayer
+
+
+func _init() -> void:
+	_audio_player = AudioEventPlayer.new()
+	add_child(_audio_player)
 
 
 func is_engine_busy() -> bool:
@@ -20,9 +25,9 @@ func is_engine_busy() -> bool:
 		|| gameData.isOccupied)
 
 
-func play(animation_state: String, audio_event, wait_offset: float = -0.5) -> void:
+func play(animation_state: String, audio_event: AudioEvent, wait_offset: float = -0.5) -> void:
 	Out.debug("play:", animation_state)
-	start_audio(audio_event)
+	_audio_player.play_event(audio_event)
 	var playback = start_animation(animation_state)
 	await await_animation(wait_offset, playback)
 	Out.debug("play done")
@@ -45,11 +50,3 @@ func start_animation(state_name: String):
 	var playback = get_parent().animator.get("parameters/playback")
 	playback.start(state_name)
 	return playback
-
-
-func start_audio(event) -> AudioStreamPlayer:
-	if !is_instance_valid(_audio_channel):
-		_audio_channel = SoundChannel.new()
-		add_child(_audio_channel)
-	_audio_channel.play_event(event)
-	return _audio_channel

@@ -24,15 +24,17 @@ func on_physics_process(delta: float) -> void:
 
 
 class FlashlightDriver extends Node:
-	const IN_START = 0.0
-	const IN_DURATION = 0.015
-	const OUT_START = 0.120
-	const OUT_DURATION = 0.0
 	const HOLD_THRESHOLD = 0.25
-	const _POINTING_CHANNEL_PATH := "/root/Map/Core/Controller/Character/LikhoPointingDeviceSound"
+	const AttachmentClickPlayer = preload("./Audio/AttachmentClickPlayer.gd")
 
 	var gameData = preload("res://Resources/GameData.tres")
 	var _hold_elapsed := 0.0
+	var _click_sound: AttachmentClickPlayer
+
+
+	func _init() -> void:
+		_click_sound = AttachmentClickPlayer.new()
+		add_child(_click_sound)
 
 
 	func _physics_process(delta: float):
@@ -49,17 +51,11 @@ class FlashlightDriver extends Node:
 			return
 
 		if evt.is_action_pressed("flashlight", false) && !gameData.freeze:
-			_play_click(IN_START, IN_DURATION)
+			_click_sound.click_in()
 			if !gameData.flashlight:
 				parent.Activate()
 				_hold_elapsed = 0.0
 		elif evt.is_action_released("flashlight") && gameData.flashlight:
-			_play_click(OUT_START, OUT_DURATION)
+			_click_sound.click_out()
 			if _hold_elapsed > HOLD_THRESHOLD:
 				parent.Deactivate()
-
-
-	func _play_click(start: float, duration: float) -> void:
-		var channel = get_node_or_null(_POINTING_CHANNEL_PATH)
-		if channel:
-			channel.play_stream(null, start, duration)
