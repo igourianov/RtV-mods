@@ -1,5 +1,5 @@
 * fire selector card in inspect mode
-* unshift tooltip if crosshair is disabled
+* unshift interaction tooltip if crosshair is disabled
 
 # 2.15.1730
 * rig stow timing tweaks
