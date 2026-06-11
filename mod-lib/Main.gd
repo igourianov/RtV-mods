@@ -93,13 +93,12 @@ func register_hook(hookName: String, callback: Callable):
 	return id
 
 
-func register_action(action: String, label: String, event: InputEvent, hidden: bool = false):
+func register_action(action: String, label: String, event: InputEvent):
 	_init_inputs_hooks()
 	_inputs.extra_actions.append({
 		"action": action,
 		"label": label,
-		"event": event,
-		"hidden": hidden
+		"event": event
 	})
 	# register empty action right away to avoid errors from InputMap
 	if !InputMap.has_action(action):
@@ -117,6 +116,26 @@ func _init_inputs_hooks():
 		register_hook("inputs-createactions-pre", _inputs.on_create_actions_pre)
 		register_hook("inputs-createactions-post", _inputs.on_create_actions_post)
 		register_hook("inputs-resetactions-post", _inputs.on_reset_actions_post)
+
+
+func noop(_arg = null) -> void:
+	_lib.skip_super()
+
+
+func create_mouse_input(button: int) -> InputEventMouseButton:
+	var input = InputEventMouseButton.new()
+	input.button_index = button
+	input.pressed = true
+	return input
+
+
+func create_key_input(keycode: int, ctrl_pressed: bool = false, shift_pressed: bool = false) -> InputEventKey:
+	var input = InputEventKey.new()
+	input.physical_keycode = keycode
+	input.pressed = true
+	input.ctrl_pressed = ctrl_pressed
+	input.shift_pressed = shift_pressed
+	return input
 
 
 func setup(lib):

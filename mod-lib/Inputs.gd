@@ -37,7 +37,7 @@ func attach_extra_actions(caller, reset: bool) -> void:
 			event = a.event
 
 		InputMap.action_add_event(a.action, event)
-		if !a.hidden:
+		if a.label:
 			_create_input_button(caller, a.action, a.label, event)
 
 

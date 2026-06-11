@@ -67,8 +67,8 @@ func setup(lib):
 	register_hook("handling-weaponhandling", _handling.on_weapon_handling)
 	register_hook("rigmanager-updaterig-post", _handling.on_rig_update_post)
 	register_hook("weaponrig-_ready-post", _weapon_rig.on_ready_post)
-	register_hook("weaponrig-ads", _noop)
-	register_hook("weaponrig-_physics_process", _noop)
+	register_hook("weaponrig-ads", noop)
+	register_hook("weaponrig-_physics_process", noop)
 	register_hook("weaponrig-_input", _handling.on_input)
 	register_hook("camera-scopedof", _camera.on_scope_dof)
 	register_hook("controller-movementstates", _controller.on_movement_states)
@@ -90,32 +90,14 @@ func setup(lib):
 	register_hook("interactor-_physics_process-pre", _interactor.on_physics_process_pre)
 	register_hook("uiposition-_physics_process-post", _uiposition.on_physics_process_post)
 
-	register_action("optic_zoom_in", "Optic Zoom In", _create_mouse_input(MOUSE_BUTTON_WHEEL_UP))
-	register_action("optic_zoom_out", "Optic Zoom Out", _create_mouse_input(MOUSE_BUTTON_WHEEL_DOWN))
-	register_action("binoculars", "Binoculars", _create_key_input(KEY_B))
+	register_action("optic_zoom_in", "Optic Zoom In", create_mouse_input(MOUSE_BUTTON_WHEEL_UP))
+	register_action("optic_zoom_out", "Optic Zoom Out", create_mouse_input(MOUSE_BUTTON_WHEEL_DOWN))
+	register_action("binoculars", "Binoculars", create_key_input(KEY_B))
 	remove_action("ammo_check")
 	remove_action("insert")
 
 	_binoculars = BinocularsOverlay.new()
 	add_child(_binoculars)
-
-
-func _noop(_arg = null) -> void:
-	_lib.skip_super()
-
-
-func _create_mouse_input(button: int) -> InputEventMouseButton:
-	var input = InputEventMouseButton.new()
-	input.button_index = button
-	input.pressed = true
-	return input
-
-
-func _create_key_input(keycode: int) -> InputEventKey:
-	var input = InputEventKey.new()
-	input.physical_keycode = keycode
-	input.pressed = true
-	return input
 
 
 func load_config(config: ConfigFile) -> void:

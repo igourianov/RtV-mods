@@ -17,24 +17,9 @@ func setup(lib) -> void:
 	register_hook("interface-use", _interface.on_use)
 	register_hook("interface-release-pre", _interface.on_release_pre)
 
-	var tacmedKey = InputEventKey.new()
-	tacmedKey.keycode = KEY_Z
-	tacmedKey.pressed = true
-	register_action("tacmed", "IFAK/AFAK", tacmedKey)
-
-	var hurtMyself = InputEventKey.new()
-	hurtMyself.keycode = KEY_O
-	hurtMyself.pressed = true
-	hurtMyself.ctrl_pressed = true
-	hurtMyself.shift_pressed = true
-	register_action("hurt_myself", "", hurtMyself, true)
-
-	hurtMyself = InputEventKey.new()
-	hurtMyself.keycode = KEY_P
-	hurtMyself.pressed = true
-	hurtMyself.ctrl_pressed = true
-	hurtMyself.shift_pressed = true
-	register_action("hurt_myself_more", "", hurtMyself, true)
+	register_action("tacmed", "IFAK/AFAK", create_key_input(KEY_Z))
+	register_action("hurt_myself", "", create_key_input(KEY_O, true, true))
+	register_action("hurt_myself_more", "", create_key_input(KEY_P, true, true))
 
 
 func _patch_items(lib) -> void:
