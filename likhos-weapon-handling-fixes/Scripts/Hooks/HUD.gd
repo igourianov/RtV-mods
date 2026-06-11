@@ -1,6 +1,8 @@
 extends RefCounted
 
 const ModConfig = preload("../ModConfig.gd")
+const InspectCard = preload("../InspectCards/InspectCard.gd")
+const FireModeCard = preload("../InspectCards/FireModeCard.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
 var _lib
@@ -18,20 +20,10 @@ var _crosshair_alpha := 0.0
 var _crosshair_delay := 0.0
 
 const _ATTACHMENT_SUBTYPES := ["Optic", "Muzzle", "Laser"]
-const _ATT_PAD_X := 16.0
-const _ATT_PAD_Y := 8.0
-const _ATT_MIN_W := 32.0
-const _ATT_MIN_H := 24.0
 const _ATT_FONT_SIZE := 16
 
-const _BULLET_W := 8.0
-const _BULLET_BODY_H := 10.0
-const _BULLET_TIP_H := 8.0
-const _BULLET_STAGGER := Vector2(7, 4)
-
-var _att_tooltips: Dictionary = {}
-var _firemode_card: Control
-var _firemode_mode := 0
+var _att_cards: Dictionary = {}
+var _firemode_card: FireModeCard
 var _camera: Camera3D
 var _rig_manager: Node3D
 
@@ -45,19 +37,24 @@ func on_ready_post() -> void:
 	if !hud:
 		return
 	_setup_crosshair(hud)
-	_setup_attachment_tooltips(hud)
+	_setup_attachment_cards(hud)
 	_setup_firemode_card(hud)
 
 
-func _setup_attachment_tooltips(hud) -> void:
-	var stale := _att_tooltips.is_empty()
+func _setup_attachment_cards(hud) -> void:
+	var stale := _att_cards.is_empty()
 	if !stale:
-		var any = _att_tooltips.values()[0]
+		var any = _att_cards.values()[0]
 		stale = !is_instance_valid(any) || any.get_parent() != hud
 	if !stale:
 		return
-	_att_tooltips.clear()
-	_create_attachment_tooltips(hud)
+	_att_cards.clear()
+	for subtype in _ATTACHMENT_SUBTYPES:
+		var card := InspectCard.new()
+		card.name = "AttachmentTooltip_" + subtype
+		card.set_font_size(_ATT_FONT_SIZE)
+		hud.add_child(card)
+		_att_cards[subtype] = card
 
 
 func _setup_crosshair(hud) -> void:
@@ -107,53 +104,29 @@ func _draw_arms(c: Control, center: Vector2, color: Color) -> void:
 	c.draw_rect(Rect2(center.x + g, center.y - t * 0.5, l, t), color, true)
 
 
-func _create_attachment_tooltips(hud) -> void:
-	if !hud.magazine:
-		return
-	for subtype in _ATTACHMENT_SUBTYPES:
-		var clone: Control = hud.magazine.duplicate()
-		clone.name = "AttachmentTooltip_" + subtype
-		var panel = clone.get_child(0)
-		var label = panel.get_child(0)
-		label.text = ""
-		label.add_theme_font_size_override("font_size", _ATT_FONT_SIZE)
-		clone.hide()
-		hud.add_child(clone)
-		_att_tooltips[subtype] = clone
-
-
 func _setup_firemode_card(hud) -> void:
 	if is_instance_valid(_firemode_card) && _firemode_card.get_parent() == hud:
 		return
-	if !hud.magazine:
-		return
-	var card: Control = hud.magazine.duplicate()
-	card.name = "FiremodeCard"
-	var panel = card.get_child(0)
-	var label = panel.get_child(0)
-	label.text = ""
-	var w: float = panel.offset_right - panel.offset_left
-	var h: float = panel.offset_bottom - panel.offset_top
-	panel.offset_left = -w / 2.0
-	panel.offset_top = -h / 2.0
-	panel.offset_right = w / 2.0
-	panel.offset_bottom = h / 2.0
-	panel.draw.connect(_draw_firemode.bind(panel, label))
-	card.hide()
-	hud.add_child(card)
-	_firemode_card = card
-	_firemode_mode = 0
+	_firemode_card = FireModeCard.new()
+	_firemode_card.name = "FiremodeCard"
+	hud.add_child(_firemode_card)
 
 
 func on_physics_process_post(delta: float) -> void:
 	var hud = _lib._caller
 	if !is_instance_valid(hud):
 		return
+	if !is_instance_valid(_camera):
+		_camera = hud.get_node_or_null("/root/Map/Core/Camera")
+	if !is_instance_valid(_rig_manager):
+		_rig_manager = hud.get_node_or_null("/root/Map/Core/Camera/Manager")
+	var rig: WeaponRig = _rig_manager.get_child(0) as WeaponRig if _rig_manager && _rig_manager.get_child_count() > 0 else null
+
 	_update_interaction_tooltip(hud)
-	_update_ammo_overlays(hud)
+	_update_ammo_cards(hud, rig)
 	_update_crosshair_visibility(hud, delta)
-	_update_attachment_tooltips(hud)
-	_update_firemode_card(hud)
+	_update_attachment_cards(rig)
+	_update_firemode_card(rig)
 
 
 func _update_crosshair_visibility(hud, delta: float) -> void:
@@ -183,23 +156,9 @@ func _update_interaction_tooltip(hud) -> void:
 		hud.tooltip.visible = false
 
 
-func _active_rig(hud) -> WeaponRig:
-	if !_rig_manager || !is_instance_valid(_rig_manager):
-		_rig_manager = hud.get_tree().current_scene.get_node_or_null("/root/Map/Core/Camera/Manager")
-	var rig = _rig_manager.get_child(0) if _rig_manager && _rig_manager.get_child_count() > 0 else null
-	return rig if rig is WeaponRig else null
-
-
-func _magazine_attached(hud) -> bool:
-	var rig = _active_rig(hud)
-	if !rig || !rig.magazine:
-		return true
-	return rig.magazine.visible
-
-
-func _update_ammo_overlays(hud) -> void:
+func _update_ammo_cards(hud, rig: WeaponRig) -> void:
 	if gameData.isInspecting && ModConfig.ammo_tooltips:
-		hud.magazine.visible = _magazine_attached(hud)
+		hud.magazine.visible = !rig || !rig.magazine || rig.magazine.visible
 		hud.chamber.visible = true
 	elif gameData.isChecking:
 		hud.magazine.visible = ModConfig.ammo_check_view
@@ -209,22 +168,13 @@ func _update_ammo_overlays(hud) -> void:
 		hud.chamber.visible = false
 
 
-func _update_attachment_tooltips(hud) -> void:
-	if _att_tooltips.is_empty():
+func _update_attachment_cards(rig: WeaponRig) -> void:
+	if _att_cards.is_empty():
 		return
 
-	if !ModConfig.attachment_tooltips || !gameData.isInspecting:
-		for tt in _att_tooltips.values():
-			tt.hide()
-		return
-
-	if !_camera || !is_instance_valid(_camera):
-		_camera = hud.get_tree().current_scene.get_node_or_null("/root/Map/Core/Camera")
-
-	var rig = _active_rig(hud)
-	if !_camera || !rig || !rig.slotData || !rig.attachments:
-		for tt in _att_tooltips.values():
-			tt.hide()
+	if !ModConfig.attachment_tooltips || !gameData.isInspecting || !_camera || !rig || !rig.slotData || !rig.attachments:
+		for card in _att_cards.values():
+			card.hide()
 		return
 
 	var by_subtype: Dictionary = {}
@@ -233,42 +183,22 @@ func _update_attachment_tooltips(hud) -> void:
 			by_subtype[nested.subtype] = nested
 
 	for subtype in _ATTACHMENT_SUBTYPES:
-		var tooltip: Control = _att_tooltips[subtype]
+		var card: InspectCard = _att_cards[subtype]
 		var item = by_subtype.get(subtype, null)
 		var attachment = rig.attachments.get_node_or_null(item.file) if item else null
 		if !item || !attachment || !is_instance_valid(attachment) || !attachment.visible:
-			tooltip.hide()
+			card.hide()
 			continue
 
-		var panel = tooltip.get_child(0)
-		var label: Label = panel.get_child(0)
-		if item.name != label.text:
-			label.text = item.name
-			var min_size = label.get_minimum_size()
-			var w = max(min_size.x + _ATT_PAD_X * 2.0, _ATT_MIN_W)
-			var h = max(min_size.y + _ATT_PAD_Y * 2.0, _ATT_MIN_H)
-			panel.offset_left = -w / 2.0
-			panel.offset_top = -h / 2.0
-			panel.offset_right = w / 2.0
-			panel.offset_bottom = h / 2.0
-
-		tooltip.global_position = _camera.unproject_position(_world_center(attachment))
-		tooltip.show()
+		card.set_text(item.name)
+		card.point_at(_camera.unproject_position(_world_center(attachment)))
 
 
-func _update_firemode_card(hud) -> void:
+func _update_firemode_card(rig: WeaponRig) -> void:
 	if !is_instance_valid(_firemode_card):
 		return
 
-	if !ModConfig.firemode_card || !gameData.isInspecting:
-		_firemode_card.hide()
-		return
-
-	if !_camera || !is_instance_valid(_camera):
-		_camera = hud.get_tree().current_scene.get_node_or_null("/root/Map/Core/Camera")
-
-	var rig = _active_rig(hud)
-	if !_camera || !rig || !rig.skeleton || !rig.data || rig.data.weaponAction != "Semi-Auto":
+	if !ModConfig.firemode_card || !gameData.isInspecting || !_camera || !rig || !rig.skeleton || !rig.data || rig.data.weaponAction != "Semi-Auto":
 		_firemode_card.hide()
 		return
 
@@ -277,35 +207,10 @@ func _update_firemode_card(hud) -> void:
 		_firemode_card.hide()
 		return
 
-	var mode = rig.slotData.mode if rig.slotData else 1
-	if mode != _firemode_mode:
-		_firemode_mode = mode
-		_firemode_card.get_child(0).queue_redraw()
+	_firemode_card.set_mode(rig.slotData.mode if rig.slotData else 1)
 
 	var bone_origin = skeleton.get_bone_global_pose(rig.selectorIndex).origin
-	_firemode_card.global_position = _camera.unproject_position(skeleton.to_global(bone_origin))
-	_firemode_card.show()
-
-
-func _draw_firemode(panel: Control, label) -> void:
-	var color: Color = label.get_theme_color("font_color") * label.self_modulate * label.modulate
-	var center := panel.size * 0.5
-	if _firemode_mode == 2:
-		_draw_bullet(panel, center + Vector2(-_BULLET_STAGGER.x, _BULLET_STAGGER.y), color)
-		_draw_bullet(panel, center + Vector2(_BULLET_STAGGER.x, -_BULLET_STAGGER.y), color)
-	else:
-		_draw_bullet(panel, center, color)
-
-
-func _draw_bullet(c: Control, center: Vector2, color: Color) -> void:
-	var top := center.y - (_BULLET_BODY_H + _BULLET_TIP_H) * 0.5
-	c.draw_rect(Rect2(center.x - _BULLET_W * 0.5, top + _BULLET_TIP_H, _BULLET_W, _BULLET_BODY_H), color, true)
-	var tip := PackedVector2Array([
-		Vector2(center.x - _BULLET_W * 0.5, top + _BULLET_TIP_H),
-		Vector2(center.x + _BULLET_W * 0.5, top + _BULLET_TIP_H),
-		Vector2(center.x, top)
-	])
-	c.draw_colored_polygon(tip, color)
+	_firemode_card.point_at(_camera.unproject_position(skeleton.to_global(bone_origin)))
 
 
 static var _local_center_cache: Dictionary = {}
