@@ -95,8 +95,8 @@ func on_physics_process_post(delta: float) -> void:
 
 
 func _update_ammo_cards(hud, rig: WeaponRig) -> void:
-	if gameData.isInspecting && ModConfig.ammo_tooltips:
-		hud.magazine.visible = !rig || !rig.magazine || rig.magazine.visible
+	if (gameData.isInspecting || gameData.isInserting) && ModConfig.ammo_cards:
+		hud.magazine.visible = rig && (!rig.magazine || rig.magazine.visible)
 		hud.chamber.visible = true
 	elif gameData.isChecking:
 		hud.magazine.visible = ModConfig.ammo_check_view
