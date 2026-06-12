@@ -240,8 +240,8 @@ func _set_target(h) -> void:
 		return
 
 	if gameData.isChecking || (gameData.isReloading && data.weaponAction != "Manual"):
-		h.targetPosition = data.lowPosition + (Vector3.ZERO if gameData.isReloading else Vector3(0, 0.05, 0))
-		h.targetRotation = data.lowRotation + Vector3(-20, 0, 0)
+		h.targetPosition = data.lowPosition
+		h.targetRotation = data.lowRotation
 		return
 
 	if gameData.isPlacing:
