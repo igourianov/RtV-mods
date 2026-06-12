@@ -21,6 +21,7 @@ static var disable_zoom_dof: bool
 static var override_movement_speeds: bool
 static var nvg_pip_blur: bool
 static var ammo_tooltips: bool
+static var replace_ammo_count: bool
 static var crouch_speed: float
 static var walk_speed: float
 static var sprint_speed: float
@@ -82,6 +83,7 @@ static func apply_config(config: ConfigFile) -> void:
 	override_movement_speeds = _get_config_value(config, "Bool", "overrideMovementSpeeds", DEFAULT_ENABLED)
 	nvg_pip_blur = _get_config_value(config, "Bool", "nvgPipBlur", DEFAULT_ENABLED)
 	ammo_tooltips = _get_config_value(config, "Bool", "ammoTooltips", DEFAULT_ENABLED)
+	replace_ammo_count = _get_config_value(config, "Bool", "replaceAmmoCount", !DEFAULT_ENABLED)
 	crouch_speed = _get_config_value(config, "Float", "crouchSpeed", DEFAULT_CROUCH_SPEED)
 	walk_speed = _get_config_value(config, "Float", "walkSpeed", DEFAULT_WALK_SPEED)
 	sprint_speed = _get_config_value(config, "Float", "sprintSpeed2", DEFAULT_SPRINT_SPEED)
@@ -153,6 +155,8 @@ static func create_template(config: ConfigFile) -> void:
 	_set_config_entry(config, "Bool", "Canted mode", "laserAutoOn", "Laser Auto-On", "Auto-activate the laser when entering canted aim", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Bool", "Inspect", "ammoTooltips", "Show ammo cards", "Show magazine and chamber overlays while inspecting the weapon", DEFAULT_ENABLED)
+
+	_set_config_entry(config, "Bool", "Inspect", "replaceAmmoCount", "Replace ammo count with bars", "Show the magazine fill as bars instead of a raw number", !DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Bool", "Inspect", "attachmentTooltips", "Show attachment cards", "Show attachment names (optic, muzzle, laser) over the weapon while inspecting", DEFAULT_ENABLED)
 

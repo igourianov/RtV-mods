@@ -3,6 +3,7 @@ extends RefCounted
 const ModConfig = preload("../ModConfig.gd")
 const InspectCard = preload("../InspectCards/InspectCard.gd")
 const FireModeCard = preload("../InspectCards/FireModeCard.gd")
+const AmmoCardReplacer = preload("../InspectCards/AmmoCardReplacer.gd")
 const Crosshair = preload("../Nodes/Crosshair.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
@@ -14,6 +15,7 @@ const _ATT_FONT_SIZE := 16
 
 var _att_cards: Dictionary = {}
 var _firemode_card: FireModeCard
+var _ammo_replacer: AmmoCardReplacer
 var _camera: Camera3D
 var _rig_manager: Node3D
 
@@ -29,6 +31,7 @@ func on_ready_post() -> void:
 	_setup_crosshair(hud)
 	_setup_attachment_cards(hud)
 	_setup_firemode_card(hud)
+	_setup_ammo_replacer(hud)
 
 
 func _setup_attachment_cards(hud) -> void:
@@ -58,22 +61,34 @@ func _setup_firemode_card(hud) -> void:
 	if is_instance_valid(_firemode_card) && _firemode_card.get_parent() == hud:
 		return
 	_firemode_card = FireModeCard.new()
-	_firemode_card.name = "FiremodeCard"
 	hud.add_child(_firemode_card)
+
+
+func _setup_ammo_replacer(hud) -> void:
+	if !hud.magazine || hud.magazine.get_child_count() == 0:
+		return
+	var panel = hud.magazine.get_child(0)
+	if is_instance_valid(_ammo_replacer) && _ammo_replacer.get_parent() == panel:
+		return
+	_ammo_replacer = AmmoCardReplacer.new()
+	panel.add_child(_ammo_replacer)
 
 
 func on_physics_process_post(delta: float) -> void:
 	var hud = _lib._caller
 	if !is_instance_valid(hud):
 		return
+
 	if !is_instance_valid(_camera):
 		_camera = hud.get_node_or_null("/root/Map/Core/Camera")
 	if !is_instance_valid(_rig_manager):
 		_rig_manager = hud.get_node_or_null("/root/Map/Core/Camera/Manager")
+
 	var rig: WeaponRig = _rig_manager.get_child(0) as WeaponRig if _rig_manager && _rig_manager.get_child_count() > 0 else null
 
 	if is_instance_valid(_crosshair):
 		_crosshair.update(hud, delta)
+
 	_update_ammo_cards(hud, rig)
 	_update_attachment_cards(rig)
 	_update_firemode_card(rig)
@@ -89,6 +104,9 @@ func _update_ammo_cards(hud, rig: WeaponRig) -> void:
 	else:
 		hud.magazine.visible = false
 		hud.chamber.visible = false
+
+	if is_instance_valid(_ammo_replacer):
+		_ammo_replacer.set_rig(rig)
 
 
 func _update_attachment_cards(rig: WeaponRig) -> void:

@@ -1,4 +1,5 @@
 * fire selector card in inspect mode
+* replaced number on ammo counter card with bars 
 * unshift interaction tooltip if crosshair is disabled
 * fixed hook registration batching
 
