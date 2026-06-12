@@ -76,21 +76,18 @@ func _process(_delta: float) -> void:
 		if rig.data.weaponType == "Bolt" && rig.slotData.chamber: # hack - injected method track only checks slotData.casing==true
 			rig.slotData.chamber = false
 			rig.slotData.casing = true
-		if !await _play("Insert_Start", rig.data.insertStart):
-			return
-		if _state == ManualLoadState.OPEN:
+		if (await _play("Insert_Start", rig.data.insertStart)) && _state == ManualLoadState.OPEN:
 			_state = ManualLoadState.IDLE
-		Out.protip("ammo-manual-insert", "Press [%s] to start reloading" % Inputs.get_binding("fire"))
+			Out.protip("ammo-manual-insert", "Press [%s] to start reloading" % Inputs.get_binding("fire"))
 		return
 
 	if _state == ManualLoadState.INSERT:
-		if rig.slotData.amount < rig.data.maxAmount && rig.interface.GetAmmo(rig.data):
-			if !await _play("Insert", rig.data.insert, -0.1):
-				return
-			rig.slotData.amount += 1
-		else:
+		if rig.slotData.amount >= rig.data.maxAmount || !rig.interface.GetAmmo(rig.data):
+			_state = ManualLoadState.IDLE
 			_audio_player.play_event(rig.audioLibrary.UIError)
-		if _state == ManualLoadState.INSERT:
+			return
+		_insert_delayed(rig)
+		if (await _play("Insert", rig.data.insert, -0.1)) && _state == ManualLoadState.INSERT:
 			_state = ManualLoadState.IDLE
 		return
 
@@ -114,3 +111,9 @@ func _play(animation_state: String, audio_event, wait_offset: float = -0.5) -> b
 		return false
 	_busy = false
 	return true
+
+func _insert_delayed(rig: WeaponRig):
+	await get_tree().create_timer(0.5, false).timeout
+	if is_instance_valid(rig):
+		rig.slotData.amount += 1
+
