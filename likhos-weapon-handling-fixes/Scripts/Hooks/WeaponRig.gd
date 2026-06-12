@@ -26,15 +26,16 @@ func on_ready_post() -> void:
 	_inject_handler(rig, WeaponRig_Inspect, "Likho_WeaponRig_Inspect")
 
 
+func _inject_handler(rig, klass, node_name: String) -> void:
+	var h = klass.new()
+	h.name = node_name
+	rig.add_child(h)
+
+
 func on_casing_eject_post() -> void:
 	var rig = _lib._caller
 	if !rig:
 		return
 	# BUGFIX: always clear chamber flag when clearing casing
-	rig.slotData.chamber = false
-
-
-func _inject_handler(rig, klass, node_name: String) -> void:
-	var h = klass.new()
-	h.name = node_name
-	rig.add_child(h)
+	if rig.data.weaponType == "Bolt":
+		rig.slotData.chamber = false
