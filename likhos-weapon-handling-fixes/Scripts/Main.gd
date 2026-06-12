@@ -67,6 +67,7 @@ func setup(lib):
 	register_hook("handling-weaponhandling", _handling.on_weapon_handling)
 	register_hook("rigmanager-updaterig-post", _handling.on_rig_update_post)
 	register_hook("weaponrig-_ready-post", _weapon_rig.on_ready_post)
+	register_hook("weaponrig-casingeject-post", _weapon_rig.on_casing_eject_post)
 	register_hook("weaponrig-ads", noop)
 	register_hook("weaponrig-_physics_process", noop)
 	register_hook("weaponrig-_input", _handling.on_input)

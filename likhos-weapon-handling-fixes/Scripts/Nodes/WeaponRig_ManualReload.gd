@@ -73,8 +73,7 @@ func _process(_delta: float) -> void:
 
 	if _state == ManualLoadState.OPEN:
 		gameData.isInserting = true
-		if rig.data.weaponType == "Bolt" && rig.slotData.chamber: # hack - injected method track only checks slotData.casing==true
-			rig.slotData.chamber = false
+		if rig.data.weaponType == "Bolt" && rig.slotData.chamber: # hack - CasingEject() only checks slotData.casing==true
 			rig.slotData.casing = true
 		if (await _play("Insert_Start", rig.data.insertStart)) && _state == ManualLoadState.OPEN:
 			_state = ManualLoadState.IDLE
@@ -92,15 +91,12 @@ func _process(_delta: float) -> void:
 		return
 
 	if _state == ManualLoadState.CLOSE:
-		if !await _play("Insert_End", rig.data.insertEnd, -1.0):
-			return
+		rig.slotData.set_meta("cocked", true)
 		if rig.data.weaponType == "Bolt":
-			if rig.slotData.amount:
-				rig.slotData.chamber = true
-				rig.slotData.amount -= 1
-			rig.slotData.set_meta("cocked", true)
-		gameData.isInserting = false
-		_state = ManualLoadState.NONE
+			_close_bolt_delayed(rig)
+		if (await _play("Insert_End", rig.data.insertEnd, -1.0)) && _state == ManualLoadState.CLOSE:
+			_state = ManualLoadState.NONE
+		gameData.isInserting = false	
 		return
 
 
@@ -112,8 +108,15 @@ func _play(animation_state: String, audio_event, wait_offset: float = -0.5) -> b
 	_busy = false
 	return true
 
+
 func _insert_delayed(rig: WeaponRig):
 	await get_tree().create_timer(0.5, false).timeout
 	if is_instance_valid(rig):
 		rig.slotData.amount += 1
 
+
+func _close_bolt_delayed(rig: WeaponRig):
+	await get_tree().create_timer(0.25, false).timeout
+	if is_instance_valid(rig) && rig.slotData.amount:
+		rig.slotData.chamber = true
+		rig.slotData.amount -= 1
