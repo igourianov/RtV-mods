@@ -36,26 +36,23 @@ func _init(lib) -> void:
 	_lib = lib
 
 
-func _ensure_channels(host: Node) -> void:
-	if !is_instance_valid(_breath_sound):
-		_breath_sound = BreathHoldPlayer.new()
-		host.add_child(_breath_sound)
-
-
-# removes stamina drain on isInspecting
 func on_stamina(delta: float) -> void:
-	if _lib._caller == null:
+	var chr: Node = _lib._caller as Node
+	if !chr:
 		return
 	_lib.skip_super()
-	if !_interface:
-		_interface = _lib._caller.get_node("/root/Map/Core/UI/Interface")
-	_ensure_channels(_lib._caller)
-	_update_hold_breath(delta)
-	_body_stamina(delta, _interface.currentInventoryWeight, _interface.currentInventoryCapacity if _interface.currentInventoryCapacity else _interface.baseCarryWeight)
-	_arm_stamina(delta)
+
+	_hold_breath(chr, delta)
+	_body_stamina(chr, delta)
+	_arm_stamina(chr, delta)
 
 
-func _update_hold_breath(delta: float) -> void:
+func _hold_breath(chr: Node, delta: float) -> void:
+
+	if !is_instance_valid(_breath_sound):
+		_breath_sound = BreathHoldPlayer.new()
+		chr.add_child(_breath_sound)
+
 	var intent: bool = Input.is_action_pressed("sprint")
 	var allowed: bool = gameData.isAiming && gameData.armStamina > 0.0
 	var holding: bool = ModConfig.hold_breath_state > 0.0
@@ -76,9 +73,15 @@ func _update_hold_breath(delta: float) -> void:
 		ModConfig.hold_breath_state = clampf(_hold_breath_time / HOLD_BREATH_INTRO_DURATION, 0.0, 1.0)
 
 
-func _body_stamina(delta: float, current_inv_weight: float, max_inv_weight: float) -> void:
+func _body_stamina(chr: Node, delta: float) -> void:
+
+	if !is_instance_valid(_interface):
+		_interface = chr.get_node("/root/Map/Core/UI/Interface")
+	
+	var inv_cap: float = _interface.currentInventoryCapacity if _interface.currentInventoryCapacity else _interface.baseCarryWeight
+	var weight_factor: float = maxf(BODY_STAMINA_FACTOR_MIN, _interface.currentInventoryWeight / inv_cap)
 	var stamina: float = 0.0
-	var weight_factor: float = maxf(BODY_STAMINA_FACTOR_MIN, current_inv_weight / max_inv_weight)
+
 	if gameData.isSwimming && gameData.isMoving:
 		stamina = BODY_STAMINA_SWIM * weight_factor
 		_body_recovery_delay = 0.0
@@ -97,7 +100,7 @@ func _body_stamina(delta: float, current_inv_weight: float, max_inv_weight: floa
 	gameData.bodyStamina = clampf(gameData.bodyStamina + delta * stamina, 0.0, 100.0)
 
 
-func _arm_stamina(delta: float) -> void:
+func _arm_stamina(chr: Node, delta: float) -> void:
 	var stamina: float = 0.0
 	var weight_factor: float = ModConfig.current_weapon_weight / ModConfig.BASE_WEAPON_WEIGHT
 	if gameData.isCanted:
