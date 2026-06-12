@@ -8,7 +8,7 @@ const _MAX_BARS := 10
 const _BAR_WIDTH_FACTOR := 0.5
 const _BAR_THICKNESS := 3
 const _BAR_GAP := 3
-const _PLACEHOLDER := Color(0.4, 0.30, 0.2)
+const _PLACEHOLDER := Color(0.3, 0.3, 0.3)
 
 var _rig
 var _label: Label
@@ -91,7 +91,7 @@ func _draw() -> void:
 	var fill_color := _content_color()
 
 	for i in bar_count:
-		var y: float = start_y + i * (_BAR_THICKNESS + _BAR_GAP)
+		var center_y: float = start_y + i * (_BAR_THICKNESS + _BAR_GAP) + _BAR_THICKNESS * 0.5
 		var is_filled: bool = i >= bar_count - filled
 		var color := fill_color if is_filled else _PLACEHOLDER
-		draw_rect(Rect2(bar_x, y, bar_w, _BAR_THICKNESS), color, true)
+		draw_line(Vector2(bar_x, center_y), Vector2(bar_x + bar_w, center_y), color, _BAR_THICKNESS, true)
