@@ -4,6 +4,7 @@ const ModConfig = preload("../ModConfig.gd")
 const InspectCard = preload("../InspectCards/InspectCard.gd")
 const FireModeCard = preload("../InspectCards/FireModeCard.gd")
 const AmmoCardReplacer = preload("../InspectCards/AmmoCardReplacer.gd")
+const ChamberCardReplacer = preload("../InspectCards/ChamberCardReplacer.gd")
 const Crosshair = preload("../Nodes/Crosshair.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
@@ -16,6 +17,7 @@ const _ATT_FONT_SIZE := 16
 var _att_cards: Dictionary = {}
 var _firemode_card: FireModeCard
 var _ammo_replacer: AmmoCardReplacer
+var _chamber_replacer: ChamberCardReplacer
 var _camera: Camera3D
 var _rig_manager: Node3D
 
@@ -32,6 +34,7 @@ func on_ready_post() -> void:
 	_setup_attachment_cards(hud)
 	_setup_firemode_card(hud)
 	_setup_ammo_replacer(hud)
+	_setup_chamber_replacer(hud)
 
 
 func _setup_attachment_cards(hud) -> void:
@@ -74,6 +77,16 @@ func _setup_ammo_replacer(hud) -> void:
 	panel.add_child(_ammo_replacer)
 
 
+func _setup_chamber_replacer(hud) -> void:
+	if !hud.chamber || hud.chamber.get_child_count() == 0:
+		return
+	var panel = hud.chamber.get_child(0)
+	if is_instance_valid(_chamber_replacer) && _chamber_replacer.get_parent() == panel:
+		return
+	_chamber_replacer = ChamberCardReplacer.new()
+	panel.add_child(_chamber_replacer)
+
+
 func on_physics_process_post(delta: float) -> void:
 	var hud = _lib._caller
 	if !is_instance_valid(hud):
@@ -110,6 +123,9 @@ func _update_ammo_cards(hud, rig: WeaponRig) -> void:
 
 	if is_instance_valid(_ammo_replacer):
 		_ammo_replacer.set_rig(rig)
+
+	if is_instance_valid(_chamber_replacer):
+		_chamber_replacer.set_rig(rig)
 
 
 func _update_attachment_cards(rig: WeaponRig) -> void:
