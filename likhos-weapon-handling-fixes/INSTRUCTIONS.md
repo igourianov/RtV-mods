@@ -28,6 +28,7 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `Noise._physics_process` (post)
 - `Tilt._physics_process` (pre)
 - `HUD._ready` (post)
+- `HUD._physics_process` (post)
 - `Optic._physics_process` (pre)
 - `Laser._process` (post)
 - `Tooltip.Update` (post)
@@ -35,6 +36,8 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `Inputs.CreateActions` (pre and post)
 - `Inputs.ResetActions` (post)
 - `Interactor._physics_process` (pre)
+- `UIPosition._physics_process` (post)
+- `Item.UpdateDetails` (post)
 
 # Install / Uninstall
 
