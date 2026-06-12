@@ -50,16 +50,26 @@ func _process(delta: float) -> void:
 	elif !_prev_visible:
 		_prev_visible = true
 		_capacity = _get_mag_cap()
-		var amount: int = _rig.slotData.amount if _rig && _rig.slotData else 0
-		_fill_target = clampf(float(amount) / float(_capacity), 0.0, 1.0) if _capacity > 0 else 0.0
 		_fill_progress = 0.0
 		_delay = _DELAY
+		_update_fill_target()
 		queue_redraw()
 	elif _delay > 0.0:
 		_delay -= delta
 	elif _fill_progress < 1.0:
 		_fill_progress = min(_fill_progress + delta / _DURATION, 1.0)
 		queue_redraw()
+	else:
+		_update_fill_target()
+		queue_redraw()
+
+
+func _update_fill_target():
+	var ammo: int = _rig.slotData.amount if _rig && _rig.slotData else 0
+	if _capacity > 0:
+		_fill_target = clampf(float(ammo) / float(_capacity), 0.0, 1.0)
+	else:
+		_fill_target = 0.0
 
 
 func _get_mag_cap() -> int:
