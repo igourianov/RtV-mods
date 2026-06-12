@@ -14,5 +14,5 @@ func on_update_details_post() -> void:
 	if !item:
 		return
 
-	if item.slotData.itemData.type == "Weapon" && ModConfig.replace_ammo_count:
+	if item.slotData.itemData.type == "Weapon" && ModConfig.ammo_icons:
 		item.amount.hide()

@@ -36,7 +36,7 @@ func set_rig(rig) -> void:
 
 
 func _process(delta: float) -> void:
-	if !ModConfig.replace_ammo_count:
+	if !ModConfig.ammo_icons:
 		_label.show()
 		visible = false
 		_prev_visible = false

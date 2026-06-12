@@ -17,11 +17,11 @@ static var crosshair_while_raised: bool
 static var cant_mode: StringName
 static var lpvo_ooa_zoom: StringName
 static var mag_schema: StringName
-static var disable_zoom_dof: bool
+static var zoom_dof: bool
 static var override_movement_speeds: bool
 static var nvg_pip_blur: bool
 static var ammo_cards: bool
-static var replace_ammo_count: bool
+static var ammo_icons: bool
 static var crouch_speed: float
 static var walk_speed: float
 static var sprint_speed: float
@@ -36,7 +36,7 @@ static var show_protips: bool
 static var debug_enabled: bool
 static var free_look: bool
 static var patrol_position: bool
-static var allow_negligent_discharge: bool
+static var negligent_discharge: bool
 static var custom_stamina: bool
 
 static var _menu_pos_auto: int = 0
@@ -80,11 +80,11 @@ static func apply_config(config: ConfigFile) -> void:
 	cant_mode = _get_config_value(config, "Dropdown", "cantMode", DEFAULT_CANT_MODE)
 	lpvo_ooa_zoom = _get_config_value(config, "Dropdown", "lpvoOofZoom", DEFAULT_LPVO_OOA_ZOOM)
 	mag_schema = _get_config_value(config, "Dropdown", "magSchema", DEFAULT_MAG_SCHEMA)
-	disable_zoom_dof = !_get_config_value(config, "Bool", "enableZoomDof", DEFAULT_ENABLED)
+	zoom_dof = _get_config_value(config, "Bool", "enableZoomDof", DEFAULT_ENABLED)
 	override_movement_speeds = _get_config_value(config, "Bool", "overrideMovementSpeeds", DEFAULT_ENABLED)
 	nvg_pip_blur = _get_config_value(config, "Bool", "nvgPipBlur", DEFAULT_ENABLED)
 	ammo_cards = _get_config_value(config, "Bool", "ammoTooltips", DEFAULT_ENABLED)
-	replace_ammo_count = _get_config_value(config, "Bool", "replaceAmmoCount", !DEFAULT_ENABLED)
+	ammo_icons = _get_config_value(config, "Bool", "replaceAmmoCount", !DEFAULT_ENABLED)
 	crouch_speed = _get_config_value(config, "Float", "crouchSpeed", DEFAULT_CROUCH_SPEED)
 	walk_speed = _get_config_value(config, "Float", "walkSpeed", DEFAULT_WALK_SPEED)
 	sprint_speed = _get_config_value(config, "Float", "sprintSpeed2", DEFAULT_SPRINT_SPEED)
@@ -97,7 +97,7 @@ static func apply_config(config: ConfigFile) -> void:
 	pip_anti_aliasing = _get_config_value(config, "Bool", "pipAntiAliasing", DEFAULT_ENABLED)
 	free_look = _get_config_value(config, "Bool", "enableFreeLook", DEFAULT_ENABLED)
 	patrol_position = _get_config_value(config, "Bool", "patrolPosition", DEFAULT_ENABLED)
-	allow_negligent_discharge = _get_config_value(config, "Bool", "allowNegligentDischarge", DEFAULT_ENABLED)
+	negligent_discharge = _get_config_value(config, "Bool", "allowNegligentDischarge", DEFAULT_ENABLED)
 	custom_stamina = _get_config_value(config, "Bool", "customStamina", DEFAULT_ENABLED)
 
 

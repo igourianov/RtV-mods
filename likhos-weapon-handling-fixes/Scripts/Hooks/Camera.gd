@@ -15,7 +15,7 @@ func on_scope_dof(delta: float) -> void:
 	var cam = _lib._caller
 	if !cam || !cam.attribute:
 		return
-	if ModConfig.disable_zoom_dof:
+	if !ModConfig.zoom_dof:
 		cam.attribute.dof_blur_far_enabled = false
 		cam.attribute.dof_blur_near_enabled = false
 		cam.attribute.dof_blur_amount = 0.0
