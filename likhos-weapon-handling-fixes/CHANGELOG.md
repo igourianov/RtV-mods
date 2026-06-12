@@ -1,5 +1,6 @@
 * fire selector card in inspect mode
 * replaced number on ammo counter card with bars 
+* sped up rig handling, fixed some of thenk jittery due to free look attachment
 * unshift interaction tooltip if crosshair is disabled
 * fixed hook registration batching
 

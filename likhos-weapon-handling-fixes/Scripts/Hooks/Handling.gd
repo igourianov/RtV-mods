@@ -47,7 +47,6 @@ enum HandlingMode {
 	RDS = 115,
 	Cant = 130,
 	ScopeZoom = 80,
-	Admin = 50,
 }
 
 const _AIM_POS_OVERRIDE := {
@@ -84,6 +83,7 @@ var _baseline_captured := false
 var _handling_speed: float = 7.5
 var _anchor_pitch: float = 0.0
 var _target_pitch: float = 0.0
+var _pitch_offset: float = 0.0
 var _stow_hold: float = 0.0
 var _stow_active := false
 var _stow_rot: Vector3
@@ -180,6 +180,7 @@ func on_weapon_handling(delta: float) -> void:
 
 	gameData.isColliding = h.collision.is_colliding()
 	_resolve_aim_intent()
+	_handlingMode = HandlingMode.Default
 	_target_idle = false
 
 	if gameData.freeze:
@@ -222,27 +223,23 @@ func _set_target(h) -> void:
 	var optic = rig.activeOptic
 
 	if gameData.isClearing || gameData.isColliding:
-		_handlingMode = HandlingMode.Default
 		h.targetPosition = data.collisionPosition
 		h.targetRotation = data.collisionRotation
 		return
 
 	if gameData.isInspecting:
-		_handlingMode = HandlingMode.Admin
 		gameData.weaponPosition = 1
 		h.targetPosition = data.inspectPosition
 		h.targetRotation = data.inspectRotation
 		return
 
 	if gameData.isInserting:
-		_handlingMode = HandlingMode.Admin
 		gameData.weaponPosition = 1
 		h.targetPosition = data.lowPosition
 		h.targetRotation = data.lowRotation
 		return
 
-	if (gameData.isChecking && ModConfig.ammo_check_view) || (gameData.isReloading && data.weaponAction != "Manual"):
-		_handlingMode = HandlingMode.Admin
+	if gameData.isChecking || (gameData.isReloading && data.weaponAction != "Manual"):
 		h.targetPosition = data.lowPosition + (Vector3.ZERO if gameData.isReloading else Vector3(0, 0.05, 0))
 		h.targetRotation = data.lowRotation + Vector3(-20, 0, 0)
 		return
@@ -270,8 +267,6 @@ func _set_target(h) -> void:
 			_handlingMode = HandlingMode.ScopeZoom
 		elif optic:
 			_handlingMode = HandlingMode.RDS
-		else:
-			_handlingMode = HandlingMode.Default
 
 		if !optic:
 			h.targetPosition = data.aimPosition
@@ -284,7 +279,6 @@ func _set_target(h) -> void:
 		return
 
 	if gameData.weaponPosition == 2:
-		_handlingMode = HandlingMode.Default
 		h.targetPosition = data.highPosition
 		h.targetRotation = data.highRotation
 		return
@@ -298,13 +292,11 @@ func _set_target_idle(h) -> void:
 	_idle_hide_left_arm = false
 
 	if data.type != "Weapon":
-		_handlingMode = HandlingMode.Default
 		h.targetPosition = data.lowPosition
 		h.targetRotation = data.lowRotation
 		return
 
 	if ModConfig.free_look && _stow_active:
-		_handlingMode = HandlingMode.Admin
 		h.targetPosition = data.lowPosition + _STOW_POS_OFFSET
 		h.targetRotation = _stow_rot
 		return
@@ -336,7 +328,8 @@ func _apply_target(h, delta: float) -> void:
 	var t := delta * _handling_speed
 
 	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), t)
-	h.rotation_degrees = lerp(h.rotation_degrees, h.targetRotation, t)
+	var target_quat := Quaternion.from_euler(Vector3(deg_to_rad(h.targetRotation.x), deg_to_rad(h.targetRotation.y), deg_to_rad(h.targetRotation.z)))
+	h.quaternion = h.quaternion.slerp(target_quat, t)
 
 	if !_baseline_captured || !ModConfig.free_look:
 		return
@@ -363,12 +356,17 @@ func _apply_target(h, delta: float) -> void:
 	if cam_pitch_deg >= _ANCHOR_PITCH:
 		_anchor_pitch = cam_euler.x
 
-	if !_target_idle:
-		_target_pitch = cam_euler.x
+	var pitch_follow: bool = gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2
+	var offset_target: float
+	if pitch_follow:
+		offset_target = 0.0
 	elif _stow_active || cam_pitch_deg >= _ANCHOR_PITCH:
-		_target_pitch = lerp(_target_pitch, 0.0, t)
+		offset_target = cam_euler.x
 	else:
-		_target_pitch = lerp(_target_pitch, cam_euler.x - _anchor_pitch, t)
+		offset_target = _anchor_pitch
+
+	_pitch_offset = lerp(_pitch_offset, offset_target, t)
+	_target_pitch = cam_euler.x - _pitch_offset
 
 	var weapon_basis := Basis.from_euler(Vector3(_target_pitch, cam_euler.y, cam_euler.z))
 	manager.global_transform = Transform3D(weapon_basis, cam_xform.origin) * _manager_local_baseline
