@@ -86,9 +86,8 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 !!! Stamina
 Both stamina bars are now dynamic and much more realistic. 
 * There is now a dynamic delay for beginning recovery after use.
-* Arm stamina drain scales with the weight of the gun held and position it is held in (canted=slower; aim zoomed=faster)
+* Arm stamina drain scales with the weight of the gun held and position it is held in (canted=slower; aiming=faster)
 * Arm stamina recovery and recovery delay scales with the Energy stat
-* Crouch halves aim stamina drain, except when holding breath
 * Leg stamina drain scales with the inventory weight
 * Leg stamina recovery and recovery delay scales with the Hydration stat
 * Overweight, Fracture and Leg Stamina=0 now block sprinting completely

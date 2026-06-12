@@ -15,12 +15,9 @@ const BODY_STAMINA_FACTOR_MIN: float = 0.2
 
 const ARM_STAMINA_CANTED: float = -2.0
 const ARM_STAMINA_AIM: float = -3.0
-const ARM_STAMINA_AIM_ZOOM: float = -3.5
-const ARM_STAMINA_RAISED: float = -2.0
-const ARM_STAMINA_AIM_CROUCH_MOD: float = 0.5
-const ARM_STAMINA_HOLD_BREATH_MOD: float = 2.0
+const ARM_STAMINA_HOLD_BREATH: float = -5.0
 
-const HOLD_BREATH_INTRO_DURATION: float = 0.5
+const HOLD_BREATH_SETTLE: float = 0.5
 const HOLD_BREATH_OUTRO_MIN_HOLD: float = 3.0
 
 var _lib
@@ -40,11 +37,15 @@ func on_stamina(delta: float) -> void:
 	var chr: Node = _lib._caller as Node
 	if !chr:
 		return
-	_lib.skip_super()
 
 	_hold_breath(chr, delta)
-	_body_stamina(chr, delta)
-	_arm_stamina(chr, delta)
+
+	if ModConfig.custom_stamina:
+		_lib.skip_super()
+		_body_stamina(chr, delta)
+		_arm_stamina(chr, delta)
+	elif ModConfig.hold_breath_state > 0.0:
+		gameData.armStamina = clampf(gameData.armStamina + delta * ARM_STAMINA_HOLD_BREATH, 0.0, 100.0)
 
 
 func _hold_breath(chr: Node, delta: float) -> void:
@@ -70,7 +71,7 @@ func _hold_breath(chr: Node, delta: float) -> void:
 			_breath_sound.release()
 		ModConfig.hold_breath_state = 0.0
 	elif holding:
-		ModConfig.hold_breath_state = clampf(_hold_breath_time / HOLD_BREATH_INTRO_DURATION, 0.0, 1.0)
+		ModConfig.hold_breath_state = clampf(_hold_breath_time / HOLD_BREATH_SETTLE, 0.0, 1.0)
 
 
 func _body_stamina(chr: Node, delta: float) -> void:
@@ -80,6 +81,7 @@ func _body_stamina(chr: Node, delta: float) -> void:
 	
 	var inv_cap: float = _interface.currentInventoryCapacity if _interface.currentInventoryCapacity else _interface.baseCarryWeight
 	var weight_factor: float = maxf(BODY_STAMINA_FACTOR_MIN, _interface.currentInventoryWeight / inv_cap)
+	var hydration_factor: float = gameData.hydration / 100.0
 	var stamina: float = 0.0
 
 	if gameData.isSwimming && gameData.isMoving:
@@ -88,14 +90,11 @@ func _body_stamina(chr: Node, delta: float) -> void:
 	elif gameData.isRunning:
 		stamina = BODY_STAMINA_RUN * weight_factor
 		_body_recovery_delay = 0.0
-	elif gameData.bodyStamina >= 100.0:
-		return
-	else:
-		var hydration_factor: float = gameData.hydration / 100.0
+	elif gameData.bodyStamina < 100.0:
 		if _body_recovery_delay < _recovery_delay_threshold(gameData.bodyStamina, hydration_factor):
 			_body_recovery_delay += delta
-			return
-		stamina = STAMINA_RECOVERY * hydration_factor * hydration_factor
+		else:
+			stamina = STAMINA_RECOVERY * hydration_factor * hydration_factor
 
 	gameData.bodyStamina = clampf(gameData.bodyStamina + delta * stamina, 0.0, 100.0)
 
@@ -103,28 +102,21 @@ func _body_stamina(chr: Node, delta: float) -> void:
 func _arm_stamina(chr: Node, delta: float) -> void:
 	var stamina: float = 0.0
 	var weight_factor: float = ModConfig.current_weapon_weight / ModConfig.BASE_WEAPON_WEIGHT
-	if gameData.isCanted:
+	var energy_factor: float = gameData.energy / 100.0
+
+	if gameData.isAiming:
+		stamina = ARM_STAMINA_AIM * weight_factor
+		if ModConfig.hold_breath_state > 0.0:
+			stamina += ARM_STAMINA_HOLD_BREATH
+		_arm_recovery_delay = 0.0
+	elif gameData.isCanted || gameData.weaponPosition == 2:
 		stamina = ARM_STAMINA_CANTED * weight_factor
 		_arm_recovery_delay = 0.0
-	elif gameData.isAiming:
-		stamina = ARM_STAMINA_AIM_ZOOM if ModConfig.current_scope_mag >= 2.0 else ARM_STAMINA_AIM
-		stamina *= weight_factor
-		if ModConfig.hold_breath_state > 0.0:
-			stamina *= ARM_STAMINA_HOLD_BREATH_MOD
-		elif gameData.isCrouching:
-			stamina *= ARM_STAMINA_AIM_CROUCH_MOD
-		_arm_recovery_delay = 0.0
-	elif gameData.weaponPosition == 2:
-		stamina = ARM_STAMINA_RAISED * weight_factor
-		_arm_recovery_delay = 0.0
-	elif gameData.armStamina >= 100.0:
-		return
-	else:
-		var energy_factor: float = gameData.energy / 100.0
+	elif gameData.armStamina < 100.0:
 		if _arm_recovery_delay < _recovery_delay_threshold(gameData.armStamina, energy_factor):
 			_arm_recovery_delay += delta
-			return
-		stamina = STAMINA_RECOVERY * energy_factor * energy_factor
+		else:
+			stamina = STAMINA_RECOVERY * energy_factor * energy_factor
 
 	gameData.armStamina = clampf(gameData.armStamina + delta * stamina, 0.0, 100.0)
 

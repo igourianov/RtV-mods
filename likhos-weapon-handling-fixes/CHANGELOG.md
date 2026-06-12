@@ -3,6 +3,7 @@
 * sped up rig handling, fixed state transition jittery due to free look attachment
 * unshift interaction tooltip if crosshair is disabled
 * fixed hook registration batching
+* simplified stamina drain logic, added MCM toggle 
 
 # 2.15.1730
 * rig stow timing tweaks
