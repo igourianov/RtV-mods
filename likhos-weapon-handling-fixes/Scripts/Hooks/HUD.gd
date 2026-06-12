@@ -105,6 +105,9 @@ func _update_ammo_cards(hud, rig: WeaponRig) -> void:
 		hud.magazine.visible = false
 		hud.chamber.visible = false
 
+	if rig && rig.slotData && (hud.chamber.visible || hud.magazine.visible):
+		rig.UpdateHUD()
+
 	if is_instance_valid(_ammo_replacer):
 		_ammo_replacer.set_rig(rig)
 
