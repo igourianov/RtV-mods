@@ -85,7 +85,6 @@ var _anchor_pitch: float = 0.0
 var _target_pitch: float = 0.0
 var _pitch_offset: float = 0.0
 var _stow_hold: float = 0.0
-var _stow_active := false
 var _stow_rot: Vector3
 var _idle_hide_left_arm := false
 var _rig_updated := false
@@ -173,17 +172,7 @@ func on_weapon_handling(delta: float) -> void:
 	_resolve_aim_intent()
 	_handlingMode = HandlingMode.Default
 	_target_idle = false
-
-	if gameData.freeze:
-		_stow_active = true
-		_stow_hold = _STOW_HOLD_INVENTORY if !_rig_updated else 0.0
-		_set_target_idle(h)
-		_apply_target(h, delta)
-		_apply_left_arm(h)
-		return
-
-	_rig_updated = false
-
+	
 	_set_target(h)
 	_apply_target(h, delta)
 	_apply_left_arm(h)
@@ -289,7 +278,7 @@ func _set_target_idle(h) -> void:
 		h.targetRotation = data.lowRotation
 		return
 
-	if ModConfig.free_look && _stow_active:
+	if ModConfig.free_look && _stow_hold > 0.0:
 		h.targetPosition = data.lowPosition + _STOW_POS_OFFSET
 		h.targetRotation = _stow_rot
 		return
@@ -336,23 +325,21 @@ func _apply_target(h, delta: float) -> void:
 	var cam_euler := cam_xform.basis.get_euler()
 	var cam_pitch_deg := rad_to_deg(cam_euler.x)
 
-	if !_target_idle:
-		_stow_active = false
+	if gameData.freeze:
+		_stow_hold = _STOW_HOLD_INVENTORY if !_rig_updated else 0.01
 	elif cam_pitch_deg < _LOOK_DOWN_PITCH:
 		_stow_hold = _STOW_HOLD_LOOK_DOWN
-		_stow_active = true
-	elif _stow_active:
+	elif _stow_hold > 0.0:
 		_stow_hold -= delta
-		_stow_active = _stow_hold > 0.0
+		_rig_updated = false
 
 	if cam_pitch_deg >= _ANCHOR_PITCH:
 		_anchor_pitch = cam_euler.x
 
-	var pitch_follow: bool = gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2
 	var offset_target: float
-	if pitch_follow:
+	if !_target_idle:
 		offset_target = 0.0
-	elif _stow_active || cam_pitch_deg >= _ANCHOR_PITCH:
+	elif _stow_hold > 0.0 || cam_pitch_deg >= _ANCHOR_PITCH:
 		offset_target = cam_euler.x
 	else:
 		offset_target = _anchor_pitch
@@ -374,7 +361,8 @@ func _apply_left_arm(h) -> void:
 		return
 
 	# collapse the left support arm while stowed (hacky: zero-scale the shoulder bone)
-	if _stow_active || (_target_idle && _idle_hide_left_arm):
+	#Out.debug("_target_idle:", _target_idle, "_stow_hold:", _stow_hold, "_idle_hide_left_arm:", _idle_hide_left_arm)
+	if _target_idle && (_stow_hold > 0.0 || _idle_hide_left_arm):
 		rig.skeleton.set_bone_pose_scale(arm_idx, _NEAR_ZERO)
 	else:
 		rig.skeleton.set_bone_pose_scale(arm_idx, Vector3.ONE)
