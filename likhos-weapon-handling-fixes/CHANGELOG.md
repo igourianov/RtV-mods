@@ -1,9 +1,10 @@
 * fire selector card in inspect mode
 * replaced number on ammo and chamber cards with icons 
-* sped up rig handling, fixed state transition jittery due to free look attachment
+* fixed state transition jittery due to free look attachment
 * unshift interaction tooltip if crosshair is disabled
 * fixed hook registration batching
-* simplified stamina drain logic, added MCM toggle 
+* simplified stamina drain logic, added MCM toggle
+* lots of refactoring
 
 # 2.15.1730
 * rig stow timing tweaks
