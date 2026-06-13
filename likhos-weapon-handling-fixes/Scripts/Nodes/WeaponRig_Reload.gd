@@ -155,11 +155,9 @@ func _do_reload(ammo_check: bool = false) -> void:
 		return
 
 	if data.weaponAction == "Manual":
-		if slotData.chamber:
-			slotData.chamber = false
+		if slotData.chamber: # hack - reload only animates ejecting casing but not live round
 			slotData.casing = true
 		await _play_reload("Reload", data.reload, -0.2)
-		slotData.casing = false
 		slotData.set_meta("cocked", true)
 		if slotData.amount:
 			slotData.chamber = true
