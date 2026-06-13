@@ -3,6 +3,7 @@
 * fixed state transition jittery due to free look attachment
 * unshift interaction tooltip if crosshair is disabled
 * fixed hook registration batching
+* fixed semi guns firing on reload from ammo check when there is no valid mag to use
 * simplified stamina drain logic, added MCM toggle
 * lots of refactoring
 
