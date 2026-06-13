@@ -1,3 +1,4 @@
+# 2.16.1851
 * fire selector card in inspect mode
 * replacement icons for ammo and chamber cards (disabled by default)
 * fixed state transition jittery due to free look attachment
