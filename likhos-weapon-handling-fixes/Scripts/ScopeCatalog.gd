@@ -1,6 +1,8 @@
 const Out = preload("../Lib/Out.gd")
 const ModConfig = preload("./ModConfig.gd")
 
+static var gameData = preload("res://Resources/GameData.tres")
+
 const _FALLBACK_MAG: Array[float] = [1.0]
 
 static var _lens_geometry_cache := {}
@@ -61,8 +63,26 @@ static func get_mag_range(key: String) -> Array:
 	return entry.get(field, entry.get("mag_range", _FALLBACK_MAG))
 
 
-static func is_magnified(optic) -> bool:
-	return optic && (optic.attachmentData.scope || optic.attachmentData.variable)
+static func sync_optic_state(rig) -> void:
+	var optic = rig.activeOptic if rig else null
+	# BUGFIX: vanilla forgets to reset secondaryOptic when equipping another optic, breaking other scopes in PIP mode
+	if gameData.secondaryOptic && !(optic && optic.secondary):
+		gameData.secondaryOptic = false
+	gameData.isScoped = optic && (optic.attachmentData.scope || optic.attachmentData.variable) && !gameData.secondaryOptic
+	if gameData.isScoped:
+		var mags := get_mag_range(optic.attachmentData.file)
+		ModConfig.current_scope_mag = mags[clamp(rig.slotData.zoom, 1, mags.size()) - 1]
+	else:
+		ModConfig.current_scope_mag = 1.0
+
+	if rig:
+		if !optic:
+			rig.aimOffset = 0.0
+		elif gameData.secondaryOptic:
+			# BUGFIX: vanilla fails to factor optic.scale, causing incorrect Y offset on several guns
+			rig.aimOffset = optic.position.y + optic.secondary.position.y * optic.scale.y
+		else:
+			rig.aimOffset = optic.position.y
 
 
 static func get_optic_geometry(optic) -> Dictionary:

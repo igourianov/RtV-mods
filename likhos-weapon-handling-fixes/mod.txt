@@ -1,7 +1,7 @@
 [mod]
 name="Likho's VosTac"
 id="likhos-weapon-handling-fixes"
-version="2.15.1839"
+version="2.15.1840"
 prefix="[likho-vostac]"
 description="Likho's collection of game fixes and realism improvements"
 debug=false

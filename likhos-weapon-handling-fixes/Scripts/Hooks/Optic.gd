@@ -45,7 +45,7 @@ func on_physics_process_pre(_delta: float) -> void:
 	if pip_mat && pip_mat.shader:
 		if !("shader_parameter/blur_radius" in pip_mat):
 			pip_mat.shader = _NVG_PIP_SHADER
-		var blur_on: bool = managed && gameData.PIP && gameData.NVG && ModConfig.nvg_pip_blur && ModConfig.current_scope_mag > 1.0
+		var blur_on: bool = managed && gameData.isAiming && gameData.isScoped && gameData.PIP && gameData.NVG && ModConfig.nvg_pip_blur && ModConfig.current_scope_mag > 1.0
 		var radius: float = BLUR_RADIUS_BASE * ModConfig.current_scope_mag if blur_on else 0.0
 		pip_mat.set_shader_parameter("blur_radius", radius)
 

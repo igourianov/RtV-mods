@@ -118,20 +118,14 @@ func on_rig_update_post(_animate) -> void:
 		manager.transform = _manager_local_baseline
 
 	var rig = manager.get_child(manager.get_child_count() - 1) if manager.get_child_count() else null
+	var optic = rig.activeOptic if rig else null
 
 	# save weapon weight for the handling speed calc
 	var weapon = rig.weaponSlot.get_children()[0] if rig && rig.weaponSlot else null
 	ModConfig.current_weapon_weight = weapon.Weight() if weapon else 0.0
 	Out.debug("weapon weight: %.1fkg" % ModConfig.current_weapon_weight)
 
-	# BUGFIX
-	# Vanilla forgets to reset secondaryOptic flag when equipping another optic
-	# Causes other scopes to break in PIP mode
-	var optic = rig.activeOptic if rig else null
-	if gameData.secondaryOptic && !(optic && optic.secondary):
-		gameData.secondaryOptic = false
-
-	gameData.isScoped = ScopeCatalog.is_magnified(optic) && !gameData.secondaryOptic
+	ScopeCatalog.sync_optic_state(rig)
 
 	# fold/unfold iron sights based on optic presence
 	# BUGFIX - vanilla doens't check frontSightIndex, which casues flicker on M4A1, which doens't have foldable front sight
