@@ -15,6 +15,7 @@ const Laser = preload("./Hooks/Laser.gd")
 const Flashlight = preload("./Hooks/Flashlight.gd")
 const ScopeCatalog = preload("./ScopeCatalog.gd")
 const RigOpticPatches = preload("./RigOpticPatches.gd")
+const WeaponPatches = preload("./WeaponPatches.gd")
 const Tooltip = preload("./Hooks/Tooltip.gd")
 const Interactor = preload("./Hooks/Interactor.gd")
 const UIPosition = preload("./Hooks/UIPosition.gd")
@@ -46,6 +47,7 @@ func setup(lib):
 
 	ScopeCatalog.apply(lib)
 	RigOpticPatches.apply(lib)
+	WeaponPatches.apply(lib)
 
 	var preferences = Preferences.Load()
 
