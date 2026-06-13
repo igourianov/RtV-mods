@@ -91,7 +91,6 @@ func _process(_delta: float) -> void:
 		return
 
 	if _state == ManualLoadState.CLOSE:
-		rig.slotData.set_meta("cocked", true)
 		if rig.data.weaponType == "Bolt":
 			_close_bolt_delayed(rig)
 		if (await _play("Insert_End", rig.data.insertEnd, -1.0)) && _state == ManualLoadState.CLOSE:

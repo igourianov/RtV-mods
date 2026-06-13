@@ -12,9 +12,6 @@ var _dry_click_sound
 
 func _ready() -> void:
 	set_physics_process(true)
-	var rig = get_parent()
-	if rig.slotData && !rig.slotData.has_meta("cocked"):
-		rig.slotData.set_meta("cocked", rig.slotData.chamber)
 
 
 func _physics_process(delta: float) -> void:
@@ -37,7 +34,7 @@ func _fire_input(rig) -> void:
 	if !ModConfig.negligent_discharge && !gameData.weaponPosition == 2 && !gameData.isAiming && !gameData.isCanted:
 		return
 
-	var cocked: bool = slotData.get_meta("cocked", false)
+	var cocked: bool = slotData.chamber || slotData.get_meta("cocked", true)
 	var triggered := false
 	
 	if slotData.mode == 1:

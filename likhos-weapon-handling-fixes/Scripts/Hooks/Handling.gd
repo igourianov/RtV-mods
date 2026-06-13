@@ -142,9 +142,6 @@ func on_rig_update_post(_animate) -> void:
 		if rig.frontSightIndex:
 			rig.skeleton.set_bone_pose_rotation(rig.frontSightIndex, rot)
 
-	# true up cocked state if mag was loaded from inventory
-	if rig && rig.slotData:
-		rig.slotData.set_meta("cocked", rig.slotData.chamber)
 
 
 func on_input(evt: InputEvent) -> void:
