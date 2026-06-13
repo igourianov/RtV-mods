@@ -4,6 +4,7 @@
 * unshift interaction tooltip if crosshair is disabled
 * fixed hook registration batching
 * fixed semi guns firing on reload from ammo check when there is no valid mag to use
+* fixed left arm missing after opening inventory when free look disabled
 * simplified stamina drain logic, added MCM toggle
 * lots of refactoring
 
