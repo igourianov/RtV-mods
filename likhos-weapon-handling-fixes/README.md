@@ -40,6 +40,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 * Reworked input priority for Crouch/Sprint/Aim/Canted actions. Last action wins instead of following hardcoded order (exception: sprint while aiming = hold breath)
 * Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in MCM)
 * Flashlight now supports both toggle and hold actions on the same binding, and will shine the light on the inspected weapon. Recommended for use with [LootLight](https://modworkshop.net/mod/56422) mod.
+* Additional weapon cards in Inspect/Ammo Check/Insert modes + icon replacers for ammo count and chamber status (check MCM settings)
 * Likho's protips in-game to make the user aware of the changed bindings
 
 ## Vanilla Bug Fixes

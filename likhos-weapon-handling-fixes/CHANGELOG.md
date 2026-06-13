@@ -1,5 +1,5 @@
 * fire selector card in inspect mode
-* replaced number on ammo and chamber cards with icons 
+* replacement icons for ammo and chamber cards (disabled by default)
 * fixed state transition jittery due to free look attachment
 * unshift interaction tooltip if crosshair is disabled
 * fixed hook registration batching
