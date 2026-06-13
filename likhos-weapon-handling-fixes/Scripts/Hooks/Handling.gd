@@ -43,10 +43,11 @@ const _NEAR_ZERO := Vector3(0.001, 0.001, 0.001)
 
 # the handling speed modifier - read as % of base
 enum HandlingMode {
-	Default = 100,
+	Aim = 100,
 	RDS = 115,
 	Cant = 130,
-	ScopeZoom = 80,
+	Zoom = 80,
+	Default = 50,
 }
 
 const _AIM_POS_OVERRIDE := {
@@ -263,9 +264,11 @@ func _set_target(h) -> void:
 
 	if gameData.isAiming:
 		if optic && ModConfig.current_scope_mag > 1.5:
-			_handlingMode = HandlingMode.ScopeZoom
+			_handlingMode = HandlingMode.Zoom
 		elif optic:
 			_handlingMode = HandlingMode.RDS
+		else:
+			_handlingMode = HandlingMode.Aim
 
 		if !optic:
 			h.targetPosition = data.aimPosition
