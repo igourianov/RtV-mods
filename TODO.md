@@ -4,7 +4,6 @@
 - move manufacturer name into another field out of title
 - flashlight auto-on on PEQ15, similar to laser
 - gangster style for pistols
-- move ModConfig.current_scope_mag out of ADS, so it's always set and reliablebefore entering ADS
 
 # Closed
 - MP7 clipping in canted mode - will not fix (missing texture on the gun)
@@ -36,3 +35,4 @@
 - binoculars - done
 - show approx ammo counts - another mods will handle it
 - split Scripts into Scripts and Hooks - done
+- move ModConfig.current_scope_mag out of ADS, so it's always set and reliablebefore entering ADS - done
