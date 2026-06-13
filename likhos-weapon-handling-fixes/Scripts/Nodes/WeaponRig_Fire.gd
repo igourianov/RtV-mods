@@ -37,35 +37,32 @@ func _fire_input(rig) -> void:
 	if !ModConfig.negligent_discharge && !gameData.weaponPosition == 2 && !gameData.isAiming && !gameData.isCanted:
 		return
 
+	var cocked: bool = slotData.get_meta("cocked", false)
 	var triggered := false
+	
 	if slotData.mode == 1:
 		triggered = Input.is_action_just_pressed("fire")
 	elif slotData.mode == 2:
 		triggered = Input.is_action_pressed("fire")
-	if !triggered:
+
+	if !triggered || !cocked:
 		return
 
-	var cocked: bool = slotData.get_meta("cocked", false)
-
-	if slotData.chamber && cocked:
-		rig.FireEvent()
-		if slotData.mode == 1:
-			rig.fireImpulse = 0.1
-			rig.fireRate = 0.1
-		else:
-			rig.fireImpulse = data.fireRate
-			rig.fireRate = data.fireRate
-		if (data.weaponAction == "Manual" || data.weaponAction == "Single") && !slotData.chamber:
-			slotData.set_meta("cocked", false)
-		_check_low_ammo_protip(rig)
-	elif !slotData.chamber && cocked:
+	if !slotData.chamber:
 		slotData.set_meta("cocked", false)
 		_play_dry_click(rig)
+		return
 
+	rig.FireEvent()
+	if slotData.mode == 1:
+		rig.fireImpulse = 0.1
+		rig.fireRate = 0.1
+	else:
+		rig.fireImpulse = data.fireRate
+		rig.fireRate = data.fireRate
 
-func _check_low_ammo_protip(rig) -> void:
-	var slotData = rig.slotData
-	var data = rig.data
+	if (data.weaponAction == "Manual" || data.weaponAction == "Single") && !slotData.chamber:
+		slotData.set_meta("cocked", false)
 
 	if !data.insert && slotData.amount < data.magazineSize * 0.3:
 		Out.protip("low-mag-ammo", "Hold [%s] to check the mag" % Inputs.get_binding("reload"))
