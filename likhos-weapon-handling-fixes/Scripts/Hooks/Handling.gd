@@ -80,7 +80,6 @@ var _aim_priority := true
 var _target_idle := false
 var _manager_local_baseline: Transform3D
 var _baseline_captured := false
-var _handling_speed: float = 7.5
 var _anchor_pitch: float = 0.0
 var _target_pitch: float = 0.0
 var _pitch_offset: float = 0.0
@@ -324,8 +323,7 @@ func _set_target_idle(h) -> void:
 
 
 func _apply_target(h, delta: float) -> void:
-	_handling_speed = h.handlingSpeed * (_handlingMode / 100.0)
-	var t := delta * _handling_speed
+	var t: float = delta * h.handlingSpeed * (_handlingMode / 100.0)
 
 	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), t)
 	var target_quat := Quaternion.from_euler(Vector3(deg_to_rad(h.targetRotation.x), deg_to_rad(h.targetRotation.y), deg_to_rad(h.targetRotation.z)))
