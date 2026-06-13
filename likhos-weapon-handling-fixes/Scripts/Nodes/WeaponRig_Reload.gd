@@ -170,16 +170,15 @@ func _do_reload(ammo_check: bool = false) -> void:
 		_cleanup()
 		return
 
-	var empty: bool = !slotData.chamber
 	var anim_state: String
 	var audio_event
 
 	if magAttach:
-		anim_state = "Magazine_Attach_Empty" if empty else "Magazine_Attach_Tactical"
-		audio_event = data.magazineAttachEmpty if empty else data.magazineAttachTactical
+		anim_state = "Magazine_Attach_Tactical" if slotData.chamber else "Magazine_Attach_Empty"
+		audio_event = data.magazineAttachTactical if slotData.chamber else data.magazineAttachEmpty
 	else:
-		anim_state = "Reload_Empty" if empty else "Reload_Tactical"
-		audio_event = data.reloadEmpty if empty else data.reloadTactical
+		anim_state = "Reload_Tactical" if slotData.chamber else "Reload_Empty"
+		audio_event = data.reloadTactical if slotData.chamber else data.reloadEmpty
 
 	if !rig.interface.GetMagazine(data, rig.weaponSlot, rig.magazine.visible):
 		_cleanup()
