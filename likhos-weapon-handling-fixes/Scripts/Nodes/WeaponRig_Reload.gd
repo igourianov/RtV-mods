@@ -70,6 +70,7 @@ func _input(event: InputEvent) -> void:
 		else:
 			_do_reload()
 	elif _state == State.PENDING_CHECK && event.is_action_released("reload"):
+		_state = State.NONE
 		_do_reload()
 	elif _state == State.CHECK_PULL && event.is_action_released("reload"):
 		_state = State.CHECK_PULL_RELEASED
@@ -120,9 +121,13 @@ func _process(delta: float) -> void:
 
 	if _state == State.RELOAD_FROM_CHECK:
 		rig.animator.process_mode = Node.PROCESS_MODE_INHERIT
-		_audio_player.stop()
-		ModConfig.ammo_check_view = false
-		_do_reload(true)
+		#_audio_player.stop()
+		#ModConfig.ammo_check_view = false
+		if !(await _do_reload(true)):
+			rig.animator.process_mode = Node.PROCESS_MODE_DISABLED
+			#ModConfig.ammo_check_view = true
+			#gameData.isChecking = true
+			_state = State.CHECK_PAUSED
 		return
 
 
@@ -132,31 +137,30 @@ func _set_view_delayed(shown: bool) -> void:
 		ModConfig.ammo_check_view = shown
 
 
-func _do_reload(ammo_check: bool = false) -> void:
+func _do_reload(ammo_check: bool = false) -> bool:
 	if is_engine_busy() || gameData.isInspecting || gameData.isInserting || gameData.isClearing || gameData.isReloading:
-		_cleanup()
-		return
+		return false
 
-	_state = State.BUSY
 	var rig = get_parent()
 	var data = rig.data
 	var slotData = rig.slotData
-	var magAttach: bool = ammo_check || !rig.magazine.visible
 
 	gameData.isFiring = false
 
 	if slotData.state == "Jammed":
 		gameData.isClearing = true
 		_audio_player.play_event(rig.audioLibrary.malfunctionClearRifle)
+		_state = State.BUSY
 		await get_tree().create_timer(2.0, false).timeout
 		gameData.isClearing = false
 		slotData.state = ""
 		_cleanup()
-		return
+		return true
 
 	if data.weaponAction == "Manual":
 		if slotData.chamber: # hack - reload only animates ejecting casing but not live round
 			slotData.casing = true
+		_state = State.BUSY
 		await _play_reload("Reload", data.reload, -0.2)
 		slotData.set_meta("cocked", true)
 		if slotData.amount:
@@ -164,16 +168,12 @@ func _do_reload(ammo_check: bool = false) -> void:
 			slotData.amount -= 1
 		rig.UpdateBullets()
 		_cleanup()
-		return
-
-	if !magAttach && !rig.magazine.visible:
-		_cleanup()
-		return
+		return true
 
 	var anim_state: String
 	var audio_event
 
-	if magAttach:
+	if ammo_check || !rig.magazine.visible:
 		anim_state = "Magazine_Attach_Tactical" if slotData.chamber else "Magazine_Attach_Empty"
 		audio_event = data.magazineAttachTactical if slotData.chamber else data.magazineAttachEmpty
 	else:
@@ -181,19 +181,20 @@ func _do_reload(ammo_check: bool = false) -> void:
 		audio_event = data.reloadTactical if slotData.chamber else data.reloadEmpty
 
 	if !rig.interface.GetMagazine(data, rig.weaponSlot, rig.magazine.visible):
-		_cleanup()
-		return
+		return false
 
-	if magAttach:
+	if ammo_check || !rig.magazine.visible:
 		_show_mag_delayed(rig)
 		rig.UpdateBullets()
 	else:
 		_update_bullets_delayed(rig)
 
+	_state = State.BUSY
 	await _play_reload(anim_state, audio_event)
 	slotData.chamber = true
 	slotData.set_meta("cocked", true)
 	_cleanup()
+	return true
 
 
 func _play_reload(animation_state: String, audio_event, wait_offset: float = -0.5) -> void:
