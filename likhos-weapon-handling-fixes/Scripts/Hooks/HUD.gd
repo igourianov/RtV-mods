@@ -108,15 +108,20 @@ func on_physics_process_post(delta: float) -> void:
 
 
 func _update_ammo_cards(hud, rig: WeaponRig) -> void:
-	if (gameData.isInspecting || gameData.isInserting) && ModConfig.ammo_cards:
-		hud.magazine.visible = rig && (!rig.magazine || rig.magazine.visible)
-		hud.chamber.visible = true
-	elif gameData.isChecking:
-		hud.magazine.visible = ModConfig.ammo_check_view
-		hud.chamber.visible = ModConfig.ammo_check_view
-	else:
-		hud.magazine.visible = false
-		hud.chamber.visible = false
+	var enabled := false
+	if gameData.isChecking && ModConfig.ammo_check_view:
+		enabled = ModConfig.ammo_cards_check
+	elif gameData.isInspecting:
+		enabled = ModConfig.ammo_cards_inspect
+	elif gameData.isInserting:
+		enabled = ModConfig.ammo_cards_manual_reload
+
+	var has_mag: bool = rig && (!rig.magazine || rig.magazine.visible)
+	var is_manual: bool = rig && rig.data && rig.data.weaponAction == "Manual"
+	var show_chamber: bool = ModConfig.chamber_card_mode == "enabled" || (ModConfig.chamber_card_mode == "manual" && is_manual)
+
+	hud.magazine.visible = enabled && has_mag
+	hud.chamber.visible = enabled && show_chamber
 
 	if rig && rig.slotData && (hud.chamber.visible || hud.magazine.visible):
 		rig.UpdateHUD()
@@ -132,7 +137,7 @@ func _update_attachment_cards(rig: WeaponRig) -> void:
 	if _att_cards.is_empty():
 		return
 
-	if !ModConfig.attachment_tooltips || !gameData.isInspecting || !_camera || !rig || !rig.slotData || !rig.attachments:
+	if !ModConfig.attachment_cards || !gameData.isInspecting || !_camera || !rig || !rig.slotData || !rig.attachments:
 		for card in _att_cards.values():
 			card.hide()
 		return

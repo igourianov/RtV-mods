@@ -20,8 +20,11 @@ static var mag_schema: StringName
 static var zoom_dof: bool
 static var override_movement_speeds: bool
 static var nvg_pip_blur: bool
-static var ammo_cards: bool
 static var ammo_icons: bool
+static var chamber_card_mode: StringName
+static var ammo_cards_check: bool
+static var ammo_cards_inspect: bool
+static var ammo_cards_manual_reload: bool
 static var crouch_speed: float
 static var walk_speed: float
 static var sprint_speed: float
@@ -29,7 +32,7 @@ static var walk_aim_mult: float
 static var walk_cant_mult: float
 static var walk_scope_mult: float
 static var laser_auto_on: bool
-static var attachment_tooltips: bool
+static var attachment_cards: bool
 static var firemode_card: bool
 static var pip_anti_aliasing: bool
 static var show_protips: bool
@@ -46,6 +49,7 @@ const DEFAULT_CROSSHAIR := "3seg-cross"
 const DEFAULT_CANT_MODE := "1default"
 const DEFAULT_LPVO_OOA_ZOOM := "3rail"
 const DEFAULT_MAG_SCHEMA := "2normalized"
+const DEFAULT_CHAMBER_CARD := "1enabled"
 const DEFAULT_ENABLED := true
 const DEFAULT_CROUCH_SPEED := 0.7
 const DEFAULT_WALK_SPEED := 3.0
@@ -83,8 +87,11 @@ static func apply_config(config: ConfigFile) -> void:
 	zoom_dof = _get_config_value(config, "Bool", "enableZoomDof", DEFAULT_ENABLED)
 	override_movement_speeds = _get_config_value(config, "Bool", "overrideMovementSpeeds", DEFAULT_ENABLED)
 	nvg_pip_blur = _get_config_value(config, "Bool", "nvgPipBlur", DEFAULT_ENABLED)
-	ammo_cards = _get_config_value(config, "Bool", "ammoTooltips", DEFAULT_ENABLED)
 	ammo_icons = _get_config_value(config, "Bool", "replaceAmmoCount", !DEFAULT_ENABLED)
+	chamber_card_mode = _get_config_value(config, "Dropdown", "chamberCard", DEFAULT_CHAMBER_CARD)
+	ammo_cards_check = _get_config_value(config, "Bool", "ammoCardsCheck", DEFAULT_ENABLED)
+	ammo_cards_inspect = _get_config_value(config, "Bool", "ammoCardsInspect", DEFAULT_ENABLED)
+	ammo_cards_manual_reload = _get_config_value(config, "Bool", "ammoCardsManualReload", DEFAULT_ENABLED)
 	crouch_speed = _get_config_value(config, "Float", "crouchSpeed", DEFAULT_CROUCH_SPEED)
 	walk_speed = _get_config_value(config, "Float", "walkSpeed", DEFAULT_WALK_SPEED)
 	sprint_speed = _get_config_value(config, "Float", "sprintSpeed2", DEFAULT_SPRINT_SPEED)
@@ -92,7 +99,7 @@ static func apply_config(config: ConfigFile) -> void:
 	walk_cant_mult = _get_config_value(config, "Float", "cantSpeedMult", DEFAULT_CANT_SPEED_MULT)
 	walk_scope_mult = _get_config_value(config, "Float", "scopeSpeedMult", DEFAULT_SCOPE_SPEED_MULT)
 	laser_auto_on = _get_config_value(config, "Bool", "laserAutoOn", DEFAULT_ENABLED)
-	attachment_tooltips = _get_config_value(config, "Bool", "attachmentTooltips", DEFAULT_ENABLED)
+	attachment_cards = _get_config_value(config, "Bool", "attachmentTooltips", DEFAULT_ENABLED)
 	firemode_card = _get_config_value(config, "Bool", "firemodeCard", DEFAULT_ENABLED)
 	pip_anti_aliasing = _get_config_value(config, "Bool", "pipAntiAliasing", DEFAULT_ENABLED)
 	free_look = _get_config_value(config, "Bool", "enableFreeLook", DEFAULT_ENABLED)
@@ -123,7 +130,7 @@ static func create_template(config: ConfigFile) -> void:
 	config.set_value("Category", "General", { "menu_pos": 0 })
 	config.set_value("Category", "Crosshair", { "menu_pos": 1 })
 	config.set_value("Category", "Canted mode", { "menu_pos": 2 })
-	config.set_value("Category", "Inspect", { "menu_pos": 3 })
+	config.set_value("Category", "Weapon Cards", { "menu_pos": 3 })
 	config.set_value("Category", "Aim tweaks", { "menu_pos": 4 })
 	config.set_value("Category", "Movement speeds", { "menu_pos": 5 })
 	config.set_value("Category", "Stamina", { "menu_pos": 6 })
@@ -157,13 +164,25 @@ static func create_template(config: ConfigFile) -> void:
 
 	_set_config_entry(config, "Bool", "Canted mode", "laserAutoOn", "Laser Auto-On", "Auto-activate the laser when entering canted aim", DEFAULT_ENABLED)
 
-	_set_config_entry(config, "Bool", "Inspect", "ammoTooltips", "Show ammo cards", "Show magazine and chamber overlays while reloading manual weapon or inspecting", DEFAULT_ENABLED)
+	_set_config_entry(config, "Bool", "Weapon Cards", "firemodeCard", "Fire mode card", "Show the current fire mode (semi/auto) over the fire selector while inspecting", DEFAULT_ENABLED)
 
-	_set_config_entry(config, "Bool", "Inspect", "replaceAmmoCount", "Replace ammo count with bars", "Show the magazine fill as bars instead of a raw number", !DEFAULT_ENABLED)
+	_set_config_entry(config, "Bool", "Weapon Cards", "attachmentTooltips", "Attachment cards", "Show attachment names (optic, muzzle, laser) over the weapon while inspecting", DEFAULT_ENABLED)
 
-	_set_config_entry(config, "Bool", "Inspect", "attachmentTooltips", "Show attachment cards", "Show attachment names (optic, muzzle, laser) over the weapon while inspecting", DEFAULT_ENABLED)
+	_set_config_entry(config, "Bool", "Weapon Cards", "replaceAmmoCount", "Replace ammo counts with icons", "Show the magazine fill as bars and the chamber as a bullet icon instead of raw numbers", !DEFAULT_ENABLED)
 
-	_set_config_entry(config, "Bool", "Inspect", "firemodeCard", "Show fire mode card", "Show the current fire mode (semi/auto) over the fire selector while inspecting", DEFAULT_ENABLED)
+	_set_config_entry(config, "Bool", "Weapon Cards", "ammoCardsCheck", "Ammo cards on ammo check", "Show magazine and chamber cards while performing an ammo check", DEFAULT_ENABLED)
+
+	_set_config_entry(config, "Bool", "Weapon Cards", "ammoCardsInspect", "Ammo cards on inspect", "Show magazine and chamber cards while inspecting the weapon", DEFAULT_ENABLED)
+
+	_set_config_entry(config, "Bool", "Weapon Cards", "ammoCardsManualReload", "Ammo cards on manual reload", "Show magazine and chamber cards while manually loading rounds", DEFAULT_ENABLED)
+
+	_set_config_entry(config, "Dropdown", "Weapon Cards", "chamberCard", "Chamber card", "When to show the chamber card alongside the ammo cards", DEFAULT_CHAMBER_CARD, {
+		"options": {
+			"1enabled": "Enabled",
+			"2manual": "Manual guns only",
+			"3disabled": "Disabled"
+		}
+	})
 
 	_set_config_entry(config, "Bool", "Aim tweaks", "enableFreeLook", "Adaptive free look", "Allow camera to go into free look when weapon is idle", DEFAULT_ENABLED)
 
