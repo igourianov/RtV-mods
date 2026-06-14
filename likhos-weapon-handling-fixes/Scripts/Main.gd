@@ -21,6 +21,7 @@ const Tooltip = preload("./Hooks/Tooltip.gd")
 const Interactor = preload("./Hooks/Interactor.gd")
 const UIPosition = preload("./Hooks/UIPosition.gd")
 const Item = preload("./Hooks/Item.gd")
+const KillCounter = preload("./Hooks/KillCounter.gd")
 const BinocularsOverlay = preload("./Nodes/BinocularsOverlay.gd")
 
 
@@ -43,6 +44,7 @@ var _interactor
 var _uiposition
 var _binoculars
 var _item
+var _kill_counter
 
 
 func setup(lib):
@@ -70,6 +72,7 @@ func setup(lib):
 	_interactor = Interactor.new(lib)
 	_uiposition = UIPosition.new(lib)
 	_item = Item.new(lib)
+	_kill_counter = KillCounter.new(lib)
 
 	register_hook("handling-weaponhandling", _handling.on_weapon_handling)
 	register_hook("rigmanager-updaterig-post", _handling.on_rig_update_post)
@@ -99,6 +102,8 @@ func setup(lib):
 	register_hook("interactor-_physics_process-pre", _interactor.on_physics_process_pre)
 	register_hook("uiposition-_physics_process-post", _uiposition.on_physics_process_post)
 	register_hook("item-updatedetails-post", _item.on_update_details_post)
+	register_hook("ai-death-pre", _kill_counter.on_ai_death)
+	register_hook("loader-loadscene-pre", _kill_counter.on_load_scene_pre)
 
 	register_action("optic_zoom_in", "Optic Zoom In", create_mouse_input(MOUSE_BUTTON_WHEEL_UP))
 	register_action("optic_zoom_out", "Optic Zoom Out", create_mouse_input(MOUSE_BUTTON_WHEEL_DOWN))

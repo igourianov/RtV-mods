@@ -7,6 +7,7 @@ static var hold_breath_state: float = 0.0
 static var optic_shiner: bool = false
 static var binoculars_active: bool = false
 static var binoculars_mag: float = 6.0
+static var kills: PackedByteArray = PackedByteArray([0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])
 
 # config vars
 static var crosshair_style: StringName
@@ -34,6 +35,7 @@ static var walk_scope_mult: float
 static var laser_auto_on: bool
 static var attachment_cards: bool
 static var firemode_card: bool
+static var kill_counter_card: bool
 static var pip_anti_aliasing: bool
 static var show_protips: bool
 static var debug_enabled: bool
@@ -101,6 +103,7 @@ static func apply_config(config: ConfigFile) -> void:
 	laser_auto_on = _get_config_value(config, "Bool", "laserAutoOn", DEFAULT_ENABLED)
 	attachment_cards = _get_config_value(config, "Bool", "attachmentTooltips", DEFAULT_ENABLED)
 	firemode_card = _get_config_value(config, "Bool", "firemodeCard", DEFAULT_ENABLED)
+	kill_counter_card = _get_config_value(config, "Bool", "killCounterCard", DEFAULT_ENABLED)
 	pip_anti_aliasing = _get_config_value(config, "Bool", "pipAntiAliasing", DEFAULT_ENABLED)
 	free_look = _get_config_value(config, "Bool", "enableFreeLook", DEFAULT_ENABLED)
 	patrol_position = _get_config_value(config, "Bool", "patrolPosition", DEFAULT_ENABLED)
@@ -165,6 +168,8 @@ static func create_template(config: ConfigFile) -> void:
 	_set_config_entry(config, "Bool", "Canted mode", "laserAutoOn", "Laser Auto-On", "Auto-activate the laser when entering canted aim", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Bool", "Weapon Cards", "firemodeCard", "Fire mode card", "Show the current fire mode (semi/auto) over the fire selector while inspecting", DEFAULT_ENABLED)
+
+	_set_config_entry(config, "Bool", "Weapon Cards", "killCounterCard", "Kill counter card", "Show a tally of kills scratched into the receiver while inspecting. Resets on changing zone", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Bool", "Weapon Cards", "attachmentTooltips", "Attachment cards", "Show attachment names (optic, muzzle, laser) over the weapon while inspecting", DEFAULT_ENABLED)
 

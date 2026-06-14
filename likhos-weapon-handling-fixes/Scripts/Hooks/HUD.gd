@@ -5,6 +5,7 @@ const InspectCard = preload("../InspectCards/InspectCard.gd")
 const FireModeCard = preload("../InspectCards/FireModeCard.gd")
 const AmmoCardReplacer = preload("../InspectCards/AmmoCardReplacer.gd")
 const ChamberCardReplacer = preload("../InspectCards/ChamberCardReplacer.gd")
+const KillCounterCard = preload("../InspectCards/KillCounterCard.gd")
 const Crosshair = preload("../Nodes/Crosshair.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
@@ -14,7 +15,12 @@ var _crosshair: Crosshair
 const _ATTACHMENT_SUBTYPES := ["Optic", "Muzzle", "Laser"]
 const _ATT_FONT_SIZE := 16
 
+const _KILL_SCREEN_MARGIN := Vector2(50.0, 70.0)
+const _KILL_CARD_SEP := 6
+
 var _att_cards: Dictionary = {}
+var _kill_cards: Array = []
+var _kill_container: VBoxContainer
 var _firemode_card: FireModeCard
 var _ammo_replacer: AmmoCardReplacer
 var _chamber_replacer: ChamberCardReplacer
@@ -33,6 +39,7 @@ func on_ready_post() -> void:
 	_setup_crosshair(hud)
 	_setup_attachment_cards(hud)
 	_setup_firemode_card(hud)
+	_setup_kill_cards(hud)
 	_setup_ammo_replacer(hud)
 	_setup_chamber_replacer(hud)
 
@@ -65,6 +72,26 @@ func _setup_firemode_card(hud) -> void:
 		return
 	_firemode_card = FireModeCard.new()
 	hud.add_child(_firemode_card)
+
+
+func _setup_kill_cards(hud) -> void:
+	if is_instance_valid(_kill_container) && _kill_container.get_parent() == hud:
+		return
+	_kill_cards.clear()
+
+	_kill_container = VBoxContainer.new()
+	_kill_container.name = "KillCounter"
+	_kill_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_kill_container.add_theme_constant_override("separation", _KILL_CARD_SEP)
+	_kill_container.anchor_left = 1.0
+	_kill_container.anchor_top = 1.0
+	_kill_container.anchor_right = 1.0
+	_kill_container.anchor_bottom = 1.0
+	_kill_container.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	_kill_container.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	_kill_container.offset_right = -_KILL_SCREEN_MARGIN.x
+	_kill_container.offset_bottom = -_KILL_SCREEN_MARGIN.y
+	hud.add_child(_kill_container)
 
 
 func _setup_ammo_replacer(hud) -> void:
@@ -105,6 +132,7 @@ func on_physics_process_post(delta: float) -> void:
 	_update_ammo_cards(hud, rig)
 	_update_attachment_cards(rig)
 	_update_firemode_card(rig)
+	_update_kill_cards()
 
 
 func _update_ammo_cards(hud, rig: WeaponRig) -> void:
@@ -176,6 +204,33 @@ func _update_firemode_card(rig: WeaponRig) -> void:
 
 	var bone_origin = skeleton.get_bone_global_pose(rig.selectorIndex).origin
 	_firemode_card.point_at(_camera.unproject_position(skeleton.to_global(bone_origin)))
+
+
+func _update_kill_cards() -> void:
+	if !is_instance_valid(_kill_container):
+		return
+
+	var kills := ModConfig.kills
+	if !ModConfig.kill_counter_card || !gameData.isInspecting || kills.is_empty():
+		_kill_container.hide()
+		return
+
+	_kill_container.show()
+	var groups: int = ceili(kills.size() / 10.0)
+
+	while _kill_cards.size() < groups:
+		var card := KillCounterCard.new()
+		_kill_cards.append(card)
+		_kill_container.add_child(card)
+		_kill_container.move_child(card, 0)
+
+	for i in _kill_cards.size():
+		var card = _kill_cards[i]
+		if i >= groups:
+			card.hide()
+			continue
+		card.set_group(kills.slice(i * 10, i * 10 + 10))
+		card.show()
 
 
 static var _local_center_cache: Dictionary = {}

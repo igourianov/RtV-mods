@@ -1,3 +1,6 @@
+* immersive kill counter (see it in weapon inspect mode)
+
+# 2.16.1859
 * dual activation modes (hold vs toggle) for both NVG and Binos
 * NVG now exclusive with Binos (can't activate together)
 * binos auto-deactivate by sprinting
