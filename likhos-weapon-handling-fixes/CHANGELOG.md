@@ -1,4 +1,5 @@
 * immersive kill counter (see it in weapon inspect mode)
+* rebase binos sensitivity on look sens instead of scope - more natural for observation device
 
 # 2.16.1859
 * dual activation modes (hold vs toggle) for both NVG and Binos

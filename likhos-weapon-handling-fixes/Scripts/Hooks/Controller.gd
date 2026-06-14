@@ -120,7 +120,7 @@ func _mouse_input(ctrl, evt: InputEvent) -> void:
 
 func _target_sensitivity() -> float:
 	if ModConfig.binoculars_active:
-		return gameData.scopeSensitivity / max(ModConfig.binoculars_mag, 1.0)
+		return gameData.lookSensitivity / max(ModConfig.binoculars_mag, 1.0)
 	if gameData.isCanted:
 		return gameData.aimSensitivity
 	if gameData.isAiming && gameData.isScoped:
