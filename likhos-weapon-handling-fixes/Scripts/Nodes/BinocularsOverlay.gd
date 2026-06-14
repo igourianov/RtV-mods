@@ -17,6 +17,7 @@ enum State { INACTIVE, RAISING, ACTIVE, LOWERING }
 
 const _RAISE_TIME := 0.3
 const _FOV_LERP_SPEED := 12.0
+const _HOLD_THRESHOLD := 0.25
 const _MAGS := [6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0] #[6.0, 8.0, 10.0, 12.0]
 
 const _START_RADIUS := 0.12
@@ -35,6 +36,7 @@ var _index := 0
 var _zoom := ZoomAccelerator.new()
 var _base_fov := 70.0
 var _current_fov := 70.0
+var _hold_elapsed := 0.0
 
 
 func _ready() -> void:
@@ -93,10 +95,12 @@ func _apply_layer(scene) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("binoculars") && (_state == State.INACTIVE || _state == State.LOWERING) && _can_raise():
 		_state = State.RAISING
+		_hold_elapsed = 0.0
 		return
 
 	if event.is_action_released("binoculars") && (_state == State.RAISING || _state == State.ACTIVE):
-		_state = State.LOWERING
+		if _hold_elapsed > _HOLD_THRESHOLD:
+			_state = State.LOWERING
 		return
 
 	if _state != State.RAISING && _state != State.ACTIVE:
@@ -126,6 +130,9 @@ func _can_raise() -> bool:
 
 
 func _process(delta: float) -> void:
+	if _state == State.RAISING || _state == State.ACTIVE:
+		_hold_elapsed += delta
+
 	if _state == State.INACTIVE:
 		return
 

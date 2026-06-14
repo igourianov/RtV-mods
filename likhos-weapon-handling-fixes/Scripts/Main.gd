@@ -13,6 +13,7 @@ const Character = preload("./Hooks/Character.gd")
 const Optic = preload("./Hooks/Optic.gd")
 const Laser = preload("./Hooks/Laser.gd")
 const Flashlight = preload("./Hooks/Flashlight.gd")
+const NVG = preload("./Hooks/NVG.gd")
 const ScopeCatalog = preload("./ScopeCatalog.gd")
 const RigOpticPatches = preload("./RigOpticPatches.gd")
 const WeaponPatches = preload("./WeaponPatches.gd")
@@ -36,6 +37,7 @@ var _character
 var _optic
 var _laser
 var _flashlight
+var _nvg
 var _tooltip
 var _interactor
 var _uiposition
@@ -63,6 +65,7 @@ func setup(lib):
 	_optic = Optic.new(lib, preferences)
 	_laser = Laser.new(lib)
 	_flashlight = Flashlight.new(lib)
+	_nvg = NVG.new(lib)
 	_tooltip = Tooltip.new(lib)
 	_interactor = Interactor.new(lib)
 	_uiposition = UIPosition.new(lib)
@@ -90,6 +93,7 @@ func setup(lib):
 	register_hook("laser-_input", _laser.on_input)
 	register_hook("laser-_process-post", _laser.on_process_post)
 	register_hook("flashlight-_physics_process", _flashlight.on_physics_process)
+	register_hook("nvg-_physics_process", _nvg.on_physics_process)
 	register_hook("tooltip-reset-post", _tooltip.on_reset_post)
 	register_hook("tooltip-update-post", _tooltip.on_update_post)
 	register_hook("interactor-_physics_process-pre", _interactor.on_physics_process_pre)
