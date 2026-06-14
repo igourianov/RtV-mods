@@ -126,7 +126,7 @@ func _can_raise() -> bool:
 	return !(gameData.menu || gameData.freeze || gameData.isDead || gameData.isOccupied
 		|| gameData.isReloading || gameData.isInspecting || gameData.isInserting
 		|| gameData.isChecking || gameData.isPlacing || gameData.isDrawing
-		|| gameData.isTransitioning)
+		|| gameData.isTransitioning || gameData.NVG || gameData.isRunning)
 
 
 func _process(delta: float) -> void:
@@ -139,7 +139,7 @@ func _process(delta: float) -> void:
 	if _state == State.LOWERING:
 		_progress -= delta / _RAISE_TIME
 
-	if !_resolve_camera() || gameData.isDead || gameData.menu || gameData.freeze || _progress < 0.0:
+	if !_resolve_camera() || gameData.isDead || gameData.menu || gameData.freeze || gameData.isRunning || _progress < 0.0:
 		_state = State.INACTIVE
 		_progress = 0.0
 		_rect.visible = false

@@ -1,4 +1,7 @@
-* uniform blur for PIP plane under NVG
+* uniform blur for PIP plane under NVG (actually make it unusable)
+* dual activation modes (hold vs toggle) for NVG and Binos
+* NVG now exclusive with Binos (can't activate together)
+* binos auto-deactivate by sprinting
 
 # 2.16.1851
 * fire selector card in inspect mode

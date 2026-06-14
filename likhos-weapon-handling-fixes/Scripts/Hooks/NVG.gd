@@ -25,6 +25,7 @@ func on_physics_process(delta: float) -> void:
 
 class NVGDriver extends Node:
 	const HOLD_THRESHOLD = 0.25
+	const ModConfig = preload("../ModConfig.gd")
 
 	var gameData = preload("res://Resources/GameData.tres")
 	var _hold_elapsed := 0.0
@@ -43,7 +44,7 @@ class NVGDriver extends Node:
 		if !device:
 			return
 
-		if !gameData.NVG && evt.is_action_pressed("nvg", false) && !gameData.freeze:
+		if !gameData.NVG && !ModConfig.binoculars_active && evt.is_action_pressed("nvg", false) && !gameData.freeze:
 			_hold_elapsed = 0.0
 			parent.Activate()
 			parent.NVGAudio()
