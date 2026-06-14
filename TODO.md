@@ -4,6 +4,10 @@
 - move manufacturer name into another field out of title
 - flashlight auto-on on PEQ15, similar to laser
 - gangster style for pistols
+- integrate binos with loot highlighter
+- toggle for binos, hold for NVG - exclusive
+- scope nvg blur up close
+- immersive kill count
 
 # Closed
 - MP7 clipping in canted mode - will not fix (missing texture on the gun)
