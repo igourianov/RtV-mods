@@ -141,6 +141,8 @@ static func create_template(config: ConfigFile) -> void:
 	_set_config_entry(config, "Bool", "General", "debug_enabled", "Debug", "Writing this mod's debug into stdout", !DEFAULT_ENABLED)
 	_set_config_entry(config, "Bool", "General", "show_protips", "Pro-tips", "In-game tips that help with new features and bindings", DEFAULT_ENABLED)
 
+	_set_config_entry(config, "Bool", "General", "killCounterCard", "Kill counter card", "Show a tally of kills scratched into the receiver while inspecting. Resets on changing zone", DEFAULT_ENABLED)
+
 	_set_config_entry(config, "Dropdown", "Crosshair", "crosshair", "Crosshair", "Used for exploration only", DEFAULT_CROSSHAIR, {
 		"options": {
 			"1off": "Off",
@@ -168,8 +170,6 @@ static func create_template(config: ConfigFile) -> void:
 	_set_config_entry(config, "Bool", "Canted mode", "laserAutoOn", "Laser Auto-On", "Auto-activate the laser when entering canted aim", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Bool", "Weapon Cards", "firemodeCard", "Fire mode card", "Show the current fire mode (semi/auto) over the fire selector while inspecting", DEFAULT_ENABLED)
-
-	_set_config_entry(config, "Bool", "Weapon Cards", "killCounterCard", "Kill counter card", "Show a tally of kills scratched into the receiver while inspecting. Resets on changing zone", DEFAULT_ENABLED)
 
 	_set_config_entry(config, "Bool", "Weapon Cards", "attachmentTooltips", "Attachment cards", "Show attachment names (optic, muzzle, laser) over the weapon while inspecting", DEFAULT_ENABLED)
 
