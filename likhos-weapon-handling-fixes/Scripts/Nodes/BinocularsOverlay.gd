@@ -92,7 +92,10 @@ func _apply_layer(scene) -> void:
 	layer = effective - 1
 
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		return
+
 	if event.is_action_pressed("binoculars") && (_state == State.INACTIVE || _state == State.LOWERING) && _can_raise():
 		_state = State.RAISING
 		_hold_elapsed = 0.0
