@@ -5,8 +5,6 @@
 - flashlight auto-on on PEQ15, similar to laser
 - gangster style for pistols
 - integrate binos with loot highlighter
-- toggle for binos, hold for NVG - exclusive
-- scope nvg blur up close
 - immersive kill count
 
 # Closed
@@ -40,3 +38,5 @@
 - show approx ammo counts - another mods will handle it
 - split Scripts into Scripts and Hooks - done
 - move ModConfig.current_scope_mag out of ADS, so it's always set and reliablebefore entering ADS - done
+- toggle for binos, hold for NVG - exclusive - done
+- scope nvg blur up close - done
