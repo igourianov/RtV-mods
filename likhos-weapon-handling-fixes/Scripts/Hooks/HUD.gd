@@ -15,7 +15,8 @@ var _crosshair: Crosshair
 const _ATTACHMENT_SUBTYPES := ["Optic", "Muzzle", "Laser"]
 const _ATT_FONT_SIZE := 16
 
-const _KILL_SCREEN_MARGIN := Vector2(50.0, 70.0)
+const _WRIST_BONE := "Wrist_R"
+const _KILL_BONE_OFFSET := Vector2(0.0, -10.0)
 const _KILL_CARD_SEP := 6
 
 var _att_cards: Dictionary = {}
@@ -83,14 +84,6 @@ func _setup_kill_cards(hud) -> void:
 	_kill_container.name = "KillCounter"
 	_kill_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_kill_container.add_theme_constant_override("separation", _KILL_CARD_SEP)
-	_kill_container.anchor_left = 1.0
-	_kill_container.anchor_top = 1.0
-	_kill_container.anchor_right = 1.0
-	_kill_container.anchor_bottom = 1.0
-	_kill_container.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-	_kill_container.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	_kill_container.offset_right = -_KILL_SCREEN_MARGIN.x
-	_kill_container.offset_bottom = -_KILL_SCREEN_MARGIN.y
 	hud.add_child(_kill_container)
 
 
@@ -132,7 +125,7 @@ func on_physics_process_post(delta: float) -> void:
 	_update_ammo_cards(hud, rig)
 	_update_attachment_cards(rig)
 	_update_firemode_card(rig)
-	_update_kill_cards()
+	_update_kill_cards(rig)
 
 
 func _update_ammo_cards(hud, rig: WeaponRig) -> void:
@@ -206,16 +199,21 @@ func _update_firemode_card(rig: WeaponRig) -> void:
 	_firemode_card.point_at(_camera.unproject_position(skeleton.to_global(bone_origin)))
 
 
-func _update_kill_cards() -> void:
+func _update_kill_cards(rig: WeaponRig) -> void:
 	if !is_instance_valid(_kill_container):
 		return
 
 	var kills := ModConfig.kills
-	if !ModConfig.kill_counter_card || !gameData.isInspecting || kills.is_empty():
+	if !ModConfig.kill_counter_card || !gameData.isInspecting || kills.is_empty() || !_camera || !rig || !rig.skeleton:
 		_kill_container.hide()
 		return
 
-	_kill_container.show()
+	var skeleton: Skeleton3D = rig.skeleton
+	var bone := skeleton.find_bone(_WRIST_BONE)
+	if bone < 0:
+		_kill_container.hide()
+		return
+
 	var groups: int = ceili(kills.size() / 10.0)
 
 	while _kill_cards.size() < groups:
@@ -231,6 +229,12 @@ func _update_kill_cards() -> void:
 			continue
 		card.set_group(kills.slice(i * 10, i * 10 + 10))
 		card.show()
+
+	var origin = skeleton.get_bone_global_pose(bone).origin
+	var screen = _camera.unproject_position(skeleton.to_global(origin))
+	var size = _kill_container.get_combined_minimum_size()
+	_kill_container.position = Vector2(screen.x - size.x * 0.5, screen.y - size.y) + _KILL_BONE_OFFSET
+	_kill_container.show()
 
 
 static var _local_center_cache: Dictionary = {}
