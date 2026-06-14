@@ -8,7 +8,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 
 * **Binoculars!** Added tactical [6-12x binos](https://www.youtube.com/watch?v=6d0zPQRmM3s) for observation. Hold 'B' to activate (remap in game's vanilla bindings)
 * **Hold breath** Function to steady aim at the expense of increased stamina drain (hold Sprint while aiming)
-* **Kill counter** Appear as scratch list in weapon inspect mode 
+* **Kill counter** Appear as scratch list in weapon inspect mode (when you have kills). Purple = boss.
 
 ## Weapons & Handling
 

@@ -1,3 +1,4 @@
+# 2.17.1894
 * immersive kill counter (see it in weapon inspect mode when you have some kills)
 * rebase binos sensitivity on look sens instead of scope - more natural for observation device
 
