@@ -1,9 +1,8 @@
 extends RefCounted
 
-# Tunable: blur radius in viewport texels at 1x magnification.
-# Scales linearly with optic magnification (BLUR_RADIUS_BASE * current_scope_mag).
-# 0 disables.
-const BLUR_RADIUS_BASE := 3.0
+# Tunable: blur radius in viewport texels for the NVG scope blur. 0 disables.
+# Larger = blurrier. If raised substantially, also raise STEPS in PIP_NVG.gdshader.
+const BLUR_RADIUS := 12.0
 
 const _NVG_PIP_SHADER := preload("res://mods/likhos-weapon-handling-fixes/Shaders/PIP_NVG.gdshader")
 const ModConfig = preload("../ModConfig.gd")
@@ -19,9 +18,6 @@ const _VANILLA_PIP_SSAA := 1
 var _lib
 var _preferences: Preferences
 
-# TEMP: probe whether the `in` operator detects shader uniforms on a ShaderMaterial.
-var _tested_shaders := {}
-
 
 func _init(lib, preferences: Preferences) -> void:
 	_lib = lib
@@ -33,20 +29,17 @@ func on_physics_process_pre(_delta: float) -> void:
 	if !optic:
 		return
 
-	var managed: bool = optic.visible && optic.attachmentData && (optic.attachmentData.scope || optic.attachmentData.variable)
-
 	var viewport: SubViewport = optic.viewport
 	if viewport:
-		var aa_on: bool = managed && gameData.PIP && ModConfig.pip_anti_aliasing
-		viewport.msaa_3d = _msaa_from_pref(_preferences.antialiasing) if aa_on else _VANILLA_PIP_MSAA
-		viewport.screen_space_aa = _ssaa_from_pref(_preferences.smaa) if aa_on else _VANILLA_PIP_SSAA
+		viewport.msaa_3d = _msaa_from_pref(_preferences.antialiasing) if ModConfig.pip_anti_aliasing else _VANILLA_PIP_MSAA
+		viewport.screen_space_aa = _ssaa_from_pref(_preferences.smaa) if ModConfig.pip_anti_aliasing else _VANILLA_PIP_SSAA
 
 	var pip_mat: ShaderMaterial = optic.PIP
 	if pip_mat && pip_mat.shader:
 		if !("shader_parameter/blur_radius" in pip_mat):
 			pip_mat.shader = _NVG_PIP_SHADER
-		var blur_on: bool = managed && gameData.isAiming && gameData.isScoped && gameData.PIP && gameData.NVG && ModConfig.nvg_pip_blur && ModConfig.current_scope_mag > 1.0
-		var radius: float = BLUR_RADIUS_BASE * ModConfig.current_scope_mag if blur_on else 0.0
+		var blur_on: bool = gameData.isScoped && gameData.PIP && gameData.NVG && ModConfig.nvg_pip_blur
+		var radius: float = BLUR_RADIUS if blur_on else 0.0
 		pip_mat.set_shader_parameter("blur_radius", radius)
 
 
