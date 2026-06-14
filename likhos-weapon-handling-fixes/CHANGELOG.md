@@ -1,3 +1,5 @@
+* raised AK12 and AKM inspect positions a bit to make sure kill counts cleanly visible
+
 # 2.17.1894
 * immersive kill counter (see it in weapon inspect mode when you have some kills)
 * rebase binos sensitivity on look sens instead of scope - more natural for observation device
