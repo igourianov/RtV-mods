@@ -3,14 +3,16 @@ extends "../Lib/Tooltip.gd"
 const Out = preload("../Lib/Out.gd")
 const Catalog = preload("./Catalog.gd")
 
-const ROW_MODEL = "likho_model"
-const ROW_GRAU = "likho_grau"
+const ROW_MODEL := "likho_model"
+const ROW_GRAU := "likho_grau"
+const BULLET_WEIGHT := "likho_bullet_weight"
 
 
 func on_reset_post():
 	var tooltip = _lib._caller
 	_hide_row(tooltip, ROW_MODEL)
 	_hide_row(tooltip, ROW_GRAU)
+	_hide_row(tooltip, BULLET_WEIGHT)
 
 
 func on_update_post(item) -> void:
@@ -24,18 +26,16 @@ func on_update_post(item) -> void:
 	var itemData = item.slotData.itemData
 	var parts: Array[String] = []
 	var has_armor := false
-	var caliber_name: String
+	var caliber_name: String = _get_caliber(itemData)
 	var extra_data = Catalog.DATA.get(itemData.file, {})
 
 	tooltip.type.text = itemData.subtype if itemData.type == "Attachment" && itemData.subtype else itemData.type
 
-	for element in itemData.compatible:
-		if element.type == "Ammo":
-			caliber_name = element.name
-		elif element.type == "Armor":
+	for el in itemData.compatible:
+		if el.type == "Armor":
 			has_armor = true
 		else:
-			parts.append(element.display)
+			parts.append(el.display)
 
 	if has_armor:
 		parts.append("Armor Plates")
@@ -49,8 +49,10 @@ func on_update_post(item) -> void:
 	if caliber_name:
 		tooltip.caliber.get_child(0).text = caliber_name
 		tooltip.caliber.show()
+	else:
+		tooltip.caliber.hide()
 
-	if itemData.maxAmount && itemData.type == "Attachment" && itemData.subtype == "Magazine":
+	if itemData.maxAmount && itemData.subtype == "Magazine":
 		tooltip.capacity.get_child(0).text = itemData.maxAmount
 		tooltip.capacity.show()
 
@@ -60,5 +62,16 @@ func on_update_post(item) -> void:
 	if extra_data.model_name:
 		_show_row(tooltip, ROW_MODEL, "Model:", extra_data.model_name)
 
+	if extra_data.bullet_weight:
+		_show_row(tooltip, BULLET_WEIGHT, "Load:", "%d gr" % extra_data.bullet_weight)
+
 	tooltip.panel.size = Vector2(256, 0)
 	tooltip.interface.tooltipOffset = tooltip.panel.size.y / 2.0
+
+
+func _get_caliber(data: ItemData) -> String:
+	if data.type == "Ammo":
+		return data.equipment
+	if data.type == "Weapon":
+		return _get_caliber(data.ammo)
+	return ""

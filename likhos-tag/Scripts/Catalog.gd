@@ -3,7 +3,7 @@ extends RefCounted
 const Out = preload("../Lib/Out.gd")
 const ModConfig = preload("./ModConfig.gd")
 
-const EXTRAS := ["grau_index", "model"]
+const EXTRAS := ["grau_index", "model", "bullet_weight"]
 const DATA := {
 	"ACOG": {
 		"inventory": "ACOG",
@@ -247,6 +247,83 @@ const DATA := {
 		"inventory": "VSS",
 		"weight": 1.8,
 		"penetration": 4,
+	},
+	"Ammo_223": {
+		"name": "5.56x45mm M855", # full name
+		"inventory": "M855", # short name
+		"equipment": "5.56 NATO", # caliber
+		"weight": 0.369, # defaultAmount: 30
+		"bullet_weight": 62,
+	},
+	"Ammo_308": {
+		"name": "7.62x51mm M80 Ball",
+		"inventory": "M80",
+		"equipment": "7.62 NATO",
+		"weight": 0.762, # defaultAmount: 30
+		"bullet_weight": 147,
+	},
+	"Ammo_45ACP": {
+		"name": ".45 ACP M1911 Ball",
+		"inventory": ".45",
+		"equipment": ".45 ACP",
+		"weight": 1.05, # defaultAmount: 50
+		"bullet_weight": 230,
+	},
+	"Ammo_46x30": {
+		"name": "4.6x30mm HK DM11",
+		"inventory": "DM11",
+		"equipment": "4.6x30",
+		"weight": 0.325, # defaultAmount: 50
+		"bullet_weight": 31,
+	},
+	"Ammo_545x39": {
+		"name": "5.45x39mm 7N10",
+		"inventory": "7N10",
+		"equipment": "5.45",
+		"weight": 0.321, # defaultAmount: 30
+		"bullet_weight": 56,
+	},
+	"Ammo_762x39": {
+		"name": "7.62x39mm 7N23",
+		"inventory": "7N23",
+		"equipment": "7.62",
+		"weight": 0.489, # defaultAmount: 30
+		"bullet_weight": 122,
+	},
+	"Ammo_762x54R": {
+		"name": "7.62x54mmR 7N14",
+		"inventory": "7N14",
+		"equipment": "7.62x54R",
+		"weight": 0.436, # defaultAmount: 20
+		"bullet_weight": 151,
+	},
+	"Ammo_9x18": {
+		"name": "9x18mm Makarov",
+		"inventory": "9x18",
+		"equipment": "9x18",
+		"weight": 0.5, # defaultAmount: 50
+		"bullet_weight": 93,
+	},
+	"Ammo_9x19": {
+		"name": "9x19 M882 Ball",
+		"inventory": "9mm",
+		"equipment": "9mm",
+		"weight": 0.6, # defaultAmount: 50
+		"bullet_weight": 124,
+	},
+	"Ammo_9x39": {
+		"name": "9x39mm SP-6",
+		"inventory": "SP-6",
+		"equipment": "9x39",
+		"weight": 0.46, # defaultAmount: 20
+		"bullet_weight": 242,
+	},
+	"Ammo_12x70": {
+		"name": "12GA 00 Buckshot",
+		"inventory": "#00",
+		"equipment": "12GA",
+		"weight": 0.445, # defaultAmount: 10
+		"bullet_weight": 484,
 	},
 	"AK_12_Magazine": {
 		"name": "AK-12 mag",
