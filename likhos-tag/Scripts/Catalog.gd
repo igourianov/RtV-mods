@@ -3,7 +3,7 @@ extends RefCounted
 const Out = preload("../Lib/Out.gd")
 const ModConfig = preload("./ModConfig.gd")
 
-const EXTRAS := ["grau_index", "model", "bullet_weight"]
+const EXTRAS := ["grau", "model", "load"]
 const DATA := {
 	"ACOG": {
 		"inventory": "ACOG",
@@ -22,7 +22,7 @@ const DATA := {
 	"PU": {
 		"inventory": "PU",
 		"name": ["PU 3.5x", "ПУ 3.5x"],
-		"grau_index": "56-В-421У",
+		"grau": "56-В-421У",
 		"weight": 0.4,
 	},
 	"Vudu": {
@@ -99,7 +99,7 @@ const DATA := {
 	"PBS": {
 		"inventory": "PBS-1",
 		"name": ["PBS-1", "ПБС-1"],
-		"grau_index": "6Ч12",
+		"grau": "6Ч12",
 		"weight": 0.62,
 	},
 	"PTN": {
@@ -129,18 +129,18 @@ const DATA := {
 	},
 	"AK_12": {
 		"name": "AK-12 Gen 1",
-		"grau_index": "6П70",
+		"grau": "6П70",
 		"inventory": "AK-12",
 	},
 	"AKM": {
 		"name": "AKM",
-		"grau_index": "6П1",
+		"grau": "6П1",
 		"inventory": "AKM",
 		"weight": 3.1,
 	},
 	"AKS_74U": {
 		"name": ["AKS-74U", "АКС-74У"],
-		"grau_index": "6П26",
+		"grau": "6П26",
 		"inventory": "AKS-74U",
 		"weight": 2.7,
 	},
@@ -181,7 +181,7 @@ const DATA := {
 	},
 	"Makarov": {
 		"name": ["Makarov", "Макаров"],
-		"grau_index": "56-А-125",
+		"grau": "56-А-125",
 		"inventory": "PM",
 	},
 	"MK18": {
@@ -237,13 +237,13 @@ const DATA := {
 	},
 	"SVD": {
 		"name": ["Dragunov", "Драгунов"],
-		"grau_index": "6В1",
+		"grau": "6В1",
 		"inventory": "SVD",
 		"weight": 3.7,
 	},
 	"VSS": {
 		"name": ["Vintorez", "Винторез"],
-		"grau_index": "6П29",
+		"grau": "6П29",
 		"inventory": "VSS",
 		"weight": 1.8,
 		"penetration": 4,
@@ -253,93 +253,93 @@ const DATA := {
 		"inventory": "M855", # short name
 		"equipment": "5.56 NATO", # caliber
 		"weight": 0.369, # defaultAmount: 30
-		"bullet_weight": 62,
+		"load": 62,
 	},
 	"Ammo_308": {
 		"name": "7.62x51mm M80 Ball",
 		"inventory": "M80",
 		"equipment": "7.62 NATO",
 		"weight": 0.762, # defaultAmount: 30
-		"bullet_weight": 147,
+		"load": 147,
 	},
 	"Ammo_45ACP": {
 		"name": ".45 ACP M1911 Ball",
 		"inventory": ".45",
 		"equipment": ".45 ACP",
 		"weight": 1.05, # defaultAmount: 50
-		"bullet_weight": 230,
+		"load": 230,
 	},
 	"Ammo_46x30": {
 		"name": "4.6x30mm HK DM11",
 		"inventory": "DM11",
 		"equipment": "4.6x30",
 		"weight": 0.325, # defaultAmount: 50
-		"bullet_weight": 31,
+		"load": 31,
 	},
 	"Ammo_545x39": {
 		"name": "5.45x39mm 7N10",
 		"inventory": "7N10",
 		"equipment": "5.45",
 		"weight": 0.321, # defaultAmount: 30
-		"bullet_weight": 56,
+		"load": 56,
 	},
 	"Ammo_762x39": {
 		"name": "7.62x39mm 7N23",
 		"inventory": "7N23",
 		"equipment": "7.62",
 		"weight": 0.489, # defaultAmount: 30
-		"bullet_weight": 122,
+		"load": 122,
 	},
 	"Ammo_762x54R": {
 		"name": "7.62x54mmR 7N14",
 		"inventory": "7N14",
 		"equipment": "7.62x54R",
 		"weight": 0.436, # defaultAmount: 20
-		"bullet_weight": 151,
+		"load": 151,
 	},
 	"Ammo_9x18": {
 		"name": "9x18mm Makarov",
 		"inventory": "9x18",
 		"equipment": "9x18",
 		"weight": 0.5, # defaultAmount: 50
-		"bullet_weight": 93,
+		"load": 93,
 	},
 	"Ammo_9x19": {
 		"name": "9x19 M882 Ball",
 		"inventory": "9mm",
 		"equipment": "9mm",
 		"weight": 0.6, # defaultAmount: 50
-		"bullet_weight": 124,
+		"load": 124,
 	},
 	"Ammo_9x39": {
 		"name": "9x39mm SP-6",
 		"inventory": "SP-6",
 		"equipment": "9x39",
 		"weight": 0.46, # defaultAmount: 20
-		"bullet_weight": 242,
+		"load": 242,
 	},
 	"Ammo_12x70": {
 		"name": "12GA 00 Buckshot",
 		"inventory": "#00",
 		"equipment": "12GA",
 		"weight": 0.445, # defaultAmount: 10
-		"bullet_weight": 484,
+		"load": 484,
 	},
 	"AK_12_Magazine": {
 		"name": "AK-12 mag",
-		"grau_index": "6Л34",
+		"grau": "6Л34",
 		"display": "AK-12 mag",
 		"weight": 0.19,
 	},
 	"AKM_Magazine": {
 		"name": "AKM mag",
-		"grau_index": "57-A-231",
+		"grau": "57-A-231",
 		"display": "AKM mag",
 		"weight": 0.43,
 	},
 	"AKS_74U_Magazine": {
 		"name": "AK-74 Bakelite mag",
-		"grau_index": "6Л23",
+		"grau": "6Л23",
 		"display": "AK-74 mag",
 		"weight": 0.23,
 	},
@@ -411,13 +411,13 @@ const DATA := {
 	},
 	"SVD_Magazine": {
 		"name": "SVD Waffle mag",
-		"grau_index": "6Л10",
+		"grau": "6Л10",
 		"display": "SVD mag",
 		"weight": 0.21,
 	},
 	"VSS_Magazine": {
 		"name": "VSS Plum mag",
-		"grau_index": "6Л24",
+		"grau": "6Л24",
 		"display": "VSS mag",
 		"weight": 0.18,
 	},

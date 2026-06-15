@@ -56,14 +56,14 @@ func on_update_post(item) -> void:
 		tooltip.capacity.get_child(0).text = itemData.maxAmount
 		tooltip.capacity.show()
 
-	if extra_data.grau_index:
-		_show_row(tooltip, ROW_GRAU, "GRAU index:", extra_data.grau_index)
+	if extra_data.grau:
+		_show_row(tooltip, ROW_GRAU, "GRAU:", extra_data.grau)
 
-	if extra_data.model_name:
-		_show_row(tooltip, ROW_MODEL, "Model:", extra_data.model_name)
+	if extra_data.model:
+		_show_row(tooltip, ROW_MODEL, "Model:", extra_data.model)
 
-	if extra_data.bullet_weight:
-		_show_row(tooltip, BULLET_WEIGHT, "Load:", "%d gr" % extra_data.bullet_weight)
+	if extra_data.load:
+		_show_row(tooltip, BULLET_WEIGHT, "Load:", "%d gr" % extra_data.load)
 
 	tooltip.panel.size = Vector2(256, 0)
 	tooltip.interface.tooltipOffset = tooltip.panel.size.y / 2.0
