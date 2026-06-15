@@ -47,15 +47,15 @@ class FlashlightDriver extends Node:
 		var slot = parent.lightSlot
 		var light = slot.get_child(0) if slot && slot.get_child_count() else null
 
-		if !light:
+		if !light || gameData.freeze:
 			return
 
-		if evt.is_action_pressed("flashlight", false) && !gameData.freeze:
+		if evt.is_action_pressed("flashlight", false):
 			_click_sound.click_in()
-			if !gameData.flashlight:
+			if !gameData.flashlight && light.slotData.condition > 0:
 				parent.Activate()
 				_hold_elapsed = 0.0
-		elif evt.is_action_released("flashlight") && gameData.flashlight:
+		elif evt.is_action_released("flashlight"):
 			_click_sound.click_out()
-			if _hold_elapsed > HOLD_THRESHOLD:
+			if gameData.flashlight && _hold_elapsed > HOLD_THRESHOLD:
 				parent.Deactivate()

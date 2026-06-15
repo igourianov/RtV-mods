@@ -26,9 +26,16 @@ func on_physics_process(delta: float) -> void:
 class NVGDriver extends Node:
 	const HOLD_THRESHOLD = 0.25
 	const ModConfig = preload("../ModConfig.gd")
+	const AttachmentClickPlayer = preload("../Audio/AttachmentClickPlayer.gd")
 
 	var gameData = preload("res://Resources/GameData.tres")
 	var _hold_elapsed := 0.0
+	var _click_sound: AttachmentClickPlayer
+
+
+	func _init() -> void:
+		_click_sound = AttachmentClickPlayer.new()
+		add_child(_click_sound)
 
 
 	func _physics_process(delta: float):
@@ -41,13 +48,15 @@ class NVGDriver extends Node:
 		var slot = parent.NVGSlot
 		var device = slot.get_child(0) if slot && slot.get_child_count() else null
 
-		if !device:
+		if !device || gameData.freeze || ModConfig.binoculars_active:
 			return
 
-		if !gameData.NVG && !ModConfig.binoculars_active && evt.is_action_pressed("nvg", false) && !gameData.freeze:
-			_hold_elapsed = 0.0
-			parent.Activate()
-			parent.NVGAudio()
-		elif gameData.NVG && evt.is_action_released("nvg") && _hold_elapsed > HOLD_THRESHOLD:
-			parent.Deactivate()
-			parent.NVGAudio()
+		if evt.is_action_pressed("nvg", false):
+			_click_sound.click_in()
+			if !gameData.NVG && device.slotData.condition > 0:
+				parent.Activate()
+				_hold_elapsed = 0.0
+		elif evt.is_action_released("nvg"):
+			_click_sound.click_out()
+			if gameData.NVG && _hold_elapsed > HOLD_THRESHOLD:
+				parent.Deactivate()
