@@ -263,7 +263,7 @@ const DATA := {
 		"load": 147,
 	},
 	"Ammo_45ACP": {
-		"name": ".45 ACP M1911 Ball",
+		"name": ".45 ACP 230gr FMJ",
 		"inventory": ".45",
 		"equipment": ".45 ACP",
 		"weight": 1.05, # defaultAmount: 50
@@ -305,7 +305,7 @@ const DATA := {
 		"load": 93,
 	},
 	"Ammo_9x19": {
-		"name": "9x19 M882 Ball",
+		"name": "9x19 124gr FMJ",
 		"inventory": "9mm",
 		"equipment": "9mm",
 		"weight": 0.6, # defaultAmount: 50

@@ -63,7 +63,7 @@ func on_update_post(item) -> void:
 		_show_row(tooltip, ROW_MODEL, "Model:", extra_data.model)
 
 	if extra_data.load:
-		_show_row(tooltip, BULLET_WEIGHT, "Load:", "%d gr" % extra_data.load)
+		_show_row(tooltip, BULLET_WEIGHT, "Load:", "%dgr" % extra_data.load)
 
 	tooltip.panel.size = Vector2(256, 0)
 	tooltip.interface.tooltipOffset = tooltip.panel.size.y / 2.0
