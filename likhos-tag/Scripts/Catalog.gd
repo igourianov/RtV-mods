@@ -22,7 +22,6 @@ const DATA := {
 	"PU": {
 		"inventory": "PU",
 		"name": ["PU 3.5x", "ПУ 3.5x"],
-		"grau": "56-В-421У",
 		"weight": 0.4,
 	},
 	"Vudu": {
@@ -48,7 +47,6 @@ const DATA := {
 	"Kobra": {
 		"inventory": "Kobra",
 		"name": ["Axion Kobra", "Аксион Кобра"],
-		"model": "EKP-8-18",
 		"weight": 0.4,
 	},
 	"Micro": {
@@ -99,7 +97,6 @@ const DATA := {
 	"PBS": {
 		"inventory": "PBS-1",
 		"name": ["PBS-1", "ПБС-1"],
-		"grau": "6Ч12",
 		"weight": 0.62,
 	},
 	"PTN": {
@@ -129,18 +126,15 @@ const DATA := {
 	},
 	"AK_12": {
 		"name": "AK-12 Gen 1",
-		"grau": "6П70",
 		"inventory": "AK-12",
 	},
 	"AKM": {
 		"name": "AKM",
-		"grau": "6П1",
 		"inventory": "AKM",
 		"weight": 3.1,
 	},
 	"AKS_74U": {
 		"name": ["AKS-74U", "АКС-74У"],
-		"grau": "6П26",
 		"inventory": "AKS-74U",
 		"weight": 2.7,
 	},
@@ -181,7 +175,6 @@ const DATA := {
 	},
 	"Makarov": {
 		"name": ["Makarov", "Макаров"],
-		"grau": "56-А-125",
 		"inventory": "PM",
 	},
 	"MK18": {
@@ -237,13 +230,11 @@ const DATA := {
 	},
 	"SVD": {
 		"name": ["Dragunov", "Драгунов"],
-		"grau": "6В1",
 		"inventory": "SVD",
 		"weight": 3.7,
 	},
 	"VSS": {
 		"name": ["Vintorez", "Винторез"],
-		"grau": "6П29",
 		"inventory": "VSS",
 		"weight": 1.8,
 		"penetration": 4,
@@ -284,10 +275,10 @@ const DATA := {
 		"load": 56,
 	},
 	"Ammo_762x39": {
-		"name": "7.62x39mm 7N23",
-		"inventory": "7N23",
+		"name": "7.62x39mm 7N22",
+		"inventory": "7N22",
 		"equipment": "7.62",
-		"weight": 0.489, # defaultAmount: 30
+		"weight": 0.483, # defaultAmount: 30
 		"load": 122,
 	},
 	"Ammo_762x54R": {
@@ -312,8 +303,8 @@ const DATA := {
 		"load": 124,
 	},
 	"Ammo_9x39": {
-		"name": "9x39mm SP-6",
-		"inventory": "SP-6",
+		"name": "9x39mm 7N9",
+		"inventory": "7N9",
 		"equipment": "9x39",
 		"weight": 0.46, # defaultAmount: 20
 		"load": 242,
@@ -327,19 +318,16 @@ const DATA := {
 	},
 	"AK_12_Magazine": {
 		"name": "AK-12 mag",
-		"grau": "6Л34",
 		"display": "AK-12 mag",
 		"weight": 0.19,
 	},
 	"AKM_Magazine": {
 		"name": "AKM mag",
-		"grau": "57-A-231",
 		"display": "AKM mag",
 		"weight": 0.43,
 	},
 	"AKS_74U_Magazine": {
 		"name": "AK-74 Bakelite mag",
-		"grau": "6Л23",
 		"display": "AK-74 mag",
 		"weight": 0.23,
 	},
@@ -355,13 +343,11 @@ const DATA := {
 	},
 	"KAR_21_223_Magazine": {
 		"name": "Magpul PMAG M3",
-		"model": "MAG557",
 		"display": "PMAG",
 		"weight": 0.14
 	},
 	"KAR_21_308_Magazine": {
 		"name": "Magpul PMAG LR/SR M3",
-		"model": "MAG291",
 		"display": "PMAG 308",
 		"weight": 0.18,
 		"defaultAmount": 20,
@@ -411,13 +397,11 @@ const DATA := {
 	},
 	"SVD_Magazine": {
 		"name": "SVD Waffle mag",
-		"grau": "6Л10",
 		"display": "SVD mag",
 		"weight": 0.21,
 	},
 	"VSS_Magazine": {
 		"name": "VSS Plum mag",
-		"grau": "6Л24",
 		"display": "VSS mag",
 		"weight": 0.18,
 	},

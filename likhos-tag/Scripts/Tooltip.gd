@@ -3,15 +3,11 @@ extends "../Lib/Tooltip.gd"
 const Out = preload("../Lib/Out.gd")
 const Catalog = preload("./Catalog.gd")
 
-const ROW_MODEL := "likho_model"
-const ROW_GRAU := "likho_grau"
 const BULLET_WEIGHT := "likho_bullet_weight"
 
 
 func on_reset_post():
 	var tooltip = _lib._caller
-	_hide_row(tooltip, ROW_MODEL)
-	_hide_row(tooltip, ROW_GRAU)
 	_hide_row(tooltip, BULLET_WEIGHT)
 
 
@@ -55,12 +51,6 @@ func on_update_post(item) -> void:
 	if itemData.maxAmount && itemData.subtype == "Magazine":
 		tooltip.capacity.get_child(0).text = itemData.maxAmount
 		tooltip.capacity.show()
-
-	if extra_data.grau:
-		_show_row(tooltip, ROW_GRAU, "GRAU:", extra_data.grau)
-
-	if extra_data.model:
-		_show_row(tooltip, ROW_MODEL, "Model:", extra_data.model)
 
 	if extra_data.load:
 		_show_row(tooltip, BULLET_WEIGHT, "Load:", "%dgr" % extra_data.load)
