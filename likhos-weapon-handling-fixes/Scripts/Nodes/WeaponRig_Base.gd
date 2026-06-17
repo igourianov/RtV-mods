@@ -9,12 +9,14 @@ const ModConfig = preload("../ModConfig.gd")
 
 var gameData = preload("res://Resources/GameData.tres")
 var _audio_player: AudioEventPlayer
-var _zoom_click: ZoomClickPlayer
+var _zoom_audio: ZoomClickPlayer
 
 
 func _init() -> void:
 	_audio_player = AudioEventPlayer.new()
 	add_child(_audio_player)
+	_zoom_audio = ZoomClickPlayer.new()
+	add_child(_zoom_audio)
 
 
 func is_engine_busy() -> bool:
@@ -33,13 +35,6 @@ func play(animation_state: String, audio_event: AudioEvent, wait_offset: float =
 	var playback = start_animation(animation_state)
 	await await_animation(wait_offset, playback)
 	Out.debug("play done")
-
-
-func play_zoom_click() -> void:
-	if !is_instance_valid(_zoom_click):
-		_zoom_click = ZoomClickPlayer.new()
-		add_child(_zoom_click)
-	_zoom_click.click()
 
 
 func await_animation(wait_offset: float = 0.0, playback = null) -> void:

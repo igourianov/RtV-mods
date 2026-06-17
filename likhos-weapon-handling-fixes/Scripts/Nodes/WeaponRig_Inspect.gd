@@ -64,8 +64,7 @@ func _input(event: InputEvent) -> void:
 		if new_z >= min_val && new_z <= max_val:
 			rig.slotData.position += 0.01 if zoomIn else -0.01
 			optic.position.z = optic.defaultPosition + rig.slotData.position
-			play_zoom_click()
-
+			_zoom_audio.click()
 
 
 func _inspect_toggle() -> void:
