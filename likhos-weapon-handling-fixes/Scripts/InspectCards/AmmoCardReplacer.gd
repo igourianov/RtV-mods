@@ -2,8 +2,8 @@ extends Control
 
 const ModConfig = preload("../ModConfig.gd")
 
-const _DURATION := 1.0
-const _DELAY := 0.5
+const _FILL_DURATION := 0.5
+const _FILL_DELAY := 0.5
 const _MAX_BARS := 10
 const _BAR_WIDTH_FACTOR := 0.5
 const _BAR_THICKNESS := 3
@@ -49,27 +49,29 @@ func _process(delta: float) -> void:
 		_prev_visible = false
 	elif !_prev_visible:
 		_prev_visible = true
+		_delay = _FILL_DELAY
 		_capacity = _get_mag_cap()
 		_fill_progress = 0.0
-		_delay = _DELAY
 		_update_fill_target()
 		queue_redraw()
 	elif _delay > 0.0:
 		_delay -= delta
 	elif _fill_progress < 1.0:
-		_fill_progress = min(_fill_progress + delta / _DURATION, 1.0)
-		queue_redraw()
-	else:
+		_fill_progress = min(_fill_progress + delta / _FILL_DURATION, 1.0)
 		_update_fill_target()
+		queue_redraw()
+	elif _update_fill_target():
 		queue_redraw()
 
 
 func _update_fill_target():
 	var ammo: int = _rig.slotData.amount if _rig && _rig.slotData else 0
+	var target := 0.0
 	if _capacity > 0:
-		_fill_target = clampf(float(ammo) / float(_capacity), 0.0, 1.0)
-	else:
-		_fill_target = 0.0
+		target = clampf(float(ammo) / float(_capacity), 0.0, 1.0)
+	var ret := absf(_fill_target - target) > 0.01
+	_fill_target = target
+	return ret
 
 
 func _get_mag_cap() -> int:
