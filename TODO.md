@@ -6,6 +6,7 @@
 - gangster style for pistols
 - integrate binos with loot highlighter
 - redo ammo stack weights
+- batteries for lasers
 
 # Closed
 - MP7 clipping in canted mode - will not fix (missing texture on the gun)
