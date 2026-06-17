@@ -147,6 +147,7 @@ func _process(delta: float) -> void:
 		_progress = 0.0
 		_rect.visible = false
 		ModConfig.binoculars_active = false
+		gameData.set_meta("loot_light_on", false)
 		gameData.isOccupied = false
 		return
 
@@ -157,6 +158,7 @@ func _process(delta: float) -> void:
 		_current_fov = _camera.fov
 		ModConfig.binoculars_mag = _MAGS[_index]
 		ModConfig.binoculars_active = true
+		gameData.set_meta("loot_light_on", true)
 		gameData.isOccupied = true
 		gameData.isFiring = false
 
