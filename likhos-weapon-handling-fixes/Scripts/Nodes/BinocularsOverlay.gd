@@ -8,10 +8,10 @@ const _RETICLE_PATH = "res://mods/likhos-weapon-handling-fixes/Textures/binos_re
 const _GRIME_PATH = "res://mods/likhos-weapon-handling-fixes/Textures/binos_grime.jpg"
 const _CAMERA_PATH = "/root/Map/Core/Camera"
 const _HUD_PATH = "/root/Map/Core/UI/HUD"
-const UIClickPlayer = preload("../Audio/UIClickPlayer.gd")
+const ZoomClickPlayer = preload("../Audio/ZoomClickPlayer.gd")
 
 var gameData = preload("res://Resources/GameData.tres")
-var _click_audio: UIClickPlayer
+var _click_audio: ZoomClickPlayer
 
 enum State { INACTIVE, RAISING, ACTIVE, LOWERING }
 
@@ -45,7 +45,7 @@ func _ready() -> void:
 	_build_overlay()
 	_rect.visible = false
 
-	_click_audio = UIClickPlayer.new()
+	_click_audio = ZoomClickPlayer.new()
 	add_child(_click_audio)
 
 

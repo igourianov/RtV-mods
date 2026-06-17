@@ -10,6 +10,7 @@ const _OUT_DURATION := 0.0
 
 func _init() -> void:
 	super(_CLICK_AUDIO, _CLICK_VOLUME)
+	max_polyphony = 10
 
 
 func click_in() -> void:

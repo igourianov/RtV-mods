@@ -48,7 +48,7 @@ func _handle_zoom(event: InputEvent, optic) -> bool:
 	if new_zoom != rig.slotData.zoom:
 		rig.slotData.zoom = new_zoom
 		ScopeCatalog.sync_optic_state(rig)
-		rig.PlayRailMove()
+		play_zoom_click()
 	return true
 
 

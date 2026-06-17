@@ -2,7 +2,7 @@ extends RefCounted
 
 const ModConfig = preload("../ModConfig.gd")
 const Out = preload("../../Lib/Out.gd")
-const BreathHoldPlayer = preload("../Audio/BreathHoldPlayer.gd")
+const AudioChunkPlayer = preload("../Audio/AudioChunkPlayer.gd")
 
 const STAMINA_RECOVERY: float = 100.0
 const STAMINA_RECOVERY_DELAY: float = 2.0
@@ -19,6 +19,9 @@ const ARM_STAMINA_HOLD_BREATH: float = -5.0
 
 const HOLD_BREATH_SETTLE: float = 0.5
 const HOLD_BREATH_OUTRO_MIN_HOLD: float = 3.0
+const HOLD_BREATH_STREAM: String = "res://mods/likhos-weapon-handling-fixes/Audio/hold_breath.mp3"
+const HOLD_BREATH_INTRO: float = 0.5
+const HOLD_BREATH_OUTRO_START: float = 0.5
 
 var _lib
 var _interface
@@ -26,7 +29,7 @@ var gameData = preload("res://Resources/GameData.tres")
 var _body_recovery_delay: float = 0.0
 var _arm_recovery_delay: float = 0.0
 var _hold_breath_time: float = 0.0
-var _breath_sound
+var _breath_sound: AudioChunkPlayer
 
 
 func _init(lib) -> void:
@@ -51,7 +54,7 @@ func on_stamina(delta: float) -> void:
 func _hold_breath(chr: Node, delta: float) -> void:
 
 	if !is_instance_valid(_breath_sound):
-		_breath_sound = BreathHoldPlayer.new()
+		_breath_sound = AudioChunkPlayer.new(AudioStreamMP3.load_from_file(HOLD_BREATH_STREAM))
 		chr.add_child(_breath_sound)
 
 	var intent: bool = Input.is_action_pressed("sprint")
@@ -64,11 +67,12 @@ func _hold_breath(chr: Node, delta: float) -> void:
 		_hold_breath_time = 0.0
 
 	if !holding && intent && allowed:
-		_breath_sound.hold()
+		if !_breath_sound.playing:
+			_breath_sound.play_chunk(0.0, HOLD_BREATH_INTRO)
 		ModConfig.hold_breath_state = 0.001
 	elif holding && (!intent || !allowed):
 		if _hold_breath_time > HOLD_BREATH_OUTRO_MIN_HOLD:
-			_breath_sound.release()
+			_breath_sound.play_chunk(HOLD_BREATH_OUTRO_START, 0.0)
 		ModConfig.hold_breath_state = 0.0
 	elif holding:
 		ModConfig.hold_breath_state = clampf(_hold_breath_time / HOLD_BREATH_SETTLE, 0.0, 1.0)

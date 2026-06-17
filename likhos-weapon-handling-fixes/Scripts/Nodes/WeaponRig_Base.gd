@@ -3,11 +3,13 @@ extends Node
 const Out = preload("../../Lib/Out.gd")
 const Inputs = preload("../../Lib/Inputs.gd")
 const AudioEventPlayer = preload("../Audio/AudioEventPlayer.gd")
+const ZoomClickPlayer = preload("../Audio/ZoomClickPlayer.gd")
 const ModConfig = preload("../ModConfig.gd")
 
 
 var gameData = preload("res://Resources/GameData.tres")
 var _audio_player: AudioEventPlayer
+var _zoom_click: ZoomClickPlayer
 
 
 func _init() -> void:
@@ -31,6 +33,13 @@ func play(animation_state: String, audio_event: AudioEvent, wait_offset: float =
 	var playback = start_animation(animation_state)
 	await await_animation(wait_offset, playback)
 	Out.debug("play done")
+
+
+func play_zoom_click() -> void:
+	if !is_instance_valid(_zoom_click):
+		_zoom_click = ZoomClickPlayer.new()
+		add_child(_zoom_click)
+	_zoom_click.click()
 
 
 func await_animation(wait_offset: float = 0.0, playback = null) -> void:
