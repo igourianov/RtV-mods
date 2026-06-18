@@ -63,5 +63,6 @@ func _get_caliber(data: ItemData) -> String:
 	if data.type == "Ammo":
 		return data.equipment
 	if data.type == "Weapon":
-		return _get_caliber(data.ammo)
+		#return _get_caliber(data.ammo)
+		return data.caliber
 	return ""

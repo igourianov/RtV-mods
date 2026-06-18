@@ -5,6 +5,8 @@ const ModConfig = preload("./ModConfig.gd")
 
 const EXTRAS := ["grau", "model", "load"]
 const DATA := {
+	# item data overrides
+	# key = `file` prop in the tres file
 	"ACOG": {
 		"inventory": "ACOG",
 		"name": "Trijicon ACOG TA31",
@@ -150,14 +152,17 @@ const DATA := {
 		"name": "H&K 416",
 		"inventory": "HK416",
 		"weight": 3.5,
+		"caliber": "5.56 NATO",
 	},
 	"KAR_21_223": {
 		"name": "KAR-21 .223",
 		"inventory": "KAR-21-223",
+		"caliber": ".223 Rem",
 	},
 	"KAR_21_308": {
 		"name": "KAR-21 .308",
 		"inventory": "KAR-21-308",
+		"caliber": ".308 Win",
 	},
 	"KP_31": {
 		"name": "Suomi KP-31",
@@ -167,11 +172,13 @@ const DATA := {
 		"name": "Colt M4A1",
 		"inventory": "M4A1",
 		"weight": 3.3,
+		"caliber": "5.56 NATO",
 	},
 	"M78": {
 		"name": "Valmet M78",
 		"inventory": "M78",
 		"weight": 5.0,
+		"caliber": ".308 Win",
 	},
 	"Makarov": {
 		"name": ["Makarov", "Макаров"],
@@ -180,6 +187,7 @@ const DATA := {
 	"MK18": {
 		"name": "Mk 18 Mod 1",
 		"inventory": "MK18",
+		"caliber": "5.56 NATO",
 	},
 	"Mosin": {
 		"name": ["Mosin-Nagant M1891", "Трёхлинейка 1891/30"],
@@ -212,6 +220,7 @@ const DATA := {
 		"name": "Remington 870 Police Magnum",
 		"inventory": "870",
 		"weight": 3.2,
+		"caliber": "12Ga",
 	},
 	"RK_62": {
 		"name": "Valmet RK-62",
@@ -242,14 +251,14 @@ const DATA := {
 	"Ammo_223": {
 		"name": "Fiocchi 223A", # full name
 		"inventory": "223A", # short name
-		"equipment": ".223Rem", # caliber
+		"equipment": ".223 Rem", # caliber
 		"weight": 0.35, # defaultAmount: 30
 		"load": 55,
 	},
 	"Ammo_308": {
 		"name": "Lapua S374 .308Win",
 		"inventory": "S374",
-		"equipment": ".308Win",
+		"equipment": ".308 Win",
 		"weight": 0.65, # defaultAmount: 30
 		"load": 123,
 	},
