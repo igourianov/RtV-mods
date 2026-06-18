@@ -16,9 +16,7 @@ Functional changes:
 
 The recipe names retain vanilla weapon names. The name is used as a look up key, and I can't change it without breaking every other mod touching recipes. Not worth it to just change the name.
 
-
-## Weapon Name and Weight Changes
-!!!
+!!! Weapons
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
 |--------------|---------------|-----------------------------|
 | KA-12 | AK-12 Gen 1 | |
@@ -47,8 +45,8 @@ The recipe names retain vanilla weapon names. The name is used as a look up key,
 | VSD | Dragunov | 5.3 → 3.7 |
 | SSV | Vintorez | 2.8 → 1.8 |
 !!!
-## Magazine Name and Weight Changes
-!!!
+
+!!! Magazines
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
 |--------------|---------------|---------| 
 | KA-12 Magazine | AK-12 mag | |
@@ -69,8 +67,8 @@ The recipe names retain vanilla weapon names. The name is used as a look up key,
 | VSD Magazine | SVD Waffle mag | → 0.21 |
 | SS Magazine | VSS Plum mag | |
 !!!
-## Attachment Name and Weight Changes
-!!!
+
+!!! Attachments
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
 |--------------|---------------|-----------------------------|
 | ATOG | Trijicon ACOG TA31 | 0.6 → 0.5 |
@@ -97,6 +95,22 @@ The recipe names retain vanilla weapon names. The name is used as a look up key,
 | Salvo | SilencerCo Salvo 12 | 0.9 → 0.97 |
 | SOCOM | SureFire SOCOM556 RC2 | 0.5 → 0.48 |
 | Thor | AWC Thor PSR | 0.7 → 0.51 |
+!!!
+
+!!! Ammo
+| Vanilla Name | Override Name | Weight (Vanilla → Override) |
+|--------------|---------------|-----------------------------|
+| .223 | Fiocchi 223A | 0.5 → 0.35 |
+| .308 | Lapua S374 .308Win | 0.6 → 0.65 |
+| .45 ACP | GECO .45 Auto FMJ | 0.5 → 1.05 |
+| 4.6 | Fiocchi 46EXA 4.6x30mm | 0.5 → 0.35 |
+| 5.45 | Barnaul 5.45x39mm FMJ | 0.4 → 0.33 |
+| 7.62 | Lapua 7.62 Ball | 0.6 → 0.49 |
+| 7.62R | TulAmmo 7.62x54mmR FMJ | 0.6 → 0.46 |
+| 9x18 | GECO 9x18mm FMJ | 0.3 → 0.5 |
+| 9x19 | GECO 9x19 124gr FMJ | 0.4 → 0.6 |
+| 9x39 | WOLF 9x39mm Subsonic | 0.3 → 0.46 |
+| 12/70 | Hubertus 00 Buck | 0.3 → 0.44 |
 !!!
 ### Other
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
