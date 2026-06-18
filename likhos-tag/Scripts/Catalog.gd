@@ -240,80 +240,80 @@ const DATA := {
 		"penetration": 4,
 	},
 	"Ammo_223": {
-		"name": "5.56x45mm M855", # full name
-		"inventory": "M855", # short name
-		"equipment": "5.56 NATO", # caliber
-		"weight": 0.369, # defaultAmount: 30
-		"load": 62,
+		"name": "Fiocchi 223A", # full name
+		"inventory": "223A", # short name
+		"equipment": ".223Rem", # caliber
+		"weight": 0.35, # defaultAmount: 30
+		"load": 55,
 	},
 	"Ammo_308": {
-		"name": "7.62x51mm M80 Ball",
-		"inventory": "M80",
-		"equipment": "7.62 NATO",
-		"weight": 0.762, # defaultAmount: 30
-		"load": 147,
+		"name": "Lapua S374 .308Win",
+		"inventory": "S374",
+		"equipment": ".308Win",
+		"weight": 0.65, # defaultAmount: 30
+		"load": 123,
 	},
 	"Ammo_45ACP": {
-		"name": ".45 ACP 230gr FMJ",
-		"inventory": ".45",
+		"name": "GECO .45 Auto FMJ",
+		"inventory": "G45", # fake code
 		"equipment": ".45 ACP",
 		"weight": 1.05, # defaultAmount: 50
 		"load": 230,
 	},
 	"Ammo_46x30": {
-		"name": "4.6x30mm HK DM11",
-		"inventory": "DM11",
+		"name": "Fiocchi 46EXA 4.6x30mm",
+		"inventory": "46EXA",
 		"equipment": "4.6x30",
-		"weight": 0.325, # defaultAmount: 50
-		"load": 31,
+		"weight": 0.35, # defaultAmount: 50
+		"load": 40,
 	},
 	"Ammo_545x39": {
-		"name": "5.45x39mm 7N10",
-		"inventory": "7N10",
-		"equipment": "5.45",
-		"weight": 0.321, # defaultAmount: 30
-		"load": 56,
+		"name": "Barnaul 5.45x39mm FMJ",
+		"inventory": "BRN545",
+		"equipment": "5.45x39",
+		"weight": 0.33, # defaultAmount: 30
+		"load": 60,
 	},
 	"Ammo_762x39": {
-		"name": "7.62x39mm 7N22",
-		"inventory": "7N22",
-		"equipment": "7.62",
-		"weight": 0.483, # defaultAmount: 30
-		"load": 122,
+		"name": "Lapua 7.62 Ball",
+		"inventory": "762RK",
+		"equipment": "7.62x39",
+		"weight": 0.49, # defaultAmount: 30
+		"load": 123,
 	},
 	"Ammo_762x54R": {
-		"name": "7.62x54mmR 7N14",
-		"inventory": "7N14",
+		"name": "TulAmmo 7.62x54mmR FMJ",
+		"inventory": "TA762",
 		"equipment": "7.62x54R",
-		"weight": 0.436, # defaultAmount: 20
-		"load": 151,
+		"weight": 0.46, # defaultAmount: 20
+		"load": 148,
 	},
 	"Ammo_9x18": {
-		"name": "9x18mm Makarov",
-		"inventory": "9x18",
+		"name": "GECO 9x18mm FMJ",
+		"inventory": "G918", # fake
 		"equipment": "9x18",
 		"weight": 0.5, # defaultAmount: 50
-		"load": 93,
+		"load": 95,
 	},
 	"Ammo_9x19": {
-		"name": "9x19 124gr FMJ",
-		"inventory": "9mm",
-		"equipment": "9mm",
+		"name": "GECO 9x19 124gr FMJ",
+		"inventory": "G9", # fake
+		"equipment": "9x19",
 		"weight": 0.6, # defaultAmount: 50
 		"load": 124,
 	},
 	"Ammo_9x39": {
-		"name": "9x39mm 7N9",
-		"inventory": "7N9",
+		"name": "WOLF 9x39mm Subsonic",
+		"inventory": "VM75", 
 		"equipment": "9x39",
 		"weight": 0.46, # defaultAmount: 20
-		"load": 242,
+		"load": 278,
 	},
 	"Ammo_12x70": {
-		"name": "12GA 00 Buckshot",
-		"inventory": "#00",
+		"name": "Hubertus 00 Buck",
+		"inventory": "HUB12",
 		"equipment": "12GA",
-		"weight": 0.445, # defaultAmount: 10
+		"weight": 0.44, # defaultAmount: 10
 		"load": 484,
 	},
 	"AK_12_Magazine": {
