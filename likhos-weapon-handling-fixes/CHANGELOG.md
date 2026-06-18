@@ -1,3 +1,4 @@
+# 2.17.1908
 * raised AK12 and AKM inspect positions a bit to make sure kill counts cleanly visible
 * fixed click sounds for NVG used with hold activation
 * fixed occassional flashlight double click sound
