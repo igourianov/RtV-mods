@@ -1,9 +1,10 @@
 extends AudioStreamPlayer
 
 
-func _init(audio_stream: AudioStream, volume := 0.0) -> void:
+func _init(audio_stream: AudioStream, volume := 0.0, bus := &"SFX") -> void:
 	stream = audio_stream
 	volume_db = volume
+	self.bus = bus
 
 
 func play_chunk(start := 0.0, duration := 0.0) -> AudioStreamPlayback:

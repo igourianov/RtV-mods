@@ -1,6 +1,10 @@
 extends AudioStreamPlayer
 
 
+func _init(bus := &"SFX") -> void:
+	self.bus = bus
+
+
 func play_event(event) -> AudioStreamPlayback:
 	if !event || !event.audioClips || event.audioClips.is_empty():
 		return null
