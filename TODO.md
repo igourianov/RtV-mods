@@ -4,8 +4,6 @@
 - move manufacturer name into another field out of title
 - flashlight auto-on on PEQ15, similar to laser
 - gangster style for pistols
-- integrate binos with loot highlighter
-- redo ammo stack weights
 - batteries for lasers
 
 # Closed
@@ -43,3 +41,5 @@
 - scope nvg blur up close - done
 - reduce binos sens scale - done
 - immersive kill count - done
+- redo ammo stack weights - done
+- integrate binos with loot highlighter - done
