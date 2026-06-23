@@ -36,7 +36,6 @@ const _SECONDARY_OPTIC_ROT_OFFSET := Vector3(-15.0, 0.0, 0)
 const _ANCHOR_PITCH := -10.0
 const _LOOK_DOWN_PITCH := -45.0
 const _STOW_POS_OFFSET := Vector3(0.15, -0.25, 0.3)
-#const _STOW_HOLD_INVENTORY := 1.0
 const _STOW_HOLD_LOOK_DOWN := 0.2
 const _LEFT_ARM_BONE := "Arm_Upper_L"
 const _NEAR_ZERO := Vector3(0.001, 0.001, 0.001)
@@ -87,7 +86,6 @@ var _pitch_offset: float = 0.0
 var _stow_hold: float = 0.0
 var _stow_rot: Vector3
 var _idle_hide_left_arm := false
-var _rig_updated := false
 
 
 func _init(lib) -> void:
@@ -107,8 +105,6 @@ func on_rig_update_post(_animate) -> void:
 	var manager = _lib._caller
 	if !manager:
 		return
-
-	_rig_updated = true
 
 	if !_baseline_captured:
 		_manager_local_baseline = manager.transform
@@ -134,7 +130,6 @@ func on_rig_update_post(_animate) -> void:
 		rig.skeleton.set_bone_pose_rotation(rig.backSightIndex, rot)
 		if rig.frontSightIndex:
 			rig.skeleton.set_bone_pose_rotation(rig.frontSightIndex, rot)
-
 
 
 func on_input(evt: InputEvent) -> void:
@@ -325,13 +320,10 @@ func _apply_target(h, delta: float) -> void:
 	var cam_euler := cam_xform.basis.get_euler()
 	var cam_pitch_deg := rad_to_deg(cam_euler.x)
 
-	#if gameData.freeze:
-		#_stow_hold = _STOW_HOLD_INVENTORY if !_rig_updated else 0.01
 	if cam_pitch_deg < _LOOK_DOWN_PITCH:
 		_stow_hold = _STOW_HOLD_LOOK_DOWN
 	elif _stow_hold > 0.0:
 		_stow_hold -= delta
-		_rig_updated = false
 
 	if cam_pitch_deg >= _ANCHOR_PITCH:
 		_anchor_pitch = cam_euler.x
@@ -361,7 +353,6 @@ func _apply_left_arm(h) -> void:
 		return
 
 	# collapse the left support arm while stowed (hacky: zero-scale the shoulder bone)
-	#Out.debug("_target_idle:", _target_idle, "_stow_hold:", _stow_hold, "_idle_hide_left_arm:", _idle_hide_left_arm)
 	if _target_idle && (_stow_hold > 0.0 || _idle_hide_left_arm):
 		rig.skeleton.set_bone_pose_scale(arm_idx, _NEAR_ZERO)
 	else:
