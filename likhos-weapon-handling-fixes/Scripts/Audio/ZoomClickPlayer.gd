@@ -1,4 +1,4 @@
-extends "./AudioChunkPlayer.gd"
+extends "../../Lib/AudioChunkPlayer.gd"
 
 const _CLICK_AUDIO = preload("res://Audio/UI/Files/UI_Click.wav")
 const _CLICK_VOLUME := 0.0

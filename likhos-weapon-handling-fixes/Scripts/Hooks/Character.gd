@@ -2,7 +2,7 @@ extends RefCounted
 
 const ModConfig = preload("../ModConfig.gd")
 const Out = preload("../../Lib/Out.gd")
-const AudioChunkPlayer = preload("../Audio/AudioChunkPlayer.gd")
+const AudioChunkPlayer = preload("../../Lib/AudioChunkPlayer.gd")
 
 const STAMINA_RECOVERY: float = 100.0
 const STAMINA_RECOVERY_DELAY: float = 2.0

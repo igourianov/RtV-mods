@@ -2,7 +2,7 @@ extends Node
 
 const Out = preload("../../Lib/Out.gd")
 const Inputs = preload("../../Lib/Inputs.gd")
-const AudioEventPlayer = preload("../Audio/AudioEventPlayer.gd")
+const AudioEventPlayer = preload("../../Lib/AudioEventPlayer.gd")
 const ZoomClickPlayer = preload("../Audio/ZoomClickPlayer.gd")
 const ModConfig = preload("../ModConfig.gd")
 
