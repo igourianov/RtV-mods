@@ -12,13 +12,10 @@ var gameData = preload("res://Resources/GameData.tres")
 var _lib
 var _crosshair: Crosshair
 
-const _ATTACHMENT_SUBTYPES := ["Optic", "Muzzle", "Laser"]
-
 const _WRIST_BONE := "Wrist_R"
 const _KILL_BONE_OFFSET := Vector2(0.0, -10.0)
 const _KILL_CARD_SEP := 6
 
-var _att_cards: Dictionary = {}
 var _kill_cards: Array = []
 var _kill_container: VBoxContainer
 var _firemode_card: FireModeCard
@@ -26,6 +23,7 @@ var _ammo_replacer: AmmoCardReplacer
 var _chamber_replacer: ChamberCardReplacer
 var _camera: Camera3D
 var _rig_manager: Node3D
+var _att_cards: Dictionary = {}
 
 
 func _init(lib) -> void:
@@ -37,26 +35,10 @@ func on_ready_post() -> void:
 	if !hud:
 		return
 	_setup_crosshair(hud)
-	_setup_attachment_cards(hud)
 	_setup_firemode_card(hud)
 	_setup_kill_cards(hud)
 	_setup_ammo_replacer(hud)
 	_setup_chamber_replacer(hud)
-
-
-func _setup_attachment_cards(hud) -> void:
-	var stale := _att_cards.is_empty()
-	if !stale:
-		var any = _att_cards.values()[0]
-		stale = !is_instance_valid(any) || any.get_parent() != hud
-	if !stale:
-		return
-	_att_cards.clear()
-	for subtype in _ATTACHMENT_SUBTYPES:
-		var card := InspectCard.new()
-		card.name = "AttachmentTooltip_" + subtype
-		hud.add_child(card)
-		_att_cards[subtype] = card
 
 
 func _setup_crosshair(hud) -> void:
@@ -121,7 +103,7 @@ func on_physics_process_post(delta: float) -> void:
 		_crosshair.update(hud, delta)
 
 	_update_ammo_cards(hud, rig)
-	_update_attachment_cards(rig)
+	_update_attachment_cards(hud, rig)
 	_update_firemode_card(rig)
 	_update_kill_cards(rig)
 
@@ -152,29 +134,29 @@ func _update_ammo_cards(hud, rig: WeaponRig) -> void:
 		_chamber_replacer.set_rig(rig)
 
 
-func _update_attachment_cards(rig: WeaponRig) -> void:
-	if _att_cards.is_empty():
-		return
+func _update_attachment_cards(hud, rig: WeaponRig) -> void:
+	for card in _att_cards.values():
+		if is_instance_valid(card):
+			card.hide()
 
 	if !ModConfig.attachment_cards || !gameData.isInspecting || !_camera || !rig || !rig.slotData || !rig.attachments:
-		for card in _att_cards.values():
-			card.hide()
 		return
 
-	var by_subtype: Dictionary = {}
 	for nested in rig.slotData.nested:
-		if nested != null && _ATTACHMENT_SUBTYPES.has(nested.subtype):
-			by_subtype[nested.subtype] = nested
-
-	for subtype in _ATTACHMENT_SUBTYPES:
-		var card: InspectCard = _att_cards[subtype]
-		var item = by_subtype.get(subtype, null)
-		var attachment = rig.attachments.get_node_or_null(item.file) if item else null
-		if !item || !attachment || !is_instance_valid(attachment) || !attachment.visible:
-			card.hide()
+		if !nested || nested.type != "Attachment" || nested.subtype == "Magazine":
 			continue
 
-		card.set_text(item.name)
+		var attachment = rig.attachments.get_node_or_null(nested.file)
+		if !is_instance_valid(attachment) || !attachment.visible:
+			continue
+
+		var card: InspectCard = _att_cards.get(nested.subtype)
+		if !is_instance_valid(card):
+			card = InspectCard.new()
+			hud.add_child(card)
+			_att_cards[nested.subtype] = card
+
+		card.set_text(nested.name)
 		card.point_at(_camera.unproject_position(_world_center(attachment)))
 
 
