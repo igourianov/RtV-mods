@@ -4,7 +4,6 @@
 - move manufacturer name into another field out of title
 - flashlight auto-on on PEQ15, similar to laser
 - gangster style for pistols
-- batteries for lasers
 
 # Closed
 - MP7 clipping in canted mode - will not fix (missing texture on the gun)
@@ -43,3 +42,5 @@
 - immersive kill count - done
 - redo ammo stack weights - done
 - integrate binos with loot highlighter - done
+- batteries for lasers - another mod already does that
+
