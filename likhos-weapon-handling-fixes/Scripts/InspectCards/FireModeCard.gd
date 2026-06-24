@@ -11,6 +11,7 @@ var _mode := 0
 func _init() -> void:
 	super()
 	label.hide()
+	panel.custom_minimum_size = Vector2(_NATIVE, _NATIVE)
 	panel.draw.connect(_paint)
 
 

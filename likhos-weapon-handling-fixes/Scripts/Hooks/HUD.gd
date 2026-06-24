@@ -13,7 +13,6 @@ var _lib
 var _crosshair: Crosshair
 
 const _ATTACHMENT_SUBTYPES := ["Optic", "Muzzle", "Laser"]
-const _ATT_FONT_SIZE := 16
 
 const _WRIST_BONE := "Wrist_R"
 const _KILL_BONE_OFFSET := Vector2(0.0, -10.0)
@@ -56,7 +55,6 @@ func _setup_attachment_cards(hud) -> void:
 	for subtype in _ATTACHMENT_SUBTYPES:
 		var card := InspectCard.new()
 		card.name = "AttachmentTooltip_" + subtype
-		card.set_font_size(_ATT_FONT_SIZE)
 		hud.add_child(card)
 		_att_cards[subtype] = card
 

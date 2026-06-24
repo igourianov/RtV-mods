@@ -33,9 +33,9 @@ var _slashed := false
 func _init() -> void:
 	super()
 	label.hide()
-	panel.draw.connect(_paint)
-	_resize(_WIDTH, _HEIGHT)
+	panel.custom_minimum_size = Vector2(_WIDTH, _HEIGHT)
 	custom_minimum_size = Vector2(_WIDTH, _HEIGHT)
+	panel.draw.connect(_paint)
 	_seed = randi()
 	hide()
 
