@@ -1,6 +1,8 @@
+# 2.18.1916
+* integrated binos with the LootLight mod (v2.1.0 or greater)
 * disabled weapon stow on opening inventory (it was annoying)
 * refactored inspect mode attachment cards
-* refactored sound sound helpers
+* refactored sound helpers
 
 # 2.17.1908
 * raised AK12 and AKM inspect positions a bit to make sure kill counts cleanly visible
