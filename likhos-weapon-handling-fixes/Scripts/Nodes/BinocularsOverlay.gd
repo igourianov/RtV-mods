@@ -13,7 +13,7 @@ const ZoomClickPlayer = preload("../Audio/ZoomClickPlayer.gd")
 var gameData = preload("res://Resources/GameData.tres")
 var _click_audio: ZoomClickPlayer
 
-enum State { INACTIVE, RAISING, ACTIVE, LOWERING }
+enum State { INACTIVE, ACTIVE, LOWERING }
 
 const _RAISE_TIME := 0.3
 const _FOV_LERP_SPEED := 12.0
@@ -31,12 +31,12 @@ var _rect: ColorRect
 var _mat: ShaderMaterial
 var _camera: Camera3D
 var _state := State.INACTIVE
-var _progress := 0.0
+var _raise_state := 0.0
 var _index := 0
 var _zoom := ZoomAccelerator.new()
 var _base_fov := 70.0
 var _current_fov := 70.0
-var _hold_elapsed := 0.0
+var _hold_timer := 0.0
 var _loot_light
 var _loot_light_not_found: bool
 
@@ -99,16 +99,16 @@ func _input(event: InputEvent) -> void:
 		return
 
 	if event.is_action_pressed("binoculars") && (_state == State.INACTIVE || _state == State.LOWERING) && _can_raise():
-		_state = State.RAISING
-		_hold_elapsed = 0.0
+		_state = State.ACTIVE
+		_hold_timer = _HOLD_THRESHOLD
 		return
 
-	if event.is_action_released("binoculars") && (_state == State.RAISING || _state == State.ACTIVE):
-		if _hold_elapsed > _HOLD_THRESHOLD:
+	if event.is_action_released("binoculars") && _state == State.ACTIVE:
+		if _hold_timer <= 0.0:
 			_state = State.LOWERING
 		return
 
-	if _state != State.RAISING && _state != State.ACTIVE:
+	if _state != State.ACTIVE:
 		return
 
 	if event.is_action_pressed("optic_zoom_in"):
@@ -136,16 +136,19 @@ func _can_raise() -> bool:
 
 func _process(delta: float) -> void:
 	if _state == State.INACTIVE:
+		_raise_state = 0.0
 		return
 
-	if _state == State.LOWERING:
-		_progress -= delta / _RAISE_TIME
-	elif _state == State.RAISING || _state == State.ACTIVE:
-		_hold_elapsed += delta
+	if _state == State.LOWERING && _raise_state > 0.0:
+		_raise_state -= delta / _RAISE_TIME
+	elif _state == State.ACTIVE && _raise_state < 1.0:
+		_raise_state += delta / _RAISE_TIME
 
-	if !_resolve_camera() || gameData.isDead || gameData.menu || gameData.freeze || gameData.isRunning || _progress < 0.0:
+	if _state == State.ACTIVE && _hold_timer > 0.0:
+		_hold_timer -= delta
+
+	if !_resolve_camera() || gameData.isDead || gameData.menu || gameData.freeze || gameData.isRunning || _raise_state < 0.0:
 		_state = State.INACTIVE
-		_progress = 0.0
 		_rect.visible = false
 		ModConfig.binoculars_active = false
 		gameData.isOccupied = false
@@ -153,7 +156,6 @@ func _process(delta: float) -> void:
 		return
 
 	if !ModConfig.binoculars_active:
-		_progress = 0.0
 		_rect.visible = true
 		_base_fov = gameData.baseFOV
 		_current_fov = _camera.fov
@@ -162,12 +164,7 @@ func _process(delta: float) -> void:
 		gameData.isOccupied = true
 		gameData.isFiring = false
 
-	if _state == State.RAISING:
-		_progress = min(_progress + delta / _RAISE_TIME, 1.0)
-		if _progress >= 1.0:
-			_state = State.ACTIVE
-
-	_apply(smoothstep(0.0, 1.0, _progress), delta)
+	_apply(smoothstep(0.0, 1.0, _raise_state), delta)
 	_apply_loot_light(true)
 
 
