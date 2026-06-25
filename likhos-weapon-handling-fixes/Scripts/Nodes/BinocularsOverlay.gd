@@ -37,6 +37,8 @@ var _zoom := ZoomAccelerator.new()
 var _base_fov := 70.0
 var _current_fov := 70.0
 var _hold_elapsed := 0.0
+var _loot_light
+var _loot_light_not_found: bool
 
 
 func _ready() -> void:
@@ -147,8 +149,8 @@ func _process(delta: float) -> void:
 		_progress = 0.0
 		_rect.visible = false
 		ModConfig.binoculars_active = false
-		gameData.set_meta("loot_light_on", false)
 		gameData.isOccupied = false
+		_update_loot_light(false)
 		return
 
 	if !ModConfig.binoculars_active:
@@ -158,7 +160,6 @@ func _process(delta: float) -> void:
 		_current_fov = _camera.fov
 		ModConfig.binoculars_mag = _MAGS[_index]
 		ModConfig.binoculars_active = true
-		gameData.set_meta("loot_light_on", true)
 		gameData.isOccupied = true
 		gameData.isFiring = false
 
@@ -168,6 +169,22 @@ func _process(delta: float) -> void:
 			_state = State.ACTIVE
 
 	_apply(smoothstep(0.0, 1.0, _progress), delta)
+	_update_loot_light(true)
+
+
+# integration with LootLight mod
+func _update_loot_light(on: bool):
+	if _loot_light_not_found:
+		return
+	if !is_instance_valid(_loot_light):
+		_loot_light = get_node_or_null("/root/LootLightMain")
+		if !is_instance_valid(_loot_light) || !_loot_light.has_method("Set_Highlight"):
+			_loot_light_not_found = true
+			return
+	if on:
+		_loot_light.Set_Highlight(true, 200, 10, _current_fov * 1.2)
+	else:
+		_loot_light.Set_Highlight(false)
 
 
 func _apply(t: float, delta: float) -> void:
