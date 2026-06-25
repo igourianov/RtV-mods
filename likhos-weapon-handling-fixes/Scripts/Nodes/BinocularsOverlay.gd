@@ -135,14 +135,13 @@ func _can_raise() -> bool:
 
 
 func _process(delta: float) -> void:
-	if _state == State.RAISING || _state == State.ACTIVE:
-		_hold_elapsed += delta
-
 	if _state == State.INACTIVE:
 		return
 
 	if _state == State.LOWERING:
 		_progress -= delta / _RAISE_TIME
+	elif _state == State.RAISING || _state == State.ACTIVE:
+		_hold_elapsed += delta
 
 	if !_resolve_camera() || gameData.isDead || gameData.menu || gameData.freeze || gameData.isRunning || _progress < 0.0:
 		_state = State.INACTIVE
@@ -150,7 +149,7 @@ func _process(delta: float) -> void:
 		_rect.visible = false
 		ModConfig.binoculars_active = false
 		gameData.isOccupied = false
-		_update_loot_light(false)
+		_apply_loot_light(false)
 		return
 
 	if !ModConfig.binoculars_active:
@@ -169,11 +168,11 @@ func _process(delta: float) -> void:
 			_state = State.ACTIVE
 
 	_apply(smoothstep(0.0, 1.0, _progress), delta)
-	_update_loot_light(true)
+	_apply_loot_light(true)
 
 
 # integration with LootLight mod
-func _update_loot_light(on: bool):
+func _apply_loot_light(on: bool):
 	if _loot_light_not_found:
 		return
 	if !is_instance_valid(_loot_light):
