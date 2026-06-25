@@ -1,5 +1,5 @@
 # 2.18.1916
-* integrated binos with the LootLight mod (v2.1.0 or greater)
+* integrated binos with the [LootLight](https://modworkshop.net/mod/56422) mod (v2.1.0 or greater)
 * disabled weapon stow on opening inventory (it was annoying)
 * refactored inspect mode attachment cards
 * refactored sound helpers
