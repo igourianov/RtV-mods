@@ -1,5 +1,3 @@
-extends RefCounted
-
 # Shared audio bus for every custom radio station: a narrow radio band-pass plus
 # a touch of lo-fi crunch. Created once at setup. The vanilla station keeps its
 # own bus; only mod stations route through this one. Owns the bus identifier so
