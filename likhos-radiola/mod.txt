@@ -1,0 +1,13 @@
+[mod]
+name="Likho's Radiola"
+id="likhos-radiola"
+version="0.1.7"
+prefix="[likho-radiola]"
+description="Adds extra music stations to the shelter radio"
+debug=false
+
+[autoload]
+LikhosRadiola="res://mods/likhos-radiola/Scripts/Main.gd"
+
+[hooks]
+"res://Scripts/Radio.gd"="Interact, UpdateTooltip"
