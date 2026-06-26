@@ -36,14 +36,13 @@ var _static_level := STATIC_BASE_LEVEL
 var _static_target := STATIC_BASE_LEVEL
 var _tracks: Array = []
 var _last_index := -1
-var _streams: Dictionary = {}
-var _files: Dictionary = {}
 
 
 # --- Overridable by subclasses -----------------------------------------------
 
-# path -> ordered track start offsets in seconds. The last track in a file runs
-# to the file's end.
+# AudioStream -> ordered track start offsets in seconds. The last track in a
+# stream runs to its end. Subclasses build the stream themselves, so the audio
+# format (MP3, OGG, ...) is decided by the station, not by playback here.
 func get_tracks() -> Dictionary:
 	return {}
 
@@ -99,38 +98,29 @@ func _play_next() -> void:
 	_last_index = index
 
 	var entry: Array = _tracks[index]
-	var path: String = entry[0]
-	var track: int = entry[1]
-	var stream := _get_stream(path)
+	var stream: AudioStream = entry[0]
+	var start: float = entry[1]
+	var length: float = entry[2]
 	if !stream:
 		return
 
-	var starts: Array = _files[path]
-	var start := float(starts[track])
 	_music.stream = stream
-	if track + 1 < starts.size():
-		_music.play_chunk(start, starts[track + 1] - start)
-	else:
-		_music.play_chunk(start)
+	# length 0.0 plays to the stream's end (see AudioChunkPlayer3D.play_chunk).
+	_music.play_chunk(start, length)
 
 
+# Flattens get_tracks() into a list of [stream, start, length] entries. The last
+# track in each stream gets length 0.0 so it runs to the end.
 func _build_tracks() -> void:
-	_files = get_tracks()
-	for path in _files:
-		var starts: Array = _files[path]
+	var tracks := get_tracks()
+	for stream in tracks:
+		var starts: Array = tracks[stream]
 		for i in starts.size():
-			_tracks.append([path, i])
-
-
-func _get_stream(path: String) -> AudioStream:
-	if _streams.has(path):
-		return _streams[path]
-	var stream: AudioStream = null
-	if FileAccess.file_exists(path):
-		stream = AudioStreamMP3.load_from_file(path)
-		stream.loop = false
-		_streams[path] = stream
-	return stream
+			var start := float(starts[i])
+			var length := 0.0
+			if i + 1 < starts.size():
+				length = float(starts[i + 1]) - start
+			_tracks.append([stream, start, length])
 
 
 # --- Static ------------------------------------------------------------------

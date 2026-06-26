@@ -5,16 +5,19 @@
 
 # Adding music
 
-Place an **OGG Vorbis** file (mono recommended) at `Audio/doomer_01.ogg`, then set the track data in `Scripts/Nodes/DoomerStation.gd`:
+Place an audio file (mono recommended) under `Audio/`, then set the track data in `Scripts/Nodes/DoomerStation.gd`. `get_tracks()` returns a `Dictionary` keyed by the loaded `AudioStream` itself, so the station decides which loader to use:
 
 ```
 func get_tracks() -> Dictionary:
+	var stream := _load_mp3("res://mods/likhos-radiola/Audio/doomer_01.mp3")
+	if !stream:
+		return {}
 	return {
-		"res://mods/likhos-radiola/Audio/doomer_01.ogg": [0.0, 187.0, 402.0],
+		stream: [0.0, 187.0, 402.0],
 	}
 ```
 
-Each number is a track's start offset, in seconds, within the file. The last track runs to the end of the file. Add more keys for more files. Files are loaded at runtime via `AudioStreamOggVorbis.load_from_file`, so they do not need a Godot `.import` sidecar to ship inside the mod.
+Each number is a track's start offset, in seconds, within the stream. The last track runs to the end of the stream. Add more keys for more streams. Streams are loaded at runtime via the format's `load_from_file` (e.g. `AudioStreamMP3.load_from_file`, `AudioStreamOggVorbis.load_from_file`), so the files do not need a Godot `.import` sidecar to ship inside the mod.
 
 # Adding a station
 

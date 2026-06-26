@@ -5,9 +5,12 @@ extends "RadioStation.gd"
 
 
 func get_tracks() -> Dictionary:
+	# https://www.youtube.com/watch?v=cO1o37Dyc8A
+	var stream := _load_mp3("res://mods/likhos-radiola/Audio/doomer_01.mp3")
+	if !stream:
+		return {}
 	return {
-		# https://www.youtube.com/watch?v=cO1o37Dyc8A
-		"res://mods/likhos-radiola/Audio/doomer_01.mp3": [
+		stream: [
 			0.0, # 0:00
 			139.0, # 2:19
 			340.0, # 5:40
@@ -20,6 +23,14 @@ func get_tracks() -> Dictionary:
 			1612.0, # 26:52
 		],
 	}
+
+
+func _load_mp3(path: String) -> AudioStreamMP3:
+	if !FileAccess.file_exists(path):
+		return null
+	var stream := AudioStreamMP3.load_from_file(path)
+	stream.loop = false
+	return stream
 
 
 func get_label() -> String:
