@@ -65,6 +65,44 @@ function Update-ModVersion {
 	return $newVersion
 }
 
+function Get-AutoloadScripts {
+	param([string]$ModTxtPath, [string]$ModId)
+
+	$content = [System.IO.File]::ReadAllText($ModTxtPath)
+	$section = [regex]::Match($content, '(?ms)^\[autoload\]\s*(.*?)(?=^\[|\Z)')
+	if (-not $section.Success) {
+		return @()
+	}
+
+	$paths = @()
+	foreach ($entry in [regex]::Matches($section.Groups[1].Value, '=\s*"([^"]+)"')) {
+		$resPath = $entry.Groups[1].Value
+		$prefix = "res://mods/$ModId/"
+		if ($resPath.StartsWith($prefix)) {
+			$paths += $resPath.Substring($prefix.Length)
+		}
+	}
+	return $paths
+}
+
+function Test-ModUsesLib {
+	param([string]$SourceDir, [string]$ModId)
+
+	$modTxt = Join-Path $SourceDir 'mod.txt'
+	foreach ($rel in (Get-AutoloadScripts -ModTxtPath $modTxt -ModId $ModId)) {
+		$scriptPath = Join-Path $SourceDir ($rel -replace '/', '\')
+		if (-not (Test-Path -LiteralPath $scriptPath -PathType Leaf)) {
+			continue
+		}
+		$scriptContent = [System.IO.File]::ReadAllText($scriptPath)
+		$extends = [regex]::Match($scriptContent, '(?m)^\s*extends\s+"([^"]+)"')
+		if ($extends.Success -and $extends.Groups[1].Value -match 'Lib/Main\.gd$') {
+			return $true
+		}
+	}
+	return $false
+}
+
 function New-ModZip {
 	param([string]$SourceDir, [string]$ZipPath, [string]$ModId)
 
@@ -93,9 +131,10 @@ function New-ModZip {
 			}
 		}
 
-		# Include mod-lib folder if it exists
+		# Include mod-lib folder only if the mod's Main inherits from it
 		$modLibPath = Join-Path $repoRoot 'mod-lib'
-		if (Test-Path -LiteralPath $modLibPath -PathType Container) {
+		$usesLib = Test-ModUsesLib -SourceDir $SourceDir -ModId $ModId
+		if ($usesLib -and (Test-Path -LiteralPath $modLibPath -PathType Container)) {
 			$modLibFull = (Resolve-Path -LiteralPath $modLibPath).Path.TrimEnd('\')
 			$modLibPrefixLen = $modLibFull.Length + 1
 			Get-ChildItem -LiteralPath $modLibFull -Recurse -File | ForEach-Object {
@@ -107,6 +146,8 @@ function New-ModZip {
 	} finally {
 		$zip.Dispose()
 	}
+
+	return $usesLib
 }
 
 function Test-GitAvailable {
@@ -163,12 +204,13 @@ foreach ($folder in $folders) {
 	}
 
 	$zipPath = Join-Path $ModsDir "$($folder.Name).vmz"
-	New-ModZip -SourceDir $folder.FullName -ZipPath $zipPath -ModId $folder.Name
+	$usedLib = New-ModZip -SourceDir $folder.FullName -ZipPath $zipPath -ModId $folder.Name
 
+	$libNote = if ($usedLib) { '' } else { ' (no lib)' }
 	if ($version) {
-		Write-Host "built: $($folder.Name) v$version -> $zipPath"
+		Write-Host "built: $($folder.Name) v$version$libNote -> $zipPath"
 	} else {
-		Write-Host "built: $($folder.Name) -> $zipPath"
+		Write-Host "built: $($folder.Name)$libNote -> $zipPath"
 	}
 }
 
