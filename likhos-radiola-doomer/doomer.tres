@@ -7,43 +7,43 @@
 script = ExtResource("2")
 source = "Audio/01 - Sizor - Нечего ждать.mp3"
 title = "Sizor - Нечего ждать"
-duration = 143.047
+duration = 143.0
 
 [sub_resource type="Resource" id="t11"]
 script = ExtResource("2")
 source = "Audio/02 - Sizor - Снова этот сон.mp3"
 title = "Sizor - Снова этот сон"
-duration = 184.007
+duration = 184.0
 
 [sub_resource type="Resource" id="t12"]
 script = ExtResource("2")
 source = "Audio/03 - Забавные игры - Эхо лета.mp3"
 title = "Забавные игры - Эхо лета"
-duration = 208.405
+duration = 208.36
 
 [sub_resource type="Resource" id="t13"]
 script = ExtResource("2")
 source = "Audio/04 - Новое Время - Домой.mp3"
 title = "Новое Время - Домой"
-duration = 142.655
+duration = 142.64
 
 [sub_resource type="Resource" id="t14"]
 script = ExtResource("2")
 source = "Audio/05 - Новое Время - Ты и я.mp3"
 title = "Новое Время - Ты и я"
-duration = 183.327
+duration = 183.287
 
 [sub_resource type="Resource" id="t15"]
 script = ExtResource("2")
 source = "Audio/06 - Stepnyye Ogni - Рано умирать.mp3"
 title = "Stepnyye Ogni - Рано умирать"
-duration = 229.799
+duration = 229.794
 
 [sub_resource type="Resource" id="t16"]
 script = ExtResource("2")
 source = "Audio/07 - Stepnyye Ogni - Остров.mp3"
 title = "Stepnyye Ogni - Остров"
-duration = 196.598
+duration = 196.548
 
 [sub_resource type="Resource" id="t17"]
 script = ExtResource("2")
@@ -55,145 +55,145 @@ duration = 177.371
 script = ExtResource("2")
 source = "Audio/09 - radiotehnika - иж-412.mp3"
 title = "radiotehnika - иж-412"
-duration = 252.029
+duration = 252.003
 
 [sub_resource type="Resource" id="t19"]
 script = ExtResource("2")
 source = "Audio/10 - Чернозем и Звезды - Гипербореи.mp3"
 title = "Чернозем и Звезды - Гипербореи"
-duration = 154.044
+duration = 153.997
 
 [sub_resource type="Resource" id="t20"]
 script = ExtResource("2")
 source = "Audio/11 - Свидетельство О Смерти - Считалочка.mp3"
 title = "Свидетельство О Смерти - Считалочка"
-duration = 172.016
+duration = 172.0
 
 [sub_resource type="Resource" id="t21"]
 script = ExtResource("2")
 source = "Audio/12 - КИНОхроника - Мои друзья живут в центре.mp3"
 title = "КИНОхроника - Мои друзья живут в центре"
-duration = 247.04
+duration = 247.0
 
 [sub_resource type="Resource" id="t22"]
 script = ExtResource("2")
 source = "Audio/13 - КИНОхроника - Сможешь ли ты.mp3"
 title = "КИНОхроника - Сможешь ли ты"
-duration = 244.924
+duration = 244.904
 
 [sub_resource type="Resource" id="t23"]
 script = ExtResource("2")
 source = "Audio/14 - КИНОхроника - Мой путь.mp3"
 title = "КИНОхроника - Мой путь"
-duration = 271.491
+duration = 271.469
 
 [sub_resource type="Resource" id="t24"]
 script = ExtResource("2")
 source = "Audio/15 - КИНОхроника - Жить без войны.mp3"
 title = "КИНОхроника - Жить без войны"
-duration = 261.616
+duration = 261.601
 
 [sub_resource type="Resource" id="t25"]
 script = ExtResource("2")
 source = "Audio/16 - Индустрия - История.mp3"
 title = "Индустрия - История"
-duration = 152.059
+duration = 152.026
 
 [sub_resource type="Resource" id="t26"]
 script = ExtResource("2")
 source = "Audio/17 - Рыцарь Диких Яблок - Дом.mp3"
 title = "Рыцарь Диких Яблок - Дом"
-duration = 156.865
+duration = 156.829
 
 [sub_resource type="Resource" id="t27"]
 script = ExtResource("2")
 source = "Audio/18 - конец солнечных дней - неважно.mp3"
 title = "конец солнечных дней - неважно"
-duration = 280.189
+duration = 280.171
 
 [sub_resource type="Resource" id="t28"]
 script = ExtResource("2")
 source = "Audio/19 - Сова - Гроза.mp3"
 title = "Сова - Гроза"
-duration = 155.037
+duration = 155.0
 
 [sub_resource type="Resource" id="t29"]
 script = ExtResource("2")
 source = "Audio/20 - Сова - Купе.mp3"
 title = "Сова - Купе"
-duration = 194.691
+duration = 194.664
 
 [sub_resource type="Resource" id="t30"]
 script = ExtResource("2")
 source = "Audio/21 - Сова - Главный герой.mp3"
 title = "Сова - Главный герой"
-duration = 195.344
+duration = 195.336
 
 [sub_resource type="Resource" id="t31"]
 script = ExtResource("2")
 source = "Audio/22 - Аудиокассета - Живу прошлою весною.mp3"
 title = "Аудиокассета - Живу прошлою весною"
-duration = 179.618
+duration = 179.594
 
 [sub_resource type="Resource" id="t32"]
 script = ExtResource("2")
 source = "Audio/23 - Аудиокассета - Закат.mp3"
 title = "Аудиокассета - Закат"
-duration = 122.436
+duration = 122.406
 
 [sub_resource type="Resource" id="t33"]
 script = ExtResource("2")
 source = "Audio/24 - наверное радость - Навсегда.mp3"
 title = "наверное радость - Навсегда"
-duration = 134.922
+duration = 134.881
 
 [sub_resource type="Resource" id="t34"]
 script = ExtResource("2")
 source = "Audio/25 - наверное радость - Саморазрешение.mp3"
 title = "наверное радость - Саморазрешение"
-duration = 173.349
+duration = 173.338
 
 [sub_resource type="Resource" id="t35"]
 script = ExtResource("2")
 source = "Audio/26 - наверное радость - Среди разрушенных панельных зданий.mp3"
 title = "наверное радость - Среди разрушенных панельных зданий"
-duration = 212.82
+duration = 212.78
 
 [sub_resource type="Resource" id="t36"]
 script = ExtResource("2")
 source = "Audio/27 - Улица Восток - Дворы.mp3"
 title = "Улица Восток - Дворы"
-duration = 156.709
+duration = 156.697
 
 [sub_resource type="Resource" id="t37"]
 script = ExtResource("2")
 source = "Audio/28 - апофеоз тоски, Новое Время - Спектакль.mp3"
 title = "апофеоз тоски, Новое Время - Спектакль"
-duration = 190.328
+duration = 190.303
 
 [sub_resource type="Resource" id="t38"]
 script = ExtResource("2")
 source = "Audio/29 - апофеоз тоски - Дорога.mp3"
 title = "апофеоз тоски - Дорога"
-duration = 183.249
+duration = 183.207
 
 [sub_resource type="Resource" id="t39"]
 script = ExtResource("2")
 source = "Audio/30 - Sizor - Почему все снова.mp3"
 title = "Sizor - Почему все снова"
-duration = 187.585
+duration = 187.571
 
 [sub_resource type="Resource" id="t40"]
 script = ExtResource("2")
 source = "Audio/31 - Плейлист Венкова - За окном светло.mp3"
 title = "Плейлист Венкова - За окном светло"
-duration = 118.256
+duration = 118.215
 
 [sub_resource type="Resource" id="t41"]
 script = ExtResource("2")
 source = "Audio/32 - Улица Восток - Зачем нужна красота.mp3"
 title = "Улица Восток - Зачем нужна красота"
-duration = 168.96
+duration = 168.95
 
 [resource]
 script = ExtResource("1")
