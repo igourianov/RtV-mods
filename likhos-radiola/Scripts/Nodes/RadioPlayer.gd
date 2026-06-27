@@ -7,9 +7,9 @@ const RadioBus = preload("../RadioBus.gd")
 const RadioStation = preload("../RadioStation.gd")
 
 const MUSIC_VOLUME := 0.0
-const UNIT_SIZE := 6.0
-const MAX_DISTANCE := 15.0
-const STATIC_VOLUME := -16.0
+const UNIT_SIZE := 3.0
+const MAX_DISTANCE := 20.0
+const STATIC_VOLUME := -10.0
 
 var playing := false
 var station: RadioStation

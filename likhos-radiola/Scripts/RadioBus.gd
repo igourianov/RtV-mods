@@ -1,5 +1,4 @@
-const BUS := &"ModRadio"
-const SEND := &"Master"
+const BUS := &"LikhosRadiola"
 const HIGH_PASS_HZ := 400.0
 const LOW_PASS_HZ := 3200.0
 const DISTORTION_PRE_GAIN := -6.0
@@ -12,7 +11,7 @@ static func apply() -> void:
 	AudioServer.add_bus()
 	var idx := AudioServer.bus_count - 1
 	AudioServer.set_bus_name(idx, BUS)
-	AudioServer.set_bus_send(idx, SEND)
+	AudioServer.set_bus_send(idx, &"Master")
 
 	var high_pass := AudioEffectHighPassFilter.new()
 	high_pass.cutoff_hz = HIGH_PASS_HZ

@@ -1,0 +1,129 @@
+[gd_resource type="Resource" load_steps=23 format=3]
+
+[ext_resource type="Script" path="res://mods/likhos-radiola/Scripts/RadioStation.gd" id="1"]
+[ext_resource type="Script" path="res://mods/likhos-radiola/Scripts/RadioTrack.gd" id="2"]
+
+[sub_resource type="Resource" id="t1"]
+script = ExtResource("2")
+source = "Audio/01 - Reactive Project - On A Trip.mp3"
+title = "Reactive Project - On A Trip"
+duration = 156.0
+
+[sub_resource type="Resource" id="t2"]
+script = ExtResource("2")
+source = "Audio/02 - Zhestyanshiki - Party Alarm.mp3"
+title = "Zhestyanshiki - Party Alarm"
+duration = 242.0
+
+[sub_resource type="Resource" id="t3"]
+script = ExtResource("2")
+source = "Audio/03 - Hard Bass School & XS Project - V Kashu.mp3"
+title = "Hard Bass School & XS Project - V Kashu"
+duration = 186.0
+
+[sub_resource type="Resource" id="t4"]
+script = ExtResource("2")
+source = "Audio/04 - DJ Blyatman & XS Project - How We Party.mp3"
+title = "DJ Blyatman & XS Project - How We Party"
+duration = 267.0
+
+[sub_resource type="Resource" id="t5"]
+script = ExtResource("2")
+source = "Audio/05 - XS Project - Meanwhile in Russia (Take me to Russia).mp3"
+title = "XS Project - Meanwhile in Russia (Take me to Russia)"
+duration = 234.0
+
+[sub_resource type="Resource" id="t6"]
+script = ExtResource("2")
+source = "Audio/06 - DJ Blyatman & Russian Village Boys - Instababe.mp3"
+title = "DJ Blyatman & Russian Village Boys - Instababe"
+duration = 217.0
+
+[sub_resource type="Resource" id="t7"]
+script = ExtResource("2")
+source = "Audio/07 - DJ Blyatman & Russian Village Boys - Cyka Blyat.mp3"
+title = "DJ Blyatman & Russian Village Boys - Cyka Blyat"
+duration = 166.0
+
+[sub_resource type="Resource" id="t8"]
+script = ExtResource("2")
+source = "Audio/08 - Alan Aztec - Gopnik Gonna Getcha (feat. TeslasMoustache).mp3"
+title = "Alan Aztec - Gopnik Gonna Getcha (feat. TeslasMoustache)"
+duration = 98.0
+
+[sub_resource type="Resource" id="t9"]
+script = ExtResource("2")
+source = "Audio/09 - DJ Blyatman & Russian Village Boys - MADE IN RUSSIA.mp3"
+title = "DJ Blyatman & Russian Village Boys - MADE IN RUSSIA"
+duration = 167.0
+
+[sub_resource type="Resource" id="t10"]
+script = ExtResource("2")
+source = "Audio/10 - XS Project - Grozny.mp3"
+title = "XS Project - Grozny"
+duration = 269.0
+
+[sub_resource type="Resource" id="t11"]
+script = ExtResource("2")
+source = "Audio/11 - Hard Bass School - Sex, Kvas, Hardbass.mp3"
+title = "Hard Bass School - Sex, Kvas, Hardbass"
+duration = 157.0
+
+[sub_resource type="Resource" id="t12"]
+script = ExtResource("2")
+source = "Audio/12 - Hard Bass School - Opa Blia.mp3"
+title = "Hard Bass School - Opa Blia"
+duration = 231.0
+
+[sub_resource type="Resource" id="t13"]
+script = ExtResource("2")
+source = "Audio/13 - DJ BLYATMAN - RUSSIAN EXPRESS.mp3"
+title = "DJ BLYATMAN - RUSSIAN EXPRESS"
+duration = 152.0
+
+[sub_resource type="Resource" id="t14"]
+script = ExtResource("2")
+source = "Audio/14 - Uamee - High Quality Nahui.mp3"
+title = "Uamee - High Quality Nahui"
+duration = 134.0
+
+[sub_resource type="Resource" id="t15"]
+script = ExtResource("2")
+source = "Audio/15 - Alan Aztec - Polska (feat. Frequ & Ninka).mp3"
+title = "Alan Aztec - Polska (feat. Frequ & Ninka)"
+duration = 159.0
+
+[sub_resource type="Resource" id="t16"]
+script = ExtResource("2")
+source = "Audio/16 - BENISLAV & DENKOV - ADIDAS MAJIC.mp3"
+title = "BENISLAV & DENKOV - ADIDAS MAJIC"
+duration = 169.0
+
+[sub_resource type="Resource" id="t17"]
+script = ExtResource("2")
+source = "Audio/17 - Uamee - RUSH B.mp3"
+title = "Uamee - RUSH B"
+duration = 96.0
+
+[sub_resource type="Resource" id="t18"]
+script = ExtResource("2")
+source = "Audio/18 - DJ BLYATMAN - TSAR BOMB.mp3"
+title = "DJ BLYATMAN - TSAR BOMB"
+duration = 146.0
+
+[sub_resource type="Resource" id="t19"]
+script = ExtResource("2")
+source = "Audio/19 - Davay - Op Davay.mp3"
+title = "Davay - Op Davay"
+duration = 166.0
+
+[sub_resource type="Resource" id="t20"]
+script = ExtResource("2")
+source = "Audio/20 - Tri Poloski.mp3"
+title = "Tri Poloski"
+duration = 109.0
+
+[resource]
+script = ExtResource("1")
+label = "HardBOSS Radio 104.9"
+tracks = [SubResource("t1"), SubResource("t2"), SubResource("t3"), SubResource("t4"), SubResource("t5"), SubResource("t6"), SubResource("t7"), SubResource("t8"), SubResource("t9"), SubResource("t10"), SubResource("t11"), SubResource("t12"), SubResource("t13"), SubResource("t14"), SubResource("t15"), SubResource("t16"), SubResource("t17"), SubResource("t18"), SubResource("t19"), SubResource("t20")]

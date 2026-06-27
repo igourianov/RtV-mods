@@ -1,0 +1,11 @@
+[mod]
+name="Likho's Radiola [HardBOSS Radio]"
+id="likhos-radiola-hardboss"
+version="1.0"
+prefix="[likho-radiola-hardboss]"
+description="HardBOSS Radio station for Likho's Radiola"
+credit=""
+debug=false
+
+[autoload]
+LikhosRadiolaHardboss="res://mods/likhos-radiola-hardboss/Main.gd"
