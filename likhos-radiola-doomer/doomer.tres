@@ -197,5 +197,5 @@ duration = 168.96
 
 [resource]
 script = ExtResource("1")
-label = "Doomervibe 97.1"
+label = "Doomer Nation 97.1"
 tracks = [SubResource("t10"), SubResource("t11"), SubResource("t12"), SubResource("t13"), SubResource("t14"), SubResource("t15"), SubResource("t16"), SubResource("t17"), SubResource("t18"), SubResource("t19"), SubResource("t20"), SubResource("t21"), SubResource("t22"), SubResource("t23"), SubResource("t24"), SubResource("t25"), SubResource("t26"), SubResource("t27"), SubResource("t28"), SubResource("t29"), SubResource("t30"), SubResource("t31"), SubResource("t32"), SubResource("t33"), SubResource("t34"), SubResource("t35"), SubResource("t36"), SubResource("t37"), SubResource("t38"), SubResource("t39"), SubResource("t40"), SubResource("t41")]

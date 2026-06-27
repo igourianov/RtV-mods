@@ -1,9 +1,10 @@
 [mod]
-name="Likho's Radiola - Doomer"
+name="Likho's Radiola pack - Doomer Nation 97.1"
 id="likhos-radiola-doomer"
-version="0.1.18"
+version="1.0.18"
 prefix="[likho-radiola-doomer]"
 description="Doomer music station for Likho's Radiola"
+credit="https://www.youtube.com/watch?v=F-9ZOtkWhj0"
 debug=false
 
 [autoload]
