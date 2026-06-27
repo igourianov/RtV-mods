@@ -1,19 +1,5 @@
 extends RefCounted
 
-# Hooks the shelter radio. Interact is replaced so the on/off toggle becomes a
-# cycle through the vanilla station and every registered custom station:
-#   Off -> Vanilla -> Station 0 -> Station 1 -> ... -> Off
-# Vanilla runs on the two presses where its own on/off toggle is what we want (we
-# simply don't skip_super); it is suppressed on every station-to-station hop and
-# the final station-to-off press. UpdateTooltip is post-patched to relabel the
-# prompt with the next station's name.
-#
-# Stations are global: one instance of each broadcasts to every radio (they turn
-# the wall clock into the schedule, so all radios stay in sync). Each radio gets
-# one RadioPlayer for positional playback. State is single-sourced: vanilla owns
-# `active`, the player owns `playing` + which station it is tuned to. Stations come
-# ready-made from RadioStation.REGISTRY, populated by separately-installed station packs.
-
 const RadioStation = preload("../RadioStation.gd")
 const RadioPlayer = preload("../Nodes/RadioPlayer.gd")
 
@@ -30,21 +16,28 @@ func on_interact() -> void:
 	var radio = _lib._caller
 	var stations := RadioStation.REGISTRY
 	if stations.is_empty():
-		return     # no custom stations: vanilla owns the whole Off <-> Vanilla toggle
+		return
+
 	var player := _player(radio)
-	var i := _tuned_index(player, stations)
+
+	# OFF -> Vanilla: let vanilla turn itself on.
+	if !radio.active && !player.playing:
+		return
+
+	# Vanilla -> first station: let vanilla turn off, start ours.
 	if radio.active:
-		# Vanilla -> first station: start ours, let vanilla turn its station off.
 		player.start(stations[0])
-	elif i != -1:
-		# Station -> next station, or -> off on the last one.
-		if i + 1 < stations.size():
-			player.start(stations[i + 1])
-		else:
-			player.stop()
-			radio.InteractAudio()
-		_lib.skip_super()
-	# Off -> Vanilla: do nothing, let vanilla turn its station on.
+		return
+
+	# On a station: advance, or stop after the last. Keep vanilla off.
+	_lib.skip_super()
+	var i := stations.find(player.station)
+	if i + 1 < stations.size():
+		player.start(stations[i + 1])
+		return
+
+	player.stop()
+	radio.InteractAudio()
 
 
 func on_update_tooltip_post() -> void:
@@ -64,7 +57,6 @@ func on_update_tooltip_post() -> void:
 		radio.gameData.tooltip = "Radio [Turn Off]"
 
 
-# This radio's playback node, created on first use and cached on the radio.
 func _player(radio) -> RadioPlayer:
 	if radio.has_meta("radio_player"):
 		return radio.get_meta("radio_player")
