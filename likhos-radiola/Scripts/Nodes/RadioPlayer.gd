@@ -24,7 +24,7 @@ func _init() -> void:
 	_music.max_distance = MAX_DISTANCE
 	add_child(_music)
 
-	_static = StaticNoisePlayer3D.new(RadioBus.BUS, STATIC_VOLUME, UNIT_SIZE, MAX_DISTANCE)
+	_static = StaticNoisePlayer3D.new(RadioBus.BUS, STATIC_VOLUME, UNIT_SIZE * 1.5, MAX_DISTANCE)
 	add_child(_static)
 
 
