@@ -198,7 +198,22 @@ def print_plan(plan):
 			print(f"{'':>38}  -> {p['note']}")
 
 
-def split_file(ffmpeg, src, plan, outdir, pad):
+def codec_args(enc):
+	"""Build the ffmpeg output codec args. enc=None -> lossless stream copy."""
+	if not enc:
+		return ["-c", "copy", "-avoid_negative_ts", "make_zero",
+				"-reset_timestamps", "1"]
+	args = ["-c:a", "libmp3lame"]
+	if enc.get("bitrate"):
+		args += ["-b:a", enc["bitrate"]]
+	if enc.get("mono"):
+		args += ["-ac", "1"]
+	if enc.get("samplerate"):
+		args += ["-ar", str(enc["samplerate"])]
+	return args
+
+
+def split_file(ffmpeg, src, plan, outdir, pad, enc):
 	os.makedirs(outdir, exist_ok=True)
 	for i, p in enumerate(plan, 1):
 		name = f"{str(i).zfill(pad)} - {sanitize_filename(p['title'])}.mp3"
@@ -207,8 +222,7 @@ def split_file(ffmpeg, src, plan, outdir, pad):
 			ffmpeg, "-hide_banner", "-loglevel", "error", "-y",
 			"-ss", f"{p['start']:.3f}", "-i", src,
 			"-t", f"{p['duration']:.3f}",
-			"-c", "copy", "-map", "0:a",
-			"-avoid_negative_ts", "make_zero", "-reset_timestamps", "1",
+			"-map", "0:a", *codec_args(enc),
 			dst,
 		]
 		res = subprocess.run(cmd, capture_output=True, text=True,
@@ -234,6 +248,12 @@ def main():
 					help="minimum gap length in seconds (default: 0.3)")
 	ap.add_argument("--no-snap", action="store_true",
 					help="cut at literal timestamps, ignore silence")
+	ap.add_argument("--bitrate",
+					help="re-encode (libmp3lame) at this audio bitrate, e.g. 64k")
+	ap.add_argument("--mono", action="store_true",
+					help="downmix to mono (triggers re-encode)")
+	ap.add_argument("--samplerate", type=int,
+					help="output sample rate in Hz, e.g. 22050 (triggers re-encode)")
 	ap.add_argument("--dry-run", action="store_true",
 					help="print the plan, write nothing")
 	ap.add_argument("--manifest", help="write resolved tracks to this JSON file")
@@ -255,9 +275,21 @@ def main():
 	if not os.path.isfile(args.input):
 		die(f"input not found: {args.input}")
 
+	enc = None
+	if args.bitrate or args.mono or args.samplerate:
+		enc = {"bitrate": args.bitrate, "mono": args.mono,
+			   "samplerate": args.samplerate}
+
 	tracks = parse_playlist(args.playlist)
 	total = probe_duration(args.ffprobe, args.input)
 	print(f"source: {args.input}  ({fmt_ts(total)}, {len(tracks)} tracks)")
+	if enc:
+		bits = enc["bitrate"] or "lame default"
+		chans = "mono" if enc["mono"] else "stereo"
+		sr = f"{enc['samplerate']}Hz" if enc["samplerate"] else "source rate"
+		print(f"encode: libmp3lame {bits}, {chans}, {sr}")
+	else:
+		print("encode: lossless stream copy")
 
 	if args.no_snap:
 		silences = []
@@ -284,7 +316,7 @@ def main():
 		print("dry run: no files written.")
 	else:
 		pad = max(2, len(str(len(plan))))
-		split_file(args.ffmpeg, args.input, plan, args.outdir, pad)
+		split_file(args.ffmpeg, args.input, plan, args.outdir, pad, enc)
 		print(f"\ndone -> {os.path.abspath(args.outdir)}")
 
 	if args.manifest:
