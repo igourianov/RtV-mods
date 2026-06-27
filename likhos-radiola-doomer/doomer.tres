@@ -6,70 +6,70 @@
 [sub_resource type="Resource" id="t0"]
 script = ExtResource("2")
 source = "doomer_01.mp3"
-title = ""
+title = "Сигнал в ночи"
 start = 0.0
 duration = 139.0
 
 [sub_resource type="Resource" id="t1"]
 script = ExtResource("2")
 source = "doomer_01.mp3"
-title = ""
+title = "Будущее без меня"
 start = 139.0
 duration = 201.0
 
 [sub_resource type="Resource" id="t2"]
 script = ExtResource("2")
 source = "doomer_01.mp3"
-title = ""
+title = "Сквозь бетон"
 start = 340.0
 duration = 159.0
 
 [sub_resource type="Resource" id="t3"]
 script = ExtResource("2")
 source = "doomer_01.mp3"
-title = ""
+title = "Головокружение"
 start = 499.0
 duration = 221.0
 
 [sub_resource type="Resource" id="t4"]
 script = ExtResource("2")
 source = "doomer_01.mp3"
-title = ""
+title = "Поезд на Восток"
 start = 720.0
 duration = 144.0
 
 [sub_resource type="Resource" id="t5"]
 script = ExtResource("2")
 source = "doomer_01.mp3"
-title = ""
+title = "Прощание"
 start = 864.0
 duration = 229.0
 
 [sub_resource type="Resource" id="t6"]
 script = ExtResource("2")
 source = "doomer_01.mp3"
-title = ""
+title = "Маяк"
 start = 1093.0
 duration = 173.0
 
 [sub_resource type="Resource" id="t7"]
 script = ExtResource("2")
 source = "doomer_01.mp3"
-title = ""
+title = "На небе облака"
 start = 1266.0
 duration = 164.0
 
 [sub_resource type="Resource" id="t8"]
 script = ExtResource("2")
 source = "doomer_01.mp3"
-title = ""
+title = "Не держи меня"
 start = 1430.0
 duration = 182.0
 
 [sub_resource type="Resource" id="t9"]
 script = ExtResource("2")
 source = "doomer_01.mp3"
-title = ""
+title = "Куда уходят сны"
 start = 1612.0
 
 [resource]
