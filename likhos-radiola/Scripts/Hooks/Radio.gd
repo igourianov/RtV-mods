@@ -49,12 +49,12 @@ func on_update_tooltip_post() -> void:
 		return
 	var player = radio.get_meta("radio_player")
 	var i := _tuned_index(player, stations)
-	if radio.active:
-		radio.gameData.tooltip = "Radio [%s]" % stations[0].label
-	elif i != -1 && i + 1 < stations.size():
-		radio.gameData.tooltip = "Radio [%s]" % stations[i + 1].label
-	elif i != -1:
-		radio.gameData.tooltip = "Radio [Turn Off]"
+	if i != -1:
+		radio.gameData.tooltip = "Radio [%s]" % stations[i].label
+	elif radio.active:
+		radio.gameData.tooltip = "Radio [Vostoc]"
+	else:
+		radio.gameData.tooltip = "Radio [Off]"
 
 
 func _player(radio) -> RadioPlayer:
