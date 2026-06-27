@@ -1,9 +1,10 @@
 [mod]
 name="Likho's Radiola"
 id="likhos-radiola"
-version="0.1.22"
+version="0.1.28"
 prefix="[likho-radiola]"
 description="Adds extra music stations to the shelter radio"
+debug=true
 
 [autoload]
 LikhosRadiola="res://mods/likhos-radiola/Scripts/Main.gd"

@@ -1,301 +1,169 @@
-[gd_resource type="Resource" load_steps=45 format=3]
+[gd_resource type="Resource" load_steps=35 format=3]
 
 [ext_resource type="Script" path="res://mods/likhos-radiola/Scripts/RadioStation.gd" id="1"]
 [ext_resource type="Script" path="res://mods/likhos-radiola/Scripts/RadioTrack.gd" id="2"]
 
-[sub_resource type="Resource" id="t0"]
-script = ExtResource("2")
-source = "doomer_01.mp3"
-title = "Сигнал в ночи"
-start = 0.0
-duration = 139.0
-
-[sub_resource type="Resource" id="t1"]
-script = ExtResource("2")
-source = "doomer_01.mp3"
-title = "Будущее без меня"
-start = 139.0
-duration = 201.0
-
-[sub_resource type="Resource" id="t2"]
-script = ExtResource("2")
-source = "doomer_01.mp3"
-title = "Сквозь бетон"
-start = 340.0
-duration = 159.0
-
-[sub_resource type="Resource" id="t3"]
-script = ExtResource("2")
-source = "doomer_01.mp3"
-title = "Головокружение"
-start = 499.0
-duration = 221.0
-
-[sub_resource type="Resource" id="t4"]
-script = ExtResource("2")
-source = "doomer_01.mp3"
-title = "Поезд на Восток"
-start = 720.0
-duration = 144.0
-
-[sub_resource type="Resource" id="t5"]
-script = ExtResource("2")
-source = "doomer_01.mp3"
-title = "Прощание"
-start = 864.0
-duration = 229.0
-
-[sub_resource type="Resource" id="t6"]
-script = ExtResource("2")
-source = "doomer_01.mp3"
-title = "Маяк"
-start = 1093.0
-duration = 173.0
-
-[sub_resource type="Resource" id="t7"]
-script = ExtResource("2")
-source = "doomer_01.mp3"
-title = "На небе облака"
-start = 1266.0
-duration = 164.0
-
-[sub_resource type="Resource" id="t8"]
-script = ExtResource("2")
-source = "doomer_01.mp3"
-title = "Не держи меня"
-start = 1430.0
-duration = 182.0
-
-[sub_resource type="Resource" id="t9"]
-script = ExtResource("2")
-source = "doomer_01.mp3"
-title = "Куда уходят сны"
-start = 1612.0
-
 [sub_resource type="Resource" id="t10"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/01 - Sizor - Нечего ждать.mp3"
 title = "Sizor - Нечего ждать"
-start = 0.0
-duration = 143.0
 
 [sub_resource type="Resource" id="t11"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/02 - Sizor - Снова этот сон.mp3"
 title = "Sizor - Снова этот сон"
-start = 143.0
-duration = 184.0
 
 [sub_resource type="Resource" id="t12"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/03 - Забавные игры - Эхо лета.mp3"
 title = "Забавные игры - Эхо лета"
-start = 327.0
-duration = 211.0
 
 [sub_resource type="Resource" id="t13"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/04 - Новое Время - Домой.mp3"
 title = "Новое Время - Домой"
-start = 538.0
-duration = 140.0
 
 [sub_resource type="Resource" id="t14"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/05 - Новое Время - Ты и я.mp3"
 title = "Новое Время - Ты и я"
-start = 678.0
-duration = 186.0
 
 [sub_resource type="Resource" id="t15"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/06 - Stepnyye Ogni - Рано умирать.mp3"
 title = "Stepnyye Ogni - Рано умирать"
-start = 864.0
-duration = 230.0
 
 [sub_resource type="Resource" id="t16"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/07 - Stepnyye Ogni - Остров.mp3"
 title = "Stepnyye Ogni - Остров"
-start = 1094.0
-duration = 196.0
 
 [sub_resource type="Resource" id="t17"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/08 - Nurnberg - Valasy.mp3"
 title = "Nurnberg - Valasy"
-start = 1290.0
-duration = 175.0
 
 [sub_resource type="Resource" id="t18"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/09 - radiotehnika - иж-412.mp3"
 title = "radiotehnika - иж-412"
-start = 1465.0
-duration = 255.0
 
 [sub_resource type="Resource" id="t19"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/10 - Чернозем и Звезды - Гипербореи.mp3"
 title = "Чернозем и Звезды - Гипербореи"
-start = 1720.0
-duration = 151.0
 
 [sub_resource type="Resource" id="t20"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/11 - Свидетельство О Смерти - Считалочка.mp3"
 title = "Свидетельство О Смерти - Считалочка"
-start = 1871.0
-duration = 172.0
 
 [sub_resource type="Resource" id="t21"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/12 - КИНОхроника - Мои друзья живут в центре.mp3"
 title = "КИНОхроника - Мои друзья живут в центре"
-start = 2043.0
-duration = 247.0
 
 [sub_resource type="Resource" id="t22"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/13 - КИНОхроника - Сможешь ли ты.mp3"
 title = "КИНОхроника - Сможешь ли ты"
-start = 2290.0
-duration = 247.0
 
 [sub_resource type="Resource" id="t23"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/14 - КИНОхроника - Мой путь.mp3"
 title = "КИНОхроника - Мой путь"
-start = 2537.0
-duration = 271.0
 
 [sub_resource type="Resource" id="t24"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/15 - КИНОхроника - Жить без войны.mp3"
 title = "КИНОхроника - Жить без войны"
-start = 2808.0
-duration = 263.0
 
 [sub_resource type="Resource" id="t25"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/16 - Индустрия - История.mp3"
 title = "Индустрия - История"
-start = 3071.0
-duration = 149.0
 
 [sub_resource type="Resource" id="t26"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/17 - Рыцарь Диких Яблок - Дом.mp3"
 title = "Рыцарь Диких Яблок - Дом"
-start = 3220.0
-duration = 158.0
 
 [sub_resource type="Resource" id="t27"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/18 - конец солнечных дней - неважно.mp3"
 title = "конец солнечных дней - неважно"
-start = 3378.0
-duration = 279.0
 
 [sub_resource type="Resource" id="t28"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/19 - Сова - Гроза.mp3"
 title = "Сова - Гроза"
-start = 3657.0
-duration = 155.0
 
 [sub_resource type="Resource" id="t29"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/20 - Сова - Купе.mp3"
 title = "Сова - Купе"
-start = 3812.0
-duration = 196.0
 
 [sub_resource type="Resource" id="t30"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/21 - Сова - Главный герой.mp3"
 title = "Сова - Главный герой"
-start = 4008.0
-duration = 194.0
 
 [sub_resource type="Resource" id="t31"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/22 - Аудиокассета - Живу прошлою весною.mp3"
 title = "Аудиокассета - Живу прошлою весною"
-start = 4202.0
-duration = 178.0
 
 [sub_resource type="Resource" id="t32"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/23 - Аудиокассета - Закат.mp3"
 title = "Аудиокассета - Закат"
-start = 4380.0
-duration = 124.0
 
 [sub_resource type="Resource" id="t33"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/24 - наверное радость - Навсегда.mp3"
 title = "наверное радость - Навсегда"
-start = 4504.0
-duration = 136.0
 
 [sub_resource type="Resource" id="t34"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/25 - наверное радость - Саморазрешение.mp3"
 title = "наверное радость - Саморазрешение"
-start = 4640.0
-duration = 174.0
 
 [sub_resource type="Resource" id="t35"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/26 - наверное радость - Среди разрушенных панельных зданий.mp3"
 title = "наверное радость - Среди разрушенных панельных зданий"
-start = 4814.0
-duration = 211.0
 
 [sub_resource type="Resource" id="t36"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/27 - Улица Восток - Дворы.mp3"
 title = "Улица Восток - Дворы"
-start = 5025.0
-duration = 156.0
 
 [sub_resource type="Resource" id="t37"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/28 - апофеоз тоски, Новое Время - Спектакль.mp3"
 title = "апофеоз тоски, Новое Время - Спектакль"
-start = 5181.0
-duration = 191.0
 
 [sub_resource type="Resource" id="t38"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/29 - апофеоз тоски - Дорога.mp3"
 title = "апофеоз тоски - Дорога"
-start = 5372.0
-duration = 184.0
 
 [sub_resource type="Resource" id="t39"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/30 - Sizor - Почему все снова.mp3"
 title = "Sizor - Почему все снова"
-start = 5556.0
-duration = 189.0
 
 [sub_resource type="Resource" id="t40"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/31 - Плейлист Венкова - За окном светло.mp3"
 title = "Плейлист Венкова - За окном светло"
-start = 5745.0
-duration = 119.0
 
 [sub_resource type="Resource" id="t41"]
 script = ExtResource("2")
-source = "doomer_02.mp3"
+source = "Audio/32 - Улица Восток - Зачем нужна красота.mp3"
 title = "Улица Восток - Зачем нужна красота"
-start = 5864.0
 
 [resource]
 script = ExtResource("1")
 label = "Doomervibe 97.1"
-tracks = [SubResource("t0"), SubResource("t1"), SubResource("t2"), SubResource("t3"), SubResource("t4"), SubResource("t5"), SubResource("t6"), SubResource("t7"), SubResource("t8"), SubResource("t9"), SubResource("t10"), SubResource("t11"), SubResource("t12"), SubResource("t13"), SubResource("t14"), SubResource("t15"), SubResource("t16"), SubResource("t17"), SubResource("t18"), SubResource("t19"), SubResource("t20"), SubResource("t21"), SubResource("t22"), SubResource("t23"), SubResource("t24"), SubResource("t25"), SubResource("t26"), SubResource("t27"), SubResource("t28"), SubResource("t29"), SubResource("t30"), SubResource("t31"), SubResource("t32"), SubResource("t33"), SubResource("t34"), SubResource("t35"), SubResource("t36"), SubResource("t37"), SubResource("t38"), SubResource("t39"), SubResource("t40"), SubResource("t41")]
+tracks = [SubResource("t10"), SubResource("t11"), SubResource("t12"), SubResource("t13"), SubResource("t14"), SubResource("t15"), SubResource("t16"), SubResource("t17"), SubResource("t18"), SubResource("t19"), SubResource("t20"), SubResource("t21"), SubResource("t22"), SubResource("t23"), SubResource("t24"), SubResource("t25"), SubResource("t26"), SubResource("t27"), SubResource("t28"), SubResource("t29"), SubResource("t30"), SubResource("t31"), SubResource("t32"), SubResource("t33"), SubResource("t34"), SubResource("t35"), SubResource("t36"), SubResource("t37"), SubResource("t38"), SubResource("t39"), SubResource("t40"), SubResource("t41")]

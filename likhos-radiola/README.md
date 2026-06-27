@@ -12,12 +12,7 @@ Stations play their tracks in random order and emit from the radio in 3D, so the
 
 ## Configuration
 
-The static hiss can be turned off in the Mod Configuration Menu, or in `config.ini`:
-
-```
-[audio]
-static_enabled=false
-```
+The static hiss can be toggled in the Mod Configuration Menu (Radiola -> General -> Radio static). The change applies live, even mid-broadcast.
 
 ## [Check out my other mods](https://modworkshop.net/search/mods?query=%22Likho%27s%22&sort=likes)
 

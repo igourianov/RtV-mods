@@ -42,12 +42,11 @@ Ships the shared mod-lib as `Lib/`, including `AudioChunkPlayer3D.gd` used for p
 
 # Configuration
 
-`user://MCM/likhos-radiola/config.ini`:
+Exposed through the Mod Configuration Menu, which generates and maintains `user://MCM/likhos-radiola/config.ini`:
 
-```
-[audio]
-static_enabled=true
-```
+- **Radio static** (`static_enabled`, default on) - play the analog static bed underneath the music. `RadioPlayer` reconciles against this every frame, so toggling it applies live, mid-broadcast.
+
+Edit the setting in-game rather than by hand; the file is the MCM's serialized template, not a plain key/value list. Without the MCM installed the mod falls back to the defaults.
 
 # Install / Uninstall
 
