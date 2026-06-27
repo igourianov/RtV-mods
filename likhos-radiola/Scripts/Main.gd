@@ -12,6 +12,7 @@ func setup(lib) -> void:
 	_radio = RadioHook.new(lib)
 	register_hook("radio-interact", _radio.on_interact)
 	register_hook("radio-updatetooltip-post", _radio.on_update_tooltip_post)
+	register_hook("radio-_physics_process-pre", _radio.on_physics_process_pre)
 
 
 func create_config(config: ConfigFile) -> void:
