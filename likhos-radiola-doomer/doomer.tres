@@ -1,0 +1,78 @@
+[gd_resource type="Resource" load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://mods/likhos-radiola/Scripts/RadioStation.gd" id="1"]
+[ext_resource type="Script" path="res://mods/likhos-radiola/Scripts/RadioTrack.gd" id="2"]
+
+[sub_resource type="Resource" id="t0"]
+script = ExtResource("2")
+source = "doomer_01.mp3"
+title = ""
+start = 0.0
+duration = 139.0
+
+[sub_resource type="Resource" id="t1"]
+script = ExtResource("2")
+source = "doomer_01.mp3"
+title = ""
+start = 139.0
+duration = 201.0
+
+[sub_resource type="Resource" id="t2"]
+script = ExtResource("2")
+source = "doomer_01.mp3"
+title = ""
+start = 340.0
+duration = 159.0
+
+[sub_resource type="Resource" id="t3"]
+script = ExtResource("2")
+source = "doomer_01.mp3"
+title = ""
+start = 499.0
+duration = 221.0
+
+[sub_resource type="Resource" id="t4"]
+script = ExtResource("2")
+source = "doomer_01.mp3"
+title = ""
+start = 720.0
+duration = 144.0
+
+[sub_resource type="Resource" id="t5"]
+script = ExtResource("2")
+source = "doomer_01.mp3"
+title = ""
+start = 864.0
+duration = 229.0
+
+[sub_resource type="Resource" id="t6"]
+script = ExtResource("2")
+source = "doomer_01.mp3"
+title = ""
+start = 1093.0
+duration = 173.0
+
+[sub_resource type="Resource" id="t7"]
+script = ExtResource("2")
+source = "doomer_01.mp3"
+title = ""
+start = 1266.0
+duration = 164.0
+
+[sub_resource type="Resource" id="t8"]
+script = ExtResource("2")
+source = "doomer_01.mp3"
+title = ""
+start = 1430.0
+duration = 182.0
+
+[sub_resource type="Resource" id="t9"]
+script = ExtResource("2")
+source = "doomer_01.mp3"
+title = ""
+start = 1612.0
+
+[resource]
+script = ExtResource("1")
+label = "Doomervibe 97.1"
+tracks = [SubResource("t0"), SubResource("t1"), SubResource("t2"), SubResource("t3"), SubResource("t4"), SubResource("t5"), SubResource("t6"), SubResource("t7"), SubResource("t8"), SubResource("t9")]

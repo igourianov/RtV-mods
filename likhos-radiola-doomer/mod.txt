@@ -1,0 +1,10 @@
+[mod]
+name="Likho's Radiola - Doomer"
+id="likhos-radiola-doomer"
+version="0.1.9"
+prefix="[likho-radiola-doomer]"
+description="Doomer music station for Likho's Radiola"
+debug=false
+
+[autoload]
+LikhosRadiolaDoomer="res://mods/likhos-radiola-doomer/Main.gd"

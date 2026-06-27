@@ -5,25 +5,26 @@
 
 # Adding music
 
-Place an audio file (mono recommended) under `Audio/`, then set the track data in `Scripts/Nodes/DoomerStation.gd`. `get_tracks()` returns a `Dictionary` keyed by the loaded `AudioStream` itself, so the station decides which loader to use:
+Place an audio file (mono recommended) under `Audio/`, then set the track data in `Scripts/Stations/DoomerStation.gd`. `get_tracks()` returns a `Dictionary` keyed by the loaded `AudioStream` itself, so the station decides which loader to use:
 
 ```
 func get_tracks() -> Dictionary:
-	var stream := _load_mp3("res://mods/likhos-radiola/Audio/doomer_01.mp3")
-	if !stream:
+	if !FileAccess.file_exists(PATH):
 		return {}
 	return {
-		stream: [0.0, 187.0, 402.0],
+		AudioStreamMP3.load_from_file(PATH): [0.0, 187.0, 402.0],
 	}
 ```
 
-Each number is a track's start offset, in seconds, within the stream. The last track runs to the end of the stream. Add more keys for more streams. Streams are loaded at runtime via the format's `load_from_file` (e.g. `AudioStreamMP3.load_from_file`, `AudioStreamOggVorbis.load_from_file`), so the files do not need a Godot `.import` sidecar to ship inside the mod.
+Each number is a track's start offset, in seconds, within the stream. The last track runs to the end of the stream. Add more keys for more streams. Streams are loaded at runtime via the format's `load_from_file` (e.g. `AudioStreamMP3.load_from_file`, `AudioStreamOggVorbis.load_from_file`), so the files do not need a Godot `.import` sidecar to ship inside the mod. The load runs on a worker thread, so `get_tracks()` must not touch the scene tree.
+
+Playback is a synchronized broadcast: the station derives the current track and offset from the wall clock, so tuning a radio in lands mid-track (not at 0:00) and two radios on the same station play in sync.
 
 # Adding a station
 
-Stations are interchangeable playback components. To add one:
+A station is a global broadcast; a radio is a per-instance player. To add one:
 
-1. Create a script under `Scripts/Nodes/` that `extends "RadioStation.gd"` and overrides `get_tracks()` and `get_label()`.
+1. Create a script under `Scripts/Stations/` that `extends "RadioStation.gd"` and overrides `get_tracks()` and `get_label()`.
 2. Append its `preload(...)` to the `STATIONS` list in `Scripts/Hooks/Radio.gd`.
 
 The interaction cycle extends to `Off -> Vanilla -> Station 0 -> Station 1 -> ... -> Off` automatically. All stations share the `ModRadio` bus.
