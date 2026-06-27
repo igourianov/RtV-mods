@@ -18,7 +18,7 @@ var _music: AudioChunkPlayer3D
 var _static: StaticNoisePlayer3D
 
 
-func _ready() -> void:
+func _init() -> void:
 	_music = AudioChunkPlayer3D.new(null, MUSIC_VOLUME, RadioBus.BUS)
 	_music.unit_size = UNIT_SIZE
 	_music.max_distance = MAX_DISTANCE
