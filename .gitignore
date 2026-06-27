@@ -9,3 +9,6 @@ vostok-mod-loader/
 
 build.config.json
 *.uid
+
+__pycache__/
+*.pyc
