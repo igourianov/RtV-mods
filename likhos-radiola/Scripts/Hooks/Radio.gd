@@ -1,6 +1,6 @@
 extends RefCounted
 
-const RadioStation = preload("../RadioStation.gd")
+const RadioRegistry = preload("../RadioRegistry.gd")
 const RadioPlayer = preload("../Nodes/RadioPlayer.gd")
 const ModConfig = preload("../ModConfig.gd")
 const META_PLAYER := "radio_player"
@@ -15,7 +15,7 @@ func _init(lib) -> void:
 
 func on_interact() -> void:
 	var radio = _lib._caller
-	var stations := RadioStation.REGISTRY
+	var stations := RadioRegistry.STATIONS
 	if stations.is_empty():
 		return
 
@@ -61,7 +61,7 @@ func on_physics_process_pre(_delta) -> void:
 	if randf() * 100.0 >= ModConfig.on_chance:
 		return
 
-	var stations := RadioStation.REGISTRY
+	var stations := RadioRegistry.STATIONS
 	var pick := randi() % (stations.size() + 1)
 	if pick == 0:
 		radio.active = true
@@ -71,7 +71,7 @@ func on_physics_process_pre(_delta) -> void:
 
 
 func on_update_tooltip_post() -> void:
-	if RadioStation.REGISTRY.is_empty():
+	if RadioRegistry.STATIONS.is_empty():
 		return
 	var radio = _lib._caller
 	var state: String
@@ -81,7 +81,7 @@ func on_update_tooltip_post() -> void:
 		state = "Off"
 	else:
 		var player = radio.get_meta(META_PLAYER)
-		state = player.station.label if player.station else "Off"
+		state = player.station.name if player.station else "Off"
 
 	radio.gameData.tooltip = "Radio [%s]" % state
 
@@ -91,7 +91,6 @@ func _tune_to(radio, to_station) -> void:
 	if player.playing:
 		player.stop()
 	player.station = to_station
-	to_station.load()
 	_play_tuning(radio)
 
 

@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Radiola [HardBOSS Radio]"
 id="likhos-radiola-hardboss"
-version="1.0"
+version="1.0.1"
 prefix="[likho-radiola-hardboss]"
 description="HardBOSS Radio station for Likho's Radiola"
 credit=""

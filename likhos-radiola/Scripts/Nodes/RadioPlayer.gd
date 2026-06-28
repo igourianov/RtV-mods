@@ -31,7 +31,6 @@ func _init() -> void:
 func start(to_station: RadioStation = null) -> void:
 	if to_station:
 		station = to_station
-		station.load()
 	playing = true
 	_play_current()
 
@@ -52,11 +51,11 @@ func _process(_delta: float) -> void:
 
 
 func _play_current() -> void:
-	var track := station.now_playing()
-	if !track:
+	var cue := station.now_playing()
+	if !cue:
 		return
-	_music.stream = track.stream
-	_music.play_chunk(track.start, track.duration)
+	_music.stream = cue.stream
+	_music.play_chunk(cue.start, cue.duration)
 
 
 func _sync_static() -> void:

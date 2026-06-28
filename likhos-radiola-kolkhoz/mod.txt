@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Radiola [Kolkhoz Punk]"
 id="likhos-radiola-kolkhoz"
-version="1.0.3"
+version="1.0.6"
 prefix="[likho-radiola-kolkhoz]"
 description="Kolkhoz Punk station for Likho's Radiola"
 credit=""
