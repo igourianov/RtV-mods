@@ -21,13 +21,8 @@ func on_interact() -> void:
 
 	var player := _player(radio)
 
-	# Block input while the tuning clip is sweeping to the next station.
-	if player.station && !player.playing:
-		_lib.skip_super()
-		return
-
 	# OFF -> Vanilla: let vanilla turn itself on.
-	if !radio.active && !player.playing:
+	if !radio.active && !player.station:
 		return
 
 	# Vanilla -> first station: turn the broadcast off ourselves so vanilla's
@@ -39,7 +34,8 @@ func on_interact() -> void:
 		_tune_to(radio, stations[0])
 		return
 
-	# On a station: advance, or stop after the last. Keep vanilla off.
+	# On a station (playing or mid-tune): advance, or stop after the last.
+	# Keep vanilla off.
 	_lib.skip_super()
 	var i := stations.find(player.station)
 	if i + 1 < stations.size():
@@ -47,6 +43,7 @@ func on_interact() -> void:
 		return
 
 	player.stop()
+	radio.tuning.stop()
 	radio.InteractAudio()
 
 
@@ -74,13 +71,13 @@ func on_update_tooltip_post() -> void:
 	if RadioRegistry.STATIONS.is_empty():
 		return
 	var radio = _lib._caller
-	var state: String
-	if radio.active:
-		state = "Area 05 broadcast"
-	elif !radio.has_meta(META_PLAYER):
-		state = "Off"
-	else:
-		var player = radio.get_meta(META_PLAYER)
+	var state := "Off"
+	if radio.tuning.is_playing():
+		state = "Tuning..."
+	elif radio.active:
+		state = "Area05 broadcast"
+	elif radio.has_meta(META_PLAYER):
+		var player: RadioPlayer = radio.get_meta(META_PLAYER)
 		state = player.station.name if player.station else "Off"
 
 	radio.gameData.tooltip = "Radio [%s]" % state
@@ -91,7 +88,9 @@ func _tune_to(radio, to_station) -> void:
 	if player.playing:
 		player.stop()
 	player.station = to_station
-	_play_tuning(radio)
+	# Reuse the in-progress sweep when flipping stations mid-tune.
+	if !radio.tuning.is_playing():
+		_play_tuning(radio)
 
 
 # Hold until the tuning clip stops, then start at the live position.
