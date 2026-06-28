@@ -1,18 +1,25 @@
 # Likho's Radiola
 
-Turns the shelter radio into a mood machine. The radio gains extra music stations on top of the vanilla one, each played through a lo-fi, band-passed radio filter over a bed of analog static.
+This mod reworks in-game radio, adding several authentic new stations to listen to and other improvements.
 
-Interact with the radio to cycle through the stations: Off -> Vanilla -> Doomer -> Off.
+* Created plugin system to distribute new stations later (can be used by other modders)
+* Realistic static and sound quality for old FM radio
+* Radio now plays by default when you find it (adjust chance in MCM)
+* Reworked radio interaction to show current state instead of the next action (it was confusing)
 
-Included station:
+## Plugins
 
-- **Doomer** - melancholic background music.
+This mod is only a shell, it does not contain new stations - download those separately:
 
-Stations play their tracks in random order and emit from the radio in 3D, so they fade as you walk away.
+* **Doomer Nation** melancholic post-punk, authentic 90s feel - [source](https://www.youtube.com/watch?v=F-9ZOtkWhj0)
+* **HardBOSS Radio** hardbass, simple-as - [source](https://www.youtube.com/watch?v=IRcQ70mLz6A)
+* **Kolkhoz Punk** gopnik and Russian traditional vibes by Sektor Gaza - [source](https://www.youtube.com/watch?v=GxJeEHkHAnc)
 
-## Configuration
+These need to be downloaded separately because they're relativelly large and static compared to the shell mod.
 
-The static hiss can be toggled in the Mod Configuration Menu (Radiola -> General -> Radio static). The change applies live, even mid-broadcast.
+## Why not stream directly from youtube?
+
+I wish. Unfortunately Youtube is extremely queer about letting people use their servers as CDN. So the music has to be packaged and distributed.
 
 ## [Check out my other mods](https://modworkshop.net/search/mods?query=%22Likho%27s%22&sort=likes)
 
