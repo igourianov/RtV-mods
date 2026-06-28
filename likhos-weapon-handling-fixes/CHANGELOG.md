@@ -1,4 +1,5 @@
-* fixed weapon rising while binos active
+# 2.18.1920
+* fixed the game allowing weapon rised mode while binos active (colliding with zoom)
 
 # 2.18.1916
 * integrated binos with the [LootLight](https://modworkshop.net/mod/56422) mod (v2.1.0 or greater)
