@@ -65,7 +65,7 @@ func on_update_tooltip_post() -> void:
 	var radio = _lib._caller
 	var state: String
 	if radio.active:
-		state = "Area 05"
+		state = "Area 05 broadcast"
 	elif !radio.has_meta(META_PLAYER):
 		state = "Off"
 	else:
