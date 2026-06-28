@@ -27,22 +27,3 @@ I wish. Unfortunately Youtube is extremely queer about letting people use their 
 ## [Check out my other mods](https://modworkshop.net/search/mods?query=%22Likho%27s%22&sort=likes)
 
 *Feedback and likes are welcome!*
-
-!!! Creating new station packs
-
-A pack is a standalone mod that appends one station to the Radiola at startup (no hooks, no config). Copy the structure of one of the existing packs and swap the contents:
-
-1. **Audio/** - one mp3 (or ogg) per track. You'll need each track's exact duration in seconds for the next step.
-2. **`<name>.tres`** - the station resource.
-	* Set `label` to be the station name displayed in game
-	* One `[sub_resource]` per track with
-		- `source` (path relative to the `.tres`)
-		- `title` track title (unused atm)
-		- `duration` in seconds **(must be accurate, it drives wall-clock sync)**
-	* List every sub-resource in the `tracks` array
-	* Set `load_steps` in the header to the total entry count: the 2 scripts + every track + the `[resource]` block
-3. **`Main.gd`** - change the `STATION_DATA` path to your `.tres`.
-4. **`mod.txt`** - unique `id` matching the folder name, and an `[autoload]` pointing at `Main.gd`.
-
-Zip the folder into a `.vmz` and drop it in `mods/`. The station drops into the radio's tuning cycle after the vanilla one; the core mod is untouched.
-!!!
