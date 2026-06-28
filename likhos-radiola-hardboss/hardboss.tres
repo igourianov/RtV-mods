@@ -37,7 +37,7 @@ duration = 234.0
 script = ExtResource("2")
 source = "Audio/06 - DJ Blyatman & Russian Village Boys - Instababe.mp3"
 title = "DJ Blyatman & Russian Village Boys - Instababe"
-duration = 217.0
+duration = 217.001
 
 [sub_resource type="Resource" id="t7"]
 script = ExtResource("2")
