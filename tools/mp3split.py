@@ -213,7 +213,28 @@ def codec_args(enc):
 	return args
 
 
-def split_file(ffmpeg, src, plan, outdir, pad, enc):
+def measure_loudnorm(ffmpeg, src, target_i, tp, lra):
+	"""Pass-1 loudnorm scan of the whole source. Returns measured-* dict."""
+	proc = subprocess.run(
+		[ffmpeg, "-hide_banner", "-nostats", "-i", src,
+		 "-af", f"loudnorm=I={target_i}:TP={tp}:LRA={lra}:print_format=json",
+		 "-f", "null", "-"],
+		capture_output=True, text=True, encoding="utf-8", errors="replace")
+	m = re.search(r'\{[^{}]*"input_i"[^{}]*\}', proc.stderr, re.S)
+	if not m:
+		die("loudnorm measurement failed:\n" + proc.stderr[-1000:])
+	return json.loads(m.group(0))
+
+
+def loudnorm_filter(d, target_i, tp, lra):
+	"""Pass-2 filter string applying a constant (linear) gain from measurements."""
+	return (f"loudnorm=I={target_i}:TP={tp}:LRA={lra}"
+			f":measured_I={d['input_i']}:measured_TP={d['input_tp']}"
+			f":measured_LRA={d['input_lra']}:measured_thresh={d['input_thresh']}"
+			f":offset={d['target_offset']}:linear=true")
+
+
+def split_file(ffmpeg, src, plan, outdir, pad, enc, af=None):
 	os.makedirs(outdir, exist_ok=True)
 	for i, p in enumerate(plan, 1):
 		name = f"{str(i).zfill(pad)} - {sanitize_filename(p['title'])}.mp3"
@@ -222,7 +243,7 @@ def split_file(ffmpeg, src, plan, outdir, pad, enc):
 			ffmpeg, "-hide_banner", "-loglevel", "error", "-y",
 			"-ss", f"{p['start']:.3f}", "-i", src,
 			"-t", f"{p['duration']:.3f}",
-			"-map", "0:a", *codec_args(enc),
+			"-map", "0:a", *(["-af", af] if af else []), *codec_args(enc),
 			dst,
 		]
 		res = subprocess.run(cmd, capture_output=True, text=True,
@@ -254,6 +275,14 @@ def main():
 					help="downmix to mono (triggers re-encode)")
 	ap.add_argument("--samplerate", type=int,
 					help="output sample rate in Hz, e.g. 22050 (triggers re-encode)")
+	ap.add_argument("--loudnorm", type=float, metavar="LUFS",
+					help="normalize to this integrated loudness, e.g. -14 "
+						 "(constant gain over whole source; triggers re-encode, "
+						 "use with --samplerate)")
+	ap.add_argument("--loudnorm-tp", type=float, default=-1.5,
+					help="loudnorm true-peak ceiling in dBTP (default: -1.5)")
+	ap.add_argument("--loudnorm-lra", type=float, default=11.0,
+					help="loudnorm target loudness range (default: 11)")
 	ap.add_argument("--dry-run", action="store_true",
 					help="print the plan, write nothing")
 	ap.add_argument("--manifest", help="write resolved tracks to this JSON file")
@@ -276,13 +305,23 @@ def main():
 		die(f"input not found: {args.input}")
 
 	enc = None
-	if args.bitrate or args.mono or args.samplerate:
+	if args.bitrate or args.mono or args.samplerate or args.loudnorm is not None:
 		enc = {"bitrate": args.bitrate, "mono": args.mono,
 			   "samplerate": args.samplerate}
 
 	tracks = parse_playlist(args.playlist)
 	total = probe_duration(args.ffprobe, args.input)
 	print(f"source: {args.input}  ({fmt_ts(total)}, {len(tracks)} tracks)")
+
+	af = None
+	if args.loudnorm is not None:
+		print(f"measuring loudness for loudnorm (target {args.loudnorm} LUFS) ...")
+		d = measure_loudnorm(args.ffmpeg, args.input, args.loudnorm,
+							 args.loudnorm_tp, args.loudnorm_lra)
+		af = loudnorm_filter(d, args.loudnorm, args.loudnorm_tp, args.loudnorm_lra)
+		print(f"  source: {d['input_i']} LUFS, TP {d['input_tp']} dBTP "
+			  f"-> target {args.loudnorm} LUFS")
+
 	if enc:
 		bits = enc["bitrate"] or "lame default"
 		chans = "mono" if enc["mono"] else "stereo"
@@ -316,7 +355,7 @@ def main():
 		print("dry run: no files written.")
 	else:
 		pad = max(2, len(str(len(plan))))
-		split_file(args.ffmpeg, args.input, plan, args.outdir, pad, enc)
+		split_file(args.ffmpeg, args.input, plan, args.outdir, pad, enc, af)
 		print(f"\ndone -> {os.path.abspath(args.outdir)}")
 
 	if args.manifest:
