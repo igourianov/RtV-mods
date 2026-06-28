@@ -8,10 +8,6 @@ var tracks: Array[RadioTrack] = []
 var _total := 0.0
 
 
-class Cue extends "RadioTrack.gd":
-	var start: float = 0.0
-
-
 func _init(station_name: String = "", station_tracks: Array[RadioTrack] = []) -> void:
 	name = station_name
 	tracks = station_tracks
@@ -20,13 +16,13 @@ func _init(station_name: String = "", station_tracks: Array[RadioTrack] = []) ->
 		_total += track.duration
 
 
-func now_playing() -> Cue:
+func now_playing() -> RadioTrack:
 	if tracks.is_empty():
 		return null
 	var cursor := fmod(Time.get_unix_time_from_system(), _total)
 	for track in tracks:
 		if cursor < track.duration:
-			var cue := Cue.new()
+			var cue := RadioTrack.new()
 			cue.stream = track.stream
 			cue.title = track.title
 			cue.start = cursor
