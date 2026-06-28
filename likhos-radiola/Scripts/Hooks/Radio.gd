@@ -21,20 +21,29 @@ func on_interact() -> void:
 
 	var player := _player(radio)
 
+	# Block input while the tuning clip is sweeping to the next station.
+	if player.station && !player.playing:
+		_lib.skip_super()
+		return
+
 	# OFF -> Vanilla: let vanilla turn itself on.
 	if !radio.active && !player.playing:
 		return
 
-	# Vanilla -> first station: let vanilla turn off, start ours.
+	# Vanilla -> first station: turn the broadcast off ourselves so vanilla's
+	# Interact() does not stop our tuning clip.
 	if radio.active:
-		player.start(stations[0])
+		_lib.skip_super()
+		radio.active = false
+		radio.audio.stop()
+		_tune_to(radio, stations[0])
 		return
 
 	# On a station: advance, or stop after the last. Keep vanilla off.
 	_lib.skip_super()
 	var i := stations.find(player.station)
 	if i + 1 < stations.size():
-		player.start(stations[i + 1])
+		_tune_to(radio, stations[i + 1])
 		return
 
 	player.stop()
@@ -43,6 +52,8 @@ func on_interact() -> void:
 
 func on_physics_process_pre(_delta) -> void:
 	var radio = _lib._caller
+	_tick_tuning(radio)
+
 	if radio.has_meta(META_AUTOROLL):
 		return
 	radio.set_meta(META_AUTOROLL, true)
@@ -70,9 +81,35 @@ func on_update_tooltip_post() -> void:
 		state = "Off"
 	else:
 		var player = radio.get_meta(META_PLAYER)
-		state = player.station.label if player.playing else "Off"
+		state = player.station.label if player.station else "Off"
 
 	radio.gameData.tooltip = "Radio [%s]" % state
+
+
+func _tune_to(radio, to_station) -> void:
+	var player := _player(radio)
+	if player.playing:
+		player.stop()
+	player.station = to_station
+	to_station.load()
+	_play_tuning(radio)
+
+
+# Hold until the tuning clip stops, then start at the live position.
+func _tick_tuning(radio) -> void:
+	if !radio.has_meta(META_PLAYER):
+		return
+	var player = radio.get_meta(META_PLAYER)
+	if !player.station || player.playing || radio.tuning.is_playing():
+		return
+	player.start()
+
+
+func _play_tuning(radio) -> void:
+	if radio.tuningClips.is_empty():
+		return
+	radio.tuning.stream = radio.GetRandomTuningClip()
+	radio.tuning.play()
 
 
 func _player(radio) -> RadioPlayer:

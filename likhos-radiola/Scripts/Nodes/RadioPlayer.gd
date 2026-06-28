@@ -28,10 +28,11 @@ func _init() -> void:
 	add_child(_static)
 
 
-func start(to_station: RadioStation) -> void:
-	station = to_station
+func start(to_station: RadioStation = null) -> void:
+	if to_station:
+		station = to_station
+		station.load()
 	playing = true
-	station.load()
 	_play_current()
 
 
