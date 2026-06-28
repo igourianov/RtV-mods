@@ -169,7 +169,7 @@ duration = 156.697
 script = ExtResource("2")
 source = "Audio/28 - апофеоз тоски, Новое Время - Спектакль.mp3"
 title = "апофеоз тоски, Новое Время - Спектакль"
-duration = 190.303
+duration = 190.304
 
 [sub_resource type="Resource" id="t38"]
 script = ExtResource("2")
@@ -193,7 +193,7 @@ duration = 118.215
 script = ExtResource("2")
 source = "Audio/32 - Улица Восток - Зачем нужна красота.mp3"
 title = "Улица Восток - Зачем нужна красота"
-duration = 168.95
+duration = 168.901
 
 [resource]
 script = ExtResource("1")
