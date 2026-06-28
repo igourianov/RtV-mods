@@ -178,6 +178,7 @@ func _resolve_aim_intent() -> void:
 	if gameData.isInspecting || gameData.isChecking || ModConfig.binoculars_active:
 		gameData.isAiming = false
 		gameData.isCanted = false
+		gameData.weaponPosition = 1
 		return
 
 	if !_aim_priority:
