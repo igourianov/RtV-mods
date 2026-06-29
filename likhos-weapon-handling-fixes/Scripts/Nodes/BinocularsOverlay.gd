@@ -101,6 +101,12 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("binoculars") && (_state == State.INACTIVE || _state == State.LOWERING) && _can_raise():
 		_state = State.ACTIVE
 		_hold_timer = _HOLD_THRESHOLD
+		_rect.visible = true
+		_base_fov = gameData.baseFOV
+		_current_fov = _camera.fov
+		ModConfig.binoculars_mag = _MAGS[_index]
+		gameData.isOccupied = true
+		gameData.isFiring = false
 		return
 
 	if event.is_action_released("binoculars") && _state == State.ACTIVE:
@@ -109,6 +115,10 @@ func _input(event: InputEvent) -> void:
 		return
 
 	if _state != State.ACTIVE:
+		return
+
+	if event.is_action_pressed("aim") || event.is_action_pressed("canted"):
+		_state = State.LOWERING
 		return
 
 	if event.is_action_pressed("optic_zoom_in"):
@@ -155,14 +165,7 @@ func _process(delta: float) -> void:
 		_apply_loot_light(false)
 		return
 
-	if !ModConfig.binoculars_active:
-		_rect.visible = true
-		_base_fov = gameData.baseFOV
-		_current_fov = _camera.fov
-		ModConfig.binoculars_mag = _MAGS[_index]
-		ModConfig.binoculars_active = true
-		gameData.isOccupied = true
-		gameData.isFiring = false
+	ModConfig.binoculars_active = _state == State.ACTIVE
 
 	_apply(smoothstep(0.0, 1.0, _raise_state), delta)
 	_apply_loot_light(true)

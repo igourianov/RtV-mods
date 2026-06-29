@@ -146,10 +146,10 @@ func on_input(evt: InputEvent) -> void:
 		cantToggle = true
 
 	if evt.is_action_pressed("aim"):
-		_aim_intent = !_aim_intent if aimToggle else true
+		_aim_intent = !gameData.isAiming if aimToggle else true
 		_aim_priority = true
 	elif evt.is_action_pressed("canted"):
-		_cant_intent = !_cant_intent if cantToggle else true
+		_cant_intent = !gameData.isCanted if cantToggle else true
 		_aim_priority = false
 	elif !aimToggle && evt.is_action_released("aim"):
 		_aim_intent = false
