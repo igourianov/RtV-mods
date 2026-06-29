@@ -135,7 +135,7 @@ func on_rig_update_post(_animate) -> void:
 func on_input(evt: InputEvent) -> void:
 	_lib.skip_super()
 
-	if gameData.freeze:
+	if ModConfig.gated():
 		return
 
 	var aimToggle: bool = gameData.aimMode == 2
@@ -145,10 +145,13 @@ func on_input(evt: InputEvent) -> void:
 	elif ModConfig.cant_mode == &"toggle":
 		cantToggle = true
 
-	if evt.is_action_pressed("aim"):
+	# locks block override presses but let releases clear hold-mode intent
+	var unlocked := !ModConfig.locked()
+
+	if unlocked && evt.is_action_pressed("aim"):
 		_aim_intent = !gameData.isAiming if aimToggle else true
 		_aim_priority = true
-	elif evt.is_action_pressed("canted"):
+	elif unlocked && evt.is_action_pressed("canted"):
 		_cant_intent = !gameData.isCanted if cantToggle else true
 		_aim_priority = false
 	elif !aimToggle && evt.is_action_released("aim"):
@@ -157,11 +160,30 @@ func on_input(evt: InputEvent) -> void:
 		_cant_intent = false
 
 
+# only overrides the tiers vanilla mis-gates; the clean case falls through to vanilla's weapon_high/low handling
+func on_weapon_position() -> void:
+	if ModConfig.gated():
+		_lib.skip_super()
+		return
+
+	if ModConfig.locked():
+		gameData.weaponPosition = 1
+		_lib.skip_super()
+		return
+
+	if gameData.isCanted || ModConfig.binoculars_active || gameData.isRunning || gameData.isColliding:
+		_lib.skip_super()
+		return
+
+
 func on_weapon_handling(delta: float) -> void:
 	var h = _lib._caller
 	if !h:
 		return
 	_lib.skip_super()
+
+	if ModConfig.gated():
+		return
 
 	gameData.isColliding = h.collision.is_colliding()
 	_resolve_aim_intent()
@@ -175,10 +197,9 @@ func on_weapon_handling(delta: float) -> void:
 
 func _resolve_aim_intent() -> void:
 
-	if gameData.isInspecting || gameData.isChecking || ModConfig.binoculars_active:
+	if ModConfig.locked() || ModConfig.binoculars_active:
 		gameData.isAiming = false
 		gameData.isCanted = false
-		gameData.weaponPosition = 1
 		return
 
 	if !_aim_priority:
@@ -204,13 +225,11 @@ func _set_target(h) -> void:
 		return
 
 	if gameData.isInspecting:
-		gameData.weaponPosition = 1
 		h.targetPosition = data.inspectPosition
 		h.targetRotation = data.inspectRotation
 		return
 
 	if gameData.isInserting:
-		gameData.weaponPosition = 1
 		h.targetPosition = data.lowPosition
 		h.targetRotation = data.lowRotation
 		return
@@ -221,12 +240,17 @@ func _set_target(h) -> void:
 		return
 
 	if gameData.isPlacing:
-		gameData.weaponPosition = 1
 		_set_target_idle(h)
 		return
 
 	if gameData.isRunning:
 		_set_target_idle(h)
+		return
+
+	# binos has no weapon pose of its own; stow the rig out of the camera while glassing
+	if ModConfig.binoculars_active:
+		h.targetPosition = data.lowPosition + _STOW_POS_OFFSET
+		h.targetRotation = _stow_rot
 		return
 
 	if gameData.isCanted:

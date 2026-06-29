@@ -8,6 +8,7 @@ static var optic_shiner: bool = false
 static var binoculars_active: bool = false
 static var binoculars_mag: float = 6.0
 static var kills: PackedByteArray = PackedByteArray([0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])
+static var gameData = preload("res://Resources/GameData.tres")
 
 # config vars
 static var crosshair_style: StringName
@@ -66,6 +67,18 @@ const MULT_MAX := 1.5
 const BASE_WEAPON_WEIGHT := 4.0
 
 const Out = preload("../Lib/Out.gd")
+
+
+# tier 1 - weapon handling concern does not run at all
+static func gated() -> bool:
+	return gameData.menu || gameData.freeze || gameData.isDead || gameData.isTransitioning || gameData.isCaching
+
+
+# tier 2 - modal weapon actions that own the hands until they complete
+static func locked() -> bool:
+	return (gameData.isReloading || gameData.isInspecting || gameData.isChecking
+		|| gameData.isInserting || gameData.isPlacing || gameData.isDrawing
+		|| gameData.isClearing)
 
 
 static func _get_config_value(config: ConfigFile, section: String, key: String, default_val):

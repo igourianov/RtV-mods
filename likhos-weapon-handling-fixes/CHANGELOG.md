@@ -1,3 +1,6 @@
+* reworked action priority for binoculars: can now aim straight out of bino mode without need to manually cancel
+* binos now alway force weapon position down so it doesn't block the view
+
 # 2.18.1920
 * fixed the game allowing weapon rised mode while binos active (colliding with zoom)
 

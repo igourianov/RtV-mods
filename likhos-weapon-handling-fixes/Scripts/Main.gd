@@ -75,6 +75,7 @@ func setup(lib):
 	_kill_counter = KillCounter.new(lib)
 
 	register_hook("handling-weaponhandling", _handling.on_weapon_handling)
+	register_hook("handling-weaponposition", _handling.on_weapon_position)
 	register_hook("rigmanager-updaterig-post", _handling.on_rig_update_post)
 	register_hook("weaponrig-_ready-post", _weapon_rig.on_ready_post)
 	register_hook("weaponrig-casingeject-post", _weapon_rig.on_casing_eject_post)

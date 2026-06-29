@@ -138,10 +138,8 @@ func _change_zoom(dir: int) -> void:
 func _can_raise() -> bool:
 	if !_resolve_camera():
 		return false
-	return !(gameData.menu || gameData.freeze || gameData.isDead || gameData.isOccupied
-		|| gameData.isReloading || gameData.isInspecting || gameData.isInserting
-		|| gameData.isChecking || gameData.isPlacing || gameData.isDrawing
-		|| gameData.isTransitioning || gameData.NVG || gameData.isRunning)
+	return !(ModConfig.gated() || ModConfig.locked()
+		|| gameData.isOccupied || gameData.NVG || gameData.isRunning)
 
 
 func _process(delta: float) -> void:
@@ -157,7 +155,7 @@ func _process(delta: float) -> void:
 	if _state == State.ACTIVE && _hold_timer > 0.0:
 		_hold_timer -= delta
 
-	if !_resolve_camera() || gameData.isDead || gameData.menu || gameData.freeze || gameData.isRunning || _raise_state < 0.0:
+	if !_resolve_camera() || ModConfig.gated() || gameData.isRunning || _raise_state < 0.0:
 		_state = State.INACTIVE
 		_rect.visible = false
 		ModConfig.binoculars_active = false

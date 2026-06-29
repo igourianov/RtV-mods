@@ -1,13 +1,13 @@
 [mod]
 name="Likho's VosTac"
 id="likhos-weapon-handling-fixes"
-version="2.18.1922"
+version="2.18.1924"
 prefix="[likho-vostac]"
 description="Likho's collection of game fixes and realism improvements"
 debug=false
 
 [hooks]
-"res://Scripts/Handling.gd"="WeaponHandling"
+"res://Scripts/Handling.gd"="WeaponHandling, WeaponPosition"
 "res://Scripts/WeaponRig.gd"="ADS, _physics_process, _input, _ready, CasingEject"
 "res://Scripts/Camera.gd"="ScopeDOF"
 "res://Scripts/Controller.gd"="MovementStates, Crouch, _physics_process, _input"
