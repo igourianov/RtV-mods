@@ -1,3 +1,5 @@
+# 2.19.1936
+* rangefinder feature for binoculars
 * reworked action priority for binoculars: can now aim straight out of bino mode without need to manually cancel
 * binos now alway force weapon position down so it doesn't block the view
 
