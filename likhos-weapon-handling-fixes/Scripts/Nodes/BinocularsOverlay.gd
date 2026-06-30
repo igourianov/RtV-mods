@@ -31,7 +31,7 @@ const _END_CY := 0.5
 
 const _RANGE_MAX := 2000.0
 const _RANGE_CADENCE := 0.5
-const _RANGE_MASK := 0xFFFFFFFF
+const _RANGE_MASK := 1117  # weapon bullet mask (layers 1,3,4,5,7) plus foliage obstruction (layer 11); skips layer-6 player-block collider that seals window openings
 const _RANGE_COLOR := Color(1.0, 0.5, 0.05, 0.6)
 const _RANGE_LINE := 0.275
 const _RANGE_FONT_SIZE := 28
