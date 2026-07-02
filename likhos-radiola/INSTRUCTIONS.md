@@ -23,14 +23,6 @@ Creates a runtime audio bus `LikhosRadiola` (high-pass + low-pass + lo-fi distor
 
 Ships the shared mod-lib as `Lib/`, including `AudioChunkPlayer3D.gd` used for playback.
 
-# Station packs (plugin API)
-
-Station packs are independent mods that append a `RadioStation` resource to `RadioStation.REGISTRY` from a plain `_ready`. They need no hooks and no config, and are order-independent. The registry lives in `res://mods/likhos-radiola/Scripts/RadioStation.gd`; a pack that finds it missing should skip its station rather than fail.
-
-Playback is a synchronized broadcast: each station derives the current track and offset from the wall clock, so tuning in lands mid-track (not at 0:00) and two radios on the same station play in sync.
-
-See `README.md` for the full station-pack authoring walkthrough (audio prep, the `.tres` station resource, the bootstrap and `mod.txt`).
-
 # Install / Uninstall
 
 Drop `likhos-radiola.vmz` into your game's `mods/` folder. On a default Steam install:
