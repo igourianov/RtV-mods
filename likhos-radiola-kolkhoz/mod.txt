@@ -2,10 +2,7 @@
 name="Likho's Radiola [Kolkhoz Punk]"
 id="likhos-radiola-kolkhoz"
 version="1.0.6"
-prefix="[likho-radiola-kolkhoz]"
-description="Kolkhoz Punk station for Likho's Radiola"
-credit=""
-debug=false
+credit="https://www.youtube.com/watch?v=GxJeEHkHAnc"
 
 [autoload]
 LikhosRadiolaKolkhozPunk="res://mods/likhos-radiola-kolkhoz/Main.gd"

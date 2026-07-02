@@ -2,10 +2,7 @@
 name="Likho's Radiola [HardBOSS Radio]"
 id="likhos-radiola-hardboss"
 version="1.0.1"
-prefix="[likho-radiola-hardboss]"
-description="HardBOSS Radio station for Likho's Radiola"
-credit=""
-debug=false
+credit="https://www.youtube.com/watch?v=IRcQ70mLz6A"
 
 [autoload]
 LikhosRadiolaHardboss="res://mods/likhos-radiola-hardboss/Main.gd"
