@@ -13,4 +13,4 @@ LikhosRadiola="res://mods/likhos-radiola/Scripts/Main.gd"
 "res://Scripts/Radio.gd"="Interact, UpdateTooltip, _physics_process"
 
 [updates]
-modworkshop=57722
+modworkshop=57775
