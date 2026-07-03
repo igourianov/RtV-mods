@@ -40,7 +40,7 @@ func on_use(targetItem, targetGrid) -> void:
 	var extraData = TACMED[itemData.file]
 	if extraData:
 		Out.debug("custom heal logic")
-		_use(_lib._caller, _lib._caller.get_node("/root/Map/Core/Controller/Character"), targetItem, extraData)
+		_use(_lib._caller, get_node(CHARACTER_NODE), targetItem, extraData)
 		_lib.skip_super()
 
 
@@ -86,30 +86,29 @@ func _use_anim(caller, targetItem, timer: float):
 
 func on_release_pre() -> void:
 	var caller = _lib._caller
-	if !caller.itemDragged || !caller.canCombine:
+	var sourceItem = caller.itemDragged
+	var targetItem = caller.hoverItem
+	if !caller.canCombine || !sourceItem || !targetItem || !sourceItem.slotData || !targetItem.slotData:
 		return
-	var target = caller.hoverItem.slotData if caller.hoverItem else null
-	if !target || !target.itemData:
-		return
-	var extraData = TACMED[target.itemData.file]
+
+	var extraData = TACMED[targetItem.slotData.itemData.file]
 	if !extraData || !extraData.replenishTime:
-		return
-	var source = caller.itemDragged.slotData
-	if !source || !source.itemData:
 		return
 
 	Out.debug("custom heal item reload")
-	_combine(caller, caller.hoverItem, caller.itemDragged, extraData) # no await deliberate
-	caller.Return(caller.itemDragged)
-	caller.Reset()
+	_combine(caller, targetItem, sourceItem, extraData) # no await deliberate
 
 
 func _combine(caller, targetItem, sourceItem, extraData):
 	if targetItem.slotData.condition >= 100.0:
+		caller.Return(sourceItem)
+		caller.Reset()
 		caller.PlayError()
 		return
 
+	caller.Reset()
 	caller.PlayStack()
+	sourceItem.hide()
 
 	await _use_anim(caller, targetItem, extraData.replenishTime)
 
