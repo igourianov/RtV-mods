@@ -125,12 +125,9 @@ func _combine(caller, targetItem, sourceItem, extraData):
 
 
 func _input(ev):
-	if ev.is_action_pressed("tacmed"):
-		Out.debug("action pressed: tacmed")
+	if !gameData.isOccupied && ev.is_action_pressed("tacmed"):
 		_tacmed_heal(get_node(INTERFACE_NODE), get_node(CHARACTER_NODE))
-		return
-
-	if ev.is_action_pressed("hurt_myself"):
+	elif ev.is_action_pressed("hurt_myself"):
 		_hurt_myself(get_node(CHARACTER_NODE), true)
 	elif ev.is_action_pressed("hurt_myself_more"):
 		_hurt_myself(get_node(CHARACTER_NODE), false)
@@ -154,46 +151,18 @@ func _hurt_myself(caller, bleedOnly: bool):
 
 
 func _tacmed_heal(iface, character):
-	if gameData.isOccupied:
-		return
-	
+	Out.debug("action pressed: tacmed")
 	var tacmedItems = iface.inventoryGrid.get_children().filter(func(i):
 		return TACMED[i.slotData.itemData.file] && i.slotData.condition > 0
 	)
+
 	Out.debug("usable tacmed items:", tacmedItems.size())
 	if !tacmedItems.size():
 		iface.PlayError()
 		return
 
 	if tacmedItems.size() > 1:
-		var sortable = tacmedItems.map(func(i):
-			return {
-				"item": i, # original item ref
-				"conditions_remove": _cond_heal_count(i),
-				"waste": max(0.0, i.slotData.itemData.health * i.slotData.condition / 100.0 - (100.0 - gameData.health)),
-				"condition": i.slotData.condition,
-				"value": i.slotData.itemData.value * i.slotData.condition / 100.0
-			}
-		)
-	
-		# ORDER BY [number of conditions would be removed] DESC, [heal waste] ASC, [condition] ASC, [adjusted value] ASC
-		sortable.sort_custom(func(a, b):
-			if a.conditions_remove > b.conditions_remove:
-				return true
-			elif a.conditions_remove < b.conditions_remove:
-				return false
-			elif a.waste < b.waste:
-				return true
-			elif a.waste > b.waste:
-				return false
-			elif a.condition < b.condition:
-				return true
-			elif a.condition > b.condition:
-				return false
-			return a.value < b.value
-		)
-		tacmedItems = sortable.map(func(i): return i.item)
-
+		tacmedItems = _prioritize_tacmed(tacmedItems)
 		Out.debug("prioritized tacmed:", tacmedItems.map(func(i): return {
 			"file": i.slotData.itemData.file,
 			"condition": i.slotData.condition
@@ -203,9 +172,28 @@ func _tacmed_heal(iface, character):
 	_use(iface, character, tacmedToUse, TACMED[tacmedToUse.slotData.itemData.file])
 
 
+func _prioritize_tacmed(items: Array) -> Array:
+	# ORDER BY [number of conditions would be removed] DESC, [heal waste] ASC, [condition] ASC, [adjusted value] ASC
+	var sortable = items.map(func(i):
+		return {
+			"item": i, # original item ref
+			"key": [
+				-_cond_heal_count(i),
+				max(0.0, i.slotData.itemData.health * i.slotData.condition / 100.0 - (100.0 - gameData.health)),
+				i.slotData.condition,
+				i.slotData.itemData.value * i.slotData.condition / 100.0
+			]
+		}
+	)
+
+	sortable.sort_custom(func(a, b): return a.key < b.key)
+
+	return sortable.map(func(i): return i.item)
+
+
 func _cond_heal_count(item) -> int:
 	var heal: int = 0
 	for cond in CONDITIONS:
 		if gameData[cond] && item.slotData.itemData[cond]:
 			heal += 1
-	return heal 
+	return heal
