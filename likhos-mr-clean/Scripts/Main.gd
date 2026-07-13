@@ -15,6 +15,7 @@ var _interface
 func setup(lib) -> void:
 	_strip_repair_recipes()
 	_patch_wrk(lib)
+	_localize_wrk_slotdata()
 
 	lib.register(lib.Registry.RECIPES, "likhos_cleaning_kit_refill", {
 		"recipe": CleaningKitRefill,
@@ -63,6 +64,22 @@ func _patch_wrk(lib) -> void:
 		"tetris": _rebuild_tetris(TETRIS_PATH, icon),
 		"repairs": true,
 	})
+
+
+func _localize_wrk_slotdata() -> void:
+	var scene: PackedScene = Database.get(WRK_ID)
+	if !scene:
+		Out.warning("Weapon_Repair_Kit scene unavailable, cannot fix shared slotData")
+		return
+
+	var probe = scene.instantiate()
+	if !probe.slotData:
+		Out.warning("Weapon_Repair_Kit pickup has no slotData, cannot fix sharing")
+		probe.queue_free()
+		return
+
+	probe.slotData.resource_local_to_scene = true
+	probe.queue_free()
 
 
 func _rebuild_tetris(tetris:String, icon: ImageTexture) -> PackedScene:
