@@ -8,7 +8,7 @@ Typical gun requires repair only after 10s of thousands of rounds, and it cannot
 
 The old Weapon Repair Kit was awkward: pick a per gun recipe from the crafting menu, hand over a full kit, get the gun back. Twenty plus duplicated recipes cluttering the crafting tab. Mr. Clean replaces all of that with a single drag and drop interaction.
 
-* Renamed to **Likho's No.9 Gun Cleaning Kit** + new inventory sprite. Sorry, no in-game model - too much effort (idk how to do it).
+* Renamed to **Weapon Cleaning Kit**.
 * Drag any weapon onto the kit - the weapon's missing condition gets restored from the kit's own condition pool.
 * The kit is **NOT CONSUMED** on use, but loses condition by the same amount it restored.
 * Per gun repair recipes are removed from the crafting menu.
