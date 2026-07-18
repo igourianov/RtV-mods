@@ -6,8 +6,6 @@ const CleaningKitRefill = preload("../Recipes/Cleaning_Kit_Refill.tres")
 
 const WRK_ID := "Weapon_Repair_Kit"
 const RECIPES_PATH := "res://Crafting/Recipes.tres"
-const ICON_PATH := "res://mods/likhos-mr-clean/Assets/Cleaning_kit.png"
-const TETRIS_PATH := "res://Items/Misc/Weapon_Repair_Kit/Weapon_Repair_Kit_3x2.tscn"
 
 var _interface
 
@@ -51,17 +49,14 @@ func _patch_wrk(lib) -> void:
 		compatible.append(m.entry)
 	Out.debug("found %d weapons for WRK compatibility" % compatible.size())
 
-	var icon: ImageTexture = ImageTexture.create_from_image(Image.load_from_file(ICON_PATH))
 	lib.patch(lib.Registry.ITEMS, WRK_ID, {
-		"name": "Likho's No.9 Gun Cleaning Kit",
+		"name": "Weapon Cleaning Kit",
 		"inventory": "Cleaning Kit",
 		"rotated": "Cleaning Kit",
 		"equipment": "Cleaning Kit",
 		"display": "C. Kit",
 		"showCondition": true,
 		"compatible": compatible,
-		"icon": icon,
-		"tetris": _rebuild_tetris(TETRIS_PATH, icon),
 		"repairs": true,
 	})
 
@@ -80,38 +75,3 @@ func _localize_wrk_slotdata() -> void:
 
 	probe.slotData.resource_local_to_scene = true
 	probe.queue_free()
-
-
-func _rebuild_tetris(tetris:String, icon: ImageTexture) -> PackedScene:
-	var src: PackedScene = load(tetris)
-	if !src:
-		Out.warning("failed to load tetris scene from %s" % tetris)
-		return null
-
-	var inst := src.instantiate()
-	var sprite := _find_sprite(inst)
-	if !sprite:
-		Out.warning("no Sprite2D in tetris scene %s" % tetris)
-		inst.queue_free()
-		return null
-
-	sprite.texture = icon
-
-	var packed := PackedScene.new()
-	if packed.pack(inst) != OK:
-		Out.warning("failed to pack tetris scene")
-		inst.queue_free()
-		return null
-
-	inst.queue_free()
-	return packed
-
-
-func _find_sprite(node: Node) -> Sprite2D:
-	if node is Sprite2D:
-		return node
-	for child in node.get_children():
-		var found := _find_sprite(child)
-		if found:
-			return found
-	return null
