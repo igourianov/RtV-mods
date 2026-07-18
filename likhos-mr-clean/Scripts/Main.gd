@@ -43,10 +43,9 @@ func _strip_repair_recipes() -> void:
 
 
 func _patch_wrk(lib) -> void:
-	var matches: Array = lib.find(lib.Registry.ITEMS, func(it): return it.get("type") == "Weapon")
 	var compatible: Array[ItemData] = []
-	for m in matches:
-		compatible.append(m.entry)
+	compatible.assign(lib.find(lib.Registry.ITEMS, func(it): return it.type == "Weapon").map(func(m): return m.entry))
+
 	Out.debug("found %d weapons for WRK compatibility" % compatible.size())
 
 	lib.patch(lib.Registry.ITEMS, WRK_ID, {
