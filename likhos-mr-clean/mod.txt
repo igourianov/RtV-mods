@@ -4,7 +4,7 @@ id="likhos-mr-clean"
 version="1.2.86"
 prefix="[likho-mr-clean]"
 description="Likho's mod reworking the Weapon Repair Kit into a reusable Weapon Cleaning Kit"
-debug=true
+debug=false
 
 [hooks]
 "res://Scripts/Interface.gd"="Release"
