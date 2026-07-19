@@ -5,6 +5,7 @@
       "WebFetch",
       "PowerShell",
       "WebSearch"
-    ]
+    ],
+    "defaultMode": "acceptEdits"
   }
 }
