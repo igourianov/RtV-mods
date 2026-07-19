@@ -2,8 +2,6 @@
 
 Comprehensive RtV overhaul that modifies weapon positions, handling mechanics, optics and stamina. Fixes a number of vanilla weapon bugs.
 
-Formerly `Likho's Weapon Handling Fixes`.
-
 ## Novel features
 
 * **Binoculars!** Added tactical [6-12x binos](https://www.youtube.com/watch?v=6d0zPQRmM3s) for observation. Hold 'B' to activate (remap in game's vanilla bindings)
@@ -112,11 +110,3 @@ Ammo check receives much needed love.
 ## Why this is one mod and not several
 
 These changes started out as separate mods. The catch is that Road to Vostok's scripts have a handful of "god" methods that fold a lot of unrelated behavior into a single function and mix state mutation with rendering side effects in the same call. Hooking a method through the mod loader is all-or-nothing, you can't override only part of a function. So as soon as one fix needed to touch, say, `Handling.WeaponHandling`, every other tweak that also lives in that method had to ship in the same mod or get clobbered by it. That's how the ammo-check, canted, laser and PIP changes ended up bundled together.
-
-## MCM toggles
-
-*Because people keep asking to add more...* I don't want to add any more toggles. In fact I will likely reduce them to just core subsystems or critical compatibility points in the near future.
-
-**Why?** Because code complexity scales **exponentially** with the number of config switches. And I am already burning most of my time on this mod with just fixing things that broke previously instead of doing things I like. 
-
-Imagine a very simple change that touches a code path with just one MCM toggle (assuming binary on/off state). To implement it properly I need to run minimum of 2 tests: one with the setting on, and one with it off. Two toggles - 4 tests. Three toggles - 8 tests. Ad infinitum. And this is just to run it once, not counting all the intermediate debugging runs and multi-state settings.
