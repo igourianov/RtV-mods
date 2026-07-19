@@ -10,7 +10,7 @@
 * fixed the game allowing weapon rised mode while binos active (colliding with zoom)
 
 # 2.18.1916
-* integrated binos with the [LootLight](https://modworkshop.net/mod/56422) mod (v2.1.0 or greater)
+* integrated binos with the LootLight mod (v2.1.0 or greater)
 * disabled weapon stow on opening inventory (it was annoying)
 * refactored inspect mode attachment cards
 * refactored sound helpers
@@ -110,7 +110,7 @@
 * fixed deadlock on opening inventory while checking ammo
 
 # 2.8.1288
-* moved all the attachment renaming and weight changes into [Likho's tag](https://modworkshop.net/mod/56993) mod
+* moved all the attachment renaming and weight changes into Likho's tag mod
 
 # 2.8.1286
 * redone eye relief logic - rail position now works again for altering how close the scope is to the camera

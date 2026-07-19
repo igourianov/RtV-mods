@@ -12,7 +12,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 
 ## Weapons & Handling
 
-* Reworked lowered weapon mode into [Adaptive Free Look](https://www.youtube.com/watch?v=I1lY93vEe-s) mode (disable in MCM). Recommended to use with [FP Body](https://modworkshop.net/mod/56744) mod.
+* Reworked lowered weapon mode into [Adaptive Free Look](https://www.youtube.com/watch?v=I1lY93vEe-s) mode (disable in MCM)
 * Canted aim is now an action independent from aim with optional laser auto-activation (recommend using mouse side button for it)
 * Weapon handling speed (how fast you transition into the desired state) now scales with stance and optic: red dot and LPVO 1x **115%**, canted **130%**, magnified scope **80%**
 * Reworked insert and ammo check mechanics to use hold action instead of toggle + can now reload directly from ammo check
@@ -25,7 +25,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 
 * Mouse sensitivity scales with stance and progressively with zoom level + lerp() on transition instead of snapping
 * Ability to toggle the secondary optic out of aim, with a visual cue of the toggle
-* Reworked the PIP scope mode for realism. Recommended to pair with [ExitPupil](https://modworkshop.net/mod/56890) PIP reshader mod.
+* Reworked the PIP scope mode for realism
 * Reworked all optics with real eye relief (only in PIP) and magnification values.
 * LPVO zoom is now accessible without aiming - gated by the Rail movement modifier by default to avoid collision with lower/raise weapon (change in MCM)
 * Added explicit bindings to the base game settings for optic zoom in/out (it was hardcoded to mouse wheel)
@@ -40,7 +40,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 
 * Reworked input priority for Crouch/Sprint/Aim/Canted actions. Last action wins instead of following hardcoded order (exception: sprint while aiming = hold breath)
 * Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in MCM)
-* Flashlight now supports both toggle and hold actions on the same binding, and will shine the light on the inspected weapon. Recommended for use with [LootLight](https://modworkshop.net/mod/56422) mod.
+* Flashlight now supports both toggle and hold actions on the same binding, and will shine the light on the inspected weapon
 * Additional weapon cards in Inspect/Ammo Check/Insert modes + icon replacers for ammo count and chamber status (check MCM settings)
 * Likho's protips in-game to make the user aware of the changed bindings
 
@@ -120,7 +120,3 @@ These changes started out as separate mods. The catch is that Road to Vostok's s
 **Why?** Because code complexity scales **exponentially** with the number of config switches. And I am already burning most of my time on this mod with just fixing things that broke previously instead of doing things I like. 
 
 Imagine a very simple change that touches a code path with just one MCM toggle (assuming binary on/off state). To implement it properly I need to run minimum of 2 tests: one with the setting on, and one with it off. Two toggles - 4 tests. Three toggles - 8 tests. Ad infinitum. And this is just to run it once, not counting all the intermediate debugging runs and multi-state settings.
-
-## [Check out my other mods](https://modworkshop.net/search/mods?query=%22Likho%27s%22&sort=likes)
-
-*Feedback and likes are welcome!*

@@ -14,7 +14,7 @@ This mod reworks in-game radio, adding several authentic new stations to listen 
 
 ## Plugins
 
-This mod is only a shell, it does not contain new stations - grab those separately in the [Downloads](https://modworkshop.net/mod/57775?tab=downloads) section:
+This mod is only a shell, it does not contain new stations - grab those separately in the Files section:
 
 * **Doomer Nation** melancholic post-punk, authentic 90s feel - [source](https://www.youtube.com/watch?v=F-9ZOtkWhj0)
 * **HardBOSS Radio** hardbass, simple-as - [source](https://www.youtube.com/watch?v=IRcQ70mLz6A)
@@ -65,7 +65,3 @@ func _ready() -> void:
 	var audio_dir: String = get_script().resource_path.get_base_dir().path_join("Audio")
 	RadioRegistry.register_dir("My Station Name", audio_dir)
 ```
-
-## [Check out my other mods](https://modworkshop.net/search/mods?query=%22Likho%27s%22&sort=likes)
-
-*Feedback and likes are welcome!*

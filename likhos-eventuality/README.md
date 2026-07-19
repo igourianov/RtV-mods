@@ -45,8 +45,3 @@ Once triggered, will repeat anywhere between 3-10 times at random intervals (60-
 Published all event probabilities as MCM config values. Note that probability does not override availability. E.g. Punisher won't be available before day 5, even if you set him to 100%.
 
 I *DO NOT RECOMMEND* changing them unless it is to trigger long wanted event (like Punisher) once and then revert. The probability stacking made it seem like vanilla events are way too rare. You may find that after this mod fix, events are quite common and might be annoying.
-
-
-## [Check out my other mods](https://modworkshop.net/search/mods?query=%22Likho%27s%22&sort=likes)
-
-*Feedback and likes are welcome!*

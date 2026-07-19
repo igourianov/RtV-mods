@@ -40,7 +40,3 @@ AFAK got similar treatment to IFAK. It is now effectively an advanced version of
 You can now hurt yourself in the Tutorial room by pressing:
 * `Ctrl+Shift+O`- a bit of damage and apply bleed
 * `Ctrl+Shift+P`- a bit of damage and one of [Fracture, Rupture, Burn, Headshot]
-
-## [Check out my other mods](https://modworkshop.net/search/mods?query=%22Likho%27s%22&sort=likes)
-
-*Feedback and likes are welcome!*

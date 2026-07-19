@@ -14,7 +14,3 @@ The old Weapon Repair Kit was awkward: pick a per gun recipe from the crafting m
 * Per gun repair recipes are removed from the crafting menu.
 * Added refill recipe for the kit.
 * Should be compatible with weapons added by other mods (place them before this mod in load order).
-
-## [Check out my other mods](https://modworkshop.net/search/mods?query=%22Likho%27s%22&sort=likes)
-
-*Feedback and likes are welcome!*

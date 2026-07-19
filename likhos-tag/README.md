@@ -4,7 +4,7 @@ Road to Vostok mod that comprehensively renames weapons and attachments and twea
 
 * All weapons, attachments and magazines got real life names
 * Russian items got Russian names (switch to English in MCM)
-* Real life item weights (it matters for [VosTac](https://modworkshop.net/mod/56366))
+* Real life item weights (it matters for VosTac)
 * Item tooltip is now slightly less verbose and more useful
 
 Functional changes:
@@ -113,6 +113,3 @@ The recipe names retain vanilla weapon names. The name is used as a look up key,
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
 |--------------|---------------|-----------------------------|
 | PV7 | AN/PVS-7 | 1.2 → 0.9 |
-## [Check out my other mods](https://modworkshop.net/search/mods?query=%22Likho%27s%22&sort=likes)
-
-*Feedback and likes are welcome!*
