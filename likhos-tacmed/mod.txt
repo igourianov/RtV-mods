@@ -15,6 +15,3 @@ LikhosTacMed="res://mods/likhos-tacmed/Scripts/Main.gd"
 
 [registry]
 enabled=true
-
-[updates]
-modworkshop=56593

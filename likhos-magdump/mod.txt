@@ -15,8 +15,5 @@ debug=false
 [autoload]
 LikhosMagdump="res://mods/likhos-magdump/Scripts/Main.gd"
 
-[updates]
-modworkshop=56489
-
 [registry]
 enabled=true

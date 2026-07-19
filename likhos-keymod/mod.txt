@@ -9,8 +9,5 @@ debug=false
 [autoload]
 LikhosKeymod="res://mods/likhos-keymod/Scripts/Main.gd"
 
-[updates]
-modworkshop=56537
-
 [registry]
 enabled=true

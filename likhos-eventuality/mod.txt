@@ -12,6 +12,3 @@ debug=false
 
 [autoload]
 LikhosEventuality="res://mods/likhos-eventuality/Scripts/Main.gd"
-
-[updates]
-modworkshop=56468

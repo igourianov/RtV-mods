@@ -15,6 +15,3 @@ LikhosTag="res://mods/likhos-tag/Scripts/Main.gd"
 
 [registry]
 enabled=true
-
-[updates]
-modworkshop=56993
