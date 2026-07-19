@@ -9,7 +9,7 @@ Road to Vostok mod that improves dynamic event spawning so that they more closel
 
 ### Probability math
 
-Vanilla stacks probabilities, resulting much lower chances of individual event spawning than declared in the UI. 
+Vanilla stacks probabilities, resulting in much lower chances of individual event spawning than declared in the UI. 
 
 For example: you have `["FighterJet", "Police", "Airdrop", "CrashSite"]` events available in the Village, with individual probabilities being `25% / 10% / 10% / 10%`. The actual trigger chance for them is `6.25% / 2.5% / 2.5% / 2.5%` (declared chance divided by number of available events).
 

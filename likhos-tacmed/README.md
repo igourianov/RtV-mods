@@ -10,7 +10,7 @@ The associated logic will intelligently pick item to use to minimize waste.
 
 ## IFAK
 
-IFAK has been reworked from an excotic, safe queen to a healing workhorse.
+IFAK has been reworked from an exotic, safe queen to a healing workhorse.
 
 * IFAK is now **NOT CONSUMED** on use, but instead loses condition.
 * Heals for the exact value, no overflow - 150 healing pool.
@@ -20,11 +20,11 @@ IFAK has been reworked from an excotic, safe queen to a healing workhorse.
 * Increased in weight from 0.5kg to 2kg.
 * It can now be sold by Doctor for measly 1000€ + tip.
 
-Replenishment works 1:1 - consumed item's healing value vs IFAK condition. Tourniquet replenish 10%. So you effectivelly get 150% healing from the items you would've otherwise used separately.
+Replenishment works 1:1 - consumed item's healing value vs IFAK condition. Tourniquet replenish 10%. So you effectively get 150% healing from the items you would've otherwise used separately.
 
 ## AFAK
 
-AFAK got similar treatment to IFAK. It is now effectivelly an advanced version of a Medkit.
+AFAK got similar treatment to IFAK. It is now effectively an advanced version of a Medkit.
 
 * Reusable, consumes condition on heal
 * Refilled by a new recipe under Medical section: Used AFAK + 2x Medkit => AFAK (100%)

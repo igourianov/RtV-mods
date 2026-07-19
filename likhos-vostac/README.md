@@ -70,7 +70,7 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 - *NVG-aware PIP blur:* when night vision is active and you aim a magnified optic, the PIP image will now blur. Real scopes cannot work under NVG because of eye relief differences (disable in MCM)
 
 ### Optics
-* All optics now have eye relief values and create scope shadow if mounted outside ideal eye relief (ACOG will suck on comblock rifles!)
+* All optics now have eye relief values and create scope shadow if mounted outside ideal eye relief (ACOG will suck on Combloc rifles!)
 * Changed Mark 8 ("Leopard") to 1.1-8x zoom and fixed reticle size at 1x
 * Changed Vudu to 1-10x zoom and made it legendary rarity
 * Changed POSP to be the 2-6x variant and fixed reticle size
@@ -115,11 +115,11 @@ These changes started out as separate mods. The catch is that Road to Vostok's s
 
 ## MCM toggles
 
-*Because people keep asking to add more...* I don't want to add any more toggles. In fact I will likely reduce them to just core subsystems or critical comptibility points in the near future.
+*Because people keep asking to add more...* I don't want to add any more toggles. In fact I will likely reduce them to just core subsystems or critical compatibility points in the near future.
 
 **Why?** Because code complexity scales **exponentially** with the number of config switches. And I am already burning most of my time on this mod with just fixing things that broke previously instead of doing things I like. 
 
-Imagine a very simple change that touches a code path with just one MCM toggle (assuming binary on/off state). To implement it properly I need to run minimum of 2 tests: one with the setting on, and on with it off. Two toggles - 4 tests. Three toggles - 8 tests. Ad infinitum. And this is just to run it once, not counting all the intermediate debugging runs and multi-state settings.
+Imagine a very simple change that touches a code path with just one MCM toggle (assuming binary on/off state). To implement it properly I need to run minimum of 2 tests: one with the setting on, and one with it off. Two toggles - 4 tests. Three toggles - 8 tests. Ad infinitum. And this is just to run it once, not counting all the intermediate debugging runs and multi-state settings.
 
 ## [Check out my other mods](https://modworkshop.net/search/mods?query=%22Likho%27s%22&sort=likes)
 
