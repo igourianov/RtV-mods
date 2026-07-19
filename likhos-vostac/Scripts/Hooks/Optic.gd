@@ -4,7 +4,7 @@ extends RefCounted
 # Larger = blurrier. If raised substantially, also raise STEPS in PIP_NVG.gdshader.
 const BLUR_RADIUS := 12.0
 
-const _NVG_PIP_SHADER := preload("res://mods/likhos-weapon-handling-fixes/Shaders/PIP_NVG.gdshader")
+const _NVG_PIP_SHADER := preload("res://mods/likhos-vostac/Shaders/PIP_NVG.gdshader")
 const ModConfig = preload("../ModConfig.gd")
 const Out = preload("../../Lib/Out.gd")
 var gameData = preload("res://Resources/GameData.tres")

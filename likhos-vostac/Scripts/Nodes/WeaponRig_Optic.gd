@@ -2,7 +2,7 @@ extends "./WeaponRig_Base.gd"
 
 const ScopeCatalog = preload("../ScopeCatalog.gd")
 const ZoomAccelerator = preload("../ZoomAccelerator.gd")
-const _RETICLE_SHADER := preload("res://mods/likhos-weapon-handling-fixes/Shaders/Reticle.gdshader")
+const _RETICLE_SHADER := preload("res://mods/likhos-vostac/Shaders/Reticle.gdshader")
 
 var audioLibrary = preload("res://Resources/AudioLibrary.tres")
 var audioInstance2D = preload("res://Resources/AudioInstance2D.tscn")

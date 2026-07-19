@@ -41,7 +41,7 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 
 # Install / Uninstall
 
-Drop `likhos-weapon-handling-fixes.vmz` into your game's `mods/` folder. On a default Steam install:
+Drop `likhos-vostac.vmz` into your game's `mods/` folder. On a default Steam install:
 
 ```
 <Steam>\steamapps\common\Road to Vostok\mods\
@@ -49,4 +49,4 @@ Drop `likhos-weapon-handling-fixes.vmz` into your game's `mods/` folder. On a de
 
 Launch the game. The mod loader picks it up automatically. The first time you install or update a mod, the loader does a one-shot restart to finish wiring the hooks. After that, no more restarts.
 
-To uninstall simply delete `likhos-weapon-handling-fixes.vmz` from the `mods/` folder and relaunch the game.
+To uninstall simply delete `likhos-vostac.vmz` from the `mods/` folder and relaunch the game.

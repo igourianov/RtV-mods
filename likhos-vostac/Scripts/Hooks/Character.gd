@@ -19,7 +19,7 @@ const ARM_STAMINA_HOLD_BREATH: float = -5.0
 
 const HOLD_BREATH_SETTLE: float = 0.5
 const HOLD_BREATH_OUTRO_MIN_HOLD: float = 3.0
-const HOLD_BREATH_STREAM: String = "res://mods/likhos-weapon-handling-fixes/Audio/hold_breath.mp3"
+const HOLD_BREATH_STREAM: String = "res://mods/likhos-vostac/Audio/hold_breath.mp3"
 const HOLD_BREATH_INTRO: float = 0.5
 const HOLD_BREATH_OUTRO_START: float = 0.5
 

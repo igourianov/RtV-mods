@@ -3,11 +3,11 @@ extends CanvasLayer
 const ModConfig = preload("../ModConfig.gd")
 const Out = preload("../../Lib/Out.gd")
 const ZoomAccelerator = preload("../ZoomAccelerator.gd")
-const _LENS_SHADER = preload("res://mods/likhos-weapon-handling-fixes/Shaders/BinocularsLens.gdshader")
-const _READOUT_SHADER = preload("res://mods/likhos-weapon-handling-fixes/Shaders/BinocularsReadout.gdshader")
-const _RETICLE_SHADER = preload("res://mods/likhos-weapon-handling-fixes/Shaders/BinocularsReticle.gdshader")
-const _RETICLE_PATH = "res://mods/likhos-weapon-handling-fixes/Textures/binos_reticle.png"
-const _GRIME_PATH = "res://mods/likhos-weapon-handling-fixes/Textures/binos_grime.jpg"
+const _LENS_SHADER = preload("res://mods/likhos-vostac/Shaders/BinocularsLens.gdshader")
+const _READOUT_SHADER = preload("res://mods/likhos-vostac/Shaders/BinocularsReadout.gdshader")
+const _RETICLE_SHADER = preload("res://mods/likhos-vostac/Shaders/BinocularsReticle.gdshader")
+const _RETICLE_PATH = "res://mods/likhos-vostac/Textures/binos_reticle.png"
+const _GRIME_PATH = "res://mods/likhos-vostac/Textures/binos_grime.jpg"
 const _CAMERA_PATH = "/root/Map/Core/Camera"
 const _HUD_PATH = "/root/Map/Core/UI/HUD"
 const ZoomClickPlayer = preload("../Audio/ZoomClickPlayer.gd")
