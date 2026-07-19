@@ -16,7 +16,7 @@ Functional changes:
 
 The recipe names retain vanilla weapon names. The name is used as a look up key, and I can't change it without breaking every other mod touching recipes. Not worth it to just change the name.
 
-!!! Weapons
+## Weapons
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
 |--------------|---------------|-----------------------------|
 | KA-12 | AK-12 Gen 1 | |
@@ -44,9 +44,8 @@ The recipe names retain vanilla weapon names. The name is used as a look up key,
 | RK-95 | Sako RK-95 TP | 3.8 → 3.7 |
 | VSD | Dragunov | 5.3 → 3.7 |
 | SSV | Vintorez | 2.8 → 1.8 |
-!!!
 
-!!! Magazines
+## Magazines
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
 |--------------|---------------|---------| 
 | KA-12 Magazine | AK-12 mag | |
@@ -66,9 +65,8 @@ The recipe names retain vanilla weapon names. The name is used as a look up key,
 | STANAG Magazine | USGI STANAG mag | 0.2 → 0.17 |
 | VSD Magazine | SVD Waffle mag | → 0.21 |
 | SS Magazine | VSS Plum mag | |
-!!!
 
-!!! Attachments
+## Attachments
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
 |--------------|---------------|-----------------------------|
 | ATOG | Trijicon ACOG TA31 | 0.6 → 0.5 |
@@ -95,9 +93,8 @@ The recipe names retain vanilla weapon names. The name is used as a look up key,
 | Salvo | SilencerCo Salvo 12 | 0.9 → 0.97 |
 | SOCOM | SureFire SOCOM556 RC2 | 0.5 → 0.48 |
 | Thor | AWC Thor PSR | 0.7 → 0.51 |
-!!!
 
-!!! Ammo
+## Ammo
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
 |--------------|---------------|-----------------------------|
 | .223 | Fiocchi 223A | 0.5 → 0.35 |
@@ -111,7 +108,7 @@ The recipe names retain vanilla weapon names. The name is used as a look up key,
 | 9x19 | GECO 9x19 124gr FMJ | 0.4 → 0.6 |
 | 9x39 | WOLF 9x39mm Subsonic | 0.3 → 0.46 |
 | 12/70 | Hubertus 00 Buck | 0.3 → 0.44 |
-!!!
+
 ### Other
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
 |--------------|---------------|-----------------------------|

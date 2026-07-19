@@ -60,7 +60,7 @@ Formerly `Likho's Weapon Handling Fixes`.
 
 ## More details
 
-!!! PIP mode
+### PIP mode
 Vanilla PIP is completely unusable - every scope feels like a "scout" scope. This mod addresses that:
 - *Realistic eye relief:* optics placed too close/far on the rail will get scope shadow (ACOG will suck the most!) Scope shadow no longer wobbles as you move and appears behind the reticle.
 - *Main camera FOV no longer narrows when scoped* — only the inside of the optic magnifies
@@ -68,9 +68,8 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 - *Scope DOF reworked:* scales with magnification, near-DOF enabled for foreground/background softening
 - *PIP MSAA matches main viewport:* the optic's SubViewport now mirrors the antialiasing settings used by the rest of the game - vanilla left it disabled (disable in MCM if it causes performance issues)
 - *NVG-aware PIP blur:* when night vision is active and you aim a magnified optic, the PIP image will now blur. Real scopes cannot work under NVG because of eye relief differences (disable in MCM)
-!!!
 
-!!! Optics
+### Optics
 * All optics now have eye relief values and create scope shadow if mounted outside ideal eye relief (ACOG will suck on comblock rifles!)
 * Changed Mark 8 ("Leopard") to 1.1-8x zoom and fixed reticle size at 1x
 * Changed Vudu to 1-10x zoom and made it legendary rarity
@@ -83,9 +82,8 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 	- *Short:* 3 zoom level spread evenly along scope's magnification range - like vanilla but mid-point is visually middle. Choose this if you're more CoD than Tarkov guy.
 	- *Discrete:* literal, physical zoom levels. E.g. for Vudu: 1, 2, 3, 4,...,10. Input acceleration makes this setting tolerable.
 	- *Normalized:* a comfortable middle ground between the two options above.
-!!!
 
-!!! Stamina
+### Stamina
 Both stamina bars are now dynamic and much more realistic. 
 * There is now a dynamic delay for beginning recovery after use.
 * Arm stamina drain scales with the weight of the gun held and position it is held in (canted=slower; aiming=faster)
@@ -94,25 +92,22 @@ Both stamina bars are now dynamic and much more realistic.
 * Leg stamina recovery and recovery delay scales with the Hydration stat
 * Overweight, Fracture and Leg Stamina=0 now block sprinting completely
 * Sprint now overrides crouch, so you can panic GTFO when discovered sneaking about
-!!!
 
-!!! Inspect mode
+### Inspect mode
 * Fixed and rewrote several overlapping and dangling key bindings and states.
 * Rail movement now works only in inspect mode. Rail movement binding is now unused.
 * Weapon rotation in inspect mode is now done with the Canted aim binding instead of mouse wheel.
 * Stamina drain removed
 * Added ammo and attachment cards to the inspect mode (disable via MCM menu)
 * Flashlight will now shine on the weapon while inspecting
-!!!
 
-!!! Ammo check & insert
+### Ammo check & insert
 Ammo check receives much needed love. 
 * Reload binding (default R) will now perform ammo check when held down for longer than 300ms.
 * Old ammo check binding removed.
 * Perform reload directly from the ammo check state by clicking fire button (detachable mag guns only)
 * Ammo check is now responsive - it will show ammo as long as you hold it.
 * Mosin and 870 use the same hold-to-check, fire-to-insert scheme for loading rounds
-!!!
 
 ## Why this is one mod and not several
 
