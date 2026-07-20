@@ -4,15 +4,16 @@ Conventions and judgment calls for authoring and reviewing mod code, especially 
 
 ## Syntax rules
 
-* Avoid creating untyped vars and consts. Use type inference with `:=` if possible, otherwise declare type explicitly.
-* Use C-type boolean operators `||` and `&&` inistead of `or` and `and`.
-* Use colon for dictionary `{"key": "value"}` declaration 
-* Enforce two empty lines befween functions
-* Enforce Tab identation
-* Use `!obj` style for `null` checks instead of `obj == null`
-* For types that inherit `Node` use `is_instance_valid(obj)` instead of a null check to make sure the instance wasn't disposed
-* Do not mix `if/elif` condition trees with early returns within the same function - pick one approach
-* Comments must add context the code cannot convey (constraints, reasons, gotchas). Do not narrate what the code already says
+* Avoid creating untyped vars and consts. Use type inference with `:=` if possible and RHS is a simple function call or a statement, otherwise declare type explicitly.
+* Format explicit var/const declaration like this `var var_name: Type`.
+* Use C-type boolean operators `||` and `&&` instead of `or` and `and`.
+* Use colon for dictionary `{"key": "value"}` declaration.
+* Enforce two empty lines befween functions.
+* Enforce Tab identation.
+* Use `!obj` style for `null` checks instead of `obj == null`.
+* For types that inherit `Node` use `is_instance_valid(obj)` instead of a null check to make sure the instance wasn't disposed.
+* Do not mix `if/elif` condition trees with early returns within the same function - pick one approach.
+* Comments must add context the code cannot convey (constraints, reasons, gotchas). Do not narrate what the code already says.
 
 ## State machines
 
