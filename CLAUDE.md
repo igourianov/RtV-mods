@@ -6,19 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Mods for the Godot game **Road to Vostok** (`config/name="Road to Vostok"`, version 0.1.1.3, Godot 4.6.2).
 
-## Syntax rules
-
-* When writing boolean operations - use C-type operators
-* Use colon for dictionary {"key": "value"} pairs 
-* Enforce two empty lines befween functions
-* Enforce Tab identation
-* Use `!obj` style for `null` checks instead of `obj == null`
-* Do not mix `elif` condition trees with early returns - pick one approach
-* Comments must add context the code cannot convey (constraints, reasons, gotchas). Do not narrate what the code already says
-
 ## Code guide
 
-`CODE_GUIDE.md` at the repo root is a guide to code architecture, state machines, function/variable definitions and guards. Consult and follow it when authoring or reviewing state-driven `_process`/`_input` logic.
+`CODE_GUIDE.md` at the repo root is a guide to code architecture, syntax rules, state machines, function/variable definitions and guards. Consult and follow it when authoring or reviewing state-driven `_process`/`_input` logic.
 
 ## Mods
 

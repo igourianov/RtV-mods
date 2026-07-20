@@ -1,6 +1,16 @@
 # Code Guide
 
-Conventions and judgment calls for authoring and reviewing mod code, especially state-driven `_process` / `_input` logic. These supplement the syntax rules in `CLAUDE.md`.
+Conventions and judgment calls for authoring and reviewing mod code, especially state-driven `_process` / `_input` logic.
+
+## Syntax rules
+
+* When writing boolean operations - use C-type operators
+* Use colon for dictionary {"key": "value"} pairs 
+* Enforce two empty lines befween functions
+* Enforce Tab identation
+* Use `!obj` style for `null` checks instead of `obj == null`
+* Do not mix `elif` condition trees with early returns - pick one approach
+* Comments must add context the code cannot convey (constraints, reasons, gotchas). Do not narrate what the code already says
 
 ## State machines
 
