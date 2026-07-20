@@ -1,6 +1,6 @@
 extends Control
 
-const ModConfig = preload("../ModConfig.gd")
+const ModConfig := preload("../ModConfig.gd")
 
 const _BULLET_W := 8.0
 const _BULLET_BODY_H := 14.0

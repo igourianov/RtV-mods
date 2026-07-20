@@ -1,8 +1,8 @@
 extends Control
 
-const ModConfig = preload("../ModConfig.gd")
+const ModConfig := preload("../ModConfig.gd")
 
-var gameData = preload("res://Resources/GameData.tres")
+var gameData := preload("res://Resources/GameData.tres")
 
 const _SHADOW := Color(0, 0, 0, 0.7)
 const _DOT_RADIUS := 1.5
@@ -61,10 +61,10 @@ func update(hud, delta: float) -> void:
 
 
 func _update_visibility(delta: float) -> void:
-	var cantedHidden = gameData.isCanted && !ModConfig.crosshair_while_canted
-	var runningHidden = gameData.isRunning && !ModConfig.crosshair_while_running
-	var raisedHidden = gameData.weaponPosition == 2 && !ModConfig.crosshair_while_raised
-	var shouldShow = !gameData.transition && !gameData.isAiming && !cantedHidden && !runningHidden && !raisedHidden && !_is_interaction_blocked() && ModConfig.crosshair_style != "off"
+	var cantedHidden := gameData.isCanted && !ModConfig.crosshair_while_canted
+	var runningHidden := gameData.isRunning && !ModConfig.crosshair_while_running
+	var raisedHidden := gameData.weaponPosition == 2 && !ModConfig.crosshair_while_raised
+	var shouldShow := !gameData.transition && !gameData.isAiming && !cantedHidden && !runningHidden && !raisedHidden && !_is_interaction_blocked() && ModConfig.crosshair_style != "off"
 
 	var target := 0.0
 	if shouldShow:
@@ -87,7 +87,7 @@ func _update_tooltip(hud) -> void:
 		hud.tooltip.offset_bottom += d
 		_tooltip_shifted = wantShift
 
-	var aimingMode = gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2
+	var aimingMode := gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2
 	if aimingMode || _is_interaction_blocked():
 		hud.tooltip.visible = false
 

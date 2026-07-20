@@ -1,12 +1,12 @@
 extends "../Lib/Main.gd"
 
-const EventSystem = preload("./EventSystem.gd")
-const Police = preload("./Police.gd")
-const ModConfig = preload("./ModConfig.gd")
+const EventSystem := preload("./EventSystem.gd")
+const Police := preload("./Police.gd")
+const ModConfig := preload("./ModConfig.gd")
 
-var _event_system
-var _police
-var _config
+var _event_system: EventSystem
+var _police: Police
+var _config: ModConfig
 
 
 func setup(lib) -> void:

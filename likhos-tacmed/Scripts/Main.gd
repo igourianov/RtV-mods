@@ -1,10 +1,10 @@
 extends "../Lib/Main.gd"
 
-const Interface = preload("./Interface.gd")
-const ItemData = preload("res://Scripts/ItemData.gd")
-const AFAK = preload("../Recipes/AFAK.tres")
+const Interface := preload("./Interface.gd")
+const ItemData := preload("res://Scripts/ItemData.gd")
+const AFAK := preload("../Recipes/AFAK.tres")
 
-var _interface
+var _interface: Node
 
 
 func setup(lib) -> void:

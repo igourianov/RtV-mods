@@ -5,9 +5,9 @@ extends RefCounted
 const BLUR_RADIUS := 12.0
 
 const _NVG_PIP_SHADER := preload("res://mods/likhos-vostac/Shaders/PIP_NVG.gdshader")
-const ModConfig = preload("../ModConfig.gd")
-const Out = preload("../../Lib/Out.gd")
-var gameData = preload("res://Resources/GameData.tres")
+const ModConfig := preload("../ModConfig.gd")
+const Out := preload("../../Lib/Out.gd")
+var gameData := preload("res://Resources/GameData.tres")
 
 # Vanilla scene defaults for the optic's SubViewport, applied when AA mirror is off.
 const _VANILLA_PIP_MSAA := 0

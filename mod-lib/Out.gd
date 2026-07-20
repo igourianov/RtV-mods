@@ -24,11 +24,11 @@ static func bugfix(...args):
 static func protip(id: StringName, message: String) -> bool:
 	if !show_protips:
 		return false
-	var loader = mod_main.get_node_or_null("/root/Loader")
+	var loader := mod_main.get_node_or_null("/root/Loader")
 	if !loader:
 		return false
-	var last = protip_timers.get(id, 0)
-	var now = Time.get_ticks_msec()
+	var last: int = protip_timers.get(id, 0)
+	var now := Time.get_ticks_msec()
 	if last && (now - last) < PROTIP_DELAY:
 		return false
 	protip_timers.set(id, now)

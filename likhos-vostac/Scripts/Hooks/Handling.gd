@@ -1,8 +1,8 @@
 extends RefCounted
 
-const ModConfig = preload("../ModConfig.gd")
-const ScopeCatalog = preload("../ScopeCatalog.gd")
-const Out = preload("../../Lib/Out.gd")
+const ModConfig := preload("../ModConfig.gd")
+const ScopeCatalog := preload("../ScopeCatalog.gd")
+const Out := preload("../../Lib/Out.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
 enum IdleCategory { Default, Pistol, FuddGrip, SMG, StocklessSMG }
@@ -73,7 +73,7 @@ const _AIM_POS_OVERRIDE := {
 
 
 var _lib
-var _handlingMode = HandlingMode.Default
+var _handlingMode := HandlingMode.Default
 var _aim_intent := false
 var _cant_intent := false
 var _aim_priority := true
@@ -102,7 +102,7 @@ func _stow_rotation() -> Vector3:
 
 
 func on_rig_update_post(_animate) -> void:
-	var manager = _lib._caller
+	var manager: Node3D = _lib._caller
 	if !manager:
 		return
 
@@ -308,7 +308,7 @@ func _set_target_idle(h) -> void:
 		h.targetRotation = data.lowRotation
 		return
 
-	var category = IdleCategory.Default
+	var category := IdleCategory.Default
 	if data.file == "MP5K" || data.file == "MP7":
 		category = IdleCategory.StocklessSMG
 	elif data.weaponType == "Pistol":
@@ -318,7 +318,7 @@ func _set_target_idle(h) -> void:
 	elif data.weaponType == "SMG":
 		category = IdleCategory.SMG
 
-	var entry = _idle_offsets[category]
+	var entry: Dictionary = _idle_offsets[category]
 	_idle_hide_left_arm = entry.get("hide_left_arm", false)
 
 	h.targetPosition = data.lowPosition + entry["pos"]
@@ -335,9 +335,9 @@ func _apply_target(h, delta: float) -> void:
 	if !_baseline_captured || !ModConfig.free_look:
 		return
 
-	var rig = h.get_parent()
-	var manager = rig.get_parent() if rig else null
-	var outer_cam = manager.get_parent() if manager else null
+	var rig: Node3D = h.get_parent()
+	var manager: Node3D = rig.get_parent() if rig else null
+	var outer_cam: Node3D = manager.get_parent() if manager else null
 	if !outer_cam:
 		return
 
@@ -373,7 +373,7 @@ func _apply_left_arm(h) -> void:
 	if !rig || !rig.skeleton:
 		return
 
-	var arm_idx = rig.skeleton.find_bone(_LEFT_ARM_BONE)
+	var arm_idx: int = rig.skeleton.find_bone(_LEFT_ARM_BONE)
 	if arm_idx == -1:
 		return
 

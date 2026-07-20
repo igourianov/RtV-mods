@@ -1,6 +1,6 @@
 extends "../../Lib/AudioChunkPlayer.gd"
 
-const _CLICK_AUDIO = preload("res://Audio/Interaction/Files/Flashlight.wav")
+const _CLICK_AUDIO := preload("res://Audio/Interaction/Files/Flashlight.wav")
 const _CLICK_VOLUME := -10.0
 const _IN_START := 0.0
 const _IN_DURATION := 0.015

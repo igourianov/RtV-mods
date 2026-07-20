@@ -1,8 +1,8 @@
 extends RefCounted
 
-const ModConfig = preload("../ModConfig.gd")
-const Out = preload("../../Lib/Out.gd")
-const AudioChunkPlayer = preload("../../Lib/AudioChunkPlayer.gd")
+const ModConfig := preload("../ModConfig.gd")
+const Out := preload("../../Lib/Out.gd")
+const AudioChunkPlayer := preload("../../Lib/AudioChunkPlayer.gd")
 
 const STAMINA_RECOVERY: float = 100.0
 const STAMINA_RECOVERY_DELAY: float = 2.0
@@ -25,7 +25,7 @@ const HOLD_BREATH_OUTRO_START: float = 0.5
 
 var _lib
 var _interface
-var gameData = preload("res://Resources/GameData.tres")
+var gameData: GameData = preload("res://Resources/GameData.tres")
 var _body_recovery_delay: float = 0.0
 var _arm_recovery_delay: float = 0.0
 var _hold_breath_time: float = 0.0

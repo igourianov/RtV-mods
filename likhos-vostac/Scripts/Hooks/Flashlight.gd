@@ -1,5 +1,5 @@
 
-const Out = preload("../../Lib/Out.gd")
+const Out := preload("../../Lib/Out.gd")
 
 var _lib
 
@@ -17,7 +17,7 @@ func on_physics_process(delta: float) -> void:
 		caller.Consumption(delta)
 
 	if !caller.has_node("FlashlightDriver"):
-		var driver = FlashlightDriver.new()
+		var driver := FlashlightDriver.new()
 		driver.name = "FlashlightDriver"
 		caller.add_child(driver)
 		Out.debug("flashlight input driver attached to", caller)
@@ -25,9 +25,9 @@ func on_physics_process(delta: float) -> void:
 
 class FlashlightDriver extends Node:
 	const HOLD_THRESHOLD = 0.25
-	const AttachmentClickPlayer = preload("../Audio/AttachmentClickPlayer.gd")
+	const AttachmentClickPlayer := preload("../Audio/AttachmentClickPlayer.gd")
 
-	var gameData = preload("res://Resources/GameData.tres")
+	var gameData := preload("res://Resources/GameData.tres")
 	var _hold_elapsed := 0.0
 	var _click_sound: AttachmentClickPlayer
 

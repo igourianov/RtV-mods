@@ -1,11 +1,11 @@
 extends RefCounted
 
-const Out = preload("../../Lib/Out.gd")
-const WeaponRig_Fire = preload("../Nodes/WeaponRig_Fire.gd")
-const WeaponRig_Reload = preload("../Nodes/WeaponRig_Reload.gd")
-const WeaponRig_ManualReload = preload("../Nodes/WeaponRig_ManualReload.gd")
-const WeaponRig_Optic = preload("../Nodes/WeaponRig_Optic.gd")
-const WeaponRig_Inspect = preload("../Nodes/WeaponRig_Inspect.gd")
+const Out := preload("../../Lib/Out.gd")
+const WeaponRig_Fire := preload("../Nodes/WeaponRig_Fire.gd")
+const WeaponRig_Reload := preload("../Nodes/WeaponRig_Reload.gd")
+const WeaponRig_ManualReload := preload("../Nodes/WeaponRig_ManualReload.gd")
+const WeaponRig_Optic := preload("../Nodes/WeaponRig_Optic.gd")
+const WeaponRig_Inspect := preload("../Nodes/WeaponRig_Inspect.gd")
 
 var _lib
 
@@ -15,7 +15,7 @@ func _init(lib) -> void:
 
 
 func on_ready_post() -> void:
-	var rig = _lib._caller
+	var rig: Node = _lib._caller
 	if !rig:
 		return
 	Out.debug("WeaponRig: injecting handlers")
@@ -27,13 +27,13 @@ func on_ready_post() -> void:
 
 
 func _inject_handler(rig, klass, node_name: String) -> void:
-	var h = klass.new()
+	var h: Node = klass.new()
 	h.name = node_name
 	rig.add_child(h)
 
 
 func on_casing_eject_post() -> void:
-	var rig = _lib._caller
+	var rig: Node = _lib._caller
 	if !rig:
 		return
 	# BUGFIX: always clear chamber flag when clearing casing

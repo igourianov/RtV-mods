@@ -1,9 +1,9 @@
 extends RefCounted
 
-const ModConfig = preload("../ModConfig.gd")
-const Out = preload("../../Lib/Out.gd")
+const ModConfig := preload("../ModConfig.gd")
+const Out := preload("../../Lib/Out.gd")
 
-var gameData = preload("res://Resources/GameData.tres")
+var gameData := preload("res://Resources/GameData.tres")
 var _lib
 var _sprint_intent: bool = false
 var _current_sensitivity: float
@@ -110,8 +110,8 @@ func _mouse_input(ctrl, evt: InputEvent) -> void:
 	if gameData.freeze || gameData.isCaching:
 		return
 
-	var factor = deg_to_rad(clampf(_current_sensitivity, 0.1, 2.0) / 10.0)
-	var y_sign = 1.0 if gameData.mouseMode == 2 else -1.0
+	var factor := deg_to_rad(clampf(_current_sensitivity, 0.1, 2.0) / 10.0)
+	var y_sign := 1.0 if gameData.mouseMode == 2 else -1.0
 
 	ctrl.rotate_y(-evt.relative.x * factor)
 	ctrl.head.rotate_x(y_sign * evt.relative.y * factor)

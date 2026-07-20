@@ -8,7 +8,7 @@ static var optic_shiner: bool = false
 static var binoculars_active: bool = false
 static var binoculars_mag: float = 6.0
 static var kills: PackedByteArray = PackedByteArray([0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])
-static var gameData = preload("res://Resources/GameData.tres")
+static var gameData := preload("res://Resources/GameData.tres")
 
 # config vars
 static var crosshair_style: StringName
@@ -82,7 +82,7 @@ static func locked() -> bool:
 
 
 static func _get_config_value(config: ConfigFile, section: String, key: String, default_val):
-	var value = config.get_value(section, key, {}).get("value", default_val)
+	var value: Variant = config.get_value(section, key, {}).get("value", default_val)
 	if section == "Dropdown":
 		value = value.substr(1)
 	return value
@@ -130,7 +130,7 @@ static func _next_pos() -> int:
 
 
 static func _set_config_entry(config: ConfigFile, section: String, category: String, key: String, name: String, tooltip: String, default_val, extra: Dictionary = {}) -> void:
-	var value = {
+	var value := {
 		"name": name,
 		"tooltip": tooltip,
 		"default": default_val,

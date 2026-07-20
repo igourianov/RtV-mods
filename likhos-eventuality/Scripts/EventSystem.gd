@@ -23,7 +23,7 @@ func _init(lib, config) -> void:
 
 
 func on_activate_dynamic_event() -> void:
-	var es = _lib._caller
+	var es: Node = _lib._caller
 	_lib.skip_super()
 	if es == null:
 		return
@@ -40,7 +40,7 @@ func _activate_dynamic_event(es) -> void:
 
 	_jetCounter = int(randi_range(3, 10))
 	var activated: Dictionary = {}
-	var events = es.dynamicEvents.duplicate()
+	var events: Array = es.dynamicEvents.duplicate()
 	events.shuffle()
 
 	for e in events:
@@ -68,7 +68,7 @@ func _activate_dynamic_event(es) -> void:
 			Out.debug("event activated: %s | Roll: %s/%s" % [e.function, roll, threshold])
 			Callable(es, e.function).call()
 		else:
-			var delay = randi_range(30, 300)
+			var delay := randi_range(30, 300)
 			Out.debug("event activated: %s | Roll: %s/%s | Delay: %02d:%02d" % [e.function, roll, threshold, int(floor(delay / 60.0)), delay % 60])
 			_activate_delayed_event(es, delay, e.function) # no await on purpose
 
@@ -88,7 +88,7 @@ func on_fighter_jet_post() -> void:
 
 
 func _schedule_fighter_jet(es) -> void:
-	var delay = randi_range(60, 300)
+	var delay := randi_range(60, 300)
 	Out.debug("FighterJet triggered | Next one in: %02d:%02d" % [int(floor(delay / 60.0)), delay % 60])
 	await es.get_tree().create_timer(delay, false).timeout
 	if !is_instance_valid(es):
@@ -97,19 +97,19 @@ func _schedule_fighter_jet(es) -> void:
 
 
 func on_crash_site() -> void:
-	var es = _lib._caller
+	var es: Node = _lib._caller
 	_lib.skip_super()
 	if es == null:
 		return
-	var crashesRoot = es.crashes
+	var crashesRoot: Node = es.crashes
 	if crashesRoot == null || crashesRoot.get_child_count() == 0:
 		return
-	var spawn = crashesRoot.get_child(randi_range(0, crashesRoot.get_child_count() - 1))
-	var crashSite = es.crash.instantiate()
+	var spawn := crashesRoot.get_child(randi_range(0, crashesRoot.get_child_count() - 1))
+	var crashSite: Node3D = es.crash.instantiate()
 	spawn.add_child(crashSite)
 	crashSite.global_transform = spawn.global_transform
 
-	var delay = randi_range(5, 20)
+	var delay := randi_range(5, 20)
 	Out.debug("CrashSite triggered | Boom in: %ss at %s" % [delay, spawn.global_position])
 	_play_delayed_explosion(es, spawn.global_position, delay)
 
@@ -118,7 +118,7 @@ func _play_delayed_explosion(es, pos: Vector3, initialDelay: float) -> void:
 	await es.get_tree().create_timer(initialDelay, false).timeout
 	if !is_instance_valid(es):
 		return
-	var audioEvent = _AUDIO_LIBRARY.grenadeExplosionOutdoorFar
+	var audioEvent: AudioEvent = _AUDIO_LIBRARY.grenadeExplosionOutdoorFar
 	if audioEvent == null || audioEvent.audioClips.is_empty():
 		return
 	var count := randi_range(2, 4)

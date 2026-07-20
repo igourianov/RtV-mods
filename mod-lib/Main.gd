@@ -1,8 +1,8 @@
 extends Node
 
 const MCM_PATH := "res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Helpers.tres"
-const Out = preload("./Out.gd")
-const Inputs = preload("./Inputs.gd")
+const Out := preload("./Out.gd")
+const Inputs := preload("./Inputs.gd")
 
 var _lib
 var _hooks: Array[int]
@@ -29,8 +29,8 @@ func _ready() -> void:
 
 
 func _load_mod_info():
-	var config = ConfigFile.new()
-	var configFile = (get_script().resource_path.get_base_dir() + "/../mod.txt").simplify_path()
+	var config := ConfigFile.new()
+	var configFile:String = (get_script().resource_path.get_base_dir() + "/../mod.txt").simplify_path()
 	config.load(configFile)
 	mod_id = config.get_value("mod", "id", "")
 	mod_name = config.get_value("mod", "name", "")
@@ -43,14 +43,14 @@ func _load_mod_info():
 
 func _init_config():
 
-	var config = ConfigFile.new()
+	var config := ConfigFile.new()
 	create_config(config)
 	if !config.get_sections().size():
 		load_config(config)
 		return
 
-	var configDir = "user://MCM/" + mod_id
-	var filePath = configDir + "/config.ini"
+	var configDir := "user://MCM/" + mod_id
+	var filePath := configDir + "/config.ini"
 	var helper = load(MCM_PATH) if ResourceLoader.exists(MCM_PATH) else null
 
 	if !FileAccess.file_exists(filePath):
@@ -74,7 +74,7 @@ func _init_setup():
 	_hooks = []
 	setup(_lib)
 
-	var registered = _hooks.filter(func(id): return id > -1)
+	var registered := _hooks.filter(func(id): return id > -1)
 	if registered.size() == _hooks.size():
 		Out.debug("all hooks registered successfully")
 		return
@@ -118,14 +118,14 @@ func noop(_arg = null) -> void:
 
 
 func create_mouse_input(button: int) -> InputEventMouseButton:
-	var input = InputEventMouseButton.new()
+	var input := InputEventMouseButton.new()
 	input.button_index = button
 	input.pressed = true
 	return input
 
 
 func create_key_input(keycode: int, ctrl_pressed: bool = false, shift_pressed: bool = false) -> InputEventKey:
-	var input = InputEventKey.new()
+	var input := InputEventKey.new()
 	input.physical_keycode = keycode
 	input.pressed = true
 	input.ctrl_pressed = ctrl_pressed

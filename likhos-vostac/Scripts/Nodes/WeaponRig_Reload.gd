@@ -1,10 +1,10 @@
 extends "./WeaponRig_Base.gd"
 
-const _HOLD_THRESHOLD = 0.3
-const _AMMO_CHECK_INTRO_TIME_DEFAULT = 1.0
-const _VIEW_DELAY = 0.5
+const _HOLD_THRESHOLD := 0.3
+const _AMMO_CHECK_INTRO_TIME_DEFAULT := 1.0
+const _VIEW_DELAY := 0.5
 
-const AMMO_CHECK_INTRO_TIMES = {
+const AMMO_CHECK_INTRO_TIMES := {
 	"AKM": 1.65,
 	"AK_12": 1.45,
 	"AKS_74U": 1.40,

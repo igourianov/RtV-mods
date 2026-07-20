@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Second Hand"
 id="likhos-second-hand"
-version="1.1.41"
+version="1.1.42"
 prefix="[likho-sh]"
 description="Likho's mod resizing several guns to fit into secondary slot"
 debug=false

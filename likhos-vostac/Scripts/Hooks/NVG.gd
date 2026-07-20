@@ -1,5 +1,5 @@
 
-const Out = preload("../../Lib/Out.gd")
+const Out := preload("../../Lib/Out.gd")
 
 var _lib
 
@@ -17,16 +17,16 @@ func on_physics_process(delta: float) -> void:
 		caller.Consumption(delta)
 
 	if !caller.has_node("NVGDriver"):
-		var driver = NVGDriver.new()
+		var driver := NVGDriver.new()
 		driver.name = "NVGDriver"
 		caller.add_child(driver)
 		Out.debug("nvg input driver attached to", caller)
 
 
 class NVGDriver extends Node:
-	const HOLD_THRESHOLD = 0.25
-	const ModConfig = preload("../ModConfig.gd")
-	const AttachmentClickPlayer = preload("../Audio/AttachmentClickPlayer.gd")
+	const HOLD_THRESHOLD := 0.25
+	const ModConfig := preload("../ModConfig.gd")
+	const AttachmentClickPlayer := preload("../Audio/AttachmentClickPlayer.gd")
 
 	var gameData = preload("res://Resources/GameData.tres")
 	var _hold_elapsed := 0.0
@@ -45,7 +45,7 @@ class NVGDriver extends Node:
 
 	func _input(evt: InputEvent) -> void:
 		var parent = get_parent()
-		var slot = parent.NVGSlot
+		var slot: Node = parent.NVGSlot
 		var device = slot.get_child(0) if slot && slot.get_child_count() else null
 
 		if !device || gameData.freeze || ModConfig.binoculars_active:

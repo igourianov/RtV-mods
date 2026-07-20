@@ -1,6 +1,6 @@
 extends RefCounted
 
-const Out = preload("../Lib/Out.gd")
+const Out := preload("../Lib/Out.gd")
 
 # Inventory footprint shrink. id -> new Vector2(width, height).
 const RESIZE := {

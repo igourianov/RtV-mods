@@ -1,13 +1,13 @@
 extends "./WeaponRig_Base.gd"
 
-const AudioChunkPlayer = preload("../../Lib/AudioChunkPlayer.gd")
+const AudioChunkPlayer := preload("../../Lib/AudioChunkPlayer.gd")
 
-const _CLICK_AUDIO = preload("res://Audio/UI/Files/UI_Stack_01.wav")
+const _CLICK_AUDIO := preload("res://Audio/UI/Files/UI_Stack_01.wav")
 const _CLICK_START := 25
 const _CLICK_END := 55
 const _CLICK_VOLUME_OFFSET := 15.0
 
-var _dry_click_sound
+var _dry_click_sound: AudioChunkPlayer
 
 
 func _ready() -> void:

@@ -1,13 +1,13 @@
 extends RefCounted
 
-const ModConfig = preload("../ModConfig.gd")
-const InspectCard = preload("../InspectCards/InspectCard.gd")
-const FireModeCard = preload("../InspectCards/FireModeCard.gd")
-const AmmoCardReplacer = preload("../InspectCards/AmmoCardReplacer.gd")
-const ChamberCardReplacer = preload("../InspectCards/ChamberCardReplacer.gd")
-const KillCounterCard = preload("../InspectCards/KillCounterCard.gd")
-const Crosshair = preload("../Nodes/Crosshair.gd")
-var gameData = preload("res://Resources/GameData.tres")
+const ModConfig := preload("../ModConfig.gd")
+const InspectCard := preload("../InspectCards/InspectCard.gd")
+const FireModeCard := preload("../InspectCards/FireModeCard.gd")
+const AmmoCardReplacer := preload("../InspectCards/AmmoCardReplacer.gd")
+const ChamberCardReplacer := preload("../InspectCards/ChamberCardReplacer.gd")
+const KillCounterCard := preload("../InspectCards/KillCounterCard.gd")
+const Crosshair := preload("../Nodes/Crosshair.gd")
+var gameData := preload("res://Resources/GameData.tres")
 
 var _lib
 var _crosshair: Crosshair
@@ -70,7 +70,7 @@ func _setup_kill_cards(hud) -> void:
 func _setup_ammo_replacer(hud) -> void:
 	if !hud.magazine || hud.magazine.get_child_count() == 0:
 		return
-	var panel = hud.magazine.get_child(0)
+	var panel: Node = hud.magazine.get_child(0)
 	if is_instance_valid(_ammo_replacer) && _ammo_replacer.get_parent() == panel:
 		return
 	_ammo_replacer = AmmoCardReplacer.new()
@@ -80,7 +80,7 @@ func _setup_ammo_replacer(hud) -> void:
 func _setup_chamber_replacer(hud) -> void:
 	if !hud.chamber || hud.chamber.get_child_count() == 0:
 		return
-	var panel = hud.chamber.get_child(0)
+	var panel: Node = hud.chamber.get_child(0)
 	if is_instance_valid(_chamber_replacer) && _chamber_replacer.get_parent() == panel:
 		return
 	_chamber_replacer = ChamberCardReplacer.new()
@@ -146,7 +146,7 @@ func _update_attachment_cards(hud, rig: WeaponRig) -> void:
 		if !nested || nested.type != "Attachment" || nested.subtype == "Magazine":
 			continue
 
-		var attachment = rig.attachments.get_node_or_null(nested.file)
+		var attachment: Node3D = rig.attachments.get_node_or_null(nested.file) as Node3D
 		if !is_instance_valid(attachment) || !attachment.visible:
 			continue
 
@@ -175,7 +175,7 @@ func _update_firemode_card(rig: WeaponRig) -> void:
 
 	_firemode_card.set_mode(rig.slotData.mode if rig.slotData else 1)
 
-	var bone_origin = skeleton.get_bone_global_pose(rig.selectorIndex).origin
+	var bone_origin := skeleton.get_bone_global_pose(rig.selectorIndex).origin
 	_firemode_card.point_at(_camera.unproject_position(skeleton.to_global(bone_origin)))
 
 
@@ -203,16 +203,16 @@ func _update_kill_cards(rig: WeaponRig) -> void:
 		_kill_container.move_child(card, 0)
 
 	for i in _kill_cards.size():
-		var card = _kill_cards[i]
+		var card: KillCounterCard = _kill_cards[i]
 		if i >= groups:
 			card.hide()
 			continue
 		card.set_group(kills.slice(i * 10, i * 10 + 10))
 		card.show()
 
-	var origin = skeleton.get_bone_global_pose(bone).origin
-	var screen = _camera.unproject_position(skeleton.to_global(origin))
-	var size = _kill_container.get_combined_minimum_size()
+	var origin := skeleton.get_bone_global_pose(bone).origin
+	var screen := _camera.unproject_position(skeleton.to_global(origin))
+	var size := _kill_container.get_combined_minimum_size()
 	_kill_container.position = Vector2(screen.x - size.x * 0.5, screen.y - size.y) + _KILL_BONE_OFFSET
 	_kill_container.show()
 
@@ -235,7 +235,7 @@ static func _compute_local_center(node: Node3D) -> Vector3:
 	var found := false
 	var stack: Array = [node]
 	while !stack.is_empty():
-		var n = stack.pop_back()
+		var n: Node3D = stack.pop_back()
 		if n.name == "Laser":
 			continue
 		if n is VisualInstance3D:

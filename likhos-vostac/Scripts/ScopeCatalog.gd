@@ -1,7 +1,7 @@
-const Out = preload("../Lib/Out.gd")
-const ModConfig = preload("./ModConfig.gd")
+const Out := preload("../Lib/Out.gd")
+const ModConfig := preload("./ModConfig.gd")
 
-static var gameData = preload("res://Resources/GameData.tres")
+static var gameData := preload("res://Resources/GameData.tres")
 
 const _FALLBACK_MAG: Array[float] = [1.0]
 
@@ -131,14 +131,14 @@ static func _measure_lens(optic, key: String) -> Dictionary:
 	var result := {"center": Vector3.ZERO, "radius": 0.0}
 	if optic.mesh == null || optic.mesh.mesh == null:
 		return result
-	var arrays = optic.mesh.mesh.surface_get_arrays(optic.maskIndex)
+	var arrays: Array = optic.mesh.mesh.surface_get_arrays(optic.maskIndex)
 	if arrays.is_empty():
 		return result
 	var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 	if verts.is_empty():
 		return result
 
-	var t = optic.mesh.transform
+	var t: Transform3D = optic.mesh.transform
 	var center := Vector3.ZERO
 	for v in verts:
 		center += t * v

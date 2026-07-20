@@ -54,7 +54,7 @@ func _create_row(tooltip, node_name: String, title_text: String) -> Control:
 	container.add_child(row)
 
 	if tooltip.subpanel:
-		var subpanel_index = container.get_children().find(tooltip.subpanel)
+		var subpanel_index := container.get_children().find(tooltip.subpanel)
 		if subpanel_index != -1:
 			container.move_child(row, subpanel_index)
 

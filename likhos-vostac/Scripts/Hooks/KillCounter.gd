@@ -1,6 +1,6 @@
 extends RefCounted
 
-const ModConfig = preload("../ModConfig.gd")
+const ModConfig := preload("../ModConfig.gd")
 
 var _lib
 

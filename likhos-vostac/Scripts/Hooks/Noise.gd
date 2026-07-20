@@ -1,6 +1,6 @@
 extends RefCounted
 
-const ModConfig = preload("../ModConfig.gd")
+const ModConfig := preload("../ModConfig.gd")
 
 const WOBBLE_MULT: float = 3.0
 const WOBBLE_MULT_HOLD_BREATH: float = 0.5

@@ -19,12 +19,12 @@ func _ready() -> void:
 
 
 func _inject_mosin_casing_eject() -> void:
-	var rig = get_parent()
+	var rig: WeaponRig = get_parent()
 	if rig.data.file != "Mosin":
 		return
 
-	var player = rig.animations
-	var tree = rig.animator
+	var player := rig.animations
+	var tree := rig.animator
 	if !player || !tree:
 		return
 
@@ -32,15 +32,15 @@ func _inject_mosin_casing_eject() -> void:
 	if !player.has_animation(anim_name):
 		return
 
-	var anim = player.get_animation(anim_name)
+	var anim := player.get_animation(anim_name)
 	if anim.has_meta("likho_eject_injected"):
 		return
 
-	var base = tree.get_node(tree.root_node)
+	var base := tree.get_node(tree.root_node)
 	if !base:
 		return
 
-	var track = anim.add_track(Animation.TYPE_METHOD)
+	var track := anim.add_track(Animation.TYPE_METHOD)
 	anim.track_set_path(track, base.get_path_to(rig))
 	anim.track_insert_key(track, 0.9, {"method": &"CasingEject", "args": []})
 	anim.set_meta("likho_eject_injected", true)
@@ -50,7 +50,7 @@ func _input(event: InputEvent) -> void:
 	if is_engine_busy() || gameData.isInspecting || gameData.isClearing || gameData.isReloading || gameData.isChecking:
 		return
 
-	var rig = get_parent()
+	var rig: WeaponRig = get_parent()
 	if rig.data.weaponAction != "Manual":
 		return
 
@@ -69,7 +69,7 @@ func _process(_delta: float) -> void:
 	if _state == ManualLoadState.NONE || _state == ManualLoadState.IDLE || _busy:
 		return
 
-	var rig = get_parent()
+	var rig: WeaponRig = get_parent()
 
 	if _state == ManualLoadState.OPEN:
 		gameData.isInserting = true

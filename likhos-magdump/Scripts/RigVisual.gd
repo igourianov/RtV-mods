@@ -1,9 +1,9 @@
 extends RefCounted
 
-const Out = preload("../Lib/Out.gd")
+const Out := preload("../Lib/Out.gd")
 
-const NATIVE_KEY = &"likho_magdump_native"
-const OVERLAYS_KEY = &"likho_magdump_overlays"
+const NATIVE_KEY := &"likho_magdump_native"
+const OVERLAYS_KEY := &"likho_magdump_overlays"
 
 const SWAP_DELAY := 1.2
 
@@ -47,13 +47,13 @@ func _extract_pickup_data(pickup_path: String) -> Dictionary:
 	if !scene:
 		Out.warning("failed to load %s" % pickup_path)
 		return {}
-	var instance = scene.instantiate()
-	var lod0 = instance.get_node_or_null("LOD0")
+	var instance := scene.instantiate()
+	var lod0: MeshInstance3D = instance.get_node_or_null("LOD0")
 	if !lod0 || !(lod0 is MeshInstance3D):
 		Out.warning("no LOD0 MeshInstance3D in %s" % pickup_path)
 		instance.free()
 		return {}
-	var cartridge = instance.get_node_or_null("Bullets/Cartridge_Rifle")
+	var cartridge: Node3D = instance.get_node_or_null("Bullets/Cartridge_Rifle")
 	if !cartridge:
 		Out.warning("no Bullets/Cartridge_Rifle in %s" % pickup_path)
 	var bullet_xform := Transform3D.IDENTITY
@@ -63,7 +63,7 @@ func _extract_pickup_data(pickup_path: String) -> Dictionary:
 	# the overlay along its width axis so a narrower/wider foreign mag still fills
 	# the host magwell and lines up with the host's rounds.
 	var bullet_stagger := Vector3.ZERO
-	var cartridge2 = instance.get_node_or_null("Bullets/Cartridge_Rifle_2")
+	var cartridge2: Node3D = instance.get_node_or_null("Bullets/Cartridge_Rifle_2")
 	if cartridge && cartridge2:
 		bullet_stagger = cartridge2.position - cartridge.position
 	var data := {
@@ -85,11 +85,11 @@ func on_ready_post() -> void:
 		return
 	var overlay_data: Dictionary = _table[gun_file]
 
-	var bone_name = _find_mag_bone(rig.skeleton)
+	var bone_name := _find_mag_bone(rig.skeleton)
 	if bone_name.is_empty():
 		Out.warning("could not detect mag bone for %s" % gun_file)
 		return
-	var bone_idx = rig.skeleton.find_bone(bone_name)
+	var bone_idx: int = rig.skeleton.find_bone(bone_name)
 	if bone_idx == -1:
 		Out.warning("bone %s missing in skeleton of %s" % [bone_name, gun_file])
 		return
@@ -105,7 +105,7 @@ func on_ready_post() -> void:
 	var host_xform := Transform3D.IDENTITY
 	var host_stagger := Vector3.ZERO
 	if rig.bullets && rig.bullets.get_child_count() > 0:
-		var host_cart = rig.bullets.get_child(0)
+		var host_cart: Node3D = rig.bullets.get_child(0)
 		host_xform = host_cart.transform
 		if rig.bullets.get_child_count() > 1:
 			host_stagger = rig.bullets.get_child(1).position - host_cart.position
@@ -161,7 +161,7 @@ func on_ready_post() -> void:
 
 
 func on_update_rig_pre(_animate = false) -> void:
-	var rm = _lib._caller
+	var rm: Node = _lib._caller
 	if !rm || rm.get_child_count() == 0:
 		return
 	var rig = rm.get_child(rm.get_child_count() - 1)
@@ -172,10 +172,10 @@ func on_update_rig_pre(_animate = false) -> void:
 	if _get_loaded_mag_file(rig).is_empty():
 		return
 
-	var native = rig.get_meta(NATIVE_KEY)
+	var native: MeshInstance3D = rig.get_meta(NATIVE_KEY)
 	var overlays: Dictionary = rig.get_meta(OVERLAYS_KEY)
 	var mag_file := _get_loaded_mag_file(rig)
-	var target = overlays.get(mag_file, native)
+	var target: MeshInstance3D = overlays.get(mag_file, native)
 	if !target || rig.magazine == target:
 		return
 
@@ -211,17 +211,17 @@ func refresh_after_attach(iface) -> void:
 func _get_rig(iface):
 	if !iface || !iface.rigManager:
 		return null
-	var rm = iface.rigManager
+	var rm: Node = iface.rigManager
 	if rm.get_child_count() == 0:
 		return null
-	var rig = rm.get_child(rm.get_child_count() - 1)
+	var rig := rm.get_child(rm.get_child_count() - 1)
 	if !rig || !rig.has_meta(OVERLAYS_KEY):
 		return null
 	return rig
 
 
 func _await_then_resolve(rig) -> void:
-	var tree = rig.get_tree()
+	var tree: SceneTree = rig.get_tree()
 	if !tree:
 		return
 	await tree.create_timer(SWAP_DELAY, false).timeout
@@ -231,10 +231,10 @@ func _await_then_resolve(rig) -> void:
 
 
 func _resolve_pointer(rig, transfer_visibility: bool) -> void:
-	var native = rig.get_meta(NATIVE_KEY)
+	var native: MeshInstance3D = rig.get_meta(NATIVE_KEY)
 	var overlays: Dictionary = rig.get_meta(OVERLAYS_KEY)
 	var mag_file := _get_loaded_mag_file(rig)
-	var target = overlays.get(mag_file, native)
+	var target: MeshInstance3D = overlays.get(mag_file, native)
 	if !target || rig.magazine == target:
 		return
 	var was_visible: bool = rig.magazine.visible if rig.magazine else false

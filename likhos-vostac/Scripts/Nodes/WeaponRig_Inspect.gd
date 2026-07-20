@@ -4,8 +4,8 @@ const FPS_LIGHT_PATH := "/root/Map/Core/Camera/Flashlight/FPS"
 const INSPECT_LIGHT_POSITION := Vector3(0, 0.15, 0.2)
 const LIGHT_LERP_SPEED := 10.0
 
-var _fps_light
-var _fps_light_origin
+var _fps_light: Node3D
+var _fps_light_origin: Vector3
 
 
 func _ready() -> void:
@@ -15,12 +15,12 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if !_fps_light:
-		_fps_light = get_node_or_null(FPS_LIGHT_PATH)
+		_fps_light = get_node_or_null(FPS_LIGHT_PATH) as Node3D
 		if !_fps_light:
 			return
 		_fps_light_origin = _fps_light.position
 
-	var target = INSPECT_LIGHT_POSITION if gameData.isInspecting else _fps_light_origin
+	var target := INSPECT_LIGHT_POSITION if gameData.isInspecting else _fps_light_origin
 	_fps_light.position = _fps_light.position.lerp(target, delta * LIGHT_LERP_SPEED)
 
 
@@ -53,13 +53,13 @@ func _input(event: InputEvent) -> void:
 		return
 
 	var optic = rig.activeOptic
-	var zoomIn = event.is_action_pressed("optic_zoom_in", true)
-	var zoomOut = event.is_action_pressed("optic_zoom_out", true)
+	var zoomIn := event.is_action_pressed("optic_zoom_in", true)
+	var zoomOut := event.is_action_pressed("optic_zoom_out", true)
 
 	if (zoomIn || zoomOut) && optic && optic.railMovement:
-		var min_val = roundi(optic.minPosition * 100)
-		var max_val = roundi(optic.maxPosition * 100)
-		var new_z = roundi(optic.position.z * 100) + (1 if zoomIn else -1)
+		var min_val := roundi(optic.minPosition * 100)
+		var max_val := roundi(optic.maxPosition * 100)
+		var new_z := roundi(optic.position.z * 100) + (1 if zoomIn else -1)
 
 		if new_z >= min_val && new_z <= max_val:
 			rig.slotData.position += 0.01 if zoomIn else -0.01

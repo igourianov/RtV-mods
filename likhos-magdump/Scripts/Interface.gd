@@ -14,14 +14,14 @@ func _init(lib, rig_visual) -> void:
 # the gun's currently-attached mag, performs a real object swap (free the
 # inventory mag, spawn a fresh one in its slot representing the gun's old mag)
 # instead of vanilla's in-place ammo-count swap.
-func on_get_magazine(weaponData, weaponSlot, swapMagazine) -> bool:
+func on_get_magazine(weaponData, weaponSlot, swapMagazine: bool) -> bool:
 	_lib.skip_super()
 	var iface = _lib._caller
 	if iface == null:
 		return false
 
 	var picked = null
-	var highest_amount = 0
+	var highest_amount := 0
 	for m in iface.inventoryGrid.get_children():
 		if m.slotData.itemData.subtype == "Magazine" \
 				&& m.slotData.amount != 0 \
@@ -34,11 +34,11 @@ func on_get_magazine(weaponData, weaponSlot, swapMagazine) -> bool:
 		return false
 
 	var weapon_item = weaponSlot.get_child(0)
-	var weapon_ammo = weapon_item.slotData.amount
-	var magazine_ammo = picked.slotData.amount
+	var weapon_ammo: int = weapon_item.slotData.amount
+	var magazine_ammo: int = picked.slotData.amount
 
 	# Detect cross-mag scenario for swap path.
-	var gun_mag_idx = -1
+	var gun_mag_idx := -1
 	var gun_mag_data = null
 	for i in weapon_item.slotData.nested.size():
 		if weapon_item.slotData.nested[i].subtype == "Magazine":
@@ -46,7 +46,7 @@ func on_get_magazine(weaponData, weaponSlot, swapMagazine) -> bool:
 			gun_mag_data = weapon_item.slotData.nested[i]
 			break
 
-	var cross_mag_swap = swapMagazine \
+	var cross_mag_swap:bool = swapMagazine \
 			&& gun_mag_data != null \
 			&& gun_mag_data != picked.slotData.itemData
 
@@ -67,8 +67,8 @@ func on_get_magazine(weaponData, weaponSlot, swapMagazine) -> bool:
 		return true
 
 	# Cross-mag swap: real object swap.
-	var picked_pos = picked.position
-	var picked_rotated = picked.rotated
+	var picked_pos: Vector2 = picked.position
+	var picked_rotated: bool = picked.rotated
 	var inv_mag_data = picked.slotData.itemData
 
 	# Update gun: replace nested mag identity, load amount, chamber bump.

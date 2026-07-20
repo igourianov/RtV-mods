@@ -1,15 +1,15 @@
 
-const ModConfig = preload("../ModConfig.gd")
+const ModConfig := preload("../ModConfig.gd")
 
 const _AUTO_ON_LATCH := &"likho_laser_latch"
 const _RECOLOR_LATCH := &"likho_laser_recolor"
 const _SOUND_NODE := "LikhoLaserSound"
-const AttachmentClickPlayer = preload("../Audio/AttachmentClickPlayer.gd")
+const AttachmentClickPlayer := preload("../Audio/AttachmentClickPlayer.gd")
 const _PEQ15_NAME := &"ANPEQ"
 const _PEQ15_COLOR := Color(1, 0, 0, 1)
 
 var _lib
-var gameData = preload("res://Resources/GameData.tres")
+var gameData := preload("res://Resources/GameData.tres")
 var _auto_on_latch := false
 
 
@@ -70,7 +70,7 @@ func _recolor(caller) -> void:
 	_tint_mesh(caller.laser.get_node_or_null("Beam"))
 	_tint_mesh(caller.laser.get_node_or_null("Point"))
 
-	var light = caller.laser.get_node_or_null("Point/Light")
+	var light: Light3D = caller.laser.get_node_or_null("Point/Light")
 	if light:
 		light.light_color = _PEQ15_COLOR
 
@@ -79,7 +79,7 @@ func _tint_mesh(mesh) -> void:
 	if !mesh:
 		return
 
-	var material = mesh.get_surface_override_material(0)
+	var material: ShaderMaterial = mesh.get_surface_override_material(0)
 	if !material:
 		return
 
@@ -89,7 +89,7 @@ func _tint_mesh(mesh) -> void:
 
 
 func _ensure_click(caller) -> AttachmentClickPlayer:
-	var player = caller.get_node_or_null(_SOUND_NODE)
+	var player: AttachmentClickPlayer = caller.get_node_or_null(_SOUND_NODE)
 	if !player:
 		player = AttachmentClickPlayer.new()
 		player.name = _SOUND_NODE

@@ -1,6 +1,6 @@
 extends RefCounted
 
-const Out = preload("../Lib/Out.gd")
+const Out := preload("../Lib/Out.gd")
 
 # Corrects optic node property values that ship wrong in vanilla rig scenes
 # (e.g. defaultPosition outside the [minPosition, maxPosition] rail range).

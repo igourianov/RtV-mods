@@ -1,8 +1,8 @@
 extends Control
 
-const Out = preload("../../Lib/Out.gd")
+const Out := preload("../../Lib/Out.gd")
 
-const _THEME = preload("res://UI/Themes/Theme.tres")
+const _THEME := preload("res://UI/Themes/Theme.tres")
 const _ACCENT := Color(0, 1, 0)
 const _FONT_SIZE := 16
 const _NATIVE := 64.0

@@ -1,18 +1,18 @@
 extends CanvasLayer
 
-const ModConfig = preload("../ModConfig.gd")
-const Out = preload("../../Lib/Out.gd")
-const ZoomAccelerator = preload("../ZoomAccelerator.gd")
-const _LENS_SHADER = preload("res://mods/likhos-vostac/Shaders/BinocularsLens.gdshader")
-const _READOUT_SHADER = preload("res://mods/likhos-vostac/Shaders/BinocularsReadout.gdshader")
-const _RETICLE_SHADER = preload("res://mods/likhos-vostac/Shaders/BinocularsReticle.gdshader")
-const _RETICLE_PATH = "res://mods/likhos-vostac/Textures/binos_reticle.png"
-const _GRIME_PATH = "res://mods/likhos-vostac/Textures/binos_grime.jpg"
-const _CAMERA_PATH = "/root/Map/Core/Camera"
-const _HUD_PATH = "/root/Map/Core/UI/HUD"
-const ZoomClickPlayer = preload("../Audio/ZoomClickPlayer.gd")
+const ModConfig := preload("../ModConfig.gd")
+const Out := preload("../../Lib/Out.gd")
+const ZoomAccelerator := preload("../ZoomAccelerator.gd")
+const _LENS_SHADER := preload("res://mods/likhos-vostac/Shaders/BinocularsLens.gdshader")
+const _READOUT_SHADER := preload("res://mods/likhos-vostac/Shaders/BinocularsReadout.gdshader")
+const _RETICLE_SHADER := preload("res://mods/likhos-vostac/Shaders/BinocularsReticle.gdshader")
+const _RETICLE_PATH := "res://mods/likhos-vostac/Textures/binos_reticle.png"
+const _GRIME_PATH := "res://mods/likhos-vostac/Textures/binos_grime.jpg"
+const _CAMERA_PATH := "/root/Map/Core/Camera"
+const _HUD_PATH := "/root/Map/Core/UI/HUD"
+const ZoomClickPlayer := preload("../Audio/ZoomClickPlayer.gd")
 
-var gameData = preload("res://Resources/GameData.tres")
+var gameData := preload("res://Resources/GameData.tres")
 var _click_audio: ZoomClickPlayer
 
 enum State { INACTIVE, ACTIVE, LOWERING }
@@ -48,7 +48,7 @@ var _zoom := ZoomAccelerator.new()
 var _base_fov := 70.0
 var _current_fov := 70.0
 var _hold_timer := 0.0
-var _loot_light
+var _loot_light: Node
 var _loot_light_not_found: bool
 var _ray: RayCast3D
 var _range_label: Label
@@ -114,7 +114,7 @@ func _load_texture(path: String) -> Texture2D:
 func _resolve_camera() -> bool:
 	if is_instance_valid(_camera):
 		return true
-	var scene = get_tree().current_scene
+	var scene := get_tree().current_scene
 	if !scene:
 		return false
 	_camera = scene.get_node_or_null(_CAMERA_PATH)
@@ -124,9 +124,9 @@ func _resolve_camera() -> bool:
 	return true
 
 
-func _apply_layer(scene) -> void:
+func _apply_layer(scene:Node) -> void:
 	var effective := 0
-	var n = scene.get_node_or_null(_HUD_PATH)
+	var n := scene.get_node_or_null(_HUD_PATH)
 	while n:
 		if n is CanvasLayer:
 			effective = n.layer
@@ -244,7 +244,7 @@ func _ensure_ray() -> void:
 	_ray.collision_mask = _RANGE_MASK
 	_ray.enabled = true
 	_camera.add_child(_ray)
-	var player = _camera.get_node_or_null(_PLAYER_PATH)
+	var player := _camera.get_node_or_null(_PLAYER_PATH)
 	if player:
 		_ray.add_exception(player)
 

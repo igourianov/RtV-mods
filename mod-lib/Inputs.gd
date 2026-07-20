@@ -2,8 +2,8 @@ extends RefCounted
 
 var _lib
 
-var extra_actions = []
-var remove_actions = []
+var extra_actions := []
+var remove_actions := []
 
 
 func _init(lib) -> void:
@@ -32,7 +32,7 @@ func attach_extra_actions(caller, reset: bool) -> void:
 		else:
 			InputMap.action_erase_events(a.action)
 
-		var event = savedEvents[a.action] if savedEvents else null
+		var event: InputEvent = savedEvents[a.action] if savedEvents else null
 		if reset || !event:
 			event = a.event
 
@@ -42,14 +42,14 @@ func attach_extra_actions(caller, reset: bool) -> void:
 
 
 func _create_input_button(caller, name, label, event) -> void:
-	var button = caller.remapButton.instantiate()
+	var button: Button = caller.remapButton.instantiate()
 	caller.actions.add_child(button)
 	button.pressed.connect(caller._on_input_pressed.bind(button, name))
 
-	var actionLabel = button.find_child("LabelAction")
+	var actionLabel: Label = button.find_child("LabelAction")
 	actionLabel.text = label
 
-	var inputLabel = button.find_child("LabelInput")
+	var inputLabel: Label = button.find_child("LabelInput")
 	inputLabel.text = event.as_text().trim_suffix("- Physical") if event else "[unbound]"
 
 

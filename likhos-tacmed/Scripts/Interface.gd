@@ -1,10 +1,10 @@
 extends Node
 
-const Out = preload("../Lib/Out.gd")
+const Out := preload("../Lib/Out.gd")
 const INTERFACE_NODE := "/root/Map/Core/UI/Interface"
 const CHARACTER_NODE := "/root/Map/Core/Controller/Character"
 
-const TACMED = {
+const TACMED := {
 	"IFAK": {
 		"healTime": 3.0,
 		"replenishTime": 1.0,
@@ -15,7 +15,7 @@ const TACMED = {
 	}
 }
 
-const CONDITIONS = [
+const CONDITIONS := [
 	"bleeding",
 	"fracture",
 	"burn",
@@ -27,7 +27,7 @@ const CONDITIONS = [
 ]
 
 var _lib
-var gameData = preload("res://Resources/GameData.tres")
+var gameData := preload("res://Resources/GameData.tres")
 
 
 
@@ -56,9 +56,9 @@ func _use(iface, character, targetItem, extraData) -> void:
 
 	if gameData.isDead: return
 
-	var totalHeal = slotData.itemData.health
-	var healRate = totalHeal / 100.0
-	var heal = min(slotData.condition * healRate, 100.0 - gameData.health)
+	var totalHeal: float = slotData.itemData.health
+	var healRate := totalHeal / 100.0
+	var heal := min(slotData.condition * healRate, 100.0 - gameData.health)
 	slotData.condition -= round(heal / healRate)
 	slotData.itemData.health = heal
 	character.Consume(slotData.itemData)
@@ -114,7 +114,7 @@ func _combine(caller, targetItem, sourceItem, extraData):
 
 	if gameData.isDead: return
 
-	var replenish = sourceItem.slotData.itemData.health
+	var replenish: float = sourceItem.slotData.itemData.health
 	if !replenish:
 		replenish = extraData.replenishDefault
 
@@ -152,7 +152,7 @@ func _hurt_myself(caller, bleedOnly: bool):
 
 func _tacmed_heal(iface, character):
 	Out.debug("action pressed: tacmed")
-	var tacmedItems = iface.inventoryGrid.get_children().filter(func(i):
+	var tacmedItems: Array = iface.inventoryGrid.get_children().filter(func(i):
 		return TACMED[i.slotData.itemData.file] && i.slotData.condition > 0
 	)
 
@@ -174,7 +174,7 @@ func _tacmed_heal(iface, character):
 
 func _prioritize_tacmed(items: Array) -> Array:
 	# ORDER BY [number of conditions would be removed] DESC, [heal waste] ASC, [condition] ASC, [adjusted value] ASC
-	var sortable = items.map(func(i):
+	var sortable := items.map(func(i):
 		return {
 			"item": i, # original item ref
 			"key": [

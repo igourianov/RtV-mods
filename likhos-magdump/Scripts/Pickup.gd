@@ -1,6 +1,6 @@
 extends RefCounted
 
-const Out = preload("../Lib/Out.gd")
+const Out := preload("../Lib/Out.gd")
 
 var _lib
 var _compat: Dictionary
@@ -14,13 +14,13 @@ func _init(lib, compat: Dictionary, statics: Dictionary) -> void:
 
 
 func on_ready_post() -> void:
-	var pickup = _lib._caller
+	var pickup: Node = _lib._caller
 	if !pickup || !pickup.slotData || !pickup.slotData.itemData:
 		return
 	var gun_file: String = pickup.slotData.itemData.file
 	if !_compat.has(gun_file):
 		return
-	var attachments = pickup.get_node_or_null("Attachments")
+	var attachments := pickup.get_node_or_null("Attachments")
 	if !attachments:
 		return
 
@@ -43,7 +43,7 @@ func on_ready_post() -> void:
 		if !scene:
 			Out.warning("failed to load %s" % static_path)
 			continue
-		var foreign = scene.instantiate()
+		var foreign := scene.instantiate()
 		foreign.name = foreign_id
 		foreign.transform = native_node.transform
 		foreign.visible = false
@@ -54,7 +54,7 @@ func _find_native_mag_node(attachments: Node, item_data):
 	for compat_item in item_data.compatible:
 		if compat_item.subtype != "Magazine":
 			continue
-		var node = attachments.get_node_or_null(compat_item.file)
+		var node := attachments.get_node_or_null(compat_item.file)
 		if node:
 			return node
 	return null

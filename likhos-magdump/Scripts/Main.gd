@@ -1,9 +1,9 @@
 extends "../Lib/Main.gd"
 
-const CompatTable = preload("./CompatTable.gd")
-const Interface = preload("./Interface.gd")
-const RigVisual = preload("./RigVisual.gd")
-const Pickup = preload("./Pickup.gd")
+const CompatTable := preload("./CompatTable.gd")
+const Interface := preload("./Interface.gd")
+const RigVisual := preload("./RigVisual.gd")
+const Pickup := preload("./Pickup.gd")
 
 var _interface
 var _rig_visual

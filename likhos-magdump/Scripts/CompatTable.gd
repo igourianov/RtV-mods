@@ -1,6 +1,6 @@
 extends RefCounted
 
-const Out = preload("../Lib/Out.gd")
+const Out := preload("../Lib/Out.gd")
 
 # gun_id -> [foreign_mag_id, ...]. Direction matters: a gun accepting another's
 # mag does not imply the reverse.
@@ -47,14 +47,14 @@ const MAG_STATICS := {
 
 static func apply(lib) -> void:
 	for gun_id in COMPAT:
-		var gun = lib.get_entry(lib.Registry.ITEMS, gun_id)
+		var gun: Variant = lib.get_entry(lib.Registry.ITEMS, gun_id)
 		if gun == null:
 			Out.warning("could not find gun: %s" % gun_id)
 			continue
 
 		var mags: Array = []
 		for mag_id in COMPAT[gun_id]:
-			var mag = lib.get_entry(lib.Registry.ITEMS, mag_id)
+			var mag: Variant = lib.get_entry(lib.Registry.ITEMS, mag_id)
 			if mag == null:
 				Out.warning("could not find attachment: %s | for gun: %s" % [mag_id, gun_id])
 			else:
@@ -71,7 +71,7 @@ static func _inject_mags(lib, gun, mags: Array) -> void:
 	if mags.is_empty():
 		return
 
-	var native_mag = null
+	var native_mag: Variant = null
 	for c in gun.compatible:
 		if c.type == "Attachment" && c.subtype == "Magazine":
 			native_mag = c
@@ -80,8 +80,8 @@ static func _inject_mags(lib, gun, mags: Array) -> void:
 		Out.warning("no native mag in compatible for %s" % gun.file)
 		return
 
-	var tree = gun.tetris.instantiate()
-	var native_sprite = tree.get_node_or_null(native_mag.file)
+	var tree: Node = gun.tetris.instantiate()
+	var native_sprite: Node2D = tree.get_node_or_null(native_mag.file) as Node2D
 	if native_sprite == null:
 		Out.warning("native mag sprite '%s' not found in tetris of %s" % [native_mag.file, gun.file])
 		tree.queue_free()
@@ -92,7 +92,7 @@ static func _inject_mags(lib, gun, mags: Array) -> void:
 		if tree.has_node(mag.file):
 			continue
 
-		var foreign = mag.tetris.instantiate()
+		var foreign: Node2D = mag.tetris.instantiate()
 		foreign.name = mag.file
 		foreign.position = native_sprite.position
 		foreign.rotation = native_sprite.rotation

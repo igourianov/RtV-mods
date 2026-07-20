@@ -1,6 +1,6 @@
 extends Control
 
-const ModConfig = preload("../ModConfig.gd")
+const ModConfig := preload("../ModConfig.gd")
 
 const _FILL_DURATION := 0.5
 const _FILL_DELAY := 0.5
