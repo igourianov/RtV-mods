@@ -125,10 +125,7 @@ const marked = new Marked({ gfm: true, renderer });
 
 
 function convert(md) {
-	// Nexus renders lists with a generous margin, so the blank line the preceding
-	// block leaves behind wastes vertical space. The trailing gap is dropped by the
-	// list renderer itself.
-	const bb = block(marked.parse(md)).replace(/\n\n\[list/g, "\n[list");
+	const bb = block(marked.parse(md));
 	return `${bb}\n`;
 }
 
