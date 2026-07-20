@@ -99,7 +99,7 @@ func _process(_delta: float) -> void:
 		return
 
 
-func _play(animation_state: String, audio_event, wait_offset: float = -0.5) -> bool:
+func _play(animation_state: String, audio_event: AudioEvent, wait_offset: float = -0.5) -> bool:
 	_busy = true
 	await play(animation_state, audio_event, wait_offset)
 	if !is_instance_valid(self):

@@ -27,7 +27,7 @@ func on_process_post(_delta: float) -> void:
 	__process_post(_lib._caller)
 
 
-func __input(caller, event: InputEvent) -> void:
+func __input(caller: Node, event: InputEvent) -> void:
 	if !caller.visible:
 		return
 
@@ -41,7 +41,7 @@ func __input(caller, event: InputEvent) -> void:
 			caller.set_meta(_AUTO_ON_LATCH, gameData.isCanted)
 
 
-func __process_post(caller) -> void:
+func __process_post(caller: Node) -> void:
 	if !caller.visible:
 		return
 
@@ -59,7 +59,7 @@ func __process_post(caller) -> void:
 			_ensure_click(caller).click_out()
 
 
-func _recolor(caller) -> void:
+func _recolor(caller: Node) -> void:
 	if caller.get_meta(_RECOLOR_LATCH, false):
 		return
 	caller.set_meta(_RECOLOR_LATCH, true)
@@ -75,7 +75,7 @@ func _recolor(caller) -> void:
 		light.light_color = _PEQ15_COLOR
 
 
-func _tint_mesh(mesh) -> void:
+func _tint_mesh(mesh: MeshInstance3D) -> void:
 	if !mesh:
 		return
 
@@ -88,7 +88,7 @@ func _tint_mesh(mesh) -> void:
 	mesh.set_surface_override_material(0, material)
 
 
-func _ensure_click(caller) -> AttachmentClickPlayer:
+func _ensure_click(caller: Node) -> AttachmentClickPlayer:
 	var player: AttachmentClickPlayer = caller.get_node_or_null(_SOUND_NODE)
 	if !player:
 		player = AttachmentClickPlayer.new()

@@ -50,7 +50,7 @@ func on_ready_post() -> void:
 		attachments.add_child(foreign)
 
 
-func _find_native_mag_node(attachments: Node, item_data):
+func _find_native_mag_node(attachments: Node, item_data: ItemData):
 	for compat_item in item_data.compatible:
 		if compat_item.subtype != "Magazine":
 			continue

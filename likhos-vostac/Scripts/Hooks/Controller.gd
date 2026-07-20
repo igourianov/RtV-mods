@@ -27,7 +27,7 @@ func on_movement_states(delta: float) -> void:
 	ctrl.crouchCollider.disabled = !gameData.isCrouching
 
 
-func _update_state(ctrl) -> void:
+func _update_state(ctrl: Node) -> void:
 	gameData.isMoving = ctrl.inputDirection != Vector2.ZERO
 	gameData.isIdle = !gameData.isMoving
 
@@ -46,7 +46,7 @@ func _update_state(ctrl) -> void:
 	gameData.isWalking = gameData.isMoving && !gameData.isRunning
 
 
-func _apply_speed(ctrl, delta: float) -> void:
+func _apply_speed(ctrl: Node, delta: float) -> void:
 	var useOverride: bool = ModConfig.override_movement_speeds
 	var crouchSpeed: float = ModConfig.crouch_speed if useOverride else ctrl.crouchSpeed
 	var walkSpeed: float = ModConfig.walk_speed if useOverride else ctrl.walkSpeed
@@ -106,7 +106,7 @@ func on_input(evt: InputEvent) -> void:
 		_sprint_intent = false
 
 
-func _mouse_input(ctrl, evt: InputEvent) -> void:
+func _mouse_input(ctrl: Node, evt: InputEvent) -> void:
 	if gameData.freeze || gameData.isCaching:
 		return
 
@@ -143,7 +143,7 @@ func on_crouch(delta: float) -> void:
 	ctrl.pelvis.position.y = lerp(ctrl.pelvis.position.y, (0.5 if gameData.isCrouching else 1.0), delta * 5.0)
 
 
-func _set_impulse(ctrl) -> void:
+func _set_impulse(ctrl: Node) -> void:
 	if gameData.isCrouching:
 		ctrl.crouchImpulse = 0.1
 	else:

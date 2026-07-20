@@ -28,7 +28,7 @@ func _input(event: InputEvent) -> void:
 		return
 
 
-func _handle_zoom(event: InputEvent, optic) -> bool:
+func _handle_zoom(event: InputEvent, optic: Node3D) -> bool:
 	if !optic || !optic.attachmentData.variable:
 		return false
 
@@ -52,7 +52,7 @@ func _handle_zoom(event: InputEvent, optic) -> bool:
 	return true
 
 
-func _handle_secondary_optic(event: InputEvent, optic) -> bool:
+func _handle_secondary_optic(event: InputEvent, optic: Node3D) -> bool:
 	if !optic || !optic.secondary || !event.is_action_pressed("secondary_optic"):
 		return false
 
@@ -113,7 +113,7 @@ func _handle_ads(delta: float) -> void:
 	_update_reticle(rig, optic, shadow if gameData.PIP else 0.0)
 
 
-func _validate_lens_distance(rig, lens_distance: float, target_lens_distance: float) -> bool:
+func _validate_lens_distance(rig: WeaponRig, lens_distance: float, target_lens_distance: float) -> bool:
 	if target_lens_distance >= 0.02 || lens_distance >= 0.02:
 		return true
 	gameData.impact = true
@@ -130,7 +130,7 @@ func _validate_lens_distance(rig, lens_distance: float, target_lens_distance: fl
 	return false
 
 
-func _update_optic_camera(optic, delta: float, optic_angle: float) -> void:
+func _update_optic_camera(optic: Node3D, delta: float, optic_angle: float) -> void:
 	var camera:Camera3D = optic.get_viewport().get_camera_3d()
 	if !camera:
 		return
@@ -145,7 +145,7 @@ func _update_optic_camera(optic, delta: float, optic_angle: float) -> void:
 	optic.camera.fov = lerp(optic.camera.fov, target_fov, delta * 10.0)
 
 
-func _update_reticle(rig, optic, shadow: float) -> void:
+func _update_reticle(rig: WeaponRig, optic: Node3D, shadow: float) -> void:
 	if !optic.reticle:
 		return
 	var att = optic.attachmentData

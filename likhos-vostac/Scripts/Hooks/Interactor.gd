@@ -9,7 +9,7 @@ func _init(lib) -> void:
 	_lib = lib
 
 
-func on_physics_process_pre(_delta) -> void:
+func on_physics_process_pre(_delta: float) -> void:
 	# BUGFIX: prevent interaction while in Ammo Check
 	if gameData.isChecking:
 		gameData.interaction = false

@@ -11,7 +11,7 @@ func on_reset_post():
 	_hide_row(tooltip, BULLET_WEIGHT)
 
 
-func on_update_post(item) -> void:
+func on_update_post(item: Item) -> void:
 	var tooltip = _lib._caller
 	if !tooltip:
 		return

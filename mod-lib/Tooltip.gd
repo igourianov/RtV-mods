@@ -7,7 +7,7 @@ func _init(lib) -> void:
 	_lib = lib
 
 
-func _show_row(tooltip, node_name: String, title: String, text) -> void:
+func _show_row(tooltip: Node, node_name: String, title: String, text: String) -> void:
 	var row := _get_row(tooltip, node_name)
 	if !row:
 		row = _create_row(tooltip, node_name, title)
@@ -15,21 +15,21 @@ func _show_row(tooltip, node_name: String, title: String, text) -> void:
 	row.show()
 
 
-func _hide_row(tooltip, node_name: String) -> void:
+func _hide_row(tooltip: Node, node_name: String) -> void:
 	var row := _get_row(tooltip, node_name)
 	if row:
 		row.hide()
 
 
-func _get_container(tooltip) -> Node:
+func _get_container(tooltip: Node) -> Node:
 	return tooltip.weight.get_parent()
 
 
-func _get_row(tooltip, node_name: String) -> Node:
+func _get_row(tooltip: Node, node_name: String) -> Node:
 	return _get_container(tooltip).get_node_or_null(node_name)
 
 
-func _create_row(tooltip, node_name: String, title_text: String) -> Control:
+func _create_row(tooltip: Node, node_name: String, title_text: String) -> Control:
 
 	var sibling: Label = tooltip.weight
 	var container: Node = _get_container(tooltip)

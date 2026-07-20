@@ -67,7 +67,7 @@ static func apply(lib) -> void:
 # and patches the gun's `tetris` field via the registry. Vanilla
 # Item.UpdateAttachments matches sprite children by node name, so once the
 # foreign sprite ships in the prefab no per-instance hook is needed.
-static func _inject_mags(lib, gun, mags: Array) -> void:
+static func _inject_mags(lib, gun: ItemData, mags: Array[ItemData]) -> void:
 	if mags.is_empty():
 		return
 

@@ -101,7 +101,7 @@ func _stow_rotation() -> Vector3:
 	return Vector3(rad_to_deg(e.x), rad_to_deg(e.y), rad_to_deg(e.z))
 
 
-func on_rig_update_post(_animate) -> void:
+func on_rig_update_post(_animate: bool) -> void:
 	var manager: Node3D = _lib._caller
 	if !manager:
 		return
@@ -214,7 +214,7 @@ func _resolve_aim_intent() -> void:
 		gameData.isCanted = false if _aim_intent else _cant_intent
 
 
-func _set_target(h) -> void:
+func _set_target(h: Node) -> void:
 	var data = h.data
 	var rig = h.get_parent()
 	var optic = rig.activeOptic
@@ -288,7 +288,7 @@ func _set_target(h) -> void:
 	_set_target_idle(h)
 
 
-func _set_target_idle(h) -> void:
+func _set_target_idle(h: Node) -> void:
 	var data = h.data
 	_target_idle = true
 	_idle_hide_left_arm = false
@@ -325,7 +325,7 @@ func _set_target_idle(h) -> void:
 	h.targetRotation = data.lowRotation + entry["rot"] + (_SECONDARY_OPTIC_ROT_OFFSET if gameData.secondaryOptic else Vector3.ZERO)
 
 
-func _apply_target(h, delta: float) -> void:
+func _apply_target(h: Node, delta: float) -> void:
 	var t: float = delta * h.handlingSpeed * (_handlingMode / 100.0)
 
 	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), t)
@@ -368,7 +368,7 @@ func _apply_target(h, delta: float) -> void:
 	manager.global_transform = Transform3D(weapon_basis, cam_xform.origin) * _manager_local_baseline
 
 
-func _apply_left_arm(h) -> void:
+func _apply_left_arm(h: Node) -> void:
 	var rig = h.get_parent()
 	if !rig || !rig.skeleton:
 		return

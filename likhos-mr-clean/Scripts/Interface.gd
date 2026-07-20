@@ -30,7 +30,7 @@ func on_release_pre() -> void:
 	caller.Reset()
 
 
-func _combine(caller, kitItem, weaponItem) -> void:
+func _combine(caller: Node, kitItem: Item, weaponItem: Item) -> void:
 	var kitSlotData = kitItem.slotData
 	var weaponSlotData = weaponItem.slotData
 
@@ -50,7 +50,7 @@ func _combine(caller, kitItem, weaponItem) -> void:
 	kitItem.UpdateDetails()
 
 
-func _use_anim(caller, targetItem, timer: float):
+func _use_anim(caller: Node, targetItem: Item, timer: float):
 	gameData.isOccupied = true
 	var prog = caller.progress.instantiate()
 	caller.add_child(prog)

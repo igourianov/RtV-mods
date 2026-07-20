@@ -179,20 +179,20 @@ func _do_reload(ammo_check: bool = false) -> bool:
 	return true
 
 
-func _play_reload(animation_state: String, audio_event, wait_offset: float = -0.5) -> void:
+func _play_reload(animation_state: String, audio_event: AudioEvent, wait_offset: float = -0.5) -> void:
 	gameData.isReloading = true
 	get_parent().animator.process_mode = Node.PROCESS_MODE_INHERIT # reset paused state
 	await play(animation_state, audio_event, wait_offset)
 	gameData.isReloading = false
 
 
-func _show_mag_delayed(rig) -> void:
+func _show_mag_delayed(rig: WeaponRig) -> void:
 	await rig.get_tree().create_timer(0.1, false).timeout
 	if is_instance_valid(rig):
 		rig.magazine.show()
 
 
-func _update_bullets_delayed(rig) -> void:
+func _update_bullets_delayed(rig: WeaponRig) -> void:
 	await rig.get_tree().create_timer(1.2, false).timeout
 	if is_instance_valid(rig):
 		rig.UpdateBullets()

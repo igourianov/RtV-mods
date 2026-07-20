@@ -55,7 +55,7 @@ func _draw_arms(center: Vector2, color: Color) -> void:
 	draw_rect(Rect2(center.x + g, center.y - t * 0.5, l, t), color, true)
 
 
-func update(hud, delta: float) -> void:
+func update(hud: Node, delta: float) -> void:
 	_update_visibility(delta)
 	_update_tooltip(hud)
 
@@ -79,7 +79,7 @@ func _update_visibility(delta: float) -> void:
 	visible = _alpha > 0.0
 
 
-func _update_tooltip(hud) -> void:
+func _update_tooltip(hud: Node) -> void:
 	var wantShift := ModConfig.crosshair_style != "off"
 	if wantShift != _tooltip_shifted:
 		var d := _TOOLTIP_SHIFT if wantShift else -_TOOLTIP_SHIFT

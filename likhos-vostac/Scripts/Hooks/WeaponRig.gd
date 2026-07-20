@@ -15,7 +15,7 @@ func _init(lib) -> void:
 
 
 func on_ready_post() -> void:
-	var rig: Node = _lib._caller
+	var rig: WeaponRig = _lib._caller
 	if !rig:
 		return
 	Out.debug("WeaponRig: injecting handlers")
@@ -26,14 +26,14 @@ func on_ready_post() -> void:
 	_inject_handler(rig, WeaponRig_Inspect, "Likho_WeaponRig_Inspect")
 
 
-func _inject_handler(rig, klass, node_name: String) -> void:
+func _inject_handler(rig: WeaponRig, klass: GDScript, node_name: String) -> void:
 	var h: Node = klass.new()
 	h.name = node_name
 	rig.add_child(h)
 
 
 func on_casing_eject_post() -> void:
-	var rig: Node = _lib._caller
+	var rig: WeaponRig = _lib._caller
 	if !rig:
 		return
 	# BUGFIX: always clear chamber flag when clearing casing

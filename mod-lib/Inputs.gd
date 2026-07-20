@@ -23,7 +23,7 @@ func on_reset_actions_post() -> void:
 	attach_extra_actions(_lib._caller, true)
 
 
-func attach_extra_actions(caller, reset: bool) -> void:
+func attach_extra_actions(caller: Node, reset: bool) -> void:
 	var savedEvents = caller.preferences.actionEvents if caller.preferences else null
 
 	for a in extra_actions:
@@ -41,7 +41,7 @@ func attach_extra_actions(caller, reset: bool) -> void:
 			_create_input_button(caller, a.action, a.label, event)
 
 
-func _create_input_button(caller, name, label, event) -> void:
+func _create_input_button(caller: Node, name: String, label: String, event: InputEvent) -> void:
 	var button: Button = caller.remapButton.instantiate()
 	caller.actions.add_child(button)
 	button.pressed.connect(caller._on_input_pressed.bind(button, name))

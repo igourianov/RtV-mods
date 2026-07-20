@@ -14,7 +14,7 @@ func _init(lib, rig_visual) -> void:
 # the gun's currently-attached mag, performs a real object swap (free the
 # inventory mag, spawn a fresh one in its slot representing the gun's old mag)
 # instead of vanilla's in-place ammo-count swap.
-func on_get_magazine(weaponData, weaponSlot, swapMagazine: bool) -> bool:
+func on_get_magazine(weaponData: WeaponData, weaponSlot: Node, swapMagazine: bool) -> bool:
 	_lib.skip_super()
 	var iface = _lib._caller
 	if iface == null:

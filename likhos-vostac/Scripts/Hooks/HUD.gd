@@ -41,21 +41,21 @@ func on_ready_post() -> void:
 	_setup_chamber_replacer(hud)
 
 
-func _setup_crosshair(hud) -> void:
+func _setup_crosshair(hud: Node) -> void:
 	if is_instance_valid(_crosshair) && _crosshair.get_parent() == hud:
 		return
 	_crosshair = Crosshair.new()
 	hud.add_child(_crosshair)
 
 
-func _setup_firemode_card(hud) -> void:
+func _setup_firemode_card(hud: Node) -> void:
 	if is_instance_valid(_firemode_card) && _firemode_card.get_parent() == hud:
 		return
 	_firemode_card = FireModeCard.new()
 	hud.add_child(_firemode_card)
 
 
-func _setup_kill_cards(hud) -> void:
+func _setup_kill_cards(hud: Node) -> void:
 	if is_instance_valid(_kill_container) && _kill_container.get_parent() == hud:
 		return
 	_kill_cards.clear()
@@ -134,7 +134,7 @@ func _update_ammo_cards(hud, rig: WeaponRig) -> void:
 		_chamber_replacer.set_rig(rig)
 
 
-func _update_attachment_cards(hud, rig: WeaponRig) -> void:
+func _update_attachment_cards(hud: Node, rig: WeaponRig) -> void:
 	for card in _att_cards.values():
 		if is_instance_valid(card):
 			card.hide()

@@ -35,7 +35,7 @@ func _init(lib) -> void:
 	_lib = lib
 
 
-func on_use(targetItem, targetGrid) -> void:
+func on_use(targetItem: Item, targetGrid: Grid) -> void:
 	var itemData = targetItem.slotData.itemData
 	var extraData = TACMED[itemData.file]
 	if extraData:
@@ -44,7 +44,7 @@ func on_use(targetItem, targetGrid) -> void:
 		_lib.skip_super()
 
 
-func _use(iface, character, targetItem, extraData) -> void:
+func _use(iface: Node, character: Node, targetItem: Item, extraData: Dictionary) -> void:
 	var slotData = targetItem.slotData
 	if !slotData.condition || gameData.health >= 100:
 		iface.PlayError()
@@ -68,7 +68,7 @@ func _use(iface, character, targetItem, extraData) -> void:
 	iface.Reset()
 
 
-func _use_anim(caller, targetItem, timer: float):
+func _use_anim(caller: Node, targetItem: Item, timer: float):
 	gameData.isOccupied = true
 	var prog = caller.progress.instantiate()
 	caller.add_child(prog)
@@ -99,7 +99,7 @@ func on_release_pre() -> void:
 	_combine(caller, targetItem, sourceItem, extraData) # no await deliberate
 
 
-func _combine(caller, targetItem, sourceItem, extraData):
+func _combine(caller: Node, targetItem: Item, sourceItem: Item, extraData: Dictionary):
 	if targetItem.slotData.condition >= 100.0:
 		caller.Return(sourceItem)
 		caller.Reset()
@@ -124,7 +124,7 @@ func _combine(caller, targetItem, sourceItem, extraData):
 	sourceItem.queue_free()
 
 
-func _input(ev):
+func _input(ev: InputEvent):
 	if !gameData.isOccupied && ev.is_action_pressed("tacmed"):
 		_tacmed_heal(get_node(INTERFACE_NODE), get_node(CHARACTER_NODE))
 	elif ev.is_action_pressed("hurt_myself"):
@@ -133,7 +133,7 @@ func _input(ev):
 		_hurt_myself(get_node(CHARACTER_NODE), false)
 		
 
-func _hurt_myself(caller, bleedOnly: bool):
+func _hurt_myself(caller: Node, bleedOnly: bool):
 	if bleedOnly:
 		Out.debug("I hurt myself, today...")
 		caller.Bleeding(true)
@@ -150,9 +150,9 @@ func _hurt_myself(caller, bleedOnly: bool):
 	gameData.health -= randf_range(10.0, 20.0)
 
 
-func _tacmed_heal(iface, character):
+func _tacmed_heal(iface: Node, character: Node):
 	Out.debug("action pressed: tacmed")
-	var tacmedItems: Array = iface.inventoryGrid.get_children().filter(func(i):
+	var tacmedItems: Array = iface.inventoryGrid.get_children().filter(func(i: Item):
 		return TACMED[i.slotData.itemData.file] && i.slotData.condition > 0
 	)
 
@@ -163,7 +163,7 @@ func _tacmed_heal(iface, character):
 
 	if tacmedItems.size() > 1:
 		tacmedItems = _prioritize_tacmed(tacmedItems)
-		Out.debug("prioritized tacmed:", tacmedItems.map(func(i): return {
+		Out.debug("prioritized tacmed:", tacmedItems.map(func(i: Item): return {
 			"file": i.slotData.itemData.file,
 			"condition": i.slotData.condition
 		}))
@@ -174,7 +174,7 @@ func _tacmed_heal(iface, character):
 
 func _prioritize_tacmed(items: Array) -> Array:
 	# ORDER BY [number of conditions would be removed] DESC, [heal waste] ASC, [condition] ASC, [adjusted value] ASC
-	var sortable := items.map(func(i):
+	var sortable := items.map(func(i: Item):
 		return {
 			"item": i, # original item ref
 			"key": [
@@ -186,12 +186,12 @@ func _prioritize_tacmed(items: Array) -> Array:
 		}
 	)
 
-	sortable.sort_custom(func(a, b): return a.key < b.key)
+	sortable.sort_custom(func(a: Dictionary, b: Dictionary): return a.key < b.key)
 
-	return sortable.map(func(i): return i.item)
+	return sortable.map(func(i: Dictionary): return i.item)
 
 
-func _cond_heal_count(item) -> int:
+func _cond_heal_count(item: Item) -> int:
 	var heal: int = 0
 	for cond in CONDITIONS:
 		if gameData[cond] && item.slotData.itemData[cond]:

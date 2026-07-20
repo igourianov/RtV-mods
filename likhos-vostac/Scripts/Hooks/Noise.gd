@@ -30,7 +30,7 @@ func on_physics_process_post(delta: float) -> void:
 	_apply_wobble(noise, gd, delta)
 
 
-func _apply_wobble(noise, gd, delta: float) -> void:
+func _apply_wobble(noise: Node, gd: GameData, delta: float) -> void:
 	var frequency_mult: float = 1.0
 	var amplitude_mult: float = 1.0
 
@@ -54,7 +54,7 @@ func _apply_wobble(noise, gd, delta: float) -> void:
 	) * _wobble_amplitude
 
 
-func _calculate_speed_factor(gd) -> float:
+func _calculate_speed_factor(gd: GameData) -> float:
 	if gd.isRunning:
 		return 1.0
 	if gd.isCrouching:

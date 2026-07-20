@@ -1,6 +1,7 @@
 extends RefCounted
 
 const Out = preload("../Lib/Out.gd")
+const ModConfig := preload("./ModConfig.gd")
 
 var _lib
 var _config
@@ -17,7 +18,7 @@ const blockers := {
 }
 
 
-func _init(lib, config) -> void:
+func _init(lib, config: ModConfig) -> void:
 	_lib = lib
 	_config = config
 
@@ -30,7 +31,7 @@ func on_activate_dynamic_event() -> void:
 	_activate_dynamic_event(es)
 
 
-func _activate_dynamic_event(es) -> void:
+func _activate_dynamic_event(es: Node) -> void:
 
 	Out.debug("available events: %s" % [es.dynamicEvents.map(func(el): return el.function)])
 	Out.debug("pending roll bonuses: %s" % [_rollBonus])
@@ -72,7 +73,7 @@ func _activate_dynamic_event(es) -> void:
 			Out.debug("event activated: %s | Roll: %s/%s | Delay: %02d:%02d" % [e.function, roll, threshold, int(floor(delay / 60.0)), delay % 60])
 			_activate_delayed_event(es, delay, e.function) # no await on purpose
 
-func _activate_delayed_event(es, delay, name):
+func _activate_delayed_event(es: Node, delay: int, name: String):
 	await es.get_tree().create_timer(delay, false).timeout
 	if !is_instance_valid(es):
 		Out.debug("EventSystem instance no longer valid, scheduled %s event aborted." % name)
@@ -87,7 +88,7 @@ func on_fighter_jet_post() -> void:
 	_schedule_fighter_jet(es)
 
 
-func _schedule_fighter_jet(es) -> void:
+func _schedule_fighter_jet(es: Node) -> void:
 	var delay := randi_range(60, 300)
 	Out.debug("FighterJet triggered | Next one in: %02d:%02d" % [int(floor(delay / 60.0)), delay % 60])
 	await es.get_tree().create_timer(delay, false).timeout
@@ -114,7 +115,7 @@ func on_crash_site() -> void:
 	_play_delayed_explosion(es, spawn.global_position, delay)
 
 
-func _play_delayed_explosion(es, pos: Vector3, initialDelay: float) -> void:
+func _play_delayed_explosion(es: Node, pos: Vector3, initialDelay: float) -> void:
 	await es.get_tree().create_timer(initialDelay, false).timeout
 	if !is_instance_valid(es):
 		return
@@ -131,7 +132,7 @@ func _play_delayed_explosion(es, pos: Vector3, initialDelay: float) -> void:
 		_spawn_explosion(es, pos, audioEvent)
 
 
-func _spawn_explosion(es, pos: Vector3, audioEvent) -> void:
+func _spawn_explosion(es: Node, pos: Vector3, audioEvent: AudioEvent) -> void:
 	var player := AudioStreamPlayer3D.new()
 	player.bus = &"SFX"
 	player.stream = audioEvent.audioClips.pick_random()

@@ -2,6 +2,7 @@ extends RefCounted
 
 const RadioRegistry = preload("../RadioRegistry.gd")
 const RadioPlayer = preload("../Nodes/RadioPlayer.gd")
+const RadioStation = preload("../RadioStation.gd")
 const ModConfig = preload("../ModConfig.gd")
 const META_PLAYER := "radio_player"
 const META_AUTOROLL := "radio_autoroll"
@@ -47,7 +48,7 @@ func on_interact() -> void:
 	radio.InteractAudio()
 
 
-func on_physics_process_pre(_delta) -> void:
+func on_physics_process_pre(_delta: float) -> void:
 	var radio = _lib._caller
 	_tick_tuning(radio)
 
@@ -83,7 +84,7 @@ func on_update_tooltip_post() -> void:
 	radio.gameData.tooltip = "Radio [%s]" % state
 
 
-func _tune_to(radio, to_station) -> void:
+func _tune_to(radio, to_station: RadioStation) -> void:
 	var player := _player(radio)
 	if player.playing:
 		player.stop()

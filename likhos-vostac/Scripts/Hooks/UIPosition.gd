@@ -14,7 +14,7 @@ func _init(lib) -> void:
 
 
 # center the magazine ammo tooltip on the magazine body while inspecting
-func on_physics_process_post(_delta) -> void:
+func on_physics_process_post(_delta: float) -> void:
 	var node: Node3D = _lib._caller
 	if !is_instance_valid(node) || node.type != node.Type.Magazine || !node.target:
 		return

@@ -63,7 +63,7 @@ static func get_mag_range(key: String) -> Array:
 	return entry.get(field, entry.get("mag_range", _FALLBACK_MAG))
 
 
-static func sync_optic_state(rig) -> void:
+static func sync_optic_state(rig: WeaponRig) -> void:
 	var optic = rig.activeOptic if rig else null
 	# BUGFIX: vanilla forgets to reset secondaryOptic when equipping another optic, breaking other scopes in PIP mode
 	if gameData.secondaryOptic && !(optic && optic.secondary):
@@ -85,7 +85,7 @@ static func sync_optic_state(rig) -> void:
 			rig.aimOffset = optic.position.y
 
 
-static func get_optic_geometry(optic) -> Dictionary:
+static func get_optic_geometry(optic: Node3D) -> Dictionary:
 	if !optic:
 		return {"lens_center": Vector3.ZERO, "lens_radius": 0.0, "eye_relief": Vector2.ZERO, "isFFP": false}
 
@@ -124,7 +124,7 @@ static func compute_angle(lens_radius: float, lens_distance: float) -> float:
 	return 0.0
 
 
-static func _measure_lens(optic, key: String) -> Dictionary:
+static func _measure_lens(optic: Node3D, key: String) -> Dictionary:
 	if _lens_geometry_cache.has(key):
 		return _lens_geometry_cache[key]
 

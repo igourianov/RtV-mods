@@ -28,7 +28,7 @@ func _ready() -> void:
 	_label = get_parent().get_child(0)
 
 
-func set_rig(rig) -> void:
+func set_rig(rig: WeaponRig) -> void:
 	_rig = rig
 
 

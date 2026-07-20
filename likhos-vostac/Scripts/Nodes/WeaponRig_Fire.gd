@@ -24,7 +24,7 @@ func _physics_process(delta: float) -> void:
 	rig.FireImpulse(delta)
 
 
-func _fire_input(rig) -> void:
+func _fire_input(rig: WeaponRig) -> void:
 	var slotData = rig.slotData
 	var data = rig.data
 
@@ -67,7 +67,7 @@ func _fire_input(rig) -> void:
 		Out.protip("low-internal-ammo", "Hold [%s] to load more ammo" % Inputs.get_binding("prepare"))
 
 
-func _play_dry_click(rig) -> void:
+func _play_dry_click(rig: WeaponRig) -> void:
 	Out.debug("_play_dry_click")
 	if !is_instance_valid(_dry_click_sound):
 		_dry_click_sound = AudioChunkPlayer.new(_CLICK_AUDIO, _CLICK_VOLUME_OFFSET)

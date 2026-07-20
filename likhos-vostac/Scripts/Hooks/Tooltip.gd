@@ -7,13 +7,13 @@ const ROW_EYE := "likho_eye_row"
 
 
 func on_reset_post():
-	var tooltip = _lib._caller
+	var tooltip: Node = _lib._caller
 	_hide_row(tooltip, ROW_MAG)
 	_hide_row(tooltip, ROW_EYE)
 
 
-func on_update_post(item) -> void:
-	var tooltip = _lib._caller
+func on_update_post(item: Item) -> void:
+	var tooltip: Node = _lib._caller
 	if !tooltip:
 		return
 

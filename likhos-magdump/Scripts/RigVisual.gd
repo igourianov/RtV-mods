@@ -160,7 +160,7 @@ func on_ready_post() -> void:
 	_resolve_pointer(rig, false)
 
 
-func on_update_rig_pre(_animate = false) -> void:
+func on_update_rig_pre(_animate := false) -> void:
 	var rm: Node = _lib._caller
 	if !rm || rm.get_child_count() == 0:
 		return
@@ -191,14 +191,14 @@ func on_update_rig_pre(_animate = false) -> void:
 		_resolve_pointer(rig, false)
 
 
-func refresh_after_cross_swap(iface) -> void:
+func refresh_after_cross_swap(iface: Node) -> void:
 	var rig = _get_rig(iface)
 	if !rig:
 		return
 	_await_then_resolve(rig)
 
 
-func refresh_after_attach(iface) -> void:
+func refresh_after_attach(iface: Node) -> void:
 	var rig = _get_rig(iface)
 	if !rig:
 		return
@@ -208,7 +208,7 @@ func refresh_after_attach(iface) -> void:
 	_resolve_pointer(rig, false)
 
 
-func _get_rig(iface):
+func _get_rig(iface: Node):
 	if !iface || !iface.rigManager:
 		return null
 	var rm: Node = iface.rigManager
@@ -220,7 +220,7 @@ func _get_rig(iface):
 	return rig
 
 
-func _await_then_resolve(rig) -> void:
+func _await_then_resolve(rig: WeaponRig) -> void:
 	var tree: SceneTree = rig.get_tree()
 	if !tree:
 		return
@@ -230,7 +230,7 @@ func _await_then_resolve(rig) -> void:
 	_resolve_pointer(rig, true)
 
 
-func _resolve_pointer(rig, transfer_visibility: bool) -> void:
+func _resolve_pointer(rig: WeaponRig, transfer_visibility: bool) -> void:
 	var native: MeshInstance3D = rig.get_meta(NATIVE_KEY)
 	var overlays: Dictionary = rig.get_meta(OVERLAYS_KEY)
 	var mag_file := _get_loaded_mag_file(rig)
@@ -262,7 +262,7 @@ func _find_mag_bone(skeleton: Skeleton3D) -> String:
 	return ""
 
 
-func _get_loaded_mag_file(rig) -> String:
+func _get_loaded_mag_file(rig: WeaponRig) -> String:
 	if !rig.slotData:
 		return ""
 	for nested in rig.slotData.nested:
