@@ -4,12 +4,14 @@ Conventions and judgment calls for authoring and reviewing mod code, especially 
 
 ## Syntax rules
 
-* When writing boolean operations - use C-type operators
-* Use colon for dictionary {"key": "value"} pairs 
+* Avoid creating untyped vars and consts. Use type inference with `:=` if possible, otherwise declare type explicitly.
+* Use C-type boolean operators `||` and `&&` inistead of `or` and `and`.
+* Use colon for dictionary `{"key": "value"}` declaration 
 * Enforce two empty lines befween functions
 * Enforce Tab identation
 * Use `!obj` style for `null` checks instead of `obj == null`
-* Do not mix `elif` condition trees with early returns - pick one approach
+* For types that inherit `Node` use `is_instance_valid(obj)` instead of a null check to make sure the instance wasn't disposed
+* Do not mix `if/elif` condition trees with early returns within the same function - pick one approach
 * Comments must add context the code cannot convey (constraints, reasons, gotchas). Do not narrate what the code already says
 
 ## State machines
@@ -41,7 +43,6 @@ Conventions and judgment calls for authoring and reviewing mod code, especially 
 - **Extract a repeated sub-expression into a named local** (e.g. `var timer_expired: bool = _timer <= 0.0`) for readability and single evaluation.
 - **One variable per concept, reused across mutually exclusive phases.** Sequential, never-concurrent phases can share a single timer rather than one per phase. When merging, ensure it is decremented exactly once per frame (watch for double-decrement).
 - **Don't keep vestigial vars.** A member only assigned-then-immediately-read should be a local or inlined. A member nulled in cleanup but always reassigned before use is dead housekeeping.
-- **Type locals explicitly** (`: bool`, `: float`), matching existing style.
 
 ## Guards and validity
 
