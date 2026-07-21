@@ -9,8 +9,8 @@ Conventions and judgment calls for authoring and reviewing mod code, especially 
 * Avoid creating untyped arrays and dictionaries wherever possible without re-allocating shadow copies. Note that GDScript doesn't allow casting untyped collections into typed equivalent.
 * Use C-type boolean operators `||` and `&&` instead of `or` and `and`.
 * Use colon for dictionary `{"key": "value"}` declaration.
-* Enforce two empty lines befween functions.
-* Enforce Tab identation.
+* Enforce two empty lines between functions.
+* Enforce Tab indentation.
 * Use `!obj` style for `null` checks instead of `obj == null`.
 * For types that inherit `Node` use `is_instance_valid(obj)` instead of a null check to make sure the instance wasn't disposed.
 * Do not mix `if/elif` condition trees with early returns within the same function - pick one approach.
@@ -23,7 +23,7 @@ Conventions and judgment calls for authoring and reviewing mod code, especially 
 
 - **Use `await` for linear sequences; don't rebuild it as a delta-timer FSM.** "Play animation, wait for it, apply changes" should just `await` (e.g. `await await_animation(...)`, `await play(...)`). Do not reimplement animation-completion waiting with a busy state, a kind-tag, a length pre-read and an on-complete dispatch. Reserve a per-frame `_process` FSM for genuinely *interactive* phases (hold, pause, release) that would otherwise be a polling loop (`while ...: await process_frame`).
 
-- **A state must have distinct per-frame processing.** If a candidate state runs the same processing as another and differs only in a one-time terminal action, it is a flag in disguise. collapse it. Conversely, a bit that *selects a transition* belongs in the enum, not a parallel bool.
+- **A state must have distinct per-frame processing.** If a candidate state runs the same processing as another and differs only in a one-time terminal action, it is a flag in disguise. Collapse it. Conversely, a bit that *selects a transition* belongs in the enum, not a parallel bool.
   - Promote transition-selecting flags into states (e.g. a "released early" bit becomes a distinct state).
   - Don't create a state that only carries a terminal parameter of a shared phase; pass it as data instead.
   - An inert "an awaited sequence owns the machine" marker state is acceptable when its only job is to block re-entry while a coroutine finishes itself, and existing gameplay flags don't already cover that window.
@@ -49,7 +49,7 @@ Conventions and judgment calls for authoring and reviewing mod code, especially 
 ## Guards and validity
 
 - **`is_instance_valid()` only earns its place after an `await`,** where the node can be freed mid-wait. Synchronous reads of a member set earlier in the same call don't need it.
-- **Free-running timers are safe only if reset on entry and read only when state-gated.** Hoisting a `_timer -= delta` out of its state guard is acceptable when the timer is reset on every phase entry and read only inside a state-gated condition. The cost is a latent footgun (a future reader in another state sees a decrementing value) plus minor wasted work. weigh it.
+- **Free-running timers are safe only if reset on entry and read only when state-gated.** Hoisting a `_timer -= delta` out of its state guard is acceptable when the timer is reset on every phase entry and read only inside a state-gated condition. The cost is a latent footgun (a future reader in another state sees a decrementing value) plus minor wasted work. Weigh it.
 
 ## Behavior and process
 
