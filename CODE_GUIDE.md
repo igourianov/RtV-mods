@@ -6,6 +6,7 @@ Conventions and judgment calls for authoring and reviewing mod code, especially 
 
 * Avoid creating untyped vars and consts. Use type inference with `:=` if possible and RHS is a simple function call or a statement, otherwise declare type explicitly.
 * Format explicit var/const declaration like this `var var_name: Type`.
+* Avoid creating untyped arrays and dictionaries wherever possible without re-allocating shadow copies. Note that GDScript doesn't allow casting untyped collections into typed equivalent.
 * Use C-type boolean operators `||` and `&&` instead of `or` and `and`.
 * Use colon for dictionary `{"key": "value"}` declaration.
 * Enforce two empty lines befween functions.
