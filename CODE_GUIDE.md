@@ -4,9 +4,11 @@ Conventions and judgment calls for authoring and reviewing mod code, especially 
 
 ## Syntax rules
 
-* Avoid creating untyped vars and consts. Use type inference with `:=` if possible and RHS is a simple function call or a statement, otherwise declare type explicitly.
-* Format explicit var/const declaration like this `var var_name: Type`.
-* Avoid creating untyped arrays and dictionaries wherever possible without re-allocating shadow copies. Note that GDScript doesn't allow casting untyped collections into typed equivalent.
+* Avoid creating untyped vars and consts. Use type inference with `:=` if RHS is a simple function call or a single statement, otherwise declare type explicitly. GDScript parser has trouble inferring type from complex expressions.
+* Format explicit var/const declaration like this `var var_name: Type` - note the spacing.
+* Avoid creating untyped arrays and dictionaries wherever possible without re-allocating.
+	* Note that GDScript doesn't allow casting untyped collections into typed equivalent. This expression `untyped_array as Array[int]` will produce null even if every value inside the array is int.
+	* The only way to convert an untyped array to a typed array is by creating a typed copy and using assign() method - this is an unreasonable overhead most of the time.
 * Use C-type boolean operators `||` and `&&` instead of `or` and `and`.
 * Use colon for dictionary `{"key": "value"}` declaration.
 * Enforce two empty lines between functions.
@@ -19,14 +21,14 @@ Conventions and judgment calls for authoring and reviewing mod code, especially 
 ## State machines
 
 - **`_process` drives state; `_input` only selects it.** Input handlers mutate `_state` (and minimal state payload) and nothing else. Per-frame work, scene mutation (animator, audio, shaders), timers and dispatch live in `_process`. Keep all side effects in one place.
-  - It is fine to call a complete, fire-and-forget action (a self-contained coroutine) directly from `_input`. What must not happen in `_input` is *partial-state* manipulation (un-pausing an animator, stopping a sound mid-sequence). Make those into states handled by `_process`.
+	- It is fine to call a complete, fire-and-forget action (a self-contained coroutine) directly from `_input`. What must not happen in `_input` is *partial-state* manipulation (un-pausing an animator, stopping a sound mid-sequence). Make those into states handled by `_process`.
 
 - **Use `await` for linear sequences; don't rebuild it as a delta-timer FSM.** "Play animation, wait for it, apply changes" should just `await` (e.g. `await await_animation(...)`, `await play(...)`). Do not reimplement animation-completion waiting with a busy state, a kind-tag, a length pre-read and an on-complete dispatch. Reserve a per-frame `_process` FSM for genuinely *interactive* phases (hold, pause, release) that would otherwise be a polling loop (`while ...: await process_frame`).
 
 - **A state must have distinct per-frame processing.** If a candidate state runs the same processing as another and differs only in a one-time terminal action, it is a flag in disguise. Collapse it. Conversely, a bit that *selects a transition* belongs in the enum, not a parallel bool.
-  - Promote transition-selecting flags into states (e.g. a "released early" bit becomes a distinct state).
-  - Don't create a state that only carries a terminal parameter of a shared phase; pass it as data instead.
-  - An inert "an awaited sequence owns the machine" marker state is acceptable when its only job is to block re-entry while a coroutine finishes itself, and existing gameplay flags don't already cover that window.
+	- Promote transition-selecting flags into states (e.g. a "released early" bit becomes a distinct state).
+	- Don't create a state that only carries a terminal parameter of a shared phase; pass it as data instead.
+	- An inert "an awaited sequence owns the machine" marker state is acceptable when its only job is to block re-entry while a coroutine finishes itself, and existing gameplay flags don't already cover that window.
 
 - **Collapse redundant intermediate states into a threshold or awaiter.** A phase whose only job is "wait, then flip one thing" doesn't need its own state. Express it as a small awaiter fired at the right moment.
 
