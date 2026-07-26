@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Radiola"
 id="likhos-radiola"
-version="1.0.52"
+version="1.0.53"
 prefix="[likho-radiola]"
 description="Adds extra music stations to the the radio"
 debug=false

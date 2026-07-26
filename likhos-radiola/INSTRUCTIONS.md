@@ -25,7 +25,7 @@ Ships the shared mod-lib as `Lib/`, including `AudioChunkPlayer3D.gd` used for p
 
 # Install / Uninstall
 
-Drop `likhos-radiola.vmz` into your game's `mods/` folder. On a default Steam install:
+Drop `likhos-radiola.zip` into your game's `mods/` folder. On a default Steam install:
 
 ```
 <Steam>\steamapps\common\Road to Vostok\mods\
@@ -33,4 +33,4 @@ Drop `likhos-radiola.vmz` into your game's `mods/` folder. On a default Steam in
 
 Launch the game. The mod loader picks it up automatically.
 
-To uninstall simply delete `likhos-radiola.vmz` from the `mods/` folder and relaunch the game.
+To uninstall simply delete `likhos-radiola.zip` from the `mods/` folder and relaunch the game.

@@ -1,7 +1,7 @@
 [mod]
 name="Likho's No.9"
 id="likhos-no9"
-version="1.2.88"
+version="1.2.89"
 prefix="[likho-no9]"
 description="Likho's mod reworking the Weapon Repair Kit into a reusable Weapon Cleaning Kit"
 debug=false
