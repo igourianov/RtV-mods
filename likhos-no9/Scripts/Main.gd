@@ -49,7 +49,7 @@ func _patch_wrk(lib) -> void:
 	Out.debug("found %d weapons for WRK compatibility" % compatible.size())
 
 	lib.patch(lib.Registry.ITEMS, WRK_ID, {
-		"name": "Weapon Cleaning Kit",
+		"name": "Likho's No.9 Cleaning Kit",
 		"inventory": "Cleaning Kit",
 		"rotated": "Cleaning Kit",
 		"equipment": "Cleaning Kit",

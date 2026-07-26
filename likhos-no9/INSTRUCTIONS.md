@@ -19,7 +19,7 @@ This mod uses the registry API and hooks vanilla methods through Metro Mod Loade
 
 # Install / Uninstall
 
-Drop `likhos-mr-clean.vmz` into your game's `mods/` folder. On a default Steam install:
+Drop `likhos-no9.vmz` into your game's `mods/` folder. On a default Steam install:
 
 ```
 <Steam>\steamapps\common\Road to Vostok\mods\
@@ -27,4 +27,4 @@ Drop `likhos-mr-clean.vmz` into your game's `mods/` folder. On a default Steam i
 
 Launch the game. The mod loader picks it up automatically.
 
-To uninstall simply delete `likhos-mr-clean.vmz` from the `mods/` folder and relaunch the game.
+To uninstall simply delete `likhos-no9.vmz` from the `mods/` folder and relaunch the game.

@@ -1,12 +1,12 @@
-# Likho's Mr. Clean
+# Likho's No.9
 
-RtV mod that reworks functionality of the Weapon Repair Kit into a Cleaning Kit.
+RtV mod that reworks functionality of the Weapon Repair Kit into a Cleaning Kit (reference to iconic Hoppe's No.9).
 
 Typical gun requires repair only after 10s of thousands of rounds, and it cannot be done in field conditions anyway (unless it's something very trivial like replacing firing pin). Gun cleaning makes much more sense in terms of the action mechanics and the shooting volume in this game.
 
 ## Weapon Repair Kit
 
-The old Weapon Repair Kit was awkward: pick a per gun recipe from the crafting menu, hand over a full kit, get the gun back. Twenty plus duplicated recipes cluttering the crafting tab. Mr. Clean replaces all of that with a single drag and drop interaction.
+The old Weapon Repair Kit was awkward: pick a per gun recipe from the crafting menu, hand over a full kit, get the gun back. Twenty plus duplicated recipes cluttering the crafting tab. This mod replaces all of that with a single drag and drop interaction.
 
 * Renamed to **Weapon Cleaning Kit**.
 * Drag any weapon onto the kit - the weapon's missing condition gets restored from the kit's own condition pool.
