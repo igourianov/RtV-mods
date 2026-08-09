@@ -20,7 +20,7 @@ This mod uses the registry API and hooks vanilla methods through Metro Mod Loade
 
 # Install / Uninstall
 
-Drop `likhos-magdump.zip` into your game's `mods/` folder. On a default Steam install:
+Drop `likhos-magdump.vmz` into your game's `mods/` folder. On a default Steam install:
 
 ```
 <Steam>\steamapps\common\Road to Vostok\mods\
@@ -28,4 +28,4 @@ Drop `likhos-magdump.zip` into your game's `mods/` folder. On a default Steam in
 
 Launch the game. The mod loader picks it up automatically.
 
-To uninstall simply delete `likhos-magdump.zip` from the `mods/` folder and relaunch the game.
+To uninstall simply delete `likhos-magdump.vmz` from the `mods/` folder and relaunch the game.

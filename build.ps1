@@ -203,7 +203,7 @@ foreach ($folder in $folders) {
 		$version = Get-CurrentModVersion -ModTxtPath $modTxt
 	}
 
-	$zipPath = Join-Path $ModsDir "$($folder.Name).zip"
+	$zipPath = Join-Path $ModsDir "$($folder.Name).vmz"
 	$usedLib = New-ModZip -SourceDir $folder.FullName -ZipPath $zipPath -ModId $folder.Name
 
 	$libNote = if ($usedLib) { '' } else { ' (no lib)' }

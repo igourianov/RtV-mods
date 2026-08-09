@@ -18,7 +18,7 @@ This mod uses the registry API and hooks vanilla methods through Metro Mod Loade
 
 # Install / Uninstall
 
-Drop `likhos-tacmed.zip` into your game's `mods/` folder. On a default Steam install:
+Drop `likhos-tacmed.vmz` into your game's `mods/` folder. On a default Steam install:
 
 ```
 <Steam>\steamapps\common\Road to Vostok\mods\
@@ -26,4 +26,4 @@ Drop `likhos-tacmed.zip` into your game's `mods/` folder. On a default Steam ins
 
 Launch the game. The mod loader picks it up automatically.
 
-To uninstall simply delete `likhos-tacmed.zip` from the `mods/` folder and relaunch the game.
+To uninstall simply delete `likhos-tacmed.vmz` from the `mods/` folder and relaunch the game.

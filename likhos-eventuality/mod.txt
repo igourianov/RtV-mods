@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Eventuality"
 id="likhos-eventuality"
-version="1.2.48"
+version="1.2.49"
 prefix="[likho-evt]"
 description="Likho's fixes/enhancements to the dynamic events"
 debug=false

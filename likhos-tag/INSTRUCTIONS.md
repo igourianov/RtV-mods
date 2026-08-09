@@ -18,7 +18,7 @@ Other mods that patch the same fields on the same items will conflict. Tag is in
 
 # Install / Uninstall
 
-Drop `likhos-tag.zip` into your game's `mods/` folder. On a default Steam install:
+Drop `likhos-tag.vmz` into your game's `mods/` folder. On a default Steam install:
 
 ```
 <Steam>\steamapps\common\Road to Vostok\mods\
@@ -26,4 +26,4 @@ Drop `likhos-tag.zip` into your game's `mods/` folder. On a default Steam instal
 
 Launch the game. The mod loader picks it up automatically.
 
-To uninstall simply delete `likhos-tag.zip` from the `mods/` folder and relaunch the game.
+To uninstall simply delete `likhos-tag.vmz` from the `mods/` folder and relaunch the game.

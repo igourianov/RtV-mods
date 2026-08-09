@@ -17,7 +17,7 @@ Other mods that patch the same `slots` / `size` / `*Scale` / `*Offset` fields on
 
 # Install / Uninstall
 
-Drop `likhos-second-hand.zip` into your game's `mods/` folder. On a default Steam install:
+Drop `likhos-second-hand.vmz` into your game's `mods/` folder. On a default Steam install:
 
 ```
 <Steam>\steamapps\common\Road to Vostok\mods\
@@ -25,4 +25,4 @@ Drop `likhos-second-hand.zip` into your game's `mods/` folder. On a default Stea
 
 Launch the game. The mod loader picks it up automatically.
 
-To uninstall simply delete `likhos-second-hand.zip` from the `mods/` folder and relaunch the game.
+To uninstall simply delete `likhos-second-hand.vmz` from the `mods/` folder and relaunch the game.
