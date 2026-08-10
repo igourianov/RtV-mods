@@ -17,6 +17,7 @@ Conventions and judgment calls for authoring and reviewing mod code, especially 
 * For types that inherit `Node` use `is_instance_valid(obj)` instead of a null check to make sure the instance wasn't disposed.
 * Do not mix `if/elif` condition trees with early returns within the same function - pick one approach.
 * Comments must add context the code cannot convey (constraints, reasons, gotchas). Do not narrate what the code already says.
+* Do not hard-wrap a comment sentence across lines - the editor already soft-wraps. Start a new comment line only for a new sentence or thought.
 
 ## State machines
 
