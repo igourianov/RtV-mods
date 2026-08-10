@@ -1,4 +1,5 @@
 * fixed optic reticle not tracking the weapon in PIP mode, which put it out of alignment with the laser dot
+* laser is now zeroed at 30m and invisible past that point
 
 # 2.19.1938
 * fixed rangefinder raycast colliding with open windows
