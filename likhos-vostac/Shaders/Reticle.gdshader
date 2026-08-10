@@ -8,15 +8,12 @@ uniform float size : hint_range(0.0, 1.0, 0.01) = 0.1;
 uniform float intensity : hint_range(0.0, 10.0, 1.0) = 5.0;
 uniform float shadow : hint_range(0.0, 1.0, 0.001) = 0.0;
 
+// Per-optic `size` values are authored against vanilla's view-direction UV; this rescales them onto lens UV.
+const float RETICLE_SCALE = 3.0;
+
 varying float occlusion;
 varying float spherical;
-varying vec3 reticlePosition;
 global uniform sampler2D Specular : filter_linear_mipmap;
-
-void vertex()
-{
-	reticlePosition = (MODELVIEW_MATRIX * vec4(VERTEX, 1.0)).xyz;
-}
 
 void fragment()
 {
@@ -57,8 +54,9 @@ void fragment()
 
 	// Reticle ----------------------------------------
 
-	vec3 reticleOffset = normalize(reticlePosition) + NORMAL;
-	vec2 reticleUV = (reticleOffset.xy / size) * vec2(1.0, -1.0);
+	// Deliberately lens UV, not view space. Vanilla's view-space derivation made the sight
+	// parallax-free, which held the point of aim still while the uncompensated laser dot moved.
+	vec2 reticleUV = (UV - vec2(0.5)) / (size * RETICLE_SCALE);
 	vec4 reticleSample = texture(reticle, reticleUV + vec2(0.5, 0.5));
 	float reticleAlpha = reticleSample.a;
 	vec3 reticleColor = reticleSample.rgb * vec3(intensity, 0.0, 0.0) * reticleAlpha;
