@@ -52,7 +52,7 @@ static func apply(lib) -> void:
 			Out.warning("could not find gun: %s" % gun_id)
 			continue
 
-		var mags: Array = []
+		var mags: Array[ItemData] = []
 		for mag_id in COMPAT[gun_id]:
 			var mag: Variant = lib.get_entry(lib.Registry.ITEMS, mag_id)
 			if mag == null:
