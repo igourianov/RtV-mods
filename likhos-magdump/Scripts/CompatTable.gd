@@ -47,14 +47,14 @@ const MAG_STATICS := {
 
 static func apply(lib) -> void:
 	for gun_id in COMPAT:
-		var gun: Variant = lib.get_entry(lib.Registry.ITEMS, gun_id)
+		var gun = lib.get_entry(lib.Registry.ITEMS, gun_id)
 		if gun == null:
 			Out.warning("could not find gun: %s" % gun_id)
 			continue
 
 		var mags: Array[ItemData] = []
 		for mag_id in COMPAT[gun_id]:
-			var mag: Variant = lib.get_entry(lib.Registry.ITEMS, mag_id)
+			var mag = lib.get_entry(lib.Registry.ITEMS, mag_id)
 			if mag == null:
 				Out.warning("could not find attachment: %s | for gun: %s" % [mag_id, gun_id])
 			else:
@@ -71,7 +71,7 @@ static func _inject_mags(lib, gun: ItemData, mags: Array[ItemData]) -> void:
 	if mags.is_empty():
 		return
 
-	var native_mag: Variant = null
+	var native_mag = null
 	for c in gun.compatible:
 		if c.type == "Attachment" && c.subtype == "Magazine":
 			native_mag = c

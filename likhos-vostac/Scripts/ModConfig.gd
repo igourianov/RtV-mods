@@ -82,7 +82,7 @@ static func locked() -> bool:
 
 
 static func _get_config_value(config: ConfigFile, section: String, key: String, default_val):
-	var value: Variant = config.get_value(section, key, {}).get("value", default_val)
+	var value = config.get_value(section, key, {}).get("value", default_val)
 	if section == "Dropdown":
 		value = value.substr(1)
 	return value

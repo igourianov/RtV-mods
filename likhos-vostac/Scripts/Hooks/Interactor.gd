@@ -2,7 +2,7 @@ extends RefCounted
 
 var gameData := preload("res://Resources/GameData.tres")
 
-var _lib: Variant
+var _lib
 
 
 func _init(lib) -> void:

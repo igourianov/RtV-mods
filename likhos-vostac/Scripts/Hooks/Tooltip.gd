@@ -35,7 +35,7 @@ func on_update_post(item: Item) -> void:
 			_show_row(tooltip, ROW_MAG, "Magnification:", text)
 
 	if entry.has("eye_relief"):
-		var er: Variant = entry["eye_relief"]
+		var er = entry["eye_relief"]
 		if er is Vector2:
 			_show_row(tooltip, ROW_EYE, "Eye Relief:", "%s-%s cm" % [_fmt_num(er.x), _fmt_num(er.y)])
 
