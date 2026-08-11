@@ -231,6 +231,7 @@ if (-not $fileId) {
 	throw "No file_id for '$modId' in '$configPath'. Take it from the mod's file URL on Nexus."
 }
 
+# The zip is only a shell Nexus insists on; the vmz inside it is the mod, so that is what gets named.
 $fileName = "$modId.vmz"
 $fileCategory = if ($Category) { $Category } elseif ($settings.category) { $settings.category } else { 'main' }
 $bumpModVersion = if ($NoBumpModVersion) { $false } elseif ($null -ne $settings.update_mod_version) { [bool]$settings.update_mod_version } else { $true }
