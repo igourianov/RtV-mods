@@ -8,6 +8,7 @@ vostok-mod-loader/
 */Lib/
 
 build.config.json
+nexus-api.key
 *.uid
 
 __pycache__/

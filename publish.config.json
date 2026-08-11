@@ -1,0 +1,20 @@
+{
+  "nexus": {
+    "game": "roadtovostok"
+  },
+  "mods": {
+    "likhos-vostac": { "mod_id": 96, "file_id": 7683711 },
+    "likhos-eventuality": { "mod_id": 98, "file_id": 7694790 },
+    "likhos-tacmed": { "mod_id": 99, "file_id": 7694847 },
+    "likhos-no9": { "mod_id": 106, "file_id": 7716867 },
+    "likhos-keymod": { "mod_id": 107, "file_id": 7716903 },
+    "likhos-magdump": { "mod_id": 109, "file_id": 7716993 },
+    "likhos-second-hand": { "mod_id": 111, "file_id": 7721556 },
+    "likhos-tag": { "mod_id": 112, "file_id": 7721610 },
+    "likhos-radiola": { "mod_id": 113, "file_id": 7721655 },
+    "likhos-radiola-doomer": { "mod_id": 113, "file_id": 7721661, "category": "optional", "update_mod_version": false },
+    "likhos-radiola-hardboss": { "mod_id": 113, "file_id": 7721664, "category": "optional", "update_mod_version": false },
+    "likhos-radiola-kolkhoz": { "mod_id": 113, "file_id": 7721670, "category": "optional", "update_mod_version": false },
+    "likhos-radiola-sovietwave": { "mod_id": 113, "file_id": 7721685, "category": "optional", "update_mod_version": false }
+  }
+}
