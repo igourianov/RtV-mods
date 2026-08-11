@@ -4,7 +4,6 @@ param(
 	[string]$Mod,
 	[string]$Vmz,
 	[string]$ApiKey,
-	[string]$Name,
 	[ValidateSet('main', 'optional', 'miscellaneous')]
 	[string]$Category,
 	[switch]$NoArchive,
@@ -76,7 +75,7 @@ function Get-ModInfo {
 	}
 
 	$info = @{}
-	foreach ($key in @('id', 'name', 'version')) {
+	foreach ($key in @('id', 'version')) {
 		$m = [regex]::Match($content, "(?m)^$key\s*=\s*`"([^`"]+)`"")
 		if (-not $m.Success) {
 			throw "mod.txt in '$ZipPath' has no $key entry."
@@ -232,14 +231,10 @@ if (-not $fileId) {
 	throw "No file_id for '$modId' in '$configPath'. Take it from the mod's file URL on Nexus."
 }
 
-# Nexus rejects square brackets, which mod names use for pack suffixes.
-$fileName = if ($Name) { $Name } else { $modInfo.name -replace '\[', '(' -replace '\]', ')' }
+$fileName = "$modId.vmz"
 $fileCategory = if ($Category) { $Category } elseif ($settings.category) { $settings.category } else { 'main' }
 $bumpModVersion = if ($NoBumpModVersion) { $false } elseif ($null -ne $settings.update_mod_version) { [bool]$settings.update_mod_version } else { $true }
 
-if ($fileName -notmatch "^[a-zA-Z0-9 _'().-]+\z" -or $fileName.Length -gt 50) {
-	throw "File name '$fileName' is rejected by Nexus. Allowed: letters, digits, space and _'().- up to 50 chars."
-}
 if ($version -notmatch '^[a-zA-Z0-9.-]+\z' -or $version.Length -gt 50) {
 	throw "Version '$version' is rejected by Nexus. Allowed: letters, digits and .- up to 50 chars."
 }
