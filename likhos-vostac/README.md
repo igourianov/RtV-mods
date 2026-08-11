@@ -21,6 +21,7 @@ Comprehensive RtV overhaul that modifies weapon positions, handling mechanics, o
 
 ## Aiming & Optics
 
+* Laser aiming devices are now zeroed at 30m and fade out at 50m instead of being parallel to infinity
 * Mouse sensitivity scales with stance and progressively with zoom level + lerp() on transition instead of snapping
 * Ability to toggle the secondary optic out of aim, with a visual cue of the toggle
 * Reworked the PIP scope mode for realism
@@ -44,6 +45,7 @@ Comprehensive RtV overhaul that modifies weapon positions, handling mechanics, o
 
 ## Vanilla Bug Fixes
 
+* PIP viewport no longer bobs independently from the weapon rig
 * Ammo check no longer forces weapon into raised position (prior stance preserved)
 * Canted aim activation no longer blocked by interactables
 * Disabled interactable tooltip while aiming, so it doesn't blocks vision when aiming around doorways
