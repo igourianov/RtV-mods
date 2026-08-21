@@ -12,12 +12,8 @@ Conventions and judgment calls for authoring and reviewing mod code, especially 
 * Use C-type boolean operators `||` and `&&` instead of `or` and `and`.
 * Use colon for dictionary `{"key": "value"}` declaration.
 * Enforce two empty lines between functions.
-* Enforce Tab indentation.
 * Use `!obj` style for `null` checks instead of `obj == null`.
 * For types that inherit `Node` use `is_instance_valid(obj)` instead of a null check to make sure the instance wasn't disposed.
-* Do not mix `if/elif` condition trees with early returns within the same function - pick one approach.
-* Comments must add context the code cannot convey (constraints, reasons, gotchas). Do not narrate what the code already says.
-* Do not hard-wrap a comment sentence across lines - the editor already soft-wraps. Start a new comment line only for a new sentence or thought.
 
 ## State machines
 
@@ -35,19 +31,7 @@ Conventions and judgment calls for authoring and reviewing mod code, especially 
 
 - **Mind same-frame fall-through with early-return ifs.** A `match` evaluates the subject once; an `if` chain re-reads `_state` after each block. When a block mutates `_state`, it must `return` so the next `if` doesn't re-match the new state and run two phases in one frame. Prefer flat, uniform `if _state == X: ... return` handlers (consistent with the rule against mixing elif trees with early returns).
 
-## Functions
-
-- **Inline single-use helpers.** Keep a helper only when shared by 2+ callers or when it genuinely clarifies. Fold one-call helpers back into the call site.
-- **Collapse two functions that differ only by a constant into one bool/param function** (e.g. show/hide pair → `_set(shown: bool)`).
-- **Name a function for what it does, not the path that triggered it.** A single cleanup routine can serve both normal completion and `_exit_tree` teardown.
-- **A bool param that fully determines behavior is borderline.** Fine when the paths share most logic; if they diverge heavily, prefer two states/functions.
-
-## Variables
-
-- **Hoist a value used by multiple branches to the top of the function** (e.g. `var rig = get_parent()` once per `_process`, not per branch).
-- **Extract a repeated sub-expression into a named local** (e.g. `var timer_expired: bool = _timer <= 0.0`) for readability and single evaluation.
-- **One variable per concept, reused across mutually exclusive phases.** Sequential, never-concurrent phases can share a single timer rather than one per phase. When merging, ensure it is decremented exactly once per frame (watch for double-decrement).
-- **Don't keep vestigial vars.** A member only assigned-then-immediately-read should be a local or inlined. A member nulled in cleanup but always reassigned before use is dead housekeeping.
+- **A timer shared across sequential, mutually exclusive phases must be decremented exactly once per frame.** Watch for double-decrement when merging per-phase timers into one.
 
 ## Guards and validity
 
