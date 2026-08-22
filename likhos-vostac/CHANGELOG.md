@@ -1,4 +1,5 @@
 * weapon collision now uses the patrol/stow position, fixing the rig flicker near walls
+* working the bolt on Mosin/870 no longer drops you out of aim
 
 # 2.19.1961
 * fixed optic reticle not tracking the weapon in PIP mode, which put it out of alignment with the laser dot

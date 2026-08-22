@@ -114,17 +114,18 @@ func on_rig_update_post(_animate: bool) -> void:
 
 	var rig = manager.get_child(manager.get_child_count() - 1) if manager.get_child_count() else null
 	var optic = rig.activeOptic if rig else null
+	var data = rig.data if rig else null
 
-	# save weapon weight for the handling speed calc
+	# save weapon weight for the handling speed calc, and the action for the reload lock
 	var weapon = rig.weaponSlot.get_children()[0] if rig && rig.weaponSlot else null
 	ModConfig.current_weapon_weight = weapon.Weight() if weapon else 0.0
+	ModConfig.current_weapon_action = data.weaponAction if data else ""
 	Out.debug("weapon weight: %.1fkg" % ModConfig.current_weapon_weight)
 
 	ScopeCatalog.sync_optic_state(rig)
 
 	# fold/unfold iron sights based on optic presence
 	# BUGFIX - vanilla doens't check frontSightIndex, which casues flicker on M4A1, which doens't have foldable front sight
-	var data = rig.data if rig else null
 	if data && data.foldSights:
 		var rot = Quaternion.from_euler(Vector3(data.foldSightsRotation if optic else 0.0, 0, 0))
 		rig.skeleton.set_bone_pose_rotation(rig.backSightIndex, rot)

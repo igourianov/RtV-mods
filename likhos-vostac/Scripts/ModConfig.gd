@@ -2,6 +2,7 @@
 # dynamic state vars
 static var current_scope_mag: float = 1.0
 static var current_weapon_weight: float = 0.0
+static var current_weapon_action: String = ""
 static var ammo_check_view := false
 static var hold_breath_state: float = 0.0
 static var optic_shiner: bool = false
@@ -75,8 +76,9 @@ static func gated() -> bool:
 
 
 # tier 2 - modal weapon actions that own the hands until they complete
+# vanilla flags a manual bolt cycle as a reload, but it's a single motion that must not drop the aim
 static func locked() -> bool:
-	return (gameData.isReloading || gameData.isInspecting || gameData.isChecking
+	return ((gameData.isReloading && current_weapon_action != "Manual") || gameData.isInspecting || gameData.isChecking
 		|| gameData.isInserting || gameData.isPlacing || gameData.isDrawing
 		|| gameData.isClearing)
 
