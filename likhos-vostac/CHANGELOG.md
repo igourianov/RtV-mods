@@ -1,3 +1,5 @@
+* weapon collision now uses the patrol/stow position, fixing the rig flicker near walls
+
 # 2.19.1961
 * fixed optic reticle not tracking the weapon in PIP mode, which put it out of alignment with the laser dot
 * laser is now zeroed at 30m, with the dot fading out between there and 50m

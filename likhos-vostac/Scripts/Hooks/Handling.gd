@@ -219,7 +219,7 @@ func _set_target(h: Node) -> void:
 	var rig = h.get_parent()
 	var optic = rig.activeOptic
 
-	if gameData.isClearing || gameData.isColliding:
+	if gameData.isClearing:
 		h.targetPosition = data.collisionPosition
 		h.targetRotation = data.collisionRotation
 		return
@@ -251,6 +251,11 @@ func _set_target(h: Node) -> void:
 	if ModConfig.binoculars_active:
 		h.targetPosition = data.lowPosition + _STOW_POS_OFFSET
 		h.targetRotation = _stow_rot
+		return
+
+	# below the admin poses so their animations play out; patrol/stow instead of data.collisionPosition clears the wall and keeps free-look pitch from re-aiming the collision ray
+	if gameData.isColliding:
+		_set_target_idle(h)
 		return
 
 	if gameData.isCanted:
