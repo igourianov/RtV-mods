@@ -1,3 +1,6 @@
+# 2.19.1968
+* weapon collision now scales with actual weapon length and any fitted muzzle device, instead of vanilla's four coarse buckets
+
 # 2.19.1966
 * weapon collision now uses the patrol/stow position, fixing the rig flicker near walls
 * working the bolt on Mosin/870 no longer drops you out of aim

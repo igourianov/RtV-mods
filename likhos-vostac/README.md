@@ -55,6 +55,7 @@ Comprehensive RtV overhaul that modifies weapon positions, handling mechanics, o
 * Fixed HAMR's secondary optic vertical offset on all AK rifles (not RK), SVD and Vintorez (missing scale calc)
 * Fixed HAMR causing major flickering when toggling secondary on M4A1 (bug with foldable iron sights)
 * Fixed laser ray misaligned with collision dot. You may notice that bullet holes are now very slightly offset from the laser dot - that's how real lasers work.
+* Fixed weapon collision being sized from coarse buckets instead of actual weapon length - an MP7 deflected off walls it was nowhere near, a Mosin clipped through them. Suppressors now count too.
 * Fixed flashlight draining battery while the game world is frozen
 * Fixed bugs with optic rail movement due to incorrect limits and errors in floating point math
 

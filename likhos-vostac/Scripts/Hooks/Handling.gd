@@ -39,6 +39,8 @@ const _STOW_POS_OFFSET := Vector3(0.15, -0.25, 0.3)
 const _STOW_HOLD_LOOK_DOWN := 0.2
 const _LEFT_ARM_BONE := "Arm_Upper_L"
 const _NEAR_ZERO := Vector3(0.001, 0.001, 0.001)
+# longest stock rig measures ~1.22m, plus ~0.2m for a muzzle device; anything past this means the measurement went wrong
+const _MAX_PROBE_LENGTH := 2.0
 
 # the handling speed modifier - read as % of base
 enum HandlingMode {
@@ -131,6 +133,25 @@ func on_rig_update_post(_animate: bool) -> void:
 		rig.skeleton.set_bone_pose_rotation(rig.backSightIndex, rot)
 		if rig.frontSightIndex:
 			rig.skeleton.set_bone_pose_rotation(rig.frontSightIndex, rot)
+
+	# BUGFIX - vanilla sizes the collision probe from a coarse authored bucket, so short weapons deflect off walls they are nowhere near and the longest rifles clip walls they should have deflected from
+	if rig is not WeaponRig || !rig.collision || !rig.muzzle:
+		return
+
+	var handling: Node3D = rig.get_node_or_null("Handling")
+	if !handling:
+		Out.warning("no Handling node on the %s rig - collision probe left at its authored length" % data.file)
+		return
+
+	# Handling-local space shares the probe's origin and axis but excludes the pose, and highPosition is the most forward firing pose, so the probe covers aim and canted too
+	var muzzle_offset: float = handling.to_local(rig.muzzle.global_position).z
+	var reach: float = -data.highPosition.z + muzzle_offset
+
+	if reach <= 0.0 || reach > _MAX_PROBE_LENGTH:
+		Out.warning("collision probe reach %.2fm out of range on the %s rig - left at its authored length" % [reach, data.file])
+		return
+
+	rig.collision.target_position.z = reach
 
 
 func on_input(evt: InputEvent) -> void:
