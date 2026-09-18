@@ -85,6 +85,11 @@ func _process(delta: float) -> void:
 	var timer_expired: bool = _state_timer <= 0.0
 	var rig = get_parent()
 
+	# UI can open during the hold window (isChecking not yet set) and swallow the release, so abandon the hold
+	if _state == State.PENDING && is_engine_busy():
+		_state = State.NONE
+		return
+
 	if _state == State.PENDING && timer_expired:
 		_state = State.PULLING
 		gameData.isChecking = true
