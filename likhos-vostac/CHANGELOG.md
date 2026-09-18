@@ -1,3 +1,4 @@
+# 2.19.1969
 * fixed soft lock when opening inventory while holding reload to check ammo
 
 # 2.19.1968
