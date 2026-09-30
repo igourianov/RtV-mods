@@ -26,7 +26,7 @@ Results of per-feature verification of all mods against the new vanilla version 
   - `likhos-no9/Scripts/Interface.gd:9` preloads `res://Audio/Crafting/Craft_Metal.tres`. Vanilla deleted `Audio/Crafting/`; the resource moved to `res://Audio/UI/UI_Craft_Metal.tres`. The failed preload breaks `Interface.gd`, `Main.gd` and the `interface-release-pre` hook.
   - Fix: update the path. Optionally guard with a file existence check.
 
-- [ ] **no9: kit refill recipe audio**
+- [x] **no9: kit refill recipe audio** (path updated)
   - `likhos-no9/Recipes/Cleaning_Kit_Refill.tres:4` loads `res://Audio/Crafting/Craft_Plastic.tres`, deleted in vanilla.
   - Fix: use `res://Audio/UI/UI_Craft_Plastic.tres` (no uid needed).
 
