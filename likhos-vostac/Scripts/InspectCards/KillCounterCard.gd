@@ -22,6 +22,7 @@ const _HEIGHT := _TICK_LENGTH + _PAD * 2.0
 
 const _KILL_COLOR := Color(1, 1, 1)
 const _BOSS_KILL_COLOR := Color(0.62, 0.2, 0.85)
+const _NOMAD_KILL_COLOR := Color(0.25, 0.75, 0.3)
 const _PLACEHOLDER_COLOR := Color(0.25, 0.25, 0.25, 0.2)
 const _SHADOW_COLOR := Color(0.0, 0.0, 0.0, 0.35)
 
@@ -59,7 +60,12 @@ func _paint() -> void:
 func _slot_color(i: int) -> Color:
 	if i >= _slice.size():
 		return _PLACEHOLDER_COLOR
-	return _BOSS_KILL_COLOR if _slice[i] == 1 else _KILL_COLOR
+	match _slice[i]:
+		AIData.Faction.Boss:
+			return _BOSS_KILL_COLOR
+		AIData.Faction.Nomad:
+			return _NOMAD_KILL_COLOR
+	return _KILL_COLOR
 
 
 func _draw_tick(x: float, cy: float, seed_val: int, color: Color) -> void:

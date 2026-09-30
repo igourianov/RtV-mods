@@ -1,3 +1,6 @@
+# 2.20.1984
+* nomad kills now show green on the kill counter
+
 # 2.20.1982
 * number of compat updates for the game Build 2 (MML 3.4.1 is required!)
 

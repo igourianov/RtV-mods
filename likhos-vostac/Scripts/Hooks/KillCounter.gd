@@ -13,8 +13,7 @@ func on_ai_death(_direction = null, _force = null) -> void:
 	var ai = _lib._caller
 	if !ai || ai.dead:
 		return
-	var isBoss: bool = ai.variant && ai.variant.faction == AIData.Faction.Boss
-	ModConfig.kills.append(1 if isBoss else 0)
+	ModConfig.kills.append(ai.variant.faction if ai.variant else AIData.Faction.Bandit)
 
 
 func on_load_scene_pre(_scene = null) -> void:

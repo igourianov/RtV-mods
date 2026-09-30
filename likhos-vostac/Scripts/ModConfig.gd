@@ -8,7 +8,7 @@ static var hold_breath_state: float = 0.0
 static var optic_shiner: bool = false
 static var binoculars_active: bool = false
 static var binoculars_mag: float = 6.0
-static var kills: PackedByteArray = PackedByteArray([0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])
+static var kills: PackedByteArray = PackedByteArray([0, 0, 0, 1, 2, 3, 0, 4, 0, 1, 0, 0, 0])
 static var gameData := preload("res://Resources/GameData.tres")
 
 # config vars
