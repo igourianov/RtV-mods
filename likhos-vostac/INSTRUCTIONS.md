@@ -1,7 +1,7 @@
 # Requirements
 
 - Road to Vostok 0.2.0.0 (Godot 4.6.3)
-- [Metro Mod Loader (MML)](https://www.nexusmods.com/roadtovostok/mods/20) v3.2.1 or later (separate install, not bundled with the game)
+- [Metro Mod Loader (MML)](https://www.nexusmods.com/roadtovostok/mods/20) v3.4.1 or later (separate install, not bundled with the game)
 - [Mod Configuration Menu (MCM)](https://www.nexusmods.com/roadtovostok/mods/58) (optional)
 
 # Compatibility
