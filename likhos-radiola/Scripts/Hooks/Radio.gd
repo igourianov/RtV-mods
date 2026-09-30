@@ -56,12 +56,13 @@ func on_physics_process_pre(_delta: float) -> void:
 		return
 	radio.set_meta(META_AUTOROLL, true)
 
-	# Vanilla may already have switched the radio on (random roll). The mod's own chance covers the rest.
 	# The gathering radio always plays its own broadcast.
 	if radio.gathering:
 		return
 
-	if !radio.active && randf() * 100.0 >= ModConfig.on_chance:
+	# The mod's chance replaces vanilla's random-on roll, so discard whatever vanilla rolled.
+	radio.active = false
+	if randf() * 100.0 >= ModConfig.on_chance:
 		return
 
 	var stations := RadioRegistry.STATIONS
@@ -70,7 +71,6 @@ func on_physics_process_pre(_delta: float) -> void:
 		radio.active = true
 		return
 
-	radio.active = false
 	_player(radio).start(stations[pick - 1])
 
 

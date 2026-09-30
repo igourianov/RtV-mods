@@ -16,7 +16,7 @@ This mod hooks vanilla methods through Metro Mod Loader (declared in `[hooks]`):
 
 **Pre / post hooks** (compose with other mods):
 
-- `Radio._physics_process` (pre) - once per radio (not the gathering radio), rolls the MCM on-chance unless vanilla already switched it on, then picks the vanilla station or any registered pack station at random.
+- `Radio._physics_process` (pre) - once per radio (not the gathering radio), discards vanilla's random-on roll, rolls the MCM on-chance instead, then picks the vanilla station or any registered pack station at random.
 - `Radio.UpdateTooltip` (post) - relabels the interaction prompt to show the current state instead of the next action.
 
 Creates a runtime audio bus `LikhosRadiola` (high-pass + low-pass + lo-fi distortion) shared by all custom stations.

@@ -325,7 +325,7 @@ Shrinks AKS-74U, VSS, Remington 870, KP-31 and Mosin by one cell, and lets AKS-7
 * Files: `Scripts/Hooks/Radio.gd` `on_update_tooltip_post`. Hook: `radio-updatetooltip-post`.
 
 #### Auto-play on find (random station)
-* Radios switched on by vanilla (0.2.0.0 random-on, about 5%) or by the mod's own MCM chance (default 75%) pick uniformly between the vanilla broadcast and each pack station. The gathering radio is left alone.
+* The mod's MCM chance (default 75%) replaces vanilla's 0.2.0.0 random-on roll (about 5%). Radios that pass pick uniformly between the vanilla broadcast and each pack station. The gathering radio is left alone.
 * Files: `Scripts/Hooks/Radio.gd` `on_physics_process_pre`, `Scripts/ModConfig.gd`. Hook: `radio-_physics_process-pre`.
 
 #### Wall-clock playback
