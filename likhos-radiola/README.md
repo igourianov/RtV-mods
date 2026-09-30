@@ -7,7 +7,7 @@ This mod reworks in-game radio, adding several authentic new stations to listen 
 * Created plugin system to distribute new stations later (can be used by other modders)
 * Station playback is driven by the wall clock (doesn't reset on activation), as real radio should 
 * Realistic static and sound quality for old FM radio
-* Radio now plays by default when you find it (adjust chance in MCM)
+* Radios that the game spawns already switched on now pick a random station (vanilla or any installed pack)
 * Reworked radio interaction to show current state instead of the next action (it was confusing)
 
 ## Plugins

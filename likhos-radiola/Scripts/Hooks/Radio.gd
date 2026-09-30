@@ -3,7 +3,6 @@ extends RefCounted
 const RadioRegistry = preload("../RadioRegistry.gd")
 const RadioPlayer = preload("../Nodes/RadioPlayer.gd")
 const RadioStation = preload("../RadioStation.gd")
-const ModConfig = preload("../ModConfig.gd")
 const META_PLAYER := "radio_player"
 const META_AUTOROLL := "radio_autoroll"
 
@@ -56,15 +55,16 @@ func on_physics_process_pre(_delta: float) -> void:
 		return
 	radio.set_meta(META_AUTOROLL, true)
 
-	if randf() * 100.0 >= ModConfig.on_chance:
+	# Vanilla decides which radios start on (random roll or gathering), the mod only picks what plays on the random ones.
+	if !radio.active || radio.gathering:
 		return
 
 	var stations := RadioRegistry.STATIONS
 	var pick := randi() % (stations.size() + 1)
 	if pick == 0:
-		radio.active = true
 		return
 
+	radio.active = false
 	_player(radio).start(stations[pick - 1])
 
 
