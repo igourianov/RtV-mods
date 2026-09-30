@@ -41,7 +41,7 @@ static func _set_config_entry(config: ConfigFile, section: String, category: Str
 static func create_template(config: ConfigFile) -> void:
 	config.set_value("Category", "General", { "menu_pos": 0 })
 	_set_config_entry(config, "Bool", "General", "static_enabled", "Radio static", "Play the radio hiss/static bed underneath the music", DEFAULT_ENABLED)
-	_set_config_entry(config, "Float", "General", "on_chance", "Radio on chance", "Percent chance each radio starts playing a random station on zone load", DEFAULT_ON_CHANCE, {
+	_set_config_entry(config, "Float", "General", "on_chance", "Radio on chance", "Percent chance each radio starts playing a random station on zone load. Replaces the game's own random-on chance", DEFAULT_ON_CHANCE, {
 		"minRange": CHANCE_MIN,
 		"maxRange": CHANCE_MAX
 	})
