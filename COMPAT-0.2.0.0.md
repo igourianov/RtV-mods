@@ -67,7 +67,7 @@ Results of per-feature verification of all mods against the new vanilla version 
 - [ ] **keymod: new vanilla items and traders.** `Key_Garage` and the Driver and Hunter traders exist. Vanilla sets no trader flag on `Key_Garage`. Optionally add it to a trader.
 - [ ] **vostac: new weapons use default ammo-check intro time.** `AMMO_CHECK_INTRO_TIMES` has no entry for weapons added in 0.2.0.0, so they use 1.0s.
 - [ ] **vostac: rig patches and tag catalogue should cover new weapons.** Check new rigs (Jatimatic, M28, HP_DA) for optic rail ranges, inspect positions and collision probe sanity.
-- [ ] **tacmed: debug injury roll.** `_hurt_myself` could include the new `Character.Poisoning(active)` in the `randi_range(1,4)` roll.
+- [x] **tacmed: debug injury roll.** (Poisoning added, README updated) `_hurt_myself` could include the new `Character.Poisoning(active)` in the `randi_range(1,4)` roll.
 - [ ] **vostac: two `FEATURES.md` entries may be inaccurate.** The "tooltip hidden while aiming" fix was not found in `Hooks/Tooltip.gd`. The "stow on transition prompt" part was not found in `Hooks/Handling.gd`. Locate the real code or correct the doc.
 - [ ] **vostac: pre-existing precedence bug.** `WeaponRig_Fire.gd:34` has `!gameData.weaponPosition == 2`, copied from vanilla `WeaponRig.gd:380`. Not new.
 - [ ] **second-hand: pre-existing type issue.** `Patches.gd` does `float(gun.get(f))` on Vector2 offset fields (`magazineSuppressorOffset`, `opticSuppressorOffset`, `fullyModdedOffset`), which would already fail in 0.1.1.3.

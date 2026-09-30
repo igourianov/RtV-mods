@@ -139,11 +139,12 @@ func _hurt_myself(caller: Node, bleedOnly: bool):
 		caller.Bleeding(true)
 	else:
 		Out.debug("To see if I still feel...")
-		match randi_range(1,4):
+		match randi_range(1,5):
 			1: caller.Fracture(true)
 			2: caller.Rupture(true)
 			3: caller.Burn(true)
 			4: caller.Headshot(true)
+			5: caller.Poisoning(true)
 
 	gameData.impact = true
 	gameData.damage = true
