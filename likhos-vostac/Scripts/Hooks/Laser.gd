@@ -40,7 +40,7 @@ func __input(caller: Node, event: InputEvent) -> void:
 
 	if event.is_action_pressed("laser"):
 		caller.active = !caller.active
-		caller.PlayLaser()
+		caller.PlayGadget()
 		if caller.active:
 			caller.laser.show()
 		else:
