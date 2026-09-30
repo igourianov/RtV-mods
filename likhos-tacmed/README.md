@@ -16,7 +16,7 @@ IFAK has been reworked from an exotic, safe queen to a healing workhorse.
 * Heals for the exact value, no overflow - 150 healing pool.
 * Refilled by basic healing items like bandages - see compatible list.
 * It is slightly faster to use than basic bandage (3sec vs 4sec default).
-* It now only removes bleeding and burning conditions.
+* It now only removes bleeding, burning and poisoning conditions.
 * Increased in weight from 0.5kg to 2kg.
 * It can now be sold by Doctor for measly 1000€ + tip.
 

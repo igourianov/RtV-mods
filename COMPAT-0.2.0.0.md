@@ -41,7 +41,7 @@ Results of per-feature verification of all mods against the new vanilla version 
 
 ## Affected (works, behaviour changed)
 
-- [ ] **tacmed: IFAK now cures poisoning**
+- [x] **tacmed: IFAK now cures poisoning** (kept; README and BB README updated)
   - Vanilla `IFAK.tres` gained `poisoning = true` and `Character.Consume` calls `Poisoning(false)` for it.
   - Mod patch in `likhos-tacmed/Scripts/Main.gd:37-47` does not set `poisoning`, but the README says IFAK only removes bleeding and burning.
   - Decision: add `"poisoning": false` to keep the documented behaviour, or accept poisoning cure and update the README.
