@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository purpose
 
-Mods for the Godot game **Road to Vostok** (`config/name="Road to Vostok"`, version 0.1.1.3, Godot 4.6.2).
+Mods for the Godot game **Road to Vostok** (`config/name="Road to Vostok"`, version 0.2.0.0, Godot 4.6.3).
 
 ## Code guide
 

@@ -76,7 +76,7 @@ Results of per-feature verification of all mods against the new vanilla version 
 ## Housekeeping
 
 - [ ] Update `INSTRUCTIONS.md` requirements in every mod (currently "Road to Vostok 0.1.1.3 (Godot 4.6.2)"; new is 0.2.0.0 and 4.6.3).
-- [ ] Update root `CLAUDE.md` (version 0.1.1.3 and Godot 4.6.2).
+- [x] Update root `CLAUDE.md` (version 0.2.0.0 and Godot 4.6.3).
 - [ ] Re-run the affected hooks in game after fixes and check `godot.log` for `[OverrideVerify]` and load errors.
 
 ## Verified OK
