@@ -68,7 +68,7 @@ Results of per-feature verification of all mods against the new vanilla version 
 - [x] **vostac: new weapons use default ammo-check intro time.** (moved to TODO.md) `AMMO_CHECK_INTRO_TIMES` has no entry for weapons added in 0.2.0.0, so they use 1.0s.
 - [x] **vostac: rig patches and tag catalogue should cover new weapons.** (moved to TODO.md) Check new rigs (Jatimatic, M28, HP_DA) for optic rail ranges, inspect positions and collision probe sanity.
 - [x] **tacmed: debug injury roll.** (Poisoning added, README updated) `_hurt_myself` could include the new `Character.Poisoning(active)` in the `randi_range(1,4)` roll.
-- [ ] **vostac: stow on inventory open and on the transition prompt.** Tooltip-while-aiming is resolved (`Nodes/Crosshair.gd` `_update_tooltip`, `FEATURES.md` corrected). Still to locate: where the "no weapon stow on opening inventory / transition prompt" behaviour is implemented. Vanilla `Handling.WeaponPosition` and `WeaponHandling` contain no stow branch for the menu, candidates are `ModConfig.gated()` in `Handling.on_weapon_position`. Needs an in-game test with the pre-2.18.1916 behaviour as reference.
+- [x] **vostac: stow on inventory open and on the transition prompt.** (implementation not found; claims removed from `FEATURES.md`, tooltip-while-aiming corrected to `Nodes/Crosshair.gd` `_update_tooltip`)
 - [x] **vostac: fire guard precedence bug.** (`!weaponPosition == 2` changed to `weaponPosition != 2`, so the negligent discharge MCM option now works)
 - [x] **second-hand: Vector2 offset fields.** (`float()` removed, offsets now scaled as-is so both float and Vector2 fields work)
 - [x] **vostac: movement ignores `isRazor`.** (sprint now blocked while razored, README updated)

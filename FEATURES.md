@@ -181,14 +181,11 @@ Script abbreviations: `Hooks/` = `Scripts/Hooks/`, `Nodes/` = `Scripts/Nodes/`, 
 * In-game hints about changed bindings.
 * Files: `Out.protip` calls in `Nodes/WeaponRig_Fire.gd`, `WeaponRig_Inspect.gd`, `WeaponRig_ManualReload.gd`, `WeaponRig_Reload.gd`, `WeaponRig_Optic.gd`, `ModConfig.gd` (`show_protips`).
 
-#### Weapon stow on inventory disabled
-* Files: `Hooks/Handling.gd` `_set_target`.
-
 ### Vanilla bug fixes
 
 * PIP viewport bobbing independently from the rig: `Hooks/Tilt.gd` `on_physics_process_pre`, `Hooks/Recoil.gd` `on_apply_recoil_post`, `Hooks/Noise.gd` `on_physics_process_post`.
 * Canted aim blocked by interactables, no interaction during ammo check, stale transition prompt: `Hooks/Interactor.gd` `on_physics_process_pre`. Tooltip hidden while aiming, canted or raised: `Nodes/Crosshair.gd` `_update_tooltip`.
-* Zone transition prompt shown in inspect mode and weapon stow on the prompt: `Hooks/Interactor.gd`, `Hooks/Handling.gd`.
+* Zone transition prompt shown in inspect mode: `Hooks/Interactor.gd`.
 * HAMR secondary optic killing the PIP plane on other scopes (`secondaryOptic` not reset): `ScopeCatalog.gd` `sync_optic_state`.
 * HAMR secondary optic vertical offset on AK rifles, SVD and Vintorez (missing `optic.scale`): `ScopeCatalog.gd` `sync_optic_state`.
 * HAMR flicker on M4A1 (no foldable front sight, missing `frontSightIndex` check): `Hooks/Handling.gd` `on_rig_update_post`.
