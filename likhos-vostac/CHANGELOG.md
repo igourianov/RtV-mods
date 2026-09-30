@@ -1,5 +1,5 @@
 # 2.20.1982
-* number of compat updates for the game Build 2
+* number of compat updates for the game Build 2 (MML 3.4.1 is required!)
 
 # 2.19.1969
 * fixed soft lock when opening inventory while holding reload to check ammo
