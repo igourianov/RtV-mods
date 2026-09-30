@@ -16,7 +16,7 @@ Results of per-feature verification of all mods against the new vanilla version 
   - Fix: repoint the preload to `Gadget.wav` and retune the `_IN_START`, `_IN_DURATION` and `_OUT_START` chunk offsets, since the clip differs.
   - Affects: Cocked/dry fire, Flashlight and NVG activation modes, Laser.
 
-- [ ] **vostac: kill counter boss check**
+- [x] **vostac: kill counter boss check** (now `ai.variant.faction == AIData.Faction.Boss` with null guard)
   - Vanilla removed `AI.boss`. Boss status is now `variant.faction == variant.Faction.Boss` (`AI.gd:1357`, enum in `AIData.gd:4`).
   - Mod: `Hooks/KillCounter.gd:16` reads `ai.boss`, which errors, so no kill is recorded.
   - Fix: use `ai.variant.faction == ai.variant.Faction.Boss` and guard against a null `variant`.
