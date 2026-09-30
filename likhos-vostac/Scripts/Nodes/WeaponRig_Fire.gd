@@ -31,7 +31,7 @@ func _fire_input(rig: WeaponRig) -> void:
 	if slotData.state == "Jammed":
 		return
 
-	if !ModConfig.negligent_discharge && !gameData.weaponPosition == 2 && !gameData.isAiming && !gameData.isCanted:
+	if !ModConfig.negligent_discharge && gameData.weaponPosition != 2 && !gameData.isAiming && !gameData.isCanted:
 		return
 
 	var cocked: bool = slotData.chamber || slotData.get_meta("cocked", true)

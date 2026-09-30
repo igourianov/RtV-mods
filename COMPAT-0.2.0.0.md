@@ -69,7 +69,7 @@ Results of per-feature verification of all mods against the new vanilla version 
 - [x] **vostac: rig patches and tag catalogue should cover new weapons.** (moved to TODO.md) Check new rigs (Jatimatic, M28, HP_DA) for optic rail ranges, inspect positions and collision probe sanity.
 - [x] **tacmed: debug injury roll.** (Poisoning added, README updated) `_hurt_myself` could include the new `Character.Poisoning(active)` in the `randi_range(1,4)` roll.
 - [ ] **vostac: stow on inventory open and on the transition prompt.** Tooltip-while-aiming is resolved (`Nodes/Crosshair.gd` `_update_tooltip`, `FEATURES.md` corrected). Still to locate: where the "no weapon stow on opening inventory / transition prompt" behaviour is implemented. Vanilla `Handling.WeaponPosition` and `WeaponHandling` contain no stow branch for the menu, candidates are `ModConfig.gated()` in `Handling.on_weapon_position`. Needs an in-game test with the pre-2.18.1916 behaviour as reference.
-- [ ] **vostac: pre-existing precedence bug.** `WeaponRig_Fire.gd:34` has `!gameData.weaponPosition == 2`, copied from vanilla `WeaponRig.gd:380`. Not new.
+- [x] **vostac: fire guard precedence bug.** (`!weaponPosition == 2` changed to `weaponPosition != 2`, so the negligent discharge MCM option now works)
 - [ ] **second-hand: pre-existing type issue.** `Patches.gd` does `float(gun.get(f))` on Vector2 offset fields (`magazineSuppressorOffset`, `opticSuppressorOffset`, `fullyModdedOffset`), which would already fail in 0.1.1.3.
 - [ ] **vostac: movement ignores `isRazor`.** The new vanilla `Movement()` adds razor velocity jitter. The mod's speed and state logic ignores it, which only matters for the jitter.
 
