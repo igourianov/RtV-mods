@@ -187,7 +187,7 @@ Script abbreviations: `Hooks/` = `Scripts/Hooks/`, `Nodes/` = `Scripts/Nodes/`, 
 ### Vanilla bug fixes
 
 * PIP viewport bobbing independently from the rig: `Hooks/Tilt.gd` `on_physics_process_pre`, `Hooks/Recoil.gd` `on_apply_recoil_post`, `Hooks/Noise.gd` `on_physics_process_post`.
-* Canted aim blocked by interactables, tooltip blocking view while aiming, no interaction during ammo check, stale transition prompt: `Hooks/Interactor.gd` `on_physics_process_pre`, `Hooks/Tooltip.gd` (`on_reset_post`, `on_update_post`).
+* Canted aim blocked by interactables, no interaction during ammo check, stale transition prompt: `Hooks/Interactor.gd` `on_physics_process_pre`. Tooltip hidden while aiming, canted or raised: `Nodes/Crosshair.gd` `_update_tooltip`.
 * Zone transition prompt shown in inspect mode and weapon stow on the prompt: `Hooks/Interactor.gd`, `Hooks/Handling.gd`.
 * HAMR secondary optic killing the PIP plane on other scopes (`secondaryOptic` not reset): `ScopeCatalog.gd` `sync_optic_state`.
 * HAMR secondary optic vertical offset on AK rifles, SVD and Vintorez (missing `optic.scale`): `ScopeCatalog.gd` `sync_optic_state`.
