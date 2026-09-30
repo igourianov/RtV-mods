@@ -4,7 +4,7 @@ const WRK_FILE := "Weapon_Repair_Kit"
 const REPAIR_TIME := 10.0
 
 const audioInstance2D = preload("res://Resources/AudioInstance2D.tscn")
-const craftAudio = preload("res://Audio/Crafting/Craft_Metal.tres")
+const craftAudio = preload("res://Audio/UI/UI_Craft_Metal.tres")
 
 var _lib
 var gameData = preload("res://Resources/GameData.tres")

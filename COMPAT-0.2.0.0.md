@@ -22,7 +22,7 @@ Results of per-feature verification of all mods against the new vanilla version 
   - Fix: use `ai.variant.faction == ai.variant.Faction.Boss` and guard against a null `variant`.
   - Hook target `AI.Death(direction, force)` and `Loader.LoadScene` are unchanged.
 
-- [ ] **no9: cleaning kit audio preload**
+- [x] **no9: cleaning kit audio preload** (path updated)
   - `likhos-no9/Scripts/Interface.gd:9` preloads `res://Audio/Crafting/Craft_Metal.tres`. Vanilla deleted `Audio/Crafting/`; the resource moved to `res://Audio/UI/UI_Craft_Metal.tres`. The failed preload breaks `Interface.gd`, `Main.gd` and the `interface-release-pre` hook.
   - Fix: update the path. Optionally guard with a file existence check.
 
