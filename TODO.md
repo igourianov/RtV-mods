@@ -4,6 +4,9 @@
 - move manufacturer name into another field out of title
 - flashlight auto-on on PEQ15, similar to laser
 - gangster style for pistols
+- (0.2.0.0 follow-up, after more in-game testing) tag: add names and weights for new vanilla items: Jatimatic (9x19 SMG, 1.7kg) and magazine (20 rounds, 0.2kg), M28 and M28_MOD (7.62x54R bolt rifles, 4.0kg), HP_DA (9x19 pistol, 0.9kg) and magazine (14 rounds, 0.1kg), VIRVE, Watch_Tactical
+- (0.2.0.0 follow-up) keymod: decide whether to sell Key_Garage; vanilla sets no trader flag on it. New traders Driver and Hunter have no keys patched
+- (0.2.0.0 follow-up) vostac: review new rigs (Jatimatic, M28, HP_DA) for optic rail ranges, inspect positions and collision probe; add AMMO_CHECK_INTRO_TIMES entries for the new weapons (default is 1.0s)
 
 # Closed
 - MP7 clipping in canted mode - will not fix (missing texture on the gun)
