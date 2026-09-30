@@ -9,6 +9,7 @@ var _rollBonus: Dictionary = {}
 var _jetCounter: int = 0
 
 const _AUDIO_LIBRARY := preload("res://Resources/AudioLibrary.tres")
+var gameData = preload("res://Resources/GameData.tres")
 
 const blockers := {
 	"BTR": "Police",
@@ -45,6 +46,10 @@ func _activate_dynamic_event(es: Node) -> void:
 	events.shuffle()
 
 	for e in events:
+		if e.night && gameData.TOD != 4:
+			Out.debug("event skipped: %s | Night only" % e.function)
+			continue
+
 		var blocker: String = blockers.get(e.function, null)
 		var bonus: float = _rollBonus.get(e.function, 0.0)
 		var basePossibility: float = _config.get_probability(e.function, e.possibility)
