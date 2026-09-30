@@ -63,7 +63,7 @@ Results of per-feature verification of all mods against the new vanilla version 
 ## Minor and optional
 
 - [ ] **tag: new vanilla items lack catalogue entries.** Jatimatic (9x19 SMG, 1.7kg) and its magazine (20 rounds, 0.2kg), M28 and M28_MOD (7.62x54R bolt rifles, 4.0kg), HP_DA (9x19 pistol, 0.9kg) and its magazine (14 rounds, 0.1kg), VIRVE and Watch_Tactical (electronics). Add names and weights to `likhos-tag/Scripts/Catalog.gd`.
-- [ ] **tag: MP7 mag tweak is redundant.** Vanilla `MP7_Magazine.tres` already has 40 rounds (also in 0.1.1.3). Drop the `DATA` entry or keep it harmless. `FEATURES.md` wrongly says "30 to 40".
+- [x] **tag: MP7 mag tweak is redundant.** (dropped the amount lines and the README entry) Vanilla `MP7_Magazine.tres` already has 40 rounds (also in 0.1.1.3). Drop the `DATA` entry or keep it harmless. `FEATURES.md` wrongly says "30 to 40".
 - [ ] **keymod: new vanilla items and traders.** `Key_Garage` and the Driver and Hunter traders exist. Vanilla sets no trader flag on `Key_Garage`. Optionally add it to a trader.
 - [ ] **vostac: new weapons use default ammo-check intro time.** `AMMO_CHECK_INTRO_TIMES` has no entry for weapons added in 0.2.0.0, so they use 1.0s.
 - [ ] **vostac: rig patches and tag catalogue should cover new weapons.** Check new rigs (Jatimatic, M28, HP_DA) for optic rail ranges, inspect positions and collision probe sanity.

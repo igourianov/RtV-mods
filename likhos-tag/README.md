@@ -8,7 +8,6 @@ Road to Vostok mod that comprehensively renames weapons and attachments and twea
 * Item tooltip is now slightly less verbose and more useful
 
 Functional changes:
-* MP7 mag 30 -> 40
 * KAR-21 (308) mag 30 -> 20
 * VSS penetration 3 -> 4
 

@@ -213,8 +213,8 @@ Renames weapons, attachments, magazines and ammo, sets real-life weights, and sl
 * Files: `Scripts/Catalog.gd` (`DATA` per item file name, applied through `lib.patch(ITEMS)`), `Scripts/ModConfig.gd` and `Scripts/Main.gd` (`create_config`, `load_config`: Russian vs English names).
 
 #### Functional tweaks
-* MP7 mag 30 to 40, KAR-21 (.308) mag 30 to 20, VSS penetration 3 to 4.
-* Files: `Scripts/Catalog.gd` (`DATA` entries for the MP7 mag, KAR-21 .308 mag and VSS).
+* KAR-21 (.308) mag 30 to 20, VSS penetration 3 to 4.
+* Files: `Scripts/Catalog.gd` (`DATA` entries for the KAR-21 .308 mag and VSS).
 
 #### Tooltip rework
 * Less verbose, shows caliber and bullet weight.

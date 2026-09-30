@@ -375,8 +375,6 @@ const DATA := {
 		"name": "MP7 mag",
 		"display": "MP7 mag",
 		"weight": 0.1,
-		"defaultAmount": 40,
-		"maxAmount": 40,
 	},
 	"P320_Magazine": {
 		"name": "P320 mag",
