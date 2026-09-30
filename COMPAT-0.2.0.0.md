@@ -34,7 +34,7 @@ Results of per-feature verification of all mods against the new vanilla version 
   - `likhos-tacmed/Recipes/AFAK.tres:4` loads `res://Audio/Crafting/Craft_Fabric.tres`, deleted in vanilla.
   - Fix: use `res://Audio/UI/UI_Craft_Fabric.tres` (uid `uid://dur6q1qyo4pmh`).
 
-- [ ] **eventuality: crash site explosion sound**
+- [x] **eventuality: crash site explosion sound** (now `explosionOutdoorFar`; resource has `audioClips`, volume uses `AudioEvent` default)
   - Vanilla `AudioLibrary.grenadeExplosionOutdoorFar` was renamed to `explosionOutdoorFar` (`AudioLibrary.gd:90`, resource `Audio/Effects/Explosions/Explosion_Outdoor_Far.tres`).
   - Mod: `likhos-eventuality/Scripts/EventSystem.gd:122` reads the old name, gets null and returns silently. The crash site still spawns.
   - Fix: use `_AUDIO_LIBRARY.explosionOutdoorFar`. Confirm the resource still has `audioClips` and `volume` (not verified).
