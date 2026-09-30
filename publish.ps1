@@ -143,27 +143,80 @@ function Invoke-NexusApi {
 	return $response.data
 }
 
-function Assert-NewerVersion {
-	param([string]$FileId, [string]$Version)
+function Get-LiveVersion {
+	param([string]$FileId)
 
 	$live = (Invoke-NexusApi -Method Get -Path "/mod-files/$FileId/versions").versions |
 		Where-Object { $_.category -notin @('archived', 'old_version', 'removed') } |
 		Select-Object -First 1
-	if (-not $live) {
+	return $live.version
+}
+
+function Assert-NewerVersion {
+	param([string]$FileId, [string]$Live, [string]$Version)
+
+	if (-not $Live) {
 		return
 	}
 
-	if ($live.version -eq $Version) {
+	if ($Live -eq $Version) {
 		throw "$Version is already published on mod file $FileId. Bump the version or pass -Force."
 	}
 
 	$published = New-Object Version
 	$staged = New-Object Version
-	if ([Version]::TryParse($live.version, [ref]$published) -and [Version]::TryParse($Version, [ref]$staged) -and $staged -lt $published) {
-		throw "$Version is older than the published $($live.version). Pass -Force to publish it anyway."
+	if ([Version]::TryParse($Live, [ref]$published) -and [Version]::TryParse($Version, [ref]$staged) -and $staged -lt $published) {
+		throw "$Version is older than the published $Live. Pass -Force to publish it anyway."
 	}
 
-	Write-Host "replacing: $($live.version) -> $Version"
+	Write-Host "replacing: $Live -> $Version"
+}
+
+# Selects the line items of every CHANGELOG.md section newer than the live version, up to the version being published.
+function Get-Changelog {
+	param([string]$Path, [string]$Live, [string]$Version)
+
+	$since = New-Object Version
+	$until = New-Object Version
+	# A placeholder first upload (e.g. '1') is not a version, so every changelog section counts as new.
+	if ($Live -and -not [Version]::TryParse($Live, [ref]$since)) {
+		$Live = ''
+	}
+	if (-not [Version]::TryParse($Version, [ref]$until)) {
+		throw "Version '$Version' is not a version. Cannot select changelog sections."
+	}
+
+	if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
+		Write-Warning "'$Path' not found. Publishing without a changelog."
+		return ''
+	}
+
+	$lines = New-Object System.Collections.Generic.List[string]
+	$include = $false
+	foreach ($line in [System.IO.File]::ReadAllLines($Path)) {
+		$heading = [regex]::Match($line, '^\s*#+\s*(.*?)\s*$')
+		if ($heading.Success) {
+			$section = New-Object Version
+			if (-not [Version]::TryParse($heading.Groups[1].Value, [ref]$section)) {
+				throw "'$Path' heading '$line' is not a version."
+			}
+			$include = (-not $Live -or $section -gt $since) -and $section -le $until
+			continue
+		}
+		if (-not $include) {
+			continue
+		}
+
+		$text = ($line -replace '^\s*[-*+]\s+', '').Trim()
+		if ($text) {
+			$lines.Add($text)
+		}
+	}
+
+	if ($lines.Count -eq 0) {
+		Write-Warning "'$Path' has no changes between the published '$Live' and $Version. Publishing without a changelog."
+	}
+	return $lines -join "`n"
 }
 
 function Send-UploadData {
@@ -240,11 +293,18 @@ if ($version -notmatch '^[a-zA-Z0-9.-]+\z' -or $version.Length -gt 50) {
 	throw "Version '$version' is rejected by Nexus. Allowed: letters, digits and .- up to 50 chars."
 }
 
-if (-not $DryRun) {
-	$script:apiKey = Get-ApiKey
-	if (-not $Force) {
-		Assert-NewerVersion -FileId $fileId -Version $version
-	}
+$script:apiKey = Get-ApiKey
+$liveVersion = Get-LiveVersion -FileId $fileId
+if (-not $Force) {
+	Assert-NewerVersion -FileId $fileId -Live $liveVersion -Version $version
+}
+$changelogRequest = @{
+	version   = $version
+	changelog = Get-Changelog -Path (Join-Path (Join-Path $repoRoot $modId) 'CHANGELOG.md') -Live $liveVersion -Version $version
+}
+if ($changelogRequest.changelog) {
+	# The changelogs endpoint takes the v3 mod id, not the game-scoped id from the mod page URL.
+	$changelogPath = "/mods/$((Invoke-NexusApi -Method Get -Path "/games/$($config.nexus.game)/mods/$($settings.mod_id)").id)/changelogs"
 }
 
 $uploadName = "$modId.zip"
@@ -271,6 +331,10 @@ Write-Host "publishing: $modId v$version -> mod file $fileId ($fileCategory, $up
 if ($DryRun) {
 	Write-Host "dry run, POST /mod-files/$fileId/versions would send:"
 	Write-Host ($versionRequest | ConvertTo-Json -Depth 4)
+	if ($changelogRequest.changelog) {
+		Write-Host "POST $changelogPath would send:"
+		Write-Host ($changelogRequest | ConvertTo-Json -Depth 4)
+	}
 	return
 }
 
@@ -284,6 +348,10 @@ $versionRequest.upload_id = $upload.id
 $created = Invoke-NexusApi -Method Post -Path "/mod-files/$fileId/versions" -Body $versionRequest
 
 Write-Host "published: version $($created.version.id)"
+if ($changelogRequest.changelog) {
+	Invoke-NexusApi -Method Post -Path $changelogPath -Body $changelogRequest | Out-Null
+	Write-Host "added changelog for $version"
+}
 if ($settings.mod_id) {
 	Write-Host "https://www.nexusmods.com/$($config.nexus.game)/mods/$($settings.mod_id)"
 }
