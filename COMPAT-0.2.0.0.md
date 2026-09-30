@@ -54,7 +54,7 @@ Results of per-feature verification of all mods against the new vanilla version 
   - Fix: add `if e.get("night") && gameData.TOD != 4: continue` and a `Bogeyman` entry (default 10) in `ModConfig.EVENTS`.
   - Also new: Weekly events (`Driver`, `Gathering`). Vanilla only calls `ActivateDynamicEvent` when no weekly event is active, so no change needed.
 
-- [x] **radiola: auto-play vs vanilla random radios** (mod roll and `on_chance` MCM setting removed; vanilla random-on radios pick a random station; gathering radio left alone)
+- [x] **radiola: auto-play vs vanilla random radios** (mod roll kept on top of vanilla; MCM `on_chance` default 75; radios vanilla switched on or the mod roll turns on pick a random station; gathering radio left alone)
   - Vanilla `Radio._ready()` now sets `active = true` for gathering radios and ~5% of `random` radios (previously all started off).
   - Mod `Hooks/Radio.gd` `on_physics_process_pre` (lines 55-70): if its roll fails, a vanilla-activated radio stays on. If its roll succeeds on an already active radio, its station and vanilla's broadcast play at once.
   - Fix options: skip the roll when `radio.active` is already true, or set `radio.active = false` on the first tick before rolling. Decide how to treat `gathering` radios.
