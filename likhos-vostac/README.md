@@ -91,7 +91,7 @@ Both stamina bars are now dynamic and much more realistic.
 * Arm stamina recovery and recovery delay scales with the Energy stat
 * Leg stamina drain scales with the inventory weight
 * Leg stamina recovery and recovery delay scales with the Hydration stat
-* Overweight, Fracture and Leg Stamina=0 now block sprinting completely
+* Overweight, Fracture, razor wire and Leg Stamina=0 now block sprinting completely
 * Sprint now overrides crouch, so you can panic GTFO when discovered sneaking about
 
 ### Inspect mode
