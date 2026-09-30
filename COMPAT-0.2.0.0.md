@@ -30,7 +30,7 @@ Results of per-feature verification of all mods against the new vanilla version 
   - `likhos-no9/Recipes/Cleaning_Kit_Refill.tres:4` loads `res://Audio/Crafting/Craft_Plastic.tres`, deleted in vanilla.
   - Fix: use `res://Audio/UI/UI_Craft_Plastic.tres` (no uid needed).
 
-- [ ] **tacmed: AFAK refill recipe audio**
+- [x] **tacmed: AFAK refill recipe audio** (path updated)
   - `likhos-tacmed/Recipes/AFAK.tres:4` loads `res://Audio/Crafting/Craft_Fabric.tres`, deleted in vanilla.
   - Fix: use `res://Audio/UI/UI_Craft_Fabric.tres` (uid `uid://dur6q1qyo4pmh`).
 

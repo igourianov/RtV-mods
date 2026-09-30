@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="RecipeData" load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://Scripts/RecipeData.gd" id="1"]
-[ext_resource type="Resource" path="res://Audio/Crafting/Craft_Fabric.tres" id="2"]
+[ext_resource type="Resource" path="res://Audio/UI/UI_Craft_Fabric.tres" id="2"]
 [ext_resource type="Resource" path="res://Items/Medical/AFAK/AFAK.tres" id="3"]
 [ext_resource type="Resource" path="res://Items/Medical/Medkit/Medkit.tres" id="4"]
 
