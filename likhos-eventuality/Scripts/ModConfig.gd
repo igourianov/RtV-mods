@@ -16,7 +16,8 @@ static var EVENTS := {
 	"Airdrop": {"label": "Airdrops (Area 05)", "default": 10.0},
 	"CrashSite": {"label": "Helicopter Crash Sites (any zone)", "default": 10.0},
 	"BTR": {"label": "BTR Patrols (Vostok / Outpost map)", "default": 25.0},
-	"Helicopter": {"label": "Attack Helicopters (Border Zone)", "default": 25.0}
+	"Helicopter": {"label": "Attack Helicopters (Border Zone)", "default": 25.0},
+	"Bogeyman": {"label": "Bogeyman (Area 05, night only)", "default": 10.0}
 }
 
 

@@ -47,7 +47,7 @@ Results of per-feature verification of all mods against the new vanilla version 
   - Decision: add `"poisoning": false` to keep the documented behaviour, or accept poisoning cure and update the README.
   - AFAK also gained `poisoning = true`. Probably fine (consistent with its advanced-medkit role), confirm intent.
 
-- [ ] **eventuality: Bogeyman event missing night gate and MCM entry**
+- [x] **eventuality: Bogeyman event missing night gate and MCM entry** (night check added, `Bogeyman` MCM entry added)
   - New vanilla event `Events/List/D25_Bogeyman.tres` (Dynamic, possibility 10, `night = true`, implemented at `EventSystem.gd:222`). Vanilla `ActivateDynamicEvent` skips night events unless `gameData.TOD == 4` (`EventSystem.gd:106`).
   - Mod replacement `_activate_dynamic_event` (`Scripts/EventSystem.gd:47-70`) has no night check, so Bogeyman can spawn in daytime.
   - `Scripts/ModConfig.gd:13-19` has no `Bogeyman` entry, so it falls back to 10.
