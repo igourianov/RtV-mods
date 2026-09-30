@@ -11,7 +11,6 @@ var _interface
 
 
 func setup(lib) -> void:
-	_strip_repair_recipes()
 	_patch_wrk(lib)
 	_localize_wrk_slotdata()
 
@@ -19,6 +18,8 @@ func setup(lib) -> void:
 		"recipe": CleaningKitRefill,
 		"category": "weapons",
 	})
+
+	_strip_repair_recipes()
 
 	_interface = Interface.new(lib)
 
