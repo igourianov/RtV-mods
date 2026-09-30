@@ -1,3 +1,6 @@
+# 2.20.1982
+* number of compat updates for the game Build 2
+
 # 2.19.1969
 * fixed soft lock when opening inventory while holding reload to check ammo
 
