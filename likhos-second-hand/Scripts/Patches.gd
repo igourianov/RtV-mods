@@ -68,7 +68,7 @@ static func _apply_resize(lib) -> void:
 		for f in FLOAT_SCALE_FIELDS:
 			fields[f] = float(gun.get(f)) * min(fx, fy * 1.8)
 		for f in FLOAT_OFFSET_FIELDS:
-			fields[f] = float(gun.get(f)) * fy
+			fields[f] = gun.get(f) * fy
 
 		if !lib.patch(lib.Registry.ITEMS, gun_id, fields):
 			Out.warning("resize patch failed for %s" % gun_id)
