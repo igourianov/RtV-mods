@@ -18,7 +18,7 @@ The old Weapon Repair Kit was awkward: pick a per gun recipe from the crafting m
 ## Requirements
 
 - Road to Vostok 0.2.0.0 (Godot 4.6.3)
-- [Metro Mod Loader (MML)](https://www.nexusmods.com/roadtovostok/mods/20) v3.4.1 or later (separate install, not bundled with the game)
+- [Metro Mod Loader (MML)](https://vostokmods.net/mod/metro-mod-loader) v3.4.1 or later (separate install, not bundled with the game)
 
 ## Compatibility
 
