@@ -40,3 +40,33 @@ AFAK got similar treatment to IFAK. It is now effectively an advanced version of
 You can now hurt yourself in the Tutorial room by pressing:
 * `Ctrl+Shift+O`- a bit of damage and apply bleed
 * `Ctrl+Shift+P`- a bit of damage and one of [Fracture, Rupture, Burn, Headshot, Poisoning]
+
+## Requirements
+
+- Road to Vostok 0.2.0.0 (Godot 4.6.3)
+- [Metro Mod Loader (MML)](https://www.nexusmods.com/roadtovostok/mods/20) v3.4.1 or later (separate install, not bundled with the game)
+
+## Compatibility
+
+This mod uses the registry API and hooks vanilla methods through Metro Mod Loader:
+
+**Registry API** (patches item definitions):
+- `lib.patch()` on IFAK and AFAK items
+- `lib.register()` new recipe for AFAK refill
+
+**Hooks** (other mods that also replace these will conflict, pick one):
+- `Interface.Use` (replace)
+- `Interface.Combine` (replace)
+- `Interface.Hover` (post)
+
+## Install / Uninstall
+
+Drop `likhos-tacmed.vmz` into your game's `mods/` folder. On a default Steam install:
+
+```
+<Steam>\steamapps\common\Road to Vostok\mods\
+```
+
+Launch the game. The mod loader picks it up automatically.
+
+To uninstall simply delete `likhos-tacmed.vmz` from the `mods/` folder and relaunch the game.

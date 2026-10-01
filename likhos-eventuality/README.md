@@ -45,3 +45,36 @@ Once triggered, will repeat anywhere between 3-10 times at random intervals (60-
 Published all event probabilities as MCM config values. Note that probability does not override availability. E.g. Punisher won't be available before day 5, even if you set him to 100%.
 
 I *DO NOT RECOMMEND* changing them unless it is to trigger long wanted event (like Punisher) once and then revert. The probability stacking made it seem like vanilla events are way too rare. You may find that after this mod fix, events are quite common and might be annoying.
+
+## Requirements
+
+- Road to Vostok 0.2.0.0 (Godot 4.6.3)
+- [Metro Mod Loader (MML)](https://www.nexusmods.com/roadtovostok/mods/20) v3.4.1 or later (separate install, not bundled with the game)
+- [Mod Configuration Menu (MCM)](https://www.nexusmods.com/roadtovostok/mods/58)
+
+## Compatibility
+
+This mod hooks vanilla methods through Metro Mod Loader:
+
+**Replace hooks** (other mods that also replace these will conflict, pick one):
+
+- `EventSystem.ActivateDynamicEvent`
+- `EventSystem.CrashSite`
+
+**Post hooks** (additive, run after vanilla, coexist with other mods cleanly):
+
+- `EventSystem.FighterJet`
+- `Police._ready`
+- `Police.States`
+
+## Install / Uninstall
+
+Drop `likhos-eventuality.vmz` into your game's `mods/` folder. On a default Steam install:
+
+```
+<Steam>\steamapps\common\Road to Vostok\mods\
+```
+
+Launch the game. The mod loader picks it up automatically.
+
+To uninstall simply delete `likhos-eventuality.vmz` from the `mods/` folder and relaunch the game.

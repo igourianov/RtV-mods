@@ -112,3 +112,33 @@ The recipe names retain vanilla weapon names. The name is used as a look up key,
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
 |--------------|---------------|-----------------------------|
 | PV7 | AN/PVS-7 | 1.2 → 0.9 |
+
+## Requirements
+
+- Road to Vostok 0.2.0.0 (Godot 4.6.3)
+- [Metro Mod Loader (MML)](https://www.nexusmods.com/roadtovostok/mods/20) v3.4.1 or later (separate install, not bundled with the game)
+
+## Compatibility
+
+This mod uses the registry API through Metro Mod Loader:
+
+**Registry API** (patches item definitions):
+- Uses `lib.patch()` on items to override naming and other properties (display, name, weight, etc.)
+
+Other mods that patch the same fields on the same items will conflict. Tag is intentionally loaded late (`priority=10`) so its values win over earlier mods.
+
+**Hooks:**
+* `Tooltip.Reset` (post)
+* `Tooltip.Update` (post)
+
+## Install / Uninstall
+
+Drop `likhos-tag.vmz` into your game's `mods/` folder. On a default Steam install:
+
+```
+<Steam>\steamapps\common\Road to Vostok\mods\
+```
+
+Launch the game. The mod loader picks it up automatically.
+
+To uninstall simply delete `likhos-tag.vmz` from the `mods/` folder and relaunch the game.

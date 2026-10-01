@@ -113,3 +113,57 @@ Ammo check receives much needed love.
 ## Why this is one mod and not several
 
 These changes started out as separate mods. The catch is that Road to Vostok's scripts have a handful of "god" methods that fold a lot of unrelated behavior into a single function and mix state mutation with rendering side effects in the same call. Hooking a method through the mod loader is all-or-nothing, you can't override only part of a function. So as soon as one fix needed to touch, say, `Handling.WeaponHandling`, every other tweak that also lives in that method had to ship in the same mod or get clobbered by it. That's how the ammo-check, canted, laser and PIP changes ended up bundled together.
+
+## Requirements
+
+- Road to Vostok 0.2.0.0 (Godot 4.6.3)
+- [Metro Mod Loader (MML)](https://www.nexusmods.com/roadtovostok/mods/20) v3.4.1 or later (separate install, not bundled with the game)
+- [Mod Configuration Menu (MCM)](https://www.nexusmods.com/roadtovostok/mods/58) (optional)
+
+## Compatibility
+
+This mod hooks multiple vanilla methods through Metro Mod Loader:
+
+- `WeaponRig` and `Handling` objects - basically rewritten. Will conflict with pretty much anything that touches them.
+
+**Replace hooks** (other mods that also replace these will conflict, pick one):
+
+- `Camera.ScopeDOF`
+- `Controller.MovementStates`
+- `Controller._input`
+- `Controller.Crouch`
+- `Controller.Headbob`
+- `Laser._input`
+- `Flashlight._physics_process`
+- `Character.Stamina`
+
+**Pre and Post hooks** (additive, run before/after vanilla, coexist with other mods cleanly):
+
+- `RigManager.UpdateRig` (post)
+- `Recoil.ApplyRecoil` (post)
+- `Controller._physics_process` (post)
+- `Noise._physics_process` (post)
+- `Tilt._physics_process` (pre)
+- `HUD._ready` (post)
+- `HUD._physics_process` (post)
+- `Optic._physics_process` (pre)
+- `Laser._process` (post)
+- `Tooltip.Update` (post)
+- `Tooltip.Reset` (post)
+- `Inputs.CreateActions` (pre and post)
+- `Inputs.ResetActions` (post)
+- `Interactor._physics_process` (pre)
+- `UIPosition._physics_process` (post)
+- `Item.UpdateDetails` (post)
+
+## Install / Uninstall
+
+Drop `likhos-vostac.vmz` into your game's `mods/` folder. On a default Steam install:
+
+```
+<Steam>\steamapps\common\Road to Vostok\mods\
+```
+
+Launch the game. The mod loader picks it up automatically. The first time you install or update a mod, the loader does a one-shot restart to finish wiring the hooks. After that, no more restarts.
+
+To uninstall simply delete `likhos-vostac.vmz` from the `mods/` folder and relaunch the game.
