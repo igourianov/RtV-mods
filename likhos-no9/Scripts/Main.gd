@@ -36,7 +36,8 @@ func _strip_repair_recipes() -> void:
 	var removed: int = 0
 	for i in range(weapons.size() - 1, -1, -1):
 		var r = weapons[i]
-		if r && r.repair:
+		# The refill recipe is also repair=true and must survive.
+		if r && r.repair && r != CleaningKitRefill:
 			weapons.remove_at(i)
 			removed += 1
 

@@ -1,3 +1,6 @@
+# 1.3.97
+* fixed new load order clobbering kit refill recipe
+
 # 1.3.95
 * fixed vanilla weapon repair recipes not being removed
 
