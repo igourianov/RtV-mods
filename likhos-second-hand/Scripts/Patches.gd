@@ -9,6 +9,8 @@ const RESIZE := {
 	"Remington_870": Vector2(6, 1),
 	"KP_31": Vector2(4, 2),
 	"Mosin": Vector2(7, 1),
+	"M28": Vector2(7, 1),
+	"M28_MOD": Vector2(7, 1),
 }
 
 # Guns that gain Secondary slot eligibility on top of vanilla Primary.

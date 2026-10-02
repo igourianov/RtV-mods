@@ -25,6 +25,8 @@ const RESIZE := {
 	"Remington_870": true,
 	"KP_31": true,
 	"Mosin": true,
+	"M28": true,
+	"M28_MOD": true,
 }
 
 const _META_KEY := "_likho_second_hand_tricked_magazine"
