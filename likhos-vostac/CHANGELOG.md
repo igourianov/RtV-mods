@@ -1,3 +1,6 @@
+# 2.20.1993
+* applied Mosin position overrides and bolt behavior logic to M28
+
 # 2.20.1984
 * nomad kills now show green on the kill counter
 
