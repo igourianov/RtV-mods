@@ -62,6 +62,7 @@ func _create_config_template():
 		var entry: Dictionary = EVENTS[cfgKey]
 		config.set_value("Float", cfgKey, {
 			"name": entry.label,
+			"tooltip": "",
 			"default": entry.default,
 			"value": entry.default,
 			"minRange": PROB_MIN,
