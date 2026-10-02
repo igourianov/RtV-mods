@@ -11,6 +11,7 @@ static func create(config: ConfigFile) -> void:
 
 	config.set_value("Bool", "ForceEnglishNames", {
 		"name": "Force English names (requires game restart)",
+		"tooltip": "",
 		"default": false,
 		"value": false,
 		"menu_pos": next_pos.call(),
