@@ -1,6 +1,6 @@
 # Likho's TacMed
 
-Road to Vostok mod that modifies medical consumables to be more useful. Keeps with realism. Lore friendly.
+Rework high end medical consumables. Reloadable, reusable. Lore friendly.
 
 ## IFAK/AFAK keybind
 

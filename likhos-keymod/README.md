@@ -1,6 +1,8 @@
 # Likho's Keymod
 
-Tired of looking for the loot room keys? This mod adds 3 keys to the traders at the very, VERY low price of 5000 Euro + tip (while supplies last):
+Add loot room keys to traders. Balanced for end-game economy.
+
+VERY low price of 5000 Euro + tip (while supplies last):
 
 * Gunsmith -> Gym key
 * Doctor -> Cellar key

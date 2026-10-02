@@ -1,6 +1,6 @@
 # Likho's Magdump
 
-Road to Vostok mod that allows for using cross-compatible magazines as they should be in real life.
+Cross-compatible magazines as they should be in real life.
 
 Following guns can now use each other's magazines:
 * AK-74SU <-> AK-12

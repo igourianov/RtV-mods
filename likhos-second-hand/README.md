@@ -1,8 +1,9 @@
 # Likho's Second Hand
 
-Road to Vostok mod that lets a few compact long guns ride in the secondary slot, and trims their inventory footprint to match.
+Resize inventory footprint and allow use in secondary slow for several guns
 
-Affected weapons:
+## Affected weapons
+
 * AKs-74U - resize + secondary
 * VSS Vintorez - resize + secondary
 * Remington 870 - resize + secondary

@@ -1,6 +1,6 @@
 # Likho's Radiola
 
-This mod reworks in-game radio, adding several authentic new stations to listen to and other improvements.
+Rework in-game radio, adding several authentic new stations to listen to and other improvements.
 
 [Immersive implementation](https://www.youtube.com/watch?v=lP3qr8lhHIU). No custom items or UI. Hooks directly into existing radio item. 
 

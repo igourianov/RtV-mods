@@ -1,6 +1,6 @@
 # Likho's VosTac
 
-Comprehensive RtV overhaul that modifies weapon positions, handling mechanics, optics and stamina. Fixes a number of vanilla weapon bugs.
+Overhauls weapon handling. New tactical features. Fixes a number of vanilla weapon bugs.
 
 ## Novel features
 

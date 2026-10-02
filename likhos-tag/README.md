@@ -1,6 +1,6 @@
 # Likho's Tag
 
-Road to Vostok mod that comprehensively renames weapons and attachments and tweaks their properties (display names, weights, etc.) for consistency and realism.
+Real world names for weapons and attachments.
 
 * All weapons, attachments and magazines got real life names
 * Russian items got Russian names (switch to English in MCM)

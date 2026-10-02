@@ -1,5 +1,7 @@
 # Likho's No.9
 
+Repair kit rework. Reusable, reloadable.
+
 RtV mod that reworks functionality of the Weapon Repair Kit into a Cleaning Kit (reference to iconic Hoppe's No.9).
 
 Typical gun requires repair only after 10s of thousands of rounds, and it cannot be done in field conditions anyway (unless it's something very trivial like replacing firing pin). Gun cleaning makes much more sense in terms of the action mechanics and the shooting volume in this game.

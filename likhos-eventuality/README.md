@@ -1,6 +1,6 @@
 # Likho's Eventuality
 
-Road to Vostok mod that improves dynamic event spawning so that they more closely represent declared probabilities.
+Fix dynamic event spawning so that they closely represent declared probabilities. QoL.
 
 * Fixed individual event probabilities to follow declared values
 * Police van without sirens is no longer a dud
