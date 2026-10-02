@@ -28,22 +28,35 @@ func _inject_mosin_casing_eject() -> void:
 	if !player || !tree:
 		return
 
-	var anim_name: String = rig.data.file + "_Insert_Start"
-	if !player.has_animation(anim_name):
-		return
-
-	var anim := player.get_animation(anim_name)
-	if anim.has_meta("likho_eject_injected"):
-		return
-
 	var base := tree.get_node(tree.root_node)
 	if !base:
 		return
 
-	var track := anim.add_track(Animation.TYPE_METHOD)
-	anim.track_set_path(track, base.get_path_to(rig))
-	anim.track_insert_key(track, 0.9, {"method": &"CasingEject", "args": []})
-	anim.set_meta("likho_eject_injected", true)
+	# vanilla Reload already ejects on Mosin but not on M28 variants
+	var keys := {"Insert_Start": 0.9, "Reload": 0.55}
+	for suffix in keys:
+		var anim_name: String = rig.data.file + "_" + suffix
+		if !player.has_animation(anim_name):
+			continue
+
+		var anim := player.get_animation(anim_name)
+		if anim.has_meta("likho_eject_injected") || _has_casing_eject(anim):
+			continue
+
+		var track := anim.add_track(Animation.TYPE_METHOD)
+		anim.track_set_path(track, base.get_path_to(rig))
+		anim.track_insert_key(track, keys[suffix], {"method": &"CasingEject", "args": []})
+		anim.set_meta("likho_eject_injected", true)
+
+
+func _has_casing_eject(anim: Animation) -> bool:
+	for i in anim.get_track_count():
+		if anim.track_get_type(i) != Animation.TYPE_METHOD:
+			continue
+		for k in anim.track_get_key_count(i):
+			if anim.method_track_get_name(i, k) == &"CasingEject":
+				return true
+	return false
 
 
 func _input(event: InputEvent) -> void:
