@@ -25,6 +25,8 @@ const AMMO_CHECK_INTRO_TIMES := {
 	"VSS": 1.45,
 	"SVD": 2.0,
 	"Mosin": 1.5,
+	"M28": 1.2,
+	"M28_MOD": 1.2,
 	"Remington_870": 1.2,
 	"Makarov": 1.75,
 	"P320": 1.15,

@@ -71,6 +71,8 @@ const _AIM_POS_OVERRIDE := {
 	"KAR_21_308": -0.12,
 	"MP7": -0.16,
 	"Mosin": -0.22,
+	"M28": -0.2,
+	"M28_MOD": -0.2,
 }
 
 
@@ -340,7 +342,7 @@ func _set_target_idle(h: Node) -> void:
 		category = IdleCategory.StocklessSMG
 	elif data.weaponType == "Pistol":
 		category = IdleCategory.Pistol
-	elif data.file == "Mosin" || data.file == "Remington_870":
+	elif data.file in ["Mosin", "M28", "M28_MOD", "Remington_870"]:
 		category = IdleCategory.FuddGrip
 	elif data.weaponType == "SMG":
 		category = IdleCategory.SMG

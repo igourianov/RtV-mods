@@ -15,12 +15,12 @@ var _busy := false
 func _ready() -> void:
 	set_process(true)
 	set_process_input(true)
-	_inject_mosin_casing_eject() # BUGFIX for Mosin not playing casing animation when opening bolt for insertion
+	_inject_mosin_casing_eject() # BUGFIX for bolt actions not playing casing animation when opening bolt for insertion
 
 
 func _inject_mosin_casing_eject() -> void:
 	var rig: WeaponRig = get_parent()
-	if rig.data.file != "Mosin":
+	if rig.data.weaponType != "Bolt":
 		return
 
 	var player := rig.animations
@@ -28,7 +28,7 @@ func _inject_mosin_casing_eject() -> void:
 	if !player || !tree:
 		return
 
-	var anim_name := "Mosin_Insert_Start"
+	var anim_name: String = rig.data.file + "_Insert_Start"
 	if !player.has_animation(anim_name):
 		return
 
