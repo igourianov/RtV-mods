@@ -20,6 +20,8 @@ var _cant_held := false
 var _sprint_held := false
 # an optic strike ended the aim, and the key has to come up before it can aim again
 var _aim_withdrawn := false
+# set by the vanilla canted key, kept across aims as in vanilla
+var _aim_canted := false
 var _presses: int = 0
 var _aim_press: int = 0
 var _cant_press: int = 0
@@ -94,6 +96,7 @@ func withdraw_binoculars() -> void:
 func withdraw_weapon() -> void:
 	if _arms_latch == Arms.AIM || _arms_latch == Arms.CANTED:
 		_arms_latch = Arms.NONE
+	_aim_canted = false
 	_settle()
 
 
@@ -105,6 +108,7 @@ func on_load_scene_pre(_scene: String = "") -> void:
 	_aim_held = false
 	_cant_held = false
 	_sprint_held = false
+	_aim_canted = false
 	_arms = Arms.NONE
 
 
@@ -122,14 +126,16 @@ func _record_toggle(evt: InputEvent) -> void:
 	elif evt.is_action_pressed("aim") && armed && _aim_toggle() && !_cant_held:
 		_arms_latch = Arms.NONE if _arms_latch == Arms.AIM else Arms.AIM
 	# a held sprint counts even while aim keeps it suspended, because canted would end that aim
-	elif evt.is_action_pressed("canted") && armed && _cant_toggle() && !_aim_held && !_sprint_held:
+	elif evt.is_action_pressed("canted_standalone") && armed && _cant_toggle() && !_aim_held && !_sprint_held:
 		_arms_latch = Arms.NONE if _arms_latch == Arms.CANTED else Arms.CANTED
+	elif evt.is_action_pressed("canted") && unlocked && _arms == _aim_state() && (_aim_held || _arms_latch == Arms.AIM):
+		_aim_canted = !_aim_canted
 	# the binoculars key never counts as held, so an aim or canted press always replaces them
 	elif evt.is_action_pressed("binoculars") && unlocked && _arms_latch != Arms.BINOCULARS && !_aim_held && !_cant_held && !_sprint_held:
 		_arms_latch = Arms.BINOCULARS
 		_binoculars_raised_ms = Time.get_ticks_msec()
 	# sprint and hold breath share a key by default, and a press that holds breath leaves the latch alone
-	elif evt.is_action_pressed("sprint") && open && _sprint_toggle() && !hold_breath() && !(_cant_held && _weapon_ready()):
+	elif evt.is_action_pressed("sprint") && open && _sprint_toggle() && !hold_breath() && !((_cant_held || (_aim_held && _aim_canted)) && _weapon_ready()):
 		_pose_latch = Pose.NONE if _pose_latch == Pose.SPRINT else Pose.SPRINT
 		# this also ends an aim that a lock has suspended
 		if _pose_latch == Pose.SPRINT:
@@ -145,7 +151,7 @@ func _settle() -> void:
 	_arms = _resolve_arms()
 
 	# a latch that something in effect has taken over from is cleared, so nothing comes back when that ends
-	if (_arms == Arms.AIM && _aim_held) || (_arms == Arms.CANTED && _cant_held):
+	if (_arms == _aim_state() && _aim_held) || (_arms == Arms.CANTED && _cant_held):
 		_arms_latch = Arms.NONE
 
 	if _arms != Arms.NONE && _pose_latch == Pose.SPRINT:
@@ -161,7 +167,7 @@ func _follow_held_keys() -> void:
 	var open := !ModConfig.gated()
 	var armed: bool = open && _weapon_ready()
 	var aimDown := Input.is_action_pressed("aim")
-	var cantDown := Input.is_action_pressed("canted")
+	var cantDown := Input.is_action_pressed("canted_standalone")
 	var sprintDown := Input.is_action_pressed("sprint")
 
 	_aim_withdrawn = _aim_withdrawn && aimDown
@@ -182,8 +188,8 @@ func _follow_held_keys() -> void:
 
 	if !sprintDown:
 		_sprint_held = false
-	# sprint and hold breath share a key by default, and a key that holds breath starts no sprint
-	elif !_sprint_held && open && !_sprint_toggle() && !(Input.is_action_pressed("hold_breath") && _resolve_arms() == Arms.AIM):
+	# sprint and hold breath share a key by default, and under an aim on the sights or canted that key starts no sprint
+	elif !_sprint_held && open && !_sprint_toggle() && !(Input.is_action_pressed("hold_breath") && _resolve_arms() == _aim_state()):
 		_sprint_held = true
 		_presses += 1
 		_sprint_press = _presses
@@ -197,21 +203,27 @@ func _resolve_arms() -> Arms:
 	# among held keys the last pressed wins
 	var aimHeld: bool = _aim_held && ready && !(_sprint_held && _sprint_press > _aim_press)
 	var cantHeld: bool = _cant_held && ready && !(_sprint_held && _sprint_press > _cant_press)
+	var aimState := _aim_state()
 
 	if aimHeld && cantHeld:
-		return Arms.CANTED if _cant_press > _aim_press else Arms.AIM
+		return Arms.CANTED if _cant_press > _aim_press else aimState
 	if cantHeld:
 		return Arms.CANTED
 	if aimHeld:
-		return Arms.AIM
-	if _arms_latch == Arms.AIM:
+		return aimState
+	if _arms_latch == Arms.AIM && !_aim_canted:
 		return Arms.AIM if ready else Arms.NONE
-	# an aim latch never yields to a sprint key held from before it, the other arms latches do
+	# an aim latch on the sights never yields to a sprint key held from before it, the other arms latches do
 	if _sprint_held:
 		return Arms.NONE
-	if _arms_latch == Arms.CANTED:
+	if _arms_latch == Arms.AIM || _arms_latch == Arms.CANTED:
 		return Arms.CANTED if ready else Arms.NONE
 	return _arms_latch
+
+
+# the vanilla canted key turns an aim request into a canted one
+func _aim_state() -> Arms:
+	return Arms.CANTED if _aim_canted else Arms.AIM
 
 
 # during a lock a latched aim or canted is kept but not in effect, and so is a held one with no firearm in hand

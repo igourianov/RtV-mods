@@ -36,11 +36,12 @@ func attach_extra_actions(caller: Node, reset: bool) -> void:
 			savedEvents.erase(a.action)
 
 		var event: InputEvent = savedEvents.get(a.action) if savedEvents else null
-		if !event:
+		if !event && a.event:
 			# a default that names another action takes that action's binding as it is now
 			event = a.event if a.event is InputEvent else InputMap.action_get_events(a.event)[0]
 
-		InputMap.action_add_event(a.action, event)
+		if event:
+			InputMap.action_add_event(a.action, event)
 		if a.label:
 			_create_input_button(caller, a.action, a.label, event)
 

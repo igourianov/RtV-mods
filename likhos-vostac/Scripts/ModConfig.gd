@@ -176,7 +176,7 @@ static func create_template(config: ConfigFile) -> void:
 
 	_set_config_entry(config, "Bool", "Crosshair", "crosshairWhileRaised", "Show while weapon raised", "Keep the crosshair visible while the weapon is in the high-ready position", !DEFAULT_ENABLED)
 
-	_set_config_entry(config, "Dropdown", "Canted mode", "cantMode", "Canted Aim Mode", "Behavior of the canted aim input", DEFAULT_CANT_MODE, {
+	_set_config_entry(config, "Dropdown", "Canted mode", "cantMode", "Canted Aim (quick) Mode", "Behavior of the Canted Aim (quick) binding", DEFAULT_CANT_MODE, {
 		"options": {
 			"1default": "Default (follow Aim Mode)",
 			"2hold": "Hold",

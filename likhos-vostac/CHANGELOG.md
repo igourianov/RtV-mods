@@ -1,3 +1,6 @@
+# 3.0.2012
+* split canted aim into two bindings: `Canted Aim` (vanilla behavior) and `Canted Aim (quick)` (direct access). Both activate laser.
+
 # 3.0.2011
 * hold breath now has its own key binding (defaults to the sprint key)
 

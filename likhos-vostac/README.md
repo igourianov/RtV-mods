@@ -11,7 +11,7 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 ## Weapons & Handling
 
 * Reworked lowered weapon mode into [Adaptive Free Look](https://www.youtube.com/watch?v=I1lY93vEe-s) mode (disable in MCM)
-* Canted aim is now an action independent from aim with optional laser auto-activation (recommend using mouse side button for it)
+* New `Canted Aim (quick)` binding: canted aim independent from aim, with optional laser auto-activation (unbound by default)
 * Weapon handling speed (how fast you transition into the desired state) now scales with stance and optic: red dot and LPVO 1x **115%**, canted **130%**, magnified scope **80%**
 * Reworked insert and ammo check mechanics to use hold action instead of toggle + can now reload directly from ammo check
 * Reworked the inspect mode and associated bindings + QoL flashlight fix

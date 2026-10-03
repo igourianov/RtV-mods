@@ -39,7 +39,7 @@ func _input(event: InputEvent) -> void:
 
 	gameData.isAiming = false
 
-	if event.is_action_pressed("canted"):
+	if event.is_action_pressed("canted") || event.is_action_pressed("canted_standalone"):
 		if gameData.inspectPosition == 1:
 			rig.PlayInspectRotate()
 			rig.animator["parameters/conditions/Inspect_Front"] = false
@@ -80,7 +80,7 @@ func _inspect_toggle() -> void:
 		rig.UpdateBullets()
 		rig.UpdateHUD()
 		Out.protip("inspect-rotate", "Press [%s] to rotate or [%s] / [%s] to move optic" % [
-			Inputs.get_binding("canted"),
+			Inputs.get_binding("canted" if InputMap.action_get_events("canted_standalone").is_empty() else "canted_standalone"),
 			Inputs.get_binding("optic_zoom_in"),
 			Inputs.get_binding("optic_zoom_out")
 		])
