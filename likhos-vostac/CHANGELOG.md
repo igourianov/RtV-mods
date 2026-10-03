@@ -1,3 +1,6 @@
+# 3.0.2011
+* hold breath now has its own key binding (defaults to the sprint key)
+
 # 3.0.2008
 * major rework of the player inputs priority and collitions for srpint/crouch and aim/canted/binoculars
 

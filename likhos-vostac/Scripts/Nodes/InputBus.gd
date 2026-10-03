@@ -18,8 +18,6 @@ var _pose_latch := Pose.NONE
 var _aim_held := false
 var _cant_held := false
 var _sprint_held := false
-# a sprint key that went down under aim: it is hold breath until released, whatever aim does meanwhile
-var _breath_held := false
 # an optic strike ended the aim, and the key has to come up before it can aim again
 var _aim_withdrawn := false
 var _presses: int = 0
@@ -74,7 +72,7 @@ func crouch() -> bool:
 
 
 func hold_breath() -> bool:
-	return _breath_held && _arms == Arms.AIM
+	return _arms == Arms.AIM && Input.is_action_pressed("hold_breath")
 
 
 # for a domain that has to end its own state without the user asking, e.g. an optic strike
@@ -107,7 +105,6 @@ func on_load_scene_pre(_scene: String = "") -> void:
 	_aim_held = false
 	_cant_held = false
 	_sprint_held = false
-	_breath_held = false
 	_arms = Arms.NONE
 
 
@@ -131,10 +128,8 @@ func _record_toggle(evt: InputEvent) -> void:
 	elif evt.is_action_pressed("binoculars") && unlocked && _arms_latch != Arms.BINOCULARS && !_aim_held && !_cant_held && !_sprint_held:
 		_arms_latch = Arms.BINOCULARS
 		_binoculars_raised_ms = Time.get_ticks_msec()
-	# under aim the sprint key is the hold breath key and leaves the latch alone
-	elif evt.is_action_pressed("sprint") && open && _sprint_toggle() && _arms == Arms.AIM:
-		_breath_held = true
-	elif evt.is_action_pressed("sprint") && open && _sprint_toggle() && !(_cant_held && _weapon_ready()):
+	# sprint and hold breath share a key by default, and a press that holds breath leaves the latch alone
+	elif evt.is_action_pressed("sprint") && open && _sprint_toggle() && !hold_breath() && !(_cant_held && _weapon_ready()):
 		_pose_latch = Pose.NONE if _pose_latch == Pose.SPRINT else Pose.SPRINT
 		# this also ends an aim that a lock has suspended
 		if _pose_latch == Pose.SPRINT:
@@ -187,20 +182,19 @@ func _follow_held_keys() -> void:
 
 	if !sprintDown:
 		_sprint_held = false
-		_breath_held = false
-	# a sprint key keeps the meaning it starts with: it never turns from a sprint into hold breath or back
-	elif !_sprint_held && !_breath_held && open && !_sprint_toggle() && _resolve_arms() == Arms.AIM:
-		_breath_held = true
-	elif !_sprint_held && !_breath_held && open && !_sprint_toggle():
+	# sprint and hold breath share a key by default, and a key that holds breath starts no sprint
+	elif !_sprint_held && open && !_sprint_toggle() && !(Input.is_action_pressed("hold_breath") && _resolve_arms() == Arms.AIM):
 		_sprint_held = true
 		_presses += 1
 		_sprint_press = _presses
+		# a latch has no press order to lose by, so a sprint that starts under a latched aim ends it here
+		if _arms_latch == Arms.AIM:
+			_arms_latch = Arms.NONE
 
 
 func _resolve_arms() -> Arms:
 	var ready := _weapon_ready()
-	# among held keys the last pressed wins. A sprint key only counts as held when it started as a sprint,
-	# so it beats an aim key that was down but not in effect then, and never one it would hold breath under
+	# among held keys the last pressed wins
 	var aimHeld: bool = _aim_held && ready && !(_sprint_held && _sprint_press > _aim_press)
 	var cantHeld: bool = _cant_held && ready && !(_sprint_held && _sprint_press > _cant_press)
 
@@ -212,7 +206,7 @@ func _resolve_arms() -> Arms:
 		return Arms.AIM
 	if _arms_latch == Arms.AIM:
 		return Arms.AIM if ready else Arms.NONE
-	# an aim latch in effect never yields to a held sprint, the other arms latches do
+	# an aim latch never yields to a sprint key held from before it, the other arms latches do
 	if _sprint_held:
 		return Arms.NONE
 	if _arms_latch == Arms.CANTED:

@@ -88,7 +88,8 @@ func register_hook(hookName: String, callback: Callable):
 	_hooks.append(_lib.hook(hookName, callback) as int)
 
 
-func register_action(action: String, label: String, event: InputEvent):
+# event is the default binding: an InputEvent, or the name of another action to take the binding from
+func register_action(action: String, label: String, event: Variant):
 	_init_inputs_hooks()
 	_inputs.extra_actions.append({
 		"action": action,
