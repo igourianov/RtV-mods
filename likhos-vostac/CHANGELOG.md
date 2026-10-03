@@ -1,3 +1,6 @@
+# 2.20.1994
+* fixed player ending up crouched with sprint effects (footsteps, headbob) after releasing aim while holding sprint to hold breath
+
 # 2.20.1993
 * applied Mosin position overrides and bolt behavior logic to M28
 

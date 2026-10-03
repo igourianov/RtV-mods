@@ -41,7 +41,7 @@ func _update_state(ctrl: Node) -> void:
 	elif gameData.bodyStamina <= 0.0 || gameData.overweight || gameData.fracture || gameData.isRazor:
 		gameData.isRunning = false
 	else:
-		gameData.isRunning = _sprint_intent && gameData.isMoving && !gameData.isAiming && !gameData.isCanted
+		gameData.isRunning = _sprint_intent && gameData.isMoving && !gameData.isCrouching && !gameData.isAiming && !gameData.isCanted
 
 	gameData.isWalking = gameData.isMoving && !gameData.isRunning
 
