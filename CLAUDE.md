@@ -37,6 +37,8 @@ mod-lib has it's own set of hooks and dependencies, that should be included with
 
 `src/` holds the extracted original project pulled from `RTV.pck` with GDRE Tools v2.5.0-beta.5 (see `src/gdre_export.log`). It is the authoritative reference for the game's scripts, scenes, resources and UIDs, but it is **not** part of this repo and must not be committed. Treat it as read-only when planning mod changes.
 
+`src/` has it's own Git repo inside. ***DO NOT DELETE*** `src/.git` when regenerating source from compiled game.
+
 Key facts when reading `src/`:
 - Scripts are GDScript under `src/Scripts/` (e.g. `AI.gd`, `Actions.gd`, `AudioEvent.gd`).
 - Autoloads defined in `src/project.godot`: `Loader`, `Database`, `Simulation` (all from `res://Resources/`).
