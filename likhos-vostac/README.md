@@ -132,9 +132,9 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `Controller.MovementStates`
 - `Controller._input`
 - `Controller.Crouch`
-- `Controller.Headbob`
 - `Laser._input`
 - `Flashlight._physics_process`
+- `NVG._physics_process`
 - `Character.Stamina`
 
 **Pre and Post hooks** (additive, run before/after vanilla, coexist with other mods cleanly):
@@ -156,6 +156,8 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `Interactor._physics_process` (pre)
 - `UIPosition._physics_process` (post)
 - `Item.UpdateDetails` (post)
+- `AI.Death` (pre)
+- `Loader.LoadScene` (pre)
 
 ## Install / Uninstall
 
