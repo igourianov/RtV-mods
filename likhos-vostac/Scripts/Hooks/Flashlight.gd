@@ -24,22 +24,17 @@ func on_physics_process(delta: float) -> void:
 
 
 class FlashlightDriver extends Node:
-	const HOLD_THRESHOLD = 0.25
+	const ModConfig := preload("../ModConfig.gd")
 	const AttachmentClickPlayer := preload("../Audio/AttachmentClickPlayer.gd")
 
 	var gameData := preload("res://Resources/GameData.tres")
-	var _hold_elapsed := 0.0
+	var _activated_ms: int = 0
 	var _click_sound: AttachmentClickPlayer
 
 
 	func _init() -> void:
 		_click_sound = AttachmentClickPlayer.new()
 		add_child(_click_sound)
-
-
-	func _physics_process(delta: float):
-		if gameData.flashlight:
-			_hold_elapsed += delta
 
 
 	func _input(evt: InputEvent) -> void:
@@ -54,8 +49,8 @@ class FlashlightDriver extends Node:
 			_click_sound.click_in()
 			if !gameData.flashlight && light.slotData.condition > 0:
 				parent.Activate()
-				_hold_elapsed = 0.0
+				_activated_ms = Time.get_ticks_msec()
 		elif evt.is_action_released("flashlight"):
 			_click_sound.click_out()
-			if gameData.flashlight && _hold_elapsed > HOLD_THRESHOLD:
+			if gameData.flashlight && Time.get_ticks_msec() - _activated_ms > ModConfig.BUTTON_HOLD_MS:
 				parent.Deactivate()

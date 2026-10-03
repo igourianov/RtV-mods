@@ -1,6 +1,5 @@
 extends "./WeaponRig_Base.gd"
 
-const _HOLD_THRESHOLD := 0.3
 const _AMMO_CHECK_INTRO_TIME_DEFAULT := 1.0
 const _VIEW_DELAY := 0.5
 
@@ -67,7 +66,7 @@ func _input(event: InputEvent) -> void:
 	if _state == State.NONE && event.is_action_pressed("reload"):
 		if rig.magazine.visible || rig.data.weaponAction == "Manual":
 			_state = State.PENDING
-			_state_timer = _HOLD_THRESHOLD
+			_state_timer = ModConfig.BUTTON_HOLD_MS / 1000.0
 		else:
 			_do_reload(false)
 	elif _state == State.PENDING && event.is_action_released("reload"):

@@ -9,9 +9,6 @@ const ModConfig := preload("../ModConfig.gd")
 enum Arms { NONE, AIM, CANTED, BINOCULARS }
 enum Pose { NONE, SPRINT, CROUCH }
 
-# a binoculars key released later than this after the press that raised them lowers them
-const _BINOCULARS_HOLD_MS := 250
-
 var gameData := preload("res://Resources/GameData.tres")
 
 var _arms_latch := Arms.NONE
@@ -122,7 +119,8 @@ func _record_toggle(evt: InputEvent) -> void:
 	var unlocked: bool = open && !ModConfig.locked()
 	var armed: bool = unlocked && (gameData.primary || gameData.secondary)
 
-	if evt.is_action_released("binoculars") && _arms_latch == Arms.BINOCULARS && Time.get_ticks_msec() - _binoculars_raised_ms > _BINOCULARS_HOLD_MS:
+	# a held binoculars key lowers them on release, a tapped one leaves them up
+	if evt.is_action_released("binoculars") && _arms_latch == Arms.BINOCULARS && Time.get_ticks_msec() - _binoculars_raised_ms > ModConfig.BUTTON_HOLD_MS:
 		_arms_latch = Arms.NONE
 	elif evt.is_action_pressed("aim") && armed && _aim_toggle() && !_cant_held:
 		_arms_latch = Arms.NONE if _arms_latch == Arms.AIM else Arms.AIM

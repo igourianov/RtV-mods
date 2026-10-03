@@ -66,6 +66,8 @@ const SPEED_MAX := 20.0
 const MULT_MIN := 0.1
 const MULT_MAX := 1.5
 const BASE_WEAPON_WEIGHT := 4.0
+# a key released later than this after its press was held, not tapped
+const BUTTON_HOLD_MS := 250
 
 const Out = preload("../Lib/Out.gd")
 
