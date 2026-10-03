@@ -1,3 +1,6 @@
+# 3.0.2008
+* major rework of the player inputs priority and collitions for srpint/crouch and aim/canted/binoculars
+
 # 2.20.1994
 * fixed player ending up crouched with sprint effects (footsteps, headbob) after releasing aim while holding sprint to hold breath
 

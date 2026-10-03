@@ -23,6 +23,7 @@ const UIPosition = preload("./Hooks/UIPosition.gd")
 const Item = preload("./Hooks/Item.gd")
 const KillCounter = preload("./Hooks/KillCounter.gd")
 const BinocularsOverlay = preload("./Nodes/BinocularsOverlay.gd")
+const InputBus = preload("./Nodes/InputBus.gd")
 
 
 var _handling
@@ -43,6 +44,7 @@ var _tooltip
 var _interactor
 var _uiposition
 var _binoculars
+var _bus
 var _item
 var _kill_counter
 
@@ -55,15 +57,18 @@ func setup(lib):
 
 	var preferences = Preferences.Load()
 
+	_bus = InputBus.new()
+	add_child(_bus)
+
 	_weapon_rig = WeaponRig.new(lib)
-	_handling = Handling.new(lib)
+	_handling = Handling.new(lib, _bus)
 	_camera = Camera.new(lib)
-	_controller = Controller.new(lib)
+	_controller = Controller.new(lib, _bus)
 	_noise = _Noise.new(lib)
 	_tilt = Tilt.new(lib)
 	_hud = HUD.new(lib)
 	_recoil = Recoil.new(lib)
-	_character = Character.new(lib)
+	_character = Character.new(lib, _bus)
 	_optic = Optic.new(lib, preferences)
 	_laser = Laser.new(lib)
 	_flashlight = Flashlight.new(lib)
@@ -77,11 +82,12 @@ func setup(lib):
 	register_hook("handling-weaponhandling", _handling.on_weapon_handling)
 	register_hook("handling-weaponposition", _handling.on_weapon_position)
 	register_hook("rigmanager-updaterig-post", _handling.on_rig_update_post)
+	register_hook("rigmanager-clearrig-post", _handling.on_clear_rig_post)
 	register_hook("weaponrig-_ready-post", _weapon_rig.on_ready_post)
 	register_hook("weaponrig-casingeject-post", _weapon_rig.on_casing_eject_post)
 	register_hook("weaponrig-ads", noop)
 	register_hook("weaponrig-_physics_process", noop)
-	register_hook("weaponrig-_input", _handling.on_input)
+	register_hook("weaponrig-_input", noop)
 	register_hook("camera-scopedof", _camera.on_scope_dof)
 	register_hook("controller-movementstates", _controller.on_movement_states)
 	register_hook("controller-_physics_process-post", _controller.on_physics_process_post)
@@ -105,6 +111,7 @@ func setup(lib):
 	register_hook("item-updatedetails-post", _item.on_update_details_post)
 	register_hook("ai-death-pre", _kill_counter.on_ai_death)
 	register_hook("loader-loadscene-pre", _kill_counter.on_load_scene_pre)
+	register_hook("loader-loadscene-pre", _bus.on_load_scene_pre)
 
 	register_action("optic_zoom_in", "Optic Zoom In", create_mouse_input(MOUSE_BUTTON_WHEEL_UP))
 	register_action("optic_zoom_out", "Optic Zoom Out", create_mouse_input(MOUSE_BUTTON_WHEEL_DOWN))
@@ -112,7 +119,7 @@ func setup(lib):
 	remove_action("ammo_check")
 	remove_action("insert")
 
-	_binoculars = BinocularsOverlay.new()
+	_binoculars = BinocularsOverlay.new(_bus)
 	add_child(_binoculars)
 
 

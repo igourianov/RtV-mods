@@ -3,6 +3,7 @@ extends RefCounted
 const ModConfig := preload("../ModConfig.gd")
 const Out := preload("../../Lib/Out.gd")
 const AudioChunkPlayer := preload("../../Lib/AudioChunkPlayer.gd")
+const InputBus := preload("../Nodes/InputBus.gd")
 
 const STAMINA_RECOVERY: float = 100.0
 const STAMINA_RECOVERY_DELAY: float = 2.0
@@ -24,6 +25,7 @@ const HOLD_BREATH_INTRO: float = 0.5
 const HOLD_BREATH_OUTRO_START: float = 0.5
 
 var _lib
+var _bus: InputBus
 var _interface
 var gameData: GameData = preload("res://Resources/GameData.tres")
 var _body_recovery_delay: float = 0.0
@@ -32,8 +34,9 @@ var _hold_breath_time: float = 0.0
 var _breath_sound: AudioChunkPlayer
 
 
-func _init(lib) -> void:
+func _init(lib, bus: InputBus) -> void:
 	_lib = lib
+	_bus = bus
 
 
 func on_stamina(delta: float) -> void:
@@ -57,7 +60,7 @@ func _hold_breath(chr: Node, delta: float) -> void:
 		_breath_sound = AudioChunkPlayer.new(AudioStreamMP3.load_from_file(HOLD_BREATH_STREAM))
 		chr.add_child(_breath_sound)
 
-	var intent: bool = Input.is_action_pressed("sprint")
+	var intent: bool = _bus.hold_breath()
 	var allowed: bool = gameData.isAiming && gameData.armStamina > 0.0
 	var holding: bool = ModConfig.hold_breath_state > 0.0
 

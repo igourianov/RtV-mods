@@ -11,15 +11,16 @@ const _GRIME_PATH := "res://mods/likhos-vostac/Textures/binos_grime.jpg"
 const _CAMERA_PATH := "/root/Map/Core/Camera"
 const _HUD_PATH := "/root/Map/Core/UI/HUD"
 const ZoomClickPlayer := preload("../Audio/ZoomClickPlayer.gd")
+const InputBus := preload("./InputBus.gd")
 
 var gameData := preload("res://Resources/GameData.tres")
+var _bus: InputBus
 var _click_audio: ZoomClickPlayer
 
 enum State { INACTIVE, ACTIVE, LOWERING }
 
 const _RAISE_TIME := 0.3
 const _FOV_LERP_SPEED := 12.0
-const _HOLD_THRESHOLD := 0.25
 const _MAGS := [6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0] #[6.0, 8.0, 10.0, 12.0]
 
 const _START_RADIUS := 0.12
@@ -47,7 +48,6 @@ var _index := 0
 var _zoom := ZoomAccelerator.new()
 var _base_fov := 70.0
 var _current_fov := 70.0
-var _hold_timer := 0.0
 var _loot_light: Node
 var _loot_light_not_found: bool
 var _ray: RayCast3D
@@ -55,6 +55,10 @@ var _range_label: Label
 var _range_timer := 0.0
 var _reticle_rect: ColorRect
 var _reticle_mat: ShaderMaterial
+
+
+func _init(bus: InputBus) -> void:
+	_bus = bus
 
 
 func _ready() -> void:
@@ -135,37 +139,16 @@ func _apply_layer(scene:Node) -> void:
 	layer = effective - 1
 
 
+# the input bus owns the binoculars key; only the zoom keys are read here
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion:
-		return
-
-	if event.is_action_pressed("binoculars") && (_state == State.INACTIVE || _state == State.LOWERING) && _can_raise():
-		_state = State.ACTIVE
-		_hold_timer = _HOLD_THRESHOLD
-		_range_timer = 0.0
-		_rect.visible = true
-		_base_fov = gameData.baseFOV
-		_current_fov = _camera.fov
-		ModConfig.binoculars_mag = _MAGS[_index]
-		gameData.isOccupied = true
-		gameData.isFiring = false
-		return
-
-	if event.is_action_released("binoculars") && _state == State.ACTIVE:
-		if _hold_timer <= 0.0:
-			_state = State.LOWERING
-		return
-
-	if _state != State.ACTIVE:
-		return
-
-	if event.is_action_pressed("aim") || event.is_action_pressed("canted"):
-		_state = State.LOWERING
+	if event is InputEventMouseMotion || _state != State.ACTIVE:
 		return
 
 	if event.is_action_pressed("optic_zoom_in"):
 		_change_zoom(1)
-	elif event.is_action_pressed("optic_zoom_out"):
+		return
+
+	if event.is_action_pressed("optic_zoom_out"):
 		_change_zoom(-1)
 
 
@@ -180,11 +163,31 @@ func _change_zoom(dir: int) -> void:
 func _can_raise() -> bool:
 	if !_resolve_camera():
 		return false
-	return !(ModConfig.gated() || ModConfig.locked()
-		|| gameData.isOccupied || gameData.NVG || gameData.isRunning)
+	return !(ModConfig.gated() || gameData.isOccupied || gameData.NVG)
+
+
+# takes the raise state from what the input bus resolved
+func _follow_bus() -> void:
+	var wanted := _bus.binoculars()
+	if wanted && _state != State.ACTIVE && !_can_raise():
+		# the bus recorded the press, so hand it back when the binoculars cannot come up
+		_bus.withdraw_binoculars()
+	elif wanted && _state != State.ACTIVE:
+		_state = State.ACTIVE
+		_range_timer = 0.0
+		_rect.visible = true
+		_base_fov = gameData.baseFOV
+		_current_fov = _camera.fov
+		ModConfig.binoculars_mag = _MAGS[_index]
+		gameData.isOccupied = true
+		gameData.isFiring = false
+	elif !wanted && _state == State.ACTIVE:
+		_state = State.LOWERING
 
 
 func _process(delta: float) -> void:
+	_follow_bus()
+
 	if _state == State.INACTIVE:
 		_raise_state = 0.0
 		_range_label.visible = false
@@ -196,11 +199,9 @@ func _process(delta: float) -> void:
 	elif _state == State.ACTIVE && _raise_state < 1.0:
 		_raise_state += delta / _RAISE_TIME
 
-	if _state == State.ACTIVE && _hold_timer > 0.0:
-		_hold_timer -= delta
-
-	if !_resolve_camera() || ModConfig.gated() || gameData.isRunning || _raise_state < 0.0:
+	if !_resolve_camera() || ModConfig.gated() || _raise_state < 0.0:
 		_state = State.INACTIVE
+		_bus.withdraw_binoculars()
 		_rect.visible = false
 		_reticle_rect.visible = false
 		_range_label.visible = false

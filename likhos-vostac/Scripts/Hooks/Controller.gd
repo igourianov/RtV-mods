@@ -2,15 +2,17 @@ extends RefCounted
 
 const ModConfig := preload("../ModConfig.gd")
 const Out := preload("../../Lib/Out.gd")
+const InputBus := preload("../Nodes/InputBus.gd")
 
 var gameData := preload("res://Resources/GameData.tres")
 var _lib
-var _sprint_intent: bool = false
+var _bus: InputBus
 var _current_sensitivity: float
 
 
-func _init(lib) -> void:
+func _init(lib, bus: InputBus) -> void:
 	_lib = lib
+	_bus = bus
 	_current_sensitivity = gameData.lookSensitivity
 
 
@@ -31,17 +33,17 @@ func _update_state(ctrl: Node) -> void:
 	gameData.isMoving = ctrl.inputDirection != Vector2.ZERO
 	gameData.isIdle = !gameData.isMoving
 
-	if gameData.isSwimming:
-		gameData.isCrouching = false
-		gameData.isRunning = false
-	elif !gameData.isCrouching && ctrl.above.is_colliding():
-		gameData.isCrouching = true
-		gameData.isRunning = false
-		_set_impulse(ctrl)
-	elif gameData.bodyStamina <= 0.0 || gameData.overweight || gameData.fracture || gameData.isRazor:
-		gameData.isRunning = false
-	else:
-		gameData.isRunning = _sprint_intent && gameData.isMoving && !gameData.isCrouching && !gameData.isAiming && !gameData.isCanted
+	# a ceiling forces the crouch and blocks standing up, whatever the intent says
+	var crouching: bool = _bus.crouch() || ctrl.above.is_colliding()
+	var fit: bool = gameData.bodyStamina > 0.0 && !gameData.overweight && !gameData.fracture && !gameData.isRazor
+
+	if crouching && !gameData.isCrouching:
+		ctrl.crouchImpulse = 0.1
+	elif !crouching && gameData.isCrouching:
+		ctrl.standImpulse = 0.1
+
+	gameData.isCrouching = crouching
+	gameData.isRunning = _bus.sprint() && gameData.isMoving && !crouching && fit
 
 	gameData.isWalking = gameData.isMoving && !gameData.isRunning
 
@@ -81,29 +83,6 @@ func on_input(evt: InputEvent) -> void:
 	if evt is InputEventMouseMotion:
 		_lib.skip_super()
 		_mouse_input(ctrl, evt)
-		return
-
-	if gameData.freeze || gameData.isCaching:
-		return
-
-	if evt.is_action_pressed("crouch"):
-		if !gameData.isCrouching:
-			gameData.isCrouching = true
-			_sprint_intent = false
-			_set_impulse(ctrl)
-		elif !ctrl.above.is_colliding():
-			gameData.isCrouching = false
-			_set_impulse(ctrl)
-	elif evt.is_action_pressed("sprint"):
-		if gameData.sprintMode == 1:
-			_sprint_intent = true
-		else:
-			_sprint_intent = !_sprint_intent
-		if _sprint_intent && gameData.isCrouching && !ctrl.above.is_colliding() && !gameData.isAiming:
-			gameData.isCrouching = false
-			_set_impulse(ctrl)
-	elif evt.is_action_released("sprint") && gameData.sprintMode == 1:
-		_sprint_intent = false
 
 
 func _mouse_input(ctrl: Node, evt: InputEvent) -> void:
@@ -141,10 +120,3 @@ func on_crouch(delta: float) -> void:
 	_lib.skip_super()
 
 	ctrl.pelvis.position.y = lerp(ctrl.pelvis.position.y, (0.5 if gameData.isCrouching else 1.0), delta * 5.0)
-
-
-func _set_impulse(ctrl: Node) -> void:
-	if gameData.isCrouching:
-		ctrl.crouchImpulse = 0.1
-	else:
-		ctrl.standImpulse = 0.1

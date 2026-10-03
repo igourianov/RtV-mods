@@ -140,6 +140,7 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 **Pre and Post hooks** (additive, run before/after vanilla, coexist with other mods cleanly):
 
 - `RigManager.UpdateRig` (post)
+- `RigManager.ClearRig` (post)
 - `Recoil.ApplyRecoil` (post)
 - `Controller._physics_process` (post)
 - `Noise._physics_process` (post)

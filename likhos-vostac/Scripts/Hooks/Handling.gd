@@ -3,6 +3,7 @@ extends RefCounted
 const ModConfig := preload("../ModConfig.gd")
 const ScopeCatalog := preload("../ScopeCatalog.gd")
 const Out := preload("../../Lib/Out.gd")
+const InputBus := preload("../Nodes/InputBus.gd")
 var gameData = preload("res://Resources/GameData.tres")
 
 enum IdleCategory { Default, Pistol, FuddGrip, SMG, StocklessSMG }
@@ -77,10 +78,8 @@ const _AIM_POS_OVERRIDE := {
 
 
 var _lib
+var _bus: InputBus
 var _handlingMode := HandlingMode.Default
-var _aim_intent := false
-var _cant_intent := false
-var _aim_priority := true
 var _target_idle := false
 var _manager_local_baseline: Transform3D
 var _baseline_captured := false
@@ -92,8 +91,9 @@ var _stow_rot: Vector3
 var _idle_hide_left_arm := false
 
 
-func _init(lib) -> void:
+func _init(lib, bus: InputBus) -> void:
 	_lib = lib
+	_bus = bus
 	_stow_rot = _stow_rotation()
 
 
@@ -156,32 +156,10 @@ func on_rig_update_post(_animate: bool) -> void:
 	rig.collision.target_position.z = reach
 
 
-func on_input(evt: InputEvent) -> void:
-	_lib.skip_super()
-
-	if ModConfig.gated():
-		return
-
-	var aimToggle: bool = gameData.aimMode == 2
-	var cantToggle := false
-	if ModConfig.cant_mode == &"default":
-		cantToggle = aimToggle
-	elif ModConfig.cant_mode == &"toggle":
-		cantToggle = true
-
-	# locks block override presses but let releases clear hold-mode intent
-	var unlocked := !ModConfig.locked()
-
-	if unlocked && evt.is_action_pressed("aim"):
-		_aim_intent = !gameData.isAiming if aimToggle else true
-		_aim_priority = true
-	elif unlocked && evt.is_action_pressed("canted"):
-		_cant_intent = !gameData.isCanted if cantToggle else true
-		_aim_priority = false
-	elif !aimToggle && evt.is_action_released("aim"):
-		_aim_intent = false
-	elif !cantToggle && evt.is_action_released("canted"):
-		_cant_intent = false
+# vanilla ClearRig resets isAiming but not isCanted, which would stay set with no rig left to resolve it
+func on_clear_rig_post() -> void:
+	gameData.isCanted = false
+	_bus.withdraw_weapon()
 
 
 # only overrides the tiers vanilla mis-gates; the clean case falls through to vanilla's weapon_high/low handling
@@ -220,22 +198,13 @@ func on_weapon_handling(delta: float) -> void:
 
 
 func _resolve_aim_intent() -> void:
-
-	if ModConfig.locked() || ModConfig.binoculars_active:
-		gameData.isAiming = false
-		gameData.isCanted = false
-		return
-
-	if !_aim_priority:
-		gameData.isCanted = _cant_intent
-		gameData.isAiming = false if _cant_intent else _aim_intent
-	elif ModConfig.optic_shiner:
-		_aim_intent = false
-		gameData.isAiming = false
+	if ModConfig.optic_shiner:
+		_bus.withdraw_aim()
 		ModConfig.optic_shiner = false
-	else:
-		gameData.isAiming = _aim_intent
-		gameData.isCanted = false if _aim_intent else _cant_intent
+
+	# the bus already accounts for locks and for binoculars taking over the arms
+	gameData.isAiming = _bus.aim()
+	gameData.isCanted = _bus.canted()
 
 
 func _set_target(h: Node) -> void:
