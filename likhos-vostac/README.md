@@ -5,7 +5,7 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 ## Novel features
 
 * **Binoculars!** Added tactical [6-12x binos](https://www.youtube.com/watch?v=6d0zPQRmM3s) for observation. Hold 'B' to activate (remap in game's vanilla bindings)
-* **Hold breath** Function to steady aim at the expense of increased stamina drain (hold Sprint while aiming)
+* **Hold breath** Function to steady aim at the expense of increased stamina drain. Hold the `Hold Breath` binding while aiming (defaults to the Sprint key)
 * **Kill counter** Appear as scratch list in weapon inspect mode (when you have kills). Green = nomad, purple = boss.
 
 ## Weapons & Handling
@@ -37,7 +37,7 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 
 ## Controls & HUD
 
-* Reworked input priority for Crouch/Sprint/Aim/Canted actions. Last action wins instead of following hardcoded order (exception: sprint while aiming = hold breath)
+* Reworked input priority for Crouch/Sprint/Aim/Canted actions. Last action wins instead of following hardcoded order (exception: while aiming, a key shared by Sprint and Hold Breath holds breath)
 * Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in MCM)
 * Flashlight now supports both toggle and hold actions on the same binding, and will shine the light on the inspected weapon
 * Additional weapon cards in Inspect/Ammo Check/Insert modes + icon replacers for ammo count and chamber status (check MCM settings)
