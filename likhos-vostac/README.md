@@ -6,7 +6,7 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 
 * **Binoculars!** Added tactical [6-12x binos](https://www.youtube.com/watch?v=6d0zPQRmM3s) for observation. Hold 'B' to activate (remap in game's vanilla bindings)
 * **Hold breath** Function to steady aim at the expense of increased stamina drain. Hold the `Hold Breath` binding while aiming (defaults to the Sprint key)
-* **Kill counter** Appear as scratch list in weapon inspect mode (when you have kills). Green = nomad, purple = boss.
+* **Kill counter** Appears as a scratch list in weapon inspect mode (when you have kills). Green = nomad, purple = boss.
 
 ## Weapons & Handling
 
@@ -15,7 +15,7 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 * Weapon handling speed (how fast you transition into the desired state) now scales with stance and optic: red dot and LPVO 1x **115%**, canted **130%**, magnified scope **80%**
 * Reworked insert and ammo check mechanics to use hold action instead of toggle + can now reload directly from ammo check
 * Reworked the inspect mode and associated bindings + QoL flashlight fix
-* Reworked manual action guns reload animations to be more fluid (reduced animation lock out time)
+* Reworked manual action guns reload animations to be more fluid (reduced animation lockout time)
 * Mosin and 870 can now cycle the bolt on both full and empty mag, like the real guns do (you will lose ammo) + dry fire click on empty chamber
 * Negligent discharge (firing out of aim) is allowed (disable in MCM)
 
@@ -48,7 +48,7 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 * PIP viewport no longer bobs independently from the weapon rig
 * Ammo check no longer forces weapon into raised position (prior stance preserved)
 * Canted aim activation no longer blocked by interactables
-* Disabled interactable tooltip while aiming, so it doesn't blocks vision when aiming around doorways
+* Disabled interactable tooltip while aiming, so it doesn't block vision when aiming around doorways
 * Fixed Mosin ending up in weird state (mag + 0) after opening+closing the bolt
 * Fixed Mosin round/casing not ejecting when opening the bolt to reload/insert and missing animations
 * Fixed HAMR's secondary optic switch permanently killing PIP plane on other scopes (state wasn't being properly reset)
@@ -79,7 +79,7 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 * HAMR is now legendary
 * PU moved back on the gun and it is now real 3.5x zoom
 * Input acceleration for zoom bindings to quick flick from min to max or vice versa
-* MCM setting for magnification control schema
+* MCM setting for magnification control scheme
 	- *Short:* 3 zoom level spread evenly along scope's magnification range - like vanilla but mid-point is visually middle. Choose this if you're more CoD than Tarkov guy.
 	- *Discrete:* literal, physical zoom levels. E.g. for Vudu: 1, 2, 3, 4,...,10. Input acceleration makes this setting tolerable.
 	- *Normalized:* a comfortable middle ground between the two options above.

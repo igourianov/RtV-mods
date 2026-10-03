@@ -5,7 +5,7 @@
 * hold breath now has its own key binding (defaults to the sprint key)
 
 # 3.0.2008
-* major rework of the player inputs priority and collitions for srpint/crouch and aim/canted/binoculars
+* major rework of the player inputs priority and collisions for sprint/crouch and aim/canted/binoculars
 
 # 2.20.1994
 * fixed player ending up crouched with sprint effects (footsteps, headbob) after releasing aim while holding sprint to hold breath
@@ -39,10 +39,10 @@
 # 2.19.1936
 * rangefinder feature for binoculars
 * reworked action priority for binoculars: can now aim straight out of bino mode without need to manually cancel
-* binos now alway force weapon position down so it doesn't block the view
+* binos now always force weapon position down so it doesn't block the view
 
 # 2.18.1920
-* fixed the game allowing weapon rised mode while binos active (colliding with zoom)
+* fixed the game allowing weapon raised mode while binos active (colliding with zoom)
 
 # 2.18.1916
 * integrated binos with the LootLight mod (v2.1.0 or greater)
@@ -53,7 +53,7 @@
 # 2.17.1908
 * raised AK12 and AKM inspect positions a bit to make sure kill counts cleanly visible
 * fixed click sounds for NVG used with hold activation
-* fixed occassional flashlight double click sound
+* fixed occasional flashlight double click sound
 * ammo card: reduced draw delay and unnecessary redrawing
 
 # 2.17.1894
