@@ -1,6 +1,8 @@
 extends RefCounted
 
-var McmHelpers := preload("res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Helpers.tres")
+const Out = preload("../Lib/Out.gd")
+
+var McmHelpers :=preload("res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Helpers.tres")
 
 var _probabilities: Dictionary = {}
 
@@ -46,6 +48,7 @@ func _init():
 
 
 func _apply_config(config: ConfigFile):
+	Out.debug_enabled = config.get_value("Bool", "debug_enabled", {}).get("value", false)
 	for cfgKey in EVENTS:
 		var entry: Dictionary = EVENTS[cfgKey]
 		_probabilities[cfgKey] = config.get_value("Float", cfgKey, {}).get("value", entry.default)
@@ -56,7 +59,17 @@ func _create_config_template():
 	var pos := [0]
 	var next_pos := func(): pos[0] += 1; return pos[0]
 
+	config.set_value("Category", "General", { "menu_pos": 0 })
 	config.set_value("Category", "Probabilities", { "menu_pos": 1 })
+
+	config.set_value("Bool", "debug_enabled", {
+		"name": "Debug",
+		"tooltip": "Writing this mod's debug into stdout",
+		"default": false,
+		"value": false,
+		"menu_pos": next_pos.call(),
+		"category": "General"
+	})
 
 	for cfgKey in EVENTS:
 		var entry: Dictionary = EVENTS[cfgKey]

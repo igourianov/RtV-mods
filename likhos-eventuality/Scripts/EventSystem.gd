@@ -75,7 +75,7 @@ func _activate_dynamic_event(es: Node) -> void:
 			Callable(es, e.function).call()
 		else:
 			var delay := randi_range(30, 300)
-			Out.debug("event activated: %s | Roll: %s/%s | Delay: %02d:%02d" % [e.function, roll, threshold, int(floor(delay / 60.0)), delay % 60])
+			Out.debug("event delayed: %s | Roll: %s/%s | Delay: %02d:%02d" % [e.function, roll, threshold, int(floor(delay / 60.0)), delay % 60])
 			_activate_delayed_event(es, delay, e.function) # no await on purpose
 
 func _activate_delayed_event(es: Node, delay: int, name: String):
@@ -83,6 +83,7 @@ func _activate_delayed_event(es: Node, delay: int, name: String):
 	if !is_instance_valid(es):
 		Out.debug("EventSystem instance no longer valid, scheduled %s event aborted." % name)
 		return
+	Out.debug("event activate delayed: %s" % name)
 	Callable(es, name).call()
 
 func on_fighter_jet_post() -> void:

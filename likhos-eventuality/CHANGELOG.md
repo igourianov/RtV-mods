@@ -1,3 +1,6 @@
+# 1.3.58
+* cleaned up debug output and added MCM toggle to show it
+
 # 1.3.54
 * fixed Bogeyman MCM slider not rendering
 
