@@ -174,15 +174,14 @@ func _tacmed_heal(iface: Node, character: Node):
 
 
 func _prioritize_tacmed(items: Array) -> Array:
-	# ORDER BY [number of conditions would be removed] DESC, [heal waste] ASC, [condition] ASC, [adjusted value] ASC
+	# ORDER BY [number of conditions would be removed] DESC, [unit value] ASC, [condition] ASC
 	var sortable := items.map(func(i: Item):
 		return {
 			"item": i, # original item ref
 			"key": [
 				-_cond_heal_count(i),
-				max(0.0, i.slotData.itemData.health * i.slotData.condition / 100.0 - (100.0 - gameData.health)),
-				i.slotData.condition,
-				i.slotData.itemData.value * i.slotData.condition / 100.0
+				i.slotData.itemData.value,
+				i.slotData.condition
 			]
 		}
 	)
