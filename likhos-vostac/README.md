@@ -15,7 +15,7 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 * Weapon handling speed (how fast you transition into the desired state) now scales with stance and optic: red dot and LPVO 1x **115%**, canted **130%**, magnified scope **80%**
 * Reworked insert and ammo check mechanics to use hold action instead of toggle + can now reload directly from ammo check
 * Reworked the inspect mode and associated bindings + QoL flashlight fix
-* Reworked manual action guns reload animations to be more fluid (reduced animation lockout time)
+* Reworked manual action gun reload animations to be more fluid (reduced animation lockout time)
 * Mosin and 870 can now cycle the bolt on both full and empty mag, like the real guns do (you will lose ammo) + dry fire click on empty chamber
 * Negligent discharge (firing out of aim) is allowed (disable in MCM)
 
@@ -33,11 +33,12 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 
 * Reworked arm and leg stamina mechanics to drain based on weight and recover based on vitals.
 * Changed movement speed Crouch/walk/sprint from vanilla **1 / 2.5 / 5** to **0.7 / 3 / 7** (editable in MCM)
-* New movement breakpoints walk-canted/walk-aiming-1×/walk-scoped as multiplier of the walk speed **0.6 / 0.75 / 0.3** (editable in MCM)
+* New movement breakpoints walk-canted/walk-aiming-1×/walk-scoped as a multiplier of the walk speed **0.6 / 0.75 / 0.3** (editable in MCM)
 
 ## Controls & HUD
 
-* Reworked input priority for Crouch/Sprint/Aim/Canted actions. Last action wins instead of following hardcoded order (exception: while aiming, a key shared by Sprint and Hold Breath holds breath)
+* Reworked input priority for Crouch/Sprint/Aim/Canted actions. Last action wins instead of following hardcoded order. Hold action always wins over toggle.
+* New bindings for optic zoom.
 * Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in MCM)
 * Flashlight now supports both toggle and hold actions on the same binding, and will shine the light on the inspected weapon
 * Additional weapon cards in Inspect/Ammo Check/Insert modes + icon replacers for ammo count and chamber status (check MCM settings)
@@ -49,15 +50,16 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 * Ammo check no longer forces weapon into raised position (prior stance preserved)
 * Canted aim activation no longer blocked by interactables
 * Disabled interactable tooltip while aiming, so it doesn't block vision when aiming around doorways
-* Fixed Mosin ending up in weird state (mag + 0) after opening+closing the bolt
+* Fixed Mosin ending up in a weird state (mag + 0) after opening+closing the bolt
 * Fixed Mosin round/casing not ejecting when opening the bolt to reload/insert and missing animations
 * Fixed HAMR's secondary optic switch permanently killing PIP plane on other scopes (state wasn't being properly reset)
 * Fixed HAMR's secondary optic vertical offset on all AK rifles (not RK), SVD and Vintorez (missing scale calc)
 * Fixed HAMR causing major flickering when toggling secondary on M4A1 (bug with foldable iron sights)
 * Fixed laser ray misaligned with collision dot. You may notice that bullet holes are now very slightly offset from the laser dot - that's how real lasers work.
 * Fixed weapon collision being sized from coarse buckets instead of actual weapon length - an MP7 deflected off walls it was nowhere near, a Mosin clipped through them. Suppressors now count too.
-* Fixed flashlight draining battery while the game world is frozen
-* Fixed bugs with optic rail movement due to incorrect limits and errors in floating point math
+* Fixed flashlight draining battery while the game world is frozen.
+* Fixed bugs with optic rail movement due to incorrect limits and errors in floating point math.
+* Restricted sprint to only forward direction.
 
 ## More details
 
@@ -80,7 +82,7 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 * PU moved back on the gun and it is now real 3.5x zoom
 * Input acceleration for zoom bindings to quick flick from min to max or vice versa
 * MCM setting for magnification control scheme
-	- *Short:* 3 zoom level spread evenly along scope's magnification range - like vanilla but mid-point is visually middle. Choose this if you're more CoD than Tarkov guy.
+	- *Short:* 3 zoom levels spread evenly along scope's magnification range - like vanilla but mid-point is visually middle. Choose this if you're more CoD than Tarkov guy.
 	- *Discrete:* literal, physical zoom levels. E.g. for Vudu: 1, 2, 3, 4,...,10. Input acceleration makes this setting tolerable.
 	- *Normalized:* a comfortable middle ground between the two options above.
 
@@ -103,7 +105,7 @@ Both stamina bars are now dynamic and much more realistic.
 * Flashlight will now shine on the weapon while inspecting
 
 ### Ammo check & insert
-Ammo check receives much needed love. 
+Ammo check receives much-needed love. 
 * Reload binding (default R) will now perform ammo check when held down for longer than 300ms.
 * Old ammo check binding removed.
 * Perform reload directly from the ammo check state by clicking fire button (detachable mag guns only)

@@ -1,3 +1,7 @@
+# 3.0.2013
+* fixed held breath state leaking into sprint, causing crouched character to stand up when not moving
+* restricted sprint to forward direction only
+
 # 3.0.2012
 * split canted aim into two bindings: `Canted Aim` (vanilla behavior) and `Canted Aim (quick)` (direct access). Both activate laser.
 
@@ -38,7 +42,7 @@
 
 # 2.19.1936
 * rangefinder feature for binoculars
-* reworked action priority for binoculars: can now aim straight out of bino mode without need to manually cancel
+* reworked action priority for binoculars: can now aim straight out of bino mode without needing to manually cancel
 * binos now always force weapon position down so it doesn't block the view
 
 # 2.18.1920
@@ -51,7 +55,7 @@
 * refactored sound helpers
 
 # 2.17.1908
-* raised AK12 and AKM inspect positions a bit to make sure kill counts cleanly visible
+* raised AK12 and AKM inspect positions a bit to make sure kill counts are cleanly visible
 * fixed click sounds for NVG used with hold activation
 * fixed occasional flashlight double click sound
 * ammo card: reduced draw delay and unnecessary redrawing
@@ -65,12 +69,12 @@
 * NVG now exclusive with Binos (can't activate together)
 * binos auto-deactivate by sprinting
 * fixed custom mouse button bindings not working for activating binos - can now rebind binos to MMB (recommended)
-* uniform blur for PIP plane under NVG (actually make it unusable as was originally intended)
+* uniform blur for PIP plane under NVG (actually makes it unusable, as originally intended)
 
 # 2.16.1851
 * fire selector card in inspect mode
 * replacement icons for ammo and chamber cards (disabled by default)
-* fixed state transition jittery due to free look attachment
+* fixed jittery state transition due to free look attachment
 * unshift interaction tooltip if crosshair is disabled
 * fixed hook registration batching
 * fixed semi guns firing on reload from ammo check when there is no valid mag to use
