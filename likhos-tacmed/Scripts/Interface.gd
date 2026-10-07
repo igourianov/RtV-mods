@@ -11,7 +11,7 @@ const TACMED := {
 		"replenishDefault": 10.0
 	},
 	"AFAK": {
-		"healTime": 5.0
+		"healTime": 3.0
 	}
 }
 

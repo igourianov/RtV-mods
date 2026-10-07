@@ -1,3 +1,6 @@
+# 1.4.155
+* fixed AFAK heal time being accidentally set to 5 seconds
+
 # 1.4.154
 * balance patch: reduced IFAK/AFAK healing to 1:1 vs components; reduced their weight
 
