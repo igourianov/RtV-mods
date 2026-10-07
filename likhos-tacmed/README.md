@@ -13,11 +13,11 @@ The associated logic will intelligently pick item to use to minimize waste.
 IFAK has been reworked from an exotic, safe queen to a healing workhorse.
 
 * IFAK is now **NOT CONSUMED** on use, but instead loses condition.
-* Heals for the exact value, no overflow - 150 healing pool.
+* Heals for the exact value, no overflow - 100 healing pool.
 * Refilled by basic healing items like bandages - see compatible list.
 * It is slightly faster to use than basic bandage (3sec vs 4sec default).
 * It now only removes bleeding, burning and poisoning conditions.
-* Increased in weight from 0.5kg to 2kg.
+* Increased in weight from 0.5kg to 1kg.
 * It can now be sold by Doctor for measly 1000€ + tip.
 
 Replenishment works 1:1 - consumed item's healing value vs IFAK condition. Tourniquet replenish 10%. So you effectively get 150% healing from the items you would've otherwise used separately.
@@ -28,9 +28,9 @@ AFAK got similar treatment to IFAK. It is now effectively an advanced version of
 
 * Reusable, consumes condition on heal
 * Refilled by a new recipe under Medical section: Used AFAK + 2x Medkit => AFAK (100%)
-* 200 HP healing pool (vs 150 of 2 medkits)
+* 150 HP healing pool
 * Removed Energy/Hydration/Mental (why was it even doing that?)
-* Weight increase 1.2 -> 5.0kg
+* Weight increase 1.2 -> 3.0kg
 * Price 2850 -> 5000€
 * Use speed 4.0 -> 3.0sec
 * Can now be sold by Doctor
