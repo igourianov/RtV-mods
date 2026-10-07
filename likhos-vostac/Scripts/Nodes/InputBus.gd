@@ -66,7 +66,7 @@ func binoculars() -> bool:
 
 
 func sprint() -> bool:
-	return (_sprint_held || _pose_latch == Pose.SPRINT) && _arms == Arms.NONE
+	return (_sprint_held || (_pose_latch == Pose.SPRINT && _moving_forward())) && _arms == Arms.NONE
 
 
 func crouch() -> bool:
@@ -168,7 +168,8 @@ func _follow_held_keys() -> void:
 	var armed: bool = open && _weapon_ready()
 	var aimDown := Input.is_action_pressed("aim")
 	var cantDown := Input.is_action_pressed("canted_standalone")
-	var sprintDown := Input.is_action_pressed("sprint")
+	# a sprint key held in place is no sprint, so it cannot end a crouch or an aim until the character heads forward
+	var sprintDown: bool = Input.is_action_pressed("sprint") && _moving_forward()
 
 	_aim_withdrawn = _aim_withdrawn && aimDown
 
@@ -229,6 +230,10 @@ func _aim_state() -> Arms:
 # during a lock a latched aim or canted is kept but not in effect, and so is a held one with no firearm in hand
 func _weapon_ready() -> bool:
 	return (gameData.primary || gameData.secondary) && !ModConfig.locked()
+
+
+func _moving_forward() -> bool:
+	return Input.get_axis("backward", "forward") > 0.0
 
 
 func _aim_toggle() -> bool:
