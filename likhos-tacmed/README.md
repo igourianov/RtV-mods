@@ -1,10 +1,10 @@
 # Likho's TacMed
 
-Rework high end medical consumables. Reloadable, reusable. Lore friendly.
+Reworks high-end medical consumables. Reloadable, reusable. Lore friendly.
 
 ## IFAK/AFAK keybind
 
-Added a new binding (default to `Z`) under vanilla settings to quick access your IFAK/AFAK without opening inventory. 
+Added a new binding (defaults to `Z`) under vanilla settings to quickly access your IFAK/AFAK without opening inventory. 
 
 The associated logic will intelligently pick item to use to minimize waste. 
 
@@ -13,14 +13,14 @@ The associated logic will intelligently pick item to use to minimize waste.
 IFAK has been reworked from an exotic, safe queen to a healing workhorse.
 
 * IFAK is now **NOT CONSUMED** on use, but instead loses condition.
-* Heals for the exact value, no overflow - 100 healing pool.
+* Heals for the exact value, no overflow - 100 HP healing pool.
 * Refilled by basic healing items like bandages - see compatible list.
-* It is slightly faster to use than basic bandage (3sec vs 4sec default).
+* It is slightly faster to use than a basic bandage (3sec vs 4sec default).
 * It now only removes bleeding, burning and poisoning conditions.
 * Increased in weight from 0.5kg to 1kg.
-* It can now be sold by Doctor for measly 1000€ + tip.
+* It can now be sold by Doctor for a measly 1000€ + tip.
 
-Replenishment works 1:1 - consumed item's healing value vs IFAK condition. Tourniquet replenish 10%. So you effectively get 150% healing from the items you would've otherwise used separately.
+Replenishment works 1:1 - consumed item's healing value vs IFAK condition. Tourniquet replenishes 10%. So you effectively get 150% healing from the items you would've otherwise used separately.
 
 ## AFAK
 
@@ -38,8 +38,8 @@ AFAK got similar treatment to IFAK. It is now effectively an advanced version of
 ## Testing
 
 You can now hurt yourself in the Tutorial room by pressing:
-* `Ctrl+Shift+O`- a bit of damage and apply bleed
-* `Ctrl+Shift+P`- a bit of damage and one of [Fracture, Rupture, Burn, Headshot, Poisoning]
+* `Ctrl+Shift+O` a bit of damage and apply bleed
+* `Ctrl+Shift+P` a bit of damage and one of [Fracture, Rupture, Burn, Headshot, Poisoning]
 
 ## Requirements
 
