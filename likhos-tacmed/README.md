@@ -20,7 +20,7 @@ IFAK has been reworked from an exotic, safe queen to a healing workhorse.
 * Increased in weight from 0.5kg to 1kg.
 * It can now be sold by Doctor for a measly 1000€ + tip.
 
-Replenishment works 1:1 - consumed item's healing value vs IFAK condition. Tourniquet replenishes 10%. So you effectively get 150% healing from the items you would've otherwise used separately.
+Replenishment works 1:1 - consumed item's healing value vs IFAK condition. Tourniquet replenishes 10%.
 
 ## AFAK
 
