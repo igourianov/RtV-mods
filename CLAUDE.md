@@ -50,6 +50,15 @@ Key facts when reading `src/`:
 * If you have to read them, and I give permission - grep them for specific lines instead fo reading whole file. 
 
 
+### Regenerating source
+
+GDRE numbers `ext_resource` ids sequentially, so one added resource renumbers every id and reference after it. `tools/normalize-src.js` rewrites each id to the resource uid and sorts the `ext_resource` block by path. Committed `src/` content is normalized this way.
+
+* Run `node tools/normalize-src.js` after every decompile, before staging in `src/`. A fresh decompile is un-normalized again, so skipping the run produces a diff touching thousands of files.
+* Running it on already normalized files changes nothing.
+* This script is the only allowed way to modify files under `src/`.
+
+
 ## `vostok-mod-loader/` holds the loader source + docs (read-only reference)
 
 A clone of the Metro Mod Loader repo lives at `vostok-mod-loader/`. This mod loader is what is used to inject mods into the game.
