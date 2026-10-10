@@ -2,7 +2,7 @@
 
 ## Intent
 
-A new mod, Likho's Battery (`likhos-battery`). Every item that accepts batteries gets an option to take the battery back out. The removed battery carries the charge the device had and the device drops to zero. Batteries stop being implicitly 100%: a battery has its own charge, shows it and transfers exactly that charge when inserted.
+A new mod, Likho's Battery (`likhos-battery`). Every item that accepts batteries gets an option to take the battery back out. The removed battery carries the charge the device had and the device drops to zero. Batteries stop being implicitly 100%: a battery has its own charge, shows it and transfers exactly that charge when inserted. Prices follow charge: a battery is worth its charge and a device loses the value of the charge it is missing, but never the value of the device itself.
 
 ## Constraints and assumptions
 
@@ -13,7 +13,8 @@ A new mod, Likho's Battery (`likhos-battery`). Every item that accepts batteries
 * A battery's charge is its `slotData.condition`. `SlotData` already persists it, so no new saved state exists. Charge is carried as the exact float value. Display rounds it.
 * Batteries from loot, traders and crafting are created with the `SlotData` default of 100, so new batteries are full without any change to those paths.
 * Ruled out: trader tasks and recipes that consume `Batteries` keep accepting a battery of any charge.
-* Ruled out: device prices. Vanilla `Item.Value` exempts `Electronics` from condition scaling and devices keep that.
+* Vanilla `Item.Value` exempts `Electronics` from condition scaling, so in vanilla neither batteries nor devices are priced by charge.
+* A device's price is treated as the device itself plus one full battery. Every current device is worth more than the `Batteries` item (100): Narva 180, Casette Player 250, Polaris 375, Phoenix 750, PV7 2750. No price floor exists for a device worth less than a battery.
 * Ruled out: merging or topping up charge between two batteries.
 * Assumption, unverified: `Context.gd` `Update` can be wrapped by the loader's hook codegen. It is not on a skip list, but no existing mod hooks it.
 * Assumption, unverified: `Item.Value` is the only pricing path for inventory items.
@@ -66,11 +67,13 @@ An equipped flashlight, NVG or casette player that is switched on turns off by i
 
 ### Price: replace hook on `Item.Value`
 
-For the `Batteries` item the handler returns the vanilla value scaled by condition. Every other item gets the vanilla result unchanged.
+For the `Batteries` item and for every battery-powered device, the handler returns the vanilla value minus the missing share of charge priced at the `Batteries` item's value. A battery at 40% is worth 40% of a battery. A device at 40% is worth its vanilla value minus 60% of a battery. A device at 0% is worth its vanilla value minus one battery. Every other item gets the vanilla result unchanged.
+
+Removing or inserting a battery therefore never changes the combined price of the device and the battery.
 
 ### Shared contract
 
-The handlers share one test for "battery-powered device" as defined in the constraints, and resolve the `Batteries` item data once.
+The handlers share one test for "battery-powered device" as defined in the constraints, and resolve the `Batteries` item data once. Removal additionally requires charge above 0. Pricing applies at any charge.
 
 ### Observable result
 
@@ -79,6 +82,7 @@ The handlers share one test for "battery-powered device" as defined in the const
 * Dropping a 60% battery on a 20% device leaves the device at 60% and the battery at 20%.
 * Dropping a battery on a 0% device consumes it and gives the device that battery's charge.
 * A 40% battery sells for 40% of the full battery price.
+* A Narva is worth 180 at full charge, 140 at 60% and 80 at 0%.
 
 ## Tradeoffs
 
@@ -86,4 +90,5 @@ The handlers share one test for "battery-powered device" as defined in the const
 * The vanilla Unload button is reused, chosen over adding a button node to the context menu. No UI nodes are created. The cost is a collision if another mod shows Unload for electronics.
 * `Charge`, `ContextUnload` and `Item.Value` are replace hooks, which are single-owner. Another mod replacing the same method wins or loses wholesale. Pre and post hooks cannot suppress vanilla or change a return value, so they do not fit.
 * The inserted battery item is kept and re-charged on swap, chosen over destroying it and creating a new one. The returned battery needs no free grid space. The cost is that it reappears in its original position, not next to the device.
-* Only batteries are priced by charge. Pulling a battery before selling a device still adds the battery's price on top of the unchanged device price. Chosen over altering vanilla device prices.
+* Devices are priced by charge, which changes vanilla prices: a looted device below 100% is worth less than in vanilla. Chosen over leaving device prices alone, which would make pulling the battery before a sale pay out the battery's price for free.
+* The missing charge is priced at the flat `Batteries` value for every device, chosen over a percentage of the device's own value. The device and battery prices always add up, and an expensive device loses little. The cost is that a device cheaper than a battery would go to zero or below.
