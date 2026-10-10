@@ -7,6 +7,7 @@ A lightweight settings menu for mods. Meant as a replacement for Mod Configurati
 - Clean API with minimal footprint for mod makers. No pages of crude metadata required.
 - Clean, transparent config files that save only values and only if they deviate from defaults, making migrations a breeze.
 - Opens from the `LCM` button in the top right corner of the game's settings screen (placed next to MCM button).
+- Settings UI mimics MCM screen (credit to Doink for it) although completely different on the back end
 
 Without this mod installed, mods that rely on it run on their default settings.
 
