@@ -14,7 +14,7 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 * New `Canted Aim (quick)` binding: canted aim independent from aim, with optional laser auto-activation (unbound by default)
 * Weapon handling speed (how fast you transition into the desired state) now scales with stance and optic: red dot and LPVO 1x **115%**, canted **130%**, magnified scope **80%**
 * Reworked insert and ammo check mechanics to use hold action instead of toggle + can now reload directly from ammo check
-* Reworked the inspect mode and associated bindings + QoL flashlight fix
+* Reworked the inspect mode and associated bindings
 * Reworked manual action gun reload animations to be more fluid (reduced animation lockout time)
 * Mosin and 870 can now cycle the bolt on both full and empty mag, like the real guns do (you will lose ammo) + dry fire click on empty chamber
 * Negligent discharge (firing out of aim) is allowed (disable in MCM)
@@ -40,9 +40,15 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 * Reworked input priority for Crouch/Sprint/Aim/Canted actions. Last action wins instead of following hardcoded order. Hold action always wins over toggle.
 * New bindings for optic zoom.
 * Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in MCM)
-* Flashlight now supports both toggle and hold actions on the same binding, and will shine the light on the inspected weapon
 * Additional weapon cards in Inspect/Ammo Check/Insert modes + icon replacers for ammo count and chamber status (check MCM settings)
 * Likho's protips in-game to make the user aware of the changed bindings
+
+## Flashlights
+
+* All flashlights now throw a much wider and shorter beam: the cone is **80%** wider and the range is **50%** of vanilla
+* Flashlight now supports both toggle and hold actions on the same binding
+* Flashlight will now shine on the weapon while inspecting
+* Fixed flashlight draining battery while the game world is frozen.
 
 ## Vanilla Bug Fixes
 
@@ -57,7 +63,6 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 * Fixed HAMR causing major flickering when toggling secondary on M4A1 (bug with foldable iron sights)
 * Fixed laser ray misaligned with collision dot. You may notice that bullet holes are now very slightly offset from the laser dot - that's how real lasers work.
 * Fixed weapon collision being sized from coarse buckets instead of actual weapon length - an MP7 deflected off walls it was nowhere near, a Mosin clipped through them. Suppressors now count too.
-* Fixed flashlight draining battery while the game world is frozen.
 * Fixed bugs with optic rail movement due to incorrect limits and errors in floating point math.
 * Restricted sprint to only forward direction.
 
@@ -102,7 +107,6 @@ Both stamina bars are now dynamic and much more realistic.
 * Weapon rotation in inspect mode is now done with the Canted aim binding instead of mouse wheel.
 * Stamina drain removed
 * Added ammo and attachment cards to the inspect mode (disable via MCM menu)
-* Flashlight will now shine on the weapon while inspecting
 
 ### Ammo check & insert
 Ammo check receives much-needed love. 

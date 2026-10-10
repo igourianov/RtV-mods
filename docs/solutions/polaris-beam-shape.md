@@ -40,7 +40,7 @@ Context only, not modified:
 
 | property | factor |
 |---|---|
-| range | 0.6 |
+| range | 0.5 |
 | cone angle | 1.8 |
 
 These are starting values to be confirmed in game.
@@ -51,9 +51,9 @@ These are starting values to be confirmed in game.
 
 | light | tier | vanilla range | range | vanilla cone | cone |
 |---|---|---|---|---|---|
-| Narva | Low | 25 | 15 | 25 | 45 |
-| Polaris | Medium | 50 | 30 | 25 | 45 |
-| Phoenix | High | 100 | 60 | 25 | 45 |
+| Narva | Low | 25 | 12.5 | 25 | 45 |
+| Polaris | Medium | 50 | 25 | 25 | 45 |
+| Phoenix | High | 100 | 50 | 25 | 45 |
 
 At 45 degrees the lit circle has about 2.1 times the radius it has at 25 degrees at the same distance.
 
@@ -78,13 +78,13 @@ When vanilla `Activate` returns early without writing a range, the hook writes n
 
 ### Expected result
 
-* All three lights cover a much wider area and reach 60 percent as far as in vanilla.
+* All three lights cover a much wider area and reach half as far as in vanilla.
 * The lights keep their vanilla ordering and ratios: the Phoenix still reaches twice as far as the Polaris and four times as far as the Narva.
 * Brightness close to the player is unchanged for all three lights.
 
 ## Tradeoffs
 
-* **Uniform factors over per-light profiles.** Two numbers to tune and nothing to maintain when a light is added or patched. The cost is that no light can be shaped independently. The Narva drops to 15 m, which is short, and it cannot be given a gentler factor without bringing per-tier data back.
+* **Uniform factors over per-light profiles.** Two numbers to tune and nothing to maintain when a light is added or patched. The cost is that no light can be shaped independently. The Narva drops to 12.5 m, which is short, and it cannot be given a gentler factor without bringing per-tier data back.
 * **Post hook on `Activate` over a replacement.** Vanilla keeps ownership of energy, color and the tier branching, so a game patch to those values carries through. The cost is one more hooked method on `Flashlight.gd` that other mods can collide with, and that vanilla range is written and immediately overwritten on each activation.
 * **Rewriting the cone on every activation over setting it once per scene.** One redundant property write every 10 physics frames, in exchange for a single hook site and no dependency on the flashlight node's startup order.
 * **Vanilla energy on a wider cone.** Godot does not spread a spot light's energy over its cone, so the wider beam emits more total light at the same per-surface brightness. Every light illuminates more of the scene at close range than a physically scaled beam would. Lowering energy to compensate would dim the near field, most noticeably on the Narva.

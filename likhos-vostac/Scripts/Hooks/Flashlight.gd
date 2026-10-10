@@ -2,7 +2,7 @@
 const Out := preload("../../Lib/Out.gd")
 
 # Tunable: beam shape as multiples of the vanilla range and cone angle.
-const RANGE_FACTOR := 0.6
+const RANGE_FACTOR := 0.5
 const CONE_FACTOR := 1.8
 
 var _lib

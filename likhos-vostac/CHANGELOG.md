@@ -1,3 +1,7 @@
+# 3.0.2015
+* all flashlights now throw a much wider and shorter beam: the cone is 80% wider and the range is 50% of vanilla
+* fixed a possible flashlight script error in the first moments after a scene loads
+
 # 3.0.2013
 * fixed held breath state leaking into sprint, causing crouched character to stand up when not moving
 * restricted sprint to forward direction only
