@@ -1,6 +1,17 @@
 extends Node
 
 const MCM_PATH := "res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Helpers.tres"
+const MCM_CONFIG_PATH := "res://ModConfigurationMenu/Scripts/MCM_Config.gd"
+const MCM_SIMPLE_TYPES := ["Bool", "Int", "Float", "String", "Color", "Vector2", "Vector3"]
+# template key -> MCM value setter
+const MCM_SETTERS := {
+	"menu_pos": "setMenuPos",
+	"category": "setCategory",
+	"on_value_changed": "setOnValueChanged",
+	"minRange": "setMinRange",
+	"maxRange": "setMaxRange",
+	"step": "setStep"
+}
 const Out := preload("./Out.gd")
 const Inputs := preload("./Inputs.gd")
 
@@ -49,23 +60,40 @@ func _init_config():
 		load_config(config)
 		return
 
-	var configDir := "user://MCM/" + mod_id
-	var filePath := configDir + "/config.ini"
 	var helper = load(MCM_PATH) if ResourceLoader.exists(MCM_PATH) else null
+	if !helper:
+		load_config(config)
+		return
 
-	if !FileAccess.file_exists(filePath):
-		DirAccess.open("user://").make_dir(configDir)
-		config.save(filePath)
+	var mcm = load(MCM_CONFIG_PATH).new(mod_id, mod_name, mod_desc, load_config)
+	_add_mcm_values(mcm, config)
+	mcm.RegisterMod()
+	# MCM keeps a separate file per Mod Loader profile, so the values have to come from its helper
+	load_config(helper.GetModConfigFile(mod_id))
 
-	if helper:
-		helper.RegisterConfiguration(mod_id, mod_name, configDir, mod_desc, {
-			"config.ini": load_config
-		})
-		helper.CheckConfigurationHasUpdated(mod_id, config, filePath)
-		# MCM keeps a separate file per Mod Loader profile, so the values have to come from its helper
-		config = helper.GetModConfigFile(mod_id)
 
-	load_config(config)
+# Replays a template as MCM_Config builder calls, so mods keep defining their settings as plain dictionaries.
+func _add_mcm_values(mcm, template: ConfigFile) -> void:
+	for section in template.get_sections():
+		for id in template.get_section_keys(section):
+			var data: Dictionary = template.get_value(section, id)
+			var value
+			if section == "Category":
+				value = mcm.CreateCategoryHeader(id, id)
+			elif section == "Dropdown":
+				value = mcm.CreateDropdownValue(id, data["name"], data["tooltip"], data["default"], data["options"])
+			elif section in MCM_SIMPLE_TYPES:
+				value = mcm.call("Create%sValue" % section, id, data["name"], data["tooltip"], data["default"])
+			else:
+				Out.warning("unsupported MCM value type %s for %s" % [section, id])
+				continue
+
+			if value == null:
+				Out.warning("MCM rejected value %s" % id)
+				continue
+			for key in MCM_SETTERS:
+				if data.has(key):
+					value.call(MCM_SETTERS[key], data[key])
 
 
 func _init_setup():
