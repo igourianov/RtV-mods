@@ -56,6 +56,7 @@ A config object is a `Resource` script with `@export` fields, plus a `.tres` of 
 
 * An `@export` field is a setting. Its value in the `.tres`, or the script initializer, is its default.
 * A field without `@export` is not a setting. LMC never reads, shows or stores it, so the object can carry runtime state next to settings.
+* The mod owns its config object's lifecycle and manages it where that is needed. LMC keeps a reference to the object for the run and never frees, copies or validates it.
 * Settings appear in the menu in declaration order, except that fields outside any group come first.
 
 ### Registration

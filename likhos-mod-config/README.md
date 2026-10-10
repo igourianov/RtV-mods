@@ -185,3 +185,4 @@ func _process(delta: float) -> void:
 - Only values that differ from the default are saved. A default you change in an update reaches every player who has not changed that setting.
 - A saved value is dropped when its field is removed or changes its type.
 - Key bindings are not supported.
+- The config object is yours. LMC keeps a reference to it for as long as the game runs and never frees or replaces it.
