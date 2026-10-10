@@ -126,7 +126,7 @@ These changes started out as separate mods. The catch is that Road to Vostok's s
 
 - Road to Vostok 0.2.0.0 (Godot 4.6.3)
 - [Metro Mod Loader (MML)](https://vostokmods.net/mod/metro-mod-loader) v3.4.1 or later (separate install, not bundled with the game)
-- Likho's Config Manager (LCM) (optional, the mod runs on its default settings without it)
+- [Likho's Config Manager](https://vostokmods.net/mod/likhos-config-manager) (LCM) (optional, the mod runs on its default settings without it)
 
 ## Compatibility
 
