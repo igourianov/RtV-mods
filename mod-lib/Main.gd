@@ -132,9 +132,9 @@ func create_key_input(keycode: int, ctrl_pressed: bool = false, shift_pressed: b
 func setup(lib):
 	pass
 
-# a Resource with @export fields for Likho's Config Manager, the same object on every call
+# an object with @export fields for Likho's Config Manager, the same object on every call
 # its debug_enabled and show_protips fields, when declared, drive Out
-func get_config() -> Resource:
+func get_config() -> RefCounted:
 	return null
 
 # runs once on startup with the defaults, then every time stored or changed settings are written into the object from get_config

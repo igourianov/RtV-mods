@@ -53,11 +53,11 @@ Context only:
 
 ### Config object
 
-A config object is one instance of a `Resource` script with `@export` fields. Scripts that need settings read its fields directly. LCM only needs the instance and does not care how the mod creates or shares it. The README documents three ways as equal options:
+A config object is one instance of a `RefCounted` script with `@export` fields. Scripts that need settings read its fields directly. LCM only needs the instance and does not care how the mod creates or shares it. The README shows the script as `extends RefCounted` and documents three ways as equal options:
 
 * Created with `new()` where the mod registers it, and passed on by the mod.
 * Held in a static variable of the config script, so every script that preloads the script reaches the same instance.
-* A `.tres` of the script shipped in the mod and preloaded, as vanilla scripts do with `GameData.tres`.
+* A `.tres` of the script shipped in the mod and preloaded, as vanilla scripts do with `GameData.tres`. Only this way needs the script to extend `Resource`, which is itself a `RefCounted`.
 
 * An `@export` field is a setting. Its value in the `.tres`, or the script initializer, is its default.
 * A field without `@export` is not a setting. LCM never reads, shows or stores it, so the object can carry runtime state next to settings.
@@ -68,7 +68,7 @@ A config object is one instance of a `Resource` script with `@export` fields. Sc
 
 LCM's API is one script of static functions at `res://mods/likhos-config-manager/Scripts/LCM.gd`. That path is the contract with consumers and does not change. A consumer checks that the script exists, loads it and calls its one function:
 
-`register_config(mod_uid: String, mod_name: String, config: Resource, on_applied: Callable = Callable()) -> bool`
+`register_config(mod_uid: String, mod_name: String, config: RefCounted, on_applied: Callable = Callable()) -> bool`
 
 * The registered mods are static state of the API script, not of LCM's autoload. A consumer can register at any point of startup, before or after LCM's `Main` runs.
 * It returns whether the config got registered.
@@ -77,6 +77,7 @@ LCM's API is one script of static functions at `res://mods/likhos-config-manager
 * LCM takes the object's values at the time of the call as the defaults.
 * When the mod has a stored file, LCM writes its values into the object before returning and then calls `on_applied` once. Without a stored file the object stays on its defaults and `on_applied` is not called.
 * `on_applied` takes no arguments. Besides registration, LCM calls it every time the player's changes are applied.
+* `on_applied` is optional. A consumer without a callback leaves the argument out or passes `Callable()`. `null` is not a `Callable` and fails the call.
 
 ### Field mapping
 

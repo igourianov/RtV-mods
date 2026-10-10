@@ -1,12 +1,12 @@
 # Likho's Config Manager
 
-A lightweight settings menu for mods. Every mod that supports it gets an entry in one list and its own settings page.
+A lightweight settings menu for mods. Meant to serve as a replacement for MCM.
 
-* Opens from the `LCM` button in the top right corner of the game's settings screen, in the main menu and in game.
-* Changes take effect when you leave a mod's page or close the menu.
-* `Reset` next to a setting restores its default.
-* Settings are shared by all Mod Loader profiles.
-* Runs next to Mod Configuration Menu (MCM). The two menus are separate and each lists its own mods.
+## Features
+
+* Clean API with minimal footprint for mod makers. No pages of crude metadata required.
+* Clean, transparent config files, that save only values and only if they deviate from defaults, making migrations a breeze.
+* Opens from the `LCM` button in the top right corner of the game's settings screen (placed next to MCM button).
 
 Without this mod installed, mods that rely on it run on their default settings.
 
@@ -36,16 +36,16 @@ To uninstall simply delete `likhos-config-manager.vmz` from the `mods/` folder a
 
 ## For mod authors
 
-A mod describes its settings as a `Resource` with `@export` fields and registers it with one call. LCM builds the settings page from the fields, loads the player's saved values into the object and saves changes. The mod never deals with files.
+A mod describes its settings as a class with `@export` fields and registers an instance of it with one call. LCM builds the settings page from the fields, loads the player's saved values into the object and saves changes. The mod never deals with files.
 
 LCM is an optional dependency. When it is not installed the config object keeps its default values.
 
-### 1. Config script
+### 1. Define config class
 
-`Scripts/Config.gd` in your mod:
+`Scripts/Config.gd` (could be any name/location you choose) in your mod:
 
 ```gdscript
-extends Resource
+extends RefCounted
 
 @export var debug_enabled := false
 
@@ -62,23 +62,26 @@ var current_weapon_weight := 0.0
 - Settings appear in declaration order. `@export_group` starts a section with a header. Settings outside of any section are shown first, without a header.
 - A setting's label is its field name with underscores turned into spaces and the first letter capitalized. The rest keeps the field's capitalization: `walk_speed` shows as `Walk speed` and `NVG_blur` shows as `NVG blur`. Write abbreviations in capitals in the field name. There are no tooltips.
 
-### 2. Config object
+### 2. Set up shared instance
 
-LCM works on one instance of that script. Every script that reads settings has to read that same instance. There are three ways to get there. Pick one.
+LCM works on a singleton of the above class. Every script that reads settings has to read that same instance. There are three ways to get there. **PICK ONE**.
 
-**A. Create it and pass it on.** No extra file. Fits when one script reads the settings, or when you hand the object to the others yourself:
+**A. Create it and pass it everywhere.**
+
+Works best for simple, single file mods.
 
 ```gdscript
-const Config := preload("res://mods/my-mod/Scripts/Config.gd")
+const Config := preload("./Config.gd")
 
 var config := Config.new()
+var myModHook := MyModHook.new(config)
 ```
 
-**B. A static holder on the config script.** No extra file. Any script that preloads the config script reaches the same instance:
+**B. A classic singleton.** Best for multi-file, mostly-code mods.
 
 ```gdscript
 # in Config.gd
-extends Resource
+extends RefCounted
 
 static var instance := new()
 
@@ -87,14 +90,18 @@ static var instance := new()
 
 ```gdscript
 # anywhere else
-const Config := preload("res://mods/my-mod/Scripts/Config.gd")
+const Config := preload("./Config.gd")
 
 
 func _process(delta: float) -> void:
 	position.x += Config.instance.walk_speed * delta
 ```
 
-**C. A `.tres` resource.** The way the game shares its own `GameData`. `Config.tres` in your mod, with the script path being the absolute path the mod has in game:
+**C. A `.tres` resource.** Best if your mod already manages various resources.
+
+The same way the game shares its own `GameData`. This is the only option that needs the config class to be a resource, since a `.tres` cannot hold anything else. Declare it with `extends Resource` instead of `extends RefCounted`. Everything else about the class stays the same.
+
+`Config.tres` in your mod, with the script path being the absolute path the mod has in game:
 
 ```
 [gd_resource type="Resource" load_steps=2 format=3]
@@ -119,7 +126,7 @@ Pass the instance from step 2, whichever way you made it:
 
 ```gdscript
 const LCM_PATH := "res://mods/likhos-config-manager/Scripts/LCM.gd"
-const Config := preload("res://mods/my-mod/Scripts/Config.gd")
+const Config := preload("./Config.gd")
 
 var config := Config.new()
 
@@ -130,7 +137,8 @@ func _ready() -> void:
 
 
 func _on_config_applied() -> void:
-	pass
+	# you only need this is config changes need to perform immediate action
+	# ignore if your mod simply reads settings from the config object
 ```
 
 `register_config(mod_uid, mod_name, config, on_applied = Callable()) -> bool`
@@ -141,6 +149,14 @@ Returns `true` when the config is registered. Returns `false` and logs a warning
 - `mod_name`: the name shown in the menu.
 - `config`: the config object. Its values at the time of the call are the defaults.
 - `on_applied`: optional, takes no arguments. Called once during registration if the player has saved values, after they are written into the object. Called again every time the player changes settings in the menu. It is not called when there is nothing saved.
+
+A mod that reads its settings straight from the config object needs no callback. Leave the argument out:
+
+```gdscript
+load(LCM_PATH).register_config("my-mod", "My Mod", config)
+```
+
+`Callable()` in its place does the same. `null` is not accepted and fails the call.
 
 Registration can happen at any point of startup. It does not depend on mod load order.
 
@@ -161,7 +177,7 @@ A field of any other type is skipped with a warning in the log.
 One example per kind of row:
 
 ```gdscript
-extends Resource
+extends RefCounted
 
 enum CantMode { DEFAULT, RAIL, OFF }
 
@@ -218,6 +234,6 @@ func _process(delta: float) -> void:
 
 - Values are written into the config object when the player leaves the mod's page or closes the menu, not while a control is being moved.
 - Only values that differ from the default are saved. A default you change in an update reaches every player who has not changed that setting.
-- A saved value is dropped when its field is removed or changes its type.
+- A saved value is ignored when its field is removed or changes its type. Dropped on next save.
 - Key bindings are not supported.
 - The config object is yours. LCM keeps a reference to it for as long as the game runs and never frees or replaces it.
