@@ -8,6 +8,10 @@ const ModMenu := preload("../Scenes/ModMenu.tscn")
 const BUTTON_SIZE := Vector2(55, 55)
 const BUTTON_MARGIN := Vector2(30, 30)
 const BUTTON_GAP := 10
+# narrower than the button, so the icon keeps clear of its left and right edges
+const BUTTON_ICON_WIDTH := 45
+# shipped without an .import file, so it is read as a raw image instead of a resource
+const BUTTON_ICON := "../Textures/lcm_icon.png"
 
 
 var _lib
@@ -45,7 +49,11 @@ func _on_settings_ready_post() -> void:
 		right += BUTTON_SIZE.x + BUTTON_GAP
 
 	var button := Button.new()
-	button.text = "LCM"
+	var icon_path: String = get_script().resource_path.get_base_dir().path_join(BUTTON_ICON).simplify_path()
+	button.icon = ImageTexture.create_from_image(Image.load_from_file(icon_path))
+	button.expand_icon = true
+	button.add_theme_constant_override("icon_max_width", BUTTON_ICON_WIDTH)
+	button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	button.tooltip_text = "Likho's Config Manager"
 	button.set_anchors_preset(Control.PRESET_TOP_RIGHT)
 	button.offset_left = -right - BUTTON_SIZE.x
