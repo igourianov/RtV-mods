@@ -30,7 +30,6 @@ Context only:
 * `likhos-vostac/Scripts/Nodes/WeaponRig_Optic.gd` beyond the input: what a fixed scope shows while the aim is on the secondary sight line.
 * `likhos-vostac/Scripts/Hooks/Handling.gd`: the aim pose from `rig.aimOffset`, the handling speed tiers and the idle cue rotation.
 * Vanilla `src/Scripts/Optic.gd`, `src/Scripts/WeaponRig.gd` and the weapon and attachment resources under `src/Items/`.
-* `FEATURES.md`. The user writes it.
 
 ## Solution
 
