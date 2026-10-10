@@ -38,7 +38,7 @@ Assumptions, unverified:
 
 Owned:
 
-* `likhos-mod-config/`: the new mod. Its `mod.txt`, scripts, `README.md` and `INSTRUCTIONS.md`.
+* `likhos-mod-config/`: the new mod. Its `mod.txt`, scripts and `README.md`. The README covers both players and mod authors, and does not mention mod-lib, which is private to these mods.
 * `mod-lib/Main.gd`: handing a mod's config object to LMC.
 
 Context only:
