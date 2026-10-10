@@ -1,3 +1,7 @@
+# 1.3.59
+* worked around an MCM bug with MML profiles: saved settings were not applied on game start when a non-default profile is selected
+* MCM is no longer required for the mod to load
+
 # 1.3.58
 * cleaned up debug output and added MCM toggle to show it
 

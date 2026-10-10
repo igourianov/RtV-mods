@@ -2,13 +2,8 @@ extends RefCounted
 
 const Out = preload("../Lib/Out.gd")
 
-var McmHelpers :=preload("res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Helpers.tres")
-
 var _probabilities: Dictionary = {}
 
-const MOD_ID := "likhos-eventuality"
-const FILE_PATH := "user://MCM/likhos-eventuality"
-const FILE_NAME := "config.ini"
 const PROB_MIN := 0.0
 const PROB_MAX := 100.0
 
@@ -23,39 +18,14 @@ static var EVENTS := {
 }
 
 
-func _init():
-	var config: ConfigFile = _create_config_template()
-
-	var fullPath := FILE_PATH + "/" + FILE_NAME
-	if !FileAccess.file_exists(fullPath):
-		DirAccess.open("user://").make_dir(FILE_PATH)
-		config.save(fullPath)
-	else:
-		McmHelpers.CheckConfigurationHasUpdated(MOD_ID, config, fullPath)
-		config.load(fullPath)
-
-	_apply_config(config)
-
-	McmHelpers.RegisterConfiguration(
-		MOD_ID,
-		"Likho's Eventuality",
-		FILE_PATH,
-		"Per-event probability overrides for dynamic events",
-		{
-			FILE_NAME: _apply_config
-		}
-	)
-
-
-func _apply_config(config: ConfigFile):
+func apply_config(config: ConfigFile) -> void:
 	Out.debug_enabled = config.get_value("Bool", "debug_enabled", {}).get("value", false)
 	for cfgKey in EVENTS:
 		var entry: Dictionary = EVENTS[cfgKey]
 		_probabilities[cfgKey] = config.get_value("Float", cfgKey, {}).get("value", entry.default)
 
 
-func _create_config_template():
-	var config := ConfigFile.new()
+func create_template(config: ConfigFile) -> void:
 	var pos := [0]
 	var next_pos := func(): pos[0] += 1; return pos[0]
 
@@ -83,8 +53,6 @@ func _create_config_template():
 			"menu_pos": next_pos.call(),
 			"category": "Probabilities"
 		})
-
-	return config
 
 
 func get_probability(function_name: String, fallback: float) -> float:

@@ -6,11 +6,18 @@ const ModConfig := preload("./ModConfig.gd")
 
 var _event_system: EventSystem
 var _police: Police
-var _config: ModConfig
+var _config := ModConfig.new()
+
+
+func create_config(config: ConfigFile) -> void:
+	_config.create_template(config)
+
+
+func load_config(config: ConfigFile) -> void:
+	_config.apply_config(config)
 
 
 func setup(lib) -> void:
-	_config = ModConfig.new()
 	_event_system = EventSystem.new(lib, _config)
 	_police = Police.new(lib)
 

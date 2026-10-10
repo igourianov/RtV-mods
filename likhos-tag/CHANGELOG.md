@@ -1,3 +1,6 @@
+# 1.1.70
+* worked around an MCM bug with MML profiles: saved settings were not applied on game start when a non-default profile is selected
+
 # 1.1.69
 * fixed MCM setting not rendering
 

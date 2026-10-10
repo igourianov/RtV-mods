@@ -1,3 +1,6 @@
+# 3.2.2026
+* worked around an MCM bug with MML profiles: saved settings were not applied on game start when a non-default profile is selected
+
 # 3.2.2025
 * Mosin and M28 (not the MOD) with a PU scope can now toggle between the scope and iron sights using the `Secondary Optic` binding, same way the HAMR switches to its top dot
 
