@@ -25,7 +25,6 @@ static var _mods: Dictionary[String, Entry] = {}
 static var _uid_pattern := RegEx.create_from_string("^[a-z0-9_-]+$")
 
 
-# returns whether the config got registered
 static func register_config(mod_uid: String, mod_name: String, config: RefCounted, on_applied: Callable = Callable()) -> bool:
 	if _uid_pattern.search(mod_uid) == null:
 		Out.warning("config for \"%s\" is not registered, a mod uid can only contain a-z, 0-9, - and _" % mod_uid)
@@ -42,8 +41,7 @@ static func register_config(mod_uid: String, mod_name: String, config: RefCounte
 	_mods[mod_uid] = entry
 
 	var group: String = ""
-	# the script's own list, because the object's list of a config that is a Resource opens with the engine's "Resource" group
-	# and only an editor build emits the category entry that would end that group before the script's fields
+	# the script's own list, because the object's list of a config that is a Resource opens with the engine's "Resource" group and only an editor build emits the category entry that would end that group before the script's fields
 	for property in config.get_script().get_script_property_list():
 		var usage: int = property.usage
 		if usage & PROPERTY_USAGE_GROUP:

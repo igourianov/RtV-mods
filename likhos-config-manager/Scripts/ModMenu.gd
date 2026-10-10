@@ -117,7 +117,6 @@ func _set_value(field_name: String, value: Variant) -> void:
 	revert.modulate.a = 0.0 if is_default else 1.0
 
 
-# builds the input of a field from its pending value
 func _create_input(field: Dictionary) -> Control:
 	var field_name: String = field.name
 	var value: Variant = _values[field_name]
