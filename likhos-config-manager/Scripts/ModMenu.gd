@@ -56,8 +56,7 @@ func _init(settings: Control) -> void:
 	var header := HBoxContainer.new()
 	layout.add_child(header)
 
-	var caption := Label.new()
-	caption.text = "Likho's Config Manager"
+	var caption := _create_label("Likho's Config Manager")
 	caption.theme_type_variation = &"HeaderLarge"
 	caption.add_theme_font_size_override("font_size", 24)
 	caption.size_flags_horizontal = SIZE_EXPAND_FILL
@@ -162,8 +161,7 @@ func _build_page() -> void:
 		row.custom_minimum_size.y = ROW_HEIGHT
 		_rows.add_child(row)
 
-		var label := Label.new()
-		label.text = field_name.capitalize()
+		var label := _create_label(field_name.capitalize())
 		label.size_flags_horizontal = SIZE_EXPAND_FILL
 		row.add_child(label)
 
@@ -232,6 +230,8 @@ func _create_input(field: Dictionary) -> Control:
 			if limits.size() > 2 && limits[2].is_valid_float():
 				step = float(limits[2])
 			var spin_box := _create_spin_box(value, step, on_changed, float(limits[0]), float(limits[1]))
+			# its share of the row next to the slider is too narrow for a number
+			spin_box.custom_minimum_size.x = 100
 			var slider := HSlider.new()
 			slider.size_flags_horizontal = SIZE_EXPAND_FILL
 			slider.size_flags_vertical = SIZE_FILL
@@ -261,16 +261,16 @@ func _create_input(field: Dictionary) -> Control:
 		input = HBoxContainer.new()
 		input.add_theme_constant_override("separation", 12)
 		for axis: int in (2 if field.type == TYPE_VECTOR2 else 3):
-			var axis_label := Label.new()
-			axis_label.text = AXES[axis] + ":"
-			input.add_child(axis_label)
+			input.add_child(_create_label(AXES[axis] + ":"))
 			var on_axis_changed := func(number: float) -> void:
 				var vector: Variant = _values[field_name]
 				vector[axis] = number
 				_set_value(field_name, vector)
 			input.add_child(_create_spin_box(value[axis], FLOAT_STEP, on_axis_changed))
 
+	# one fixed width and no share of the row's spare space, so the inputs of all rows line up in a column
 	input.custom_minimum_size.x = INPUT_WIDTH
+	input.size_flags_horizontal = SIZE_FILL
 	return input
 
 
@@ -285,7 +285,6 @@ func _create_spin_box(value: float, step: float, on_changed: Callable, min_value
 		spin_box.max_value = max_value
 	spin_box.step = step
 	spin_box.value = value
-	spin_box.custom_minimum_size.x = 100
 	spin_box.size_flags_horizontal = SIZE_EXPAND_FILL
 	# connected last, so setting the box up does not count as a change by the player
 	spin_box.value_changed.connect(on_changed)
@@ -298,8 +297,7 @@ func _add_group_header(text: String) -> void:
 	header.add_theme_constant_override("separation", 16)
 	_rows.add_child(header)
 
-	var label := Label.new()
-	label.text = text
+	var label := _create_label(text)
 	label.add_theme_font_size_override("font_size", 24)
 	label.add_theme_color_override("font_color", DIMMED)
 	header.add_child(label)
@@ -325,11 +323,17 @@ func _add_column_title(column: VBoxContainer, text: String) -> Label:
 	var panel := PanelContainer.new()
 	panel.custom_minimum_size.y = 50
 	column.add_child(panel)
+	var label := _create_label(text)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	panel.add_child(label)
+	return label
+
+
+# text centered in the label's own height, which matters where a container stretches the label taller than its text
+func _create_label(text: String) -> Label:
 	var label := Label.new()
 	label.text = text
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	panel.add_child(label)
 	return label
 
 
