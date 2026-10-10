@@ -15,6 +15,7 @@
     "likhos-radiola-doomer": { "mod_id": 113, "file_id": 7721661, "category": "optional", "update_mod_version": false },
     "likhos-radiola-hardboss": { "mod_id": 113, "file_id": 7721664, "category": "optional", "update_mod_version": false },
     "likhos-radiola-kolkhoz": { "mod_id": 113, "file_id": 7721670, "category": "optional", "update_mod_version": false },
-    "likhos-radiola-sovietwave": { "mod_id": 113, "file_id": 7721685, "category": "optional", "update_mod_version": false }
+    "likhos-radiola-sovietwave": { "mod_id": 113, "file_id": 7721685, "category": "optional", "update_mod_version": false },
+    "likhos-config-manager": { "mod_id": 156, "file_id": 8127195 }
   }
 }
