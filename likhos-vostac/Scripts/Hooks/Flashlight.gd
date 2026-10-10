@@ -17,9 +17,9 @@ func on_activate_post() -> void:
 	var caller = _lib._caller
 	var data = caller.lightData
 
-	# Vanilla writes a range only for a light with a power tier.
+	# Vanilla writes a range only for an equipped light with a power tier.
 	# Without that write the range is still the one scaled last time, and scaling it again would compound.
-	if !data || data.power == data.Power.None:
+	if caller.lightSlot.get_child_count() == 0 || !data || data.power == data.Power.None:
 		return
 
 	var beam: SpotLight3D = caller.lightWorld
@@ -36,6 +36,10 @@ func on_activate_post() -> void:
 func on_physics_process(delta: float) -> void:
 	_lib.skip_super()
 	var caller = _lib._caller
+
+	# The slot is resolved 0.1 s after _ready, and ResetCheck dereferences it.
+	if !caller.lightSlot:
+		return
 
 	caller.ResetCheck()
 	if !caller.gameData.freeze && caller.gameData.flashlight:
