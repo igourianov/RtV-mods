@@ -161,7 +161,8 @@ func _build_page() -> void:
 		row.custom_minimum_size.y = ROW_HEIGHT
 		_rows.add_child(row)
 
-		var label := _create_label(field_name.capitalize())
+		var label_text := field_name.replace("_", " ")
+		var label := _create_label(label_text[0].to_upper() + label_text.substr(1))
 		label.size_flags_horizontal = SIZE_EXPAND_FILL
 		row.add_child(label)
 

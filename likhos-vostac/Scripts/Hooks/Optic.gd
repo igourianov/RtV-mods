@@ -32,14 +32,14 @@ func on_physics_process_pre(_delta: float) -> void:
 
 	var viewport: SubViewport = optic.viewport
 	if viewport:
-		viewport.msaa_3d = _msaa_from_pref(_preferences.antialiasing) if config.pip_anti_aliasing else _VANILLA_PIP_MSAA
-		viewport.screen_space_aa = _ssaa_from_pref(_preferences.smaa) if config.pip_anti_aliasing else _VANILLA_PIP_SSAA
+		viewport.msaa_3d = _msaa_from_pref(_preferences.antialiasing) if config.PIP_anti_aliasing else _VANILLA_PIP_MSAA
+		viewport.screen_space_aa = _ssaa_from_pref(_preferences.smaa) if config.PIP_anti_aliasing else _VANILLA_PIP_SSAA
 
 	var pip_mat: ShaderMaterial = optic.PIP
 	if pip_mat && pip_mat.shader:
 		if !("shader_parameter/blur_radius" in pip_mat):
 			pip_mat.shader = _NVG_PIP_SHADER
-		var blur_on: bool = gameData.isScoped && gameData.PIP && gameData.NVG && config.nvg_pip_blur
+		var blur_on: bool = gameData.isScoped && gameData.PIP && gameData.NVG && config.NVG_PIP_blur
 		var radius: float = BLUR_RADIUS if blur_on else 0.0
 		pip_mat.set_shader_parameter("blur_radius", radius)
 

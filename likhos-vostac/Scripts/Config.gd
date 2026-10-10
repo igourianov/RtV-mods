@@ -58,9 +58,9 @@ var gameData := preload("res://Resources/GameData.tres")
 @export var negligent_discharge: bool = true
 @export var zoom_out_of_aim: ZoomOutOfAim = ZoomOutOfAim.RAIL_MOVEMENT
 @export var magnification_schema: MagnificationSchema = MagnificationSchema.NORMALIZED
-@export var nvg_pip_blur: bool = true
-@export var pip_anti_aliasing: bool = true
-@export var zoom_dof: bool = true
+@export var NVG_PIP_blur: bool = true
+@export var PIP_anti_aliasing: bool = true
+@export var zoom_DOF: bool = true
 
 @export_group("Movement speeds")
 @export var override_movement_speeds: bool = true

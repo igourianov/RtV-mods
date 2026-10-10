@@ -60,7 +60,7 @@ var current_weapon_weight := 0.0
 - An `@export` field is a setting. Its initial value is the default.
 - A field without `@export` is ignored by LCM and can hold runtime state.
 - Settings appear in declaration order. `@export_group` starts a section with a header. Settings outside of any section are shown first, without a header.
-- A setting's label is its field name turned into words: `walk_speed` shows as `Walk Speed`. There are no tooltips.
+- A setting's label is its field name with underscores turned into spaces and the first letter capitalized. The rest keeps the field's capitalization: `walk_speed` shows as `Walk speed` and `NVG_blur` shows as `NVG blur`. Write abbreviations in capitals in the field name. There are no tooltips.
 
 ### 2. Config object
 
