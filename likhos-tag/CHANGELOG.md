@@ -1,4 +1,4 @@
-# 1.1.71
+# 1.1.72
 * settings moved from MCM to Likho's Config Manager (LCM): the mod is no longer listed in MCM, and settings saved through MCM are not carried over
 
 # 1.1.70

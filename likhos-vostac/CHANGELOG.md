@@ -1,4 +1,4 @@
-# 3.2.2027
+# 3.2.2029
 * settings moved from MCM to Likho's Config Manager (LCM): the mod is no longer listed in MCM, and settings saved through MCM are not carried over
 
 # 3.2.2026
