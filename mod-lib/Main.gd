@@ -56,16 +56,16 @@ func _init_config():
 	if !FileAccess.file_exists(filePath):
 		DirAccess.open("user://").make_dir(configDir)
 		config.save(filePath)
-	elif helper:
-		helper.CheckConfigurationHasUpdated(mod_id, config, filePath)
-		config.load(filePath)
-
-	load_config(config)
 
 	if helper:
 		helper.RegisterConfiguration(mod_id, mod_name, configDir, mod_desc, {
 			"config.ini": load_config
 		})
+		helper.CheckConfigurationHasUpdated(mod_id, config, filePath)
+		# MCM keeps a separate file per Mod Loader profile, so the values have to come from its helper
+		config = helper.GetModConfigFile(mod_id)
+
+	load_config(config)
 
 
 func _init_setup():
