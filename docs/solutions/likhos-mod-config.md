@@ -43,7 +43,7 @@ Owned:
 
 Context only:
 
-* `MCM/Mod-Configuration-Menu-Road-To-Vostok/`: the menu LMC copies the look of.
+* `MCM/`: the menu LMC copies the look of.
 * Vanilla settings UI under `src/`.
 * The existing mods and their `ModConfig.gd`. They stay on mod-lib's MCM template bridge.
 * `build.ps1`, `CLAUDE.md` and the other project docs.

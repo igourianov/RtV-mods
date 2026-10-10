@@ -71,7 +71,7 @@ Browse it (only after confirming with user) whenever the loader's behavior is un
 
 ## `MCM/` holds the Mod Configuration Menu source (read-only reference, gitignored)
 
-`MCM/Mod-Configuration-Menu-Road-To-Vostok/` is a clone of DoinkOink's MCM repo (`doinkoink-mcm`), the in-game config menu mods register settings with. It has its own Git repo inside and is not part of this repo.
+`MCM/` is a clone of DoinkOink's MCM repo (`doinkoink-mcm`), the in-game config menu mods register settings with. It has its own Git repo inside and is not part of this repo.
 
 Consult it when a mod integrates with MCM or when MCM behavior is unclear. `README.md` and `docs/` describe the API, `ExampleModConfig.gd` shows registration. Do not edit anything inside it.
 
