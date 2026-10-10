@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Battery"
 id="likhos-battery"
-version="1.0.3"
+version="1.1.17"
 prefix="[likho-battery]"
 description="Likho's mod making batteries removable and keeping their charge"
 debug=false
@@ -10,6 +10,7 @@ debug=false
 "res://Scripts/Interface.gd"="Charge,ContextRemove"
 "res://Scripts/Context.gd"="Update"
 "res://Scripts/Item.gd"="Value"
+"res://Scripts/Flashlight.gd"="Activate"
 
 [autoload]
 LikhosBattery="res://mods/likhos-battery/Scripts/Main.gd"
