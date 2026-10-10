@@ -5,8 +5,8 @@ const ModMenu := preload("../Scenes/ModMenu.tscn")
 
 # the size of MCM's own button, which sits in the corner 30px off the edges
 const BUTTON_SIZE := Vector2(55, 55)
-# one slot to the left of MCM's
-const BUTTON_MARGIN := Vector2(95, 30)
+const BUTTON_MARGIN := Vector2(30, 30)
+const BUTTON_GAP := 10
 
 
 func setup(lib) -> void:
@@ -25,12 +25,18 @@ func _on_settings_ready_post() -> void:
 	menu.settings = settings
 	settings.get_parent().add_child(menu)
 
+	# MCM creates its button a frame later, so it cannot be looked up here.
+	# Its autoload renames itself to this in _ready. With it loaded the corner slot is MCM's and ours is the next one to the left.
+	var right := BUTTON_MARGIN.x
+	if get_tree().root.has_node("MCM"):
+		right += BUTTON_SIZE.x + BUTTON_GAP
+
 	var button := Button.new()
 	button.text = "LCM"
 	button.tooltip_text = "Likho's Config Manager"
 	button.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	button.offset_left = -BUTTON_MARGIN.x - BUTTON_SIZE.x
-	button.offset_right = -BUTTON_MARGIN.x
+	button.offset_left = -right - BUTTON_SIZE.x
+	button.offset_right = -right
 	button.offset_top = BUTTON_MARGIN.y
 	button.offset_bottom = BUTTON_MARGIN.y + BUTTON_SIZE.y
 	button.pressed.connect(menu.open)
