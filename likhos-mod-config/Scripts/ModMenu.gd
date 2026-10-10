@@ -146,11 +146,15 @@ func _build_page() -> void:
 
 	var entry := LMC.mods[_mod_uid]
 	_title.text = entry.name + " Settings"
+	# fields outside any group lead the page without a header, wherever they are declared
+	# filter keeps the declaration order within both parts
+	var fields: Array[Dictionary] = entry.fields.filter(func(field: Dictionary) -> bool: return field.group == "")
+	fields.append_array(entry.fields.filter(func(field: Dictionary) -> bool: return field.group != ""))
 	var group: String = ""
-	for field in entry.fields:
+	for field in fields:
 		var field_name: String = field.name
 		_values[field_name] = entry.config.get(field_name)
-		if field.group && field.group != group:
+		if field.group != group:
 			_add_group_header(field.group)
 		group = field.group
 

@@ -56,7 +56,7 @@ A config object is a `Resource` script with `@export` fields, plus a `.tres` of 
 
 * An `@export` field is a setting. Its value in the `.tres`, or the script initializer, is its default.
 * A field without `@export` is not a setting. LMC never reads, shows or stores it, so the object can carry runtime state next to settings.
-* Settings appear in the menu in declaration order.
+* Settings appear in the menu in declaration order, except that fields outside any group come first.
 
 ### Registration
 
@@ -86,6 +86,7 @@ LMC builds a mod's settings page from the config object's property list alone.
 | `Vector2`, `Vector3` | One number box per component |
 | `@export_group` | Category header above the fields that follow it |
 
+* Fields outside any group lead the page without a header, the way a page without groups looks. That covers fields declared before the first group and fields after `@export_group("")`, which move up to join them. The groups follow in declaration order, each under its header.
 * A field of any other type is skipped with a warning naming the mod and the field.
 * A setting's label is its field name cleaned up into words. There is no tooltip.
 * Every row has a revert control that restores the default, shown only while the value differs from it.
