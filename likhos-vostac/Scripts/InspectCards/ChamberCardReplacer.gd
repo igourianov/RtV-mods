@@ -1,6 +1,6 @@
 extends Control
 
-const ModConfig := preload("../ModConfig.gd")
+const Config := preload("../Config.gd")
 
 const _BULLET_W := 8.0
 const _BULLET_BODY_H := 14.0
@@ -11,6 +11,7 @@ const _CHAMBER_TOP_OFFSET := 2.0
 const _CHAMBER_HEIGHT_FACTOR := 0.7
 const _CHAMBER_THICKNESS := 2.0
 
+var config := Config.instance
 var _rig
 var _label: Label
 var _chambered := false
@@ -33,7 +34,7 @@ func set_rig(rig: WeaponRig) -> void:
 
 
 func _process(_delta: float) -> void:
-	if !ModConfig.ammo_icons:
+	if !config.ammo_icons:
 		_label.show()
 		visible = false
 		return

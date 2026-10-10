@@ -24,7 +24,7 @@ func on_physics_process(delta: float) -> void:
 
 
 class NVGDriver extends Node:
-	const ModConfig := preload("../ModConfig.gd")
+	const Config := preload("../Config.gd")
 	const AttachmentClickPlayer := preload("../Audio/AttachmentClickPlayer.gd")
 
 	var gameData = preload("res://Resources/GameData.tres")
@@ -42,7 +42,7 @@ class NVGDriver extends Node:
 		var slot: Node = parent.NVGSlot
 		var device = slot.get_child(0) if slot && slot.get_child_count() else null
 
-		if !device || gameData.freeze || ModConfig.binoculars_active:
+		if !device || gameData.freeze || Config.instance.binoculars_active:
 			return
 
 		if evt.is_action_pressed("nvg", false):
@@ -52,5 +52,5 @@ class NVGDriver extends Node:
 				_activated_ms = Time.get_ticks_msec()
 		elif evt.is_action_released("nvg"):
 			_click_sound.click_out()
-			if gameData.NVG && Time.get_ticks_msec() - _activated_ms > ModConfig.BUTTON_HOLD_MS:
+			if gameData.NVG && Time.get_ticks_msec() - _activated_ms > Config.BUTTON_HOLD_MS:
 				parent.Deactivate()

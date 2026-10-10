@@ -1,6 +1,6 @@
 extends Control
 
-const ModConfig := preload("../ModConfig.gd")
+const Config := preload("../Config.gd")
 
 const _FILL_DURATION := 0.5
 const _FILL_DELAY := 0.5
@@ -10,6 +10,7 @@ const _BAR_THICKNESS := 3
 const _BAR_GAP := 3
 const _PLACEHOLDER := Color(0.3, 0.3, 0.3)
 
+var config := Config.instance
 var _rig
 var _label: Label
 var _prev_visible := false
@@ -36,7 +37,7 @@ func set_rig(rig: WeaponRig) -> void:
 
 
 func _process(delta: float) -> void:
-	if !ModConfig.ammo_icons:
+	if !config.ammo_icons:
 		_label.show()
 		visible = false
 		_prev_visible = false

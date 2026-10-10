@@ -7,7 +7,7 @@ Rework in-game radio, adding several authentic new stations to listen to and oth
 * Created plugin system to distribute new stations later (can be used by other modders)
 * Station playback is driven by the wall clock (doesn't reset on activation), as real radio should 
 * Realistic static and sound quality for old FM radio
-* Radios play by default when you find them: each one has a chance (adjustable in MCM, replaces the game's own random-on chance) to start on a random station, vanilla or any installed pack
+* Radios play by default when you find them: each one has a chance (adjustable in LCM, replaces the game's own random-on chance) to start on a random station, vanilla or any installed pack
 * Reworked radio interaction to show current state instead of the next action (it was confusing)
 
 ## Plugins
@@ -68,7 +68,7 @@ func _ready() -> void:
 
 - Road to Vostok 0.2.0.0 (Godot 4.6.3)
 - [Metro Mod Loader (MML)](https://vostokmods.net/mod/metro-mod-loader) v3.4.1 or later (separate install, not bundled with the game)
-- [Mod Configuration Menu (MCM)](https://vostokmods.net/mod/mod-configuration-menu) (optional, falls back to defaults without it)
+- Likho's Config Manager (LCM) (optional, the mod runs on its default settings without it)
 
 This mod is a shell. It ships no music of its own. Stations are separate "station pack" mods that register themselves at startup (see `README.md`). Without any pack installed the radio cycle only contains Off and the vanilla station.
 
@@ -82,7 +82,7 @@ This mod hooks vanilla methods through Metro Mod Loader (declared in `[hooks]`):
 
 **Pre / post hooks** (compose with other mods):
 
-- `Radio._physics_process` (pre) - once per radio (not the gathering radio), discards vanilla's random-on roll, rolls the MCM on-chance instead, then picks the vanilla station or any registered pack station at random.
+- `Radio._physics_process` (pre) - once per radio (not the gathering radio), discards vanilla's random-on roll, rolls the mod's on-chance instead, then picks the vanilla station or any registered pack station at random.
 - `Radio.UpdateTooltip` (post) - relabels the interaction prompt to show the current state instead of the next action.
 
 Creates a runtime audio bus `LikhosRadiola` (high-pass + low-pass + lo-fi distortion) shared by all custom stations.

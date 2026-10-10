@@ -40,9 +40,9 @@ The crash site will now trigger an audible explosion (5-20 sec delay after loadi
 
 Once triggered, will repeat anywhere between 3-10 times at random intervals (60-300 seconds).
 
-### MCM config
+### LCM config
 
-Published all event probabilities as MCM config values. Note that probability does not override availability. E.g. Punisher won't be available before day 5, even if you set him to 100%.
+Published all event probabilities as LCM config values. Note that probability does not override availability. E.g. Punisher won't be available before day 5, even if you set him to 100%.
 
 I *DO NOT RECOMMEND* changing them unless it is to trigger long wanted event (like Punisher) once and then revert. The probability stacking made it seem like vanilla events are way too rare. You may find that after this mod fix, events are quite common and might be annoying.
 
@@ -50,7 +50,7 @@ I *DO NOT RECOMMEND* changing them unless it is to trigger long wanted event (li
 
 - Road to Vostok 0.2.0.0 (Godot 4.6.3)
 - [Metro Mod Loader (MML)](https://vostokmods.net/mod/metro-mod-loader) v3.4.1 or later (separate install, not bundled with the game)
-- [Mod Configuration Menu (MCM)](https://vostokmods.net/mod/mod-configuration-menu)
+- Likho's Config Manager (LCM) (optional, the mod runs on its default settings without it)
 
 ## Compatibility
 

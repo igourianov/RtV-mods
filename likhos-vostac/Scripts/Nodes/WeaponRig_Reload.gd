@@ -54,7 +54,7 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	gameData.isReloading = false
 	gameData.isChecking = false
-	ModConfig.ammo_check_view = false
+	config.ammo_check_view = false
 
 
 func _input(event: InputEvent) -> void:
@@ -66,7 +66,7 @@ func _input(event: InputEvent) -> void:
 	if _state == State.NONE && event.is_action_pressed("reload"):
 		if rig.magazine.visible || rig.data.weaponAction == "Manual":
 			_state = State.PENDING
-			_state_timer = ModConfig.BUTTON_HOLD_MS / 1000.0
+			_state_timer = Config.BUTTON_HOLD_MS / 1000.0
 		else:
 			_do_reload(false)
 	elif _state == State.PENDING && event.is_action_released("reload"):
@@ -95,7 +95,7 @@ func _process(delta: float) -> void:
 		_state = State.PULLING
 		gameData.isChecking = true
 		gameData.isFiring = false
-		ModConfig.ammo_check_view = false
+		config.ammo_check_view = false
 		_set_view_delayed(true)
 		rig.UpdateBullets()
 		rig.UpdateHUD()
@@ -128,7 +128,7 @@ func _process(delta: float) -> void:
 func _set_view_delayed(shown: bool) -> void:
 	await get_tree().create_timer(_VIEW_DELAY, false).timeout
 	if is_instance_valid(self):
-		ModConfig.ammo_check_view = shown
+		config.ammo_check_view = shown
 
 
 func _do_reload(ammo_check: bool = false) -> bool:

@@ -1,18 +1,6 @@
 extends Node
 
-const MCM_PATH := "res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Helpers.tres"
-const MCM_CONFIG_PATH := "res://ModConfigurationMenu/Scripts/MCM_Config.gd"
 const LCM_PATH := "res://mods/likhos-config-manager/Scripts/LCM.gd"
-const MCM_SIMPLE_TYPES := ["Bool", "Int", "Float", "String", "Color", "Vector2", "Vector3"]
-# template key -> MCM value setter
-const MCM_SETTERS := {
-	"menu_pos": "setMenuPos",
-	"category": "setCategory",
-	"on_value_changed": "setOnValueChanged",
-	"minRange": "setMinRange",
-	"maxRange": "setMaxRange",
-	"step": "setStep"
-}
 const Out := preload("./Out.gd")
 const Inputs := preload("./Inputs.gd")
 
@@ -22,7 +10,6 @@ var _inputs: Inputs
 
 var mod_id: String
 var mod_name: String
-var mod_desc: String
 
 
 
@@ -46,7 +33,6 @@ func _load_mod_info():
 	config.load(configFile)
 	mod_id = config.get_value("mod", "id", "")
 	mod_name = config.get_value("mod", "name", "")
-	mod_desc = config.get_value("mod", "description", "")
 	Out.mod_main = self
 	Out.prefix = config.get_value("mod", "prefix", "[likho-lib]")
 	Out.debug_enabled = bool(config.get_value("mod", "debug", true))
@@ -54,54 +40,27 @@ func _load_mod_info():
 
 func _init_config():
 
-	var config_object := get_config()
-	if config_object:
-		if !ResourceLoader.exists(LCM_PATH):
-			Out.warning("Likho's Config Manager is not installed, settings stay on their defaults")
-			return
-		load(LCM_PATH).RegisterConfig(mod_id, mod_name, config_object, config_applied)
+	var config := get_config()
+	if !config:
 		return
 
-	var config := ConfigFile.new()
-	create_config(config)
-	if !config.get_sections().size():
-		load_config(config)
+	# LCM reports only the values it loaded from its store, so state derived from the defaults is set up here
+	_on_config_applied()
+
+	if !ResourceLoader.exists(LCM_PATH):
+		Out.warning("Likho's Config Manager is not installed, settings stay on their defaults")
 		return
-
-	var helper = load(MCM_PATH) if ResourceLoader.exists(MCM_PATH) else null
-	if !helper:
-		load_config(config)
-		return
-
-	var mcm = load(MCM_CONFIG_PATH).new(mod_id, mod_name, mod_desc, load_config)
-	_add_mcm_values(mcm, config)
-	mcm.RegisterMod()
-	# MCM keeps a separate file per Mod Loader profile, so the values have to come from its helper
-	load_config(helper.GetModConfigFile(mod_id))
+	load(LCM_PATH).RegisterConfig(mod_id, mod_name, config, _on_config_applied)
 
 
-# Replays a template as MCM_Config builder calls, so mods keep defining their settings as plain dictionaries.
-func _add_mcm_values(mcm, template: ConfigFile) -> void:
-	for section in template.get_sections():
-		for id in template.get_section_keys(section):
-			var data: Dictionary = template.get_value(section, id)
-			var value
-			if section == "Category":
-				value = mcm.CreateCategoryHeader(id, id)
-			elif section == "Dropdown":
-				value = mcm.CreateDropdownValue(id, data["name"], data["tooltip"], data["default"], data["options"])
-			elif section in MCM_SIMPLE_TYPES:
-				value = mcm.call("Create%sValue" % section, id, data["name"], data["tooltip"], data["default"])
-			else:
-				Out.warning("unsupported MCM value type %s for %s" % [section, id])
-				continue
-
-			if value == null:
-				Out.warning("MCM rejected value %s" % id)
-				continue
-			for key in MCM_SETTERS:
-				if data.has(key):
-					value.call(MCM_SETTERS[key], data[key])
+func _on_config_applied() -> void:
+	var config := get_config()
+	# settings of the lib itself, picked up from the mods that declare them
+	if "debug_enabled" in config:
+		Out.debug_enabled = config.debug_enabled
+	if "show_protips" in config:
+		Out.show_protips = config.show_protips
+	config_applied()
 
 
 func _init_setup():
@@ -173,17 +132,12 @@ func create_key_input(keycode: int, ctrl_pressed: bool = false, shift_pressed: b
 func setup(lib):
 	pass
 
-# a Resource with @export fields for Likho's Config Manager, replaces create_config and load_config
+# a Resource with @export fields for Likho's Config Manager, the same object on every call
+# its debug_enabled and show_protips fields, when declared, drive Out
 func get_config() -> Resource:
 	return null
 
-# runs after stored or changed settings are written into the object from get_config
+# runs once on startup with the defaults, then every time stored or changed settings are written into the object from get_config
 func config_applied() -> void:
-	pass
-
-func load_config(config: ConfigFile):
-	pass
-
-func create_config(config: ConfigFile):
 	pass
 

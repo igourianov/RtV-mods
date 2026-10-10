@@ -1,7 +1,8 @@
 extends RefCounted
 
-const ModConfig := preload("../ModConfig.gd")
+const Config := preload("../Config.gd")
 
+var config := Config.instance
 var _lib
 
 
@@ -14,5 +15,5 @@ func on_update_details_post() -> void:
 	if !item:
 		return
 
-	if item.slotData.itemData.type == "Weapon" && ModConfig.ammo_icons:
+	if item.slotData.itemData.type == "Weapon" && config.ammo_icons:
 		item.amount.hide()

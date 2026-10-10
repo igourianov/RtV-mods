@@ -2,19 +2,15 @@ extends "../Lib/Main.gd"
 
 const EventSystem := preload("./EventSystem.gd")
 const Police := preload("./Police.gd")
-const ModConfig := preload("./ModConfig.gd")
+const Config := preload("./Config.gd")
 
 var _event_system: EventSystem
 var _police: Police
-var _config := ModConfig.new()
+var _config := Config.new()
 
 
-func create_config(config: ConfigFile) -> void:
-	_config.create_template(config)
-
-
-func load_config(config: ConfigFile) -> void:
-	_config.apply_config(config)
+func get_config() -> Resource:
+	return _config
 
 
 func setup(lib) -> void:

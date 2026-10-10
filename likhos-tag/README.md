@@ -3,7 +3,7 @@
 Real world names for weapons and attachments.
 
 * All weapons, attachments and magazines got real life names
-* Russian items got Russian names (switch to English in MCM)
+* Russian items got Russian names (switch to English in LCM, takes a game restart)
 * Real life item weights (it matters for VosTac)
 * Item tooltip is now slightly less verbose and more useful
 
@@ -117,6 +117,7 @@ The recipe names retain vanilla weapon names. The name is used as a look up key,
 
 - Road to Vostok 0.2.0.0 (Godot 4.6.3)
 - [Metro Mod Loader (MML)](https://vostokmods.net/mod/metro-mod-loader) v3.4.1 or later (separate install, not bundled with the game)
+- Likho's Config Manager (LCM) (optional, the mod runs on its default settings without it)
 
 ## Compatibility
 

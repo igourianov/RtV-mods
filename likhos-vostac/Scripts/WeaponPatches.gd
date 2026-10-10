@@ -1,5 +1,4 @@
 const Out = preload("../Lib/Out.gd")
-const ModConfig = preload("./ModConfig.gd")
 
 
 static func apply(lib) -> void:

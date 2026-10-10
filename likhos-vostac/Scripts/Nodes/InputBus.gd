@@ -4,11 +4,12 @@ extends Node
 # A toggle is a latch on its axis and is cleared for good when something takes over. A held key is followed live.
 # The bus knows nothing about domain constraints: each consumer validates its own resolved state before acting on it.
 
-const ModConfig := preload("../ModConfig.gd")
+const Config := preload("../Config.gd")
 
 enum Arms { NONE, AIM, CANTED, BINOCULARS }
 enum Pose { NONE, SPRINT, CROUCH }
 
+var config := Config.instance
 var gameData := preload("res://Resources/GameData.tres")
 
 var _arms_latch := Arms.NONE
@@ -115,13 +116,13 @@ func on_load_scene_pre(_scene: String = "") -> void:
 # Toggle mode presses, judged against what a held key would do to them.
 # A press is dropped when a held key would override the latch at once.
 func _record_toggle(evt: InputEvent) -> void:
-	var open := !ModConfig.gated()
+	var open := !config.gated()
 	# during a lock the keys belong to the modal action, e.g. canted rotates the weapon while inspecting
-	var unlocked: bool = open && !ModConfig.locked()
+	var unlocked: bool = open && !config.locked()
 	var armed: bool = unlocked && (gameData.primary || gameData.secondary)
 
 	# a held binoculars key lowers them on release, a tapped one leaves them up
-	if evt.is_action_released("binoculars") && _arms_latch == Arms.BINOCULARS && Time.get_ticks_msec() - _binoculars_raised_ms > ModConfig.BUTTON_HOLD_MS:
+	if evt.is_action_released("binoculars") && _arms_latch == Arms.BINOCULARS && Time.get_ticks_msec() - _binoculars_raised_ms > Config.BUTTON_HOLD_MS:
 		_arms_latch = Arms.NONE
 	elif evt.is_action_pressed("aim") && armed && _aim_toggle() && !_cant_held:
 		_arms_latch = Arms.NONE if _arms_latch == Arms.AIM else Arms.AIM
@@ -164,7 +165,7 @@ func _settle() -> void:
 # Hold mode states follow the live key state instead of press and release events.
 # So a key pressed during a gate or a lock starts its state once that ends, and a release that never arrived as an event still ends it.
 func _follow_held_keys() -> void:
-	var open := !ModConfig.gated()
+	var open := !config.gated()
 	var armed: bool = open && _weapon_ready()
 	var aimDown := Input.is_action_pressed("aim")
 	var cantDown := Input.is_action_pressed("canted_standalone")
@@ -229,7 +230,7 @@ func _aim_state() -> Arms:
 
 # during a lock a latched aim or canted is kept but not in effect, and so is a held one with no firearm in hand
 func _weapon_ready() -> bool:
-	return (gameData.primary || gameData.secondary) && !ModConfig.locked()
+	return (gameData.primary || gameData.secondary) && !config.locked()
 
 
 func _moving_forward() -> bool:
@@ -241,9 +242,9 @@ func _aim_toggle() -> bool:
 
 
 func _cant_toggle() -> bool:
-	if ModConfig.cant_mode == &"default":
+	if config.cant_mode == Config.CantMode.DEFAULT:
 		return gameData.aimMode == 2
-	return ModConfig.cant_mode == &"toggle"
+	return config.cant_mode == Config.CantMode.TOGGLE
 
 
 func _sprint_toggle() -> bool:

@@ -1,7 +1,8 @@
 extends Control
 
-const ModConfig := preload("../ModConfig.gd")
+const Config := preload("../Config.gd")
 
+var config := Config.instance
 var gameData := preload("res://Resources/GameData.tres")
 
 const _SHADOW := Color(0, 0, 0, 0.7)
@@ -34,13 +35,13 @@ func _init() -> void:
 
 func _draw() -> void:
 	var center := size * 0.5
-	match ModConfig.crosshair_style:
-		&"dot":
+	match config.crosshair_style:
+		Config.CrosshairStyle.DOT:
 			draw_circle(center + Vector2(1, 1), _DOT_RADIUS, _SHADOW)
-			draw_circle(center, _DOT_RADIUS, ModConfig.crosshair_color)
-		&"seg-cross":
+			draw_circle(center, _DOT_RADIUS, config.crosshair_color)
+		Config.CrosshairStyle.SEGMENTED_CROSS:
 			_draw_arms(center + Vector2(1, 1), _SHADOW)
-			_draw_arms(center, ModConfig.crosshair_color)
+			_draw_arms(center, config.crosshair_color)
 		_:
 			pass
 
@@ -61,10 +62,10 @@ func update(hud: Node, delta: float) -> void:
 
 
 func _update_visibility(delta: float) -> void:
-	var cantedHidden := gameData.isCanted && !ModConfig.crosshair_while_canted
-	var runningHidden := gameData.isRunning && !ModConfig.crosshair_while_running
-	var raisedHidden := gameData.weaponPosition == 2 && !ModConfig.crosshair_while_raised
-	var shouldShow := !gameData.transition && !gameData.isAiming && !cantedHidden && !runningHidden && !raisedHidden && !_is_interaction_blocked() && ModConfig.crosshair_style != "off"
+	var cantedHidden := gameData.isCanted && !config.crosshair_while_canted
+	var runningHidden := gameData.isRunning && !config.crosshair_while_running
+	var raisedHidden := gameData.weaponPosition == 2 && !config.crosshair_while_raised
+	var shouldShow := !gameData.transition && !gameData.isAiming && !cantedHidden && !runningHidden && !raisedHidden && !_is_interaction_blocked() && config.crosshair_style != Config.CrosshairStyle.OFF
 
 	var target := 0.0
 	if shouldShow:
@@ -80,7 +81,7 @@ func _update_visibility(delta: float) -> void:
 
 
 func _update_tooltip(hud: Node) -> void:
-	var wantShift := ModConfig.crosshair_style != "off"
+	var wantShift := config.crosshair_style != Config.CrosshairStyle.OFF
 	if wantShift != _tooltip_shifted:
 		var d := _TOOLTIP_SHIFT if wantShift else -_TOOLTIP_SHIFT
 		hud.tooltip.offset_top += d

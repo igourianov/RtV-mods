@@ -1,47 +1,8 @@
+extends Resource
 
-# config vars
-static var static_enabled: bool
-static var on_chance: float
+static var instance := new()
 
-static var _menu_pos_auto: int = 0
-
-const DEFAULT_ENABLED := true
-const DEFAULT_ON_CHANCE := 75.0
-const CHANCE_MIN := 0.0
-const CHANCE_MAX := 100.0
-
-
-static func _get_config_value(config: ConfigFile, section: String, key: String, default_val):
-	return config.get_value(section, key, {}).get("value", default_val)
-
-
-static func apply_config(config: ConfigFile) -> void:
-	static_enabled = _get_config_value(config, "Bool", "static_enabled", DEFAULT_ENABLED)
-	on_chance = _get_config_value(config, "Float", "on_chance", DEFAULT_ON_CHANCE)
-
-
-static func _next_pos() -> int:
-	_menu_pos_auto += 1
-	return _menu_pos_auto
-
-
-static func _set_config_entry(config: ConfigFile, section: String, category: String, key: String, name: String, tooltip: String, default_val, extra: Dictionary = {}) -> void:
-	var value := {
-		"name": name,
-		"tooltip": tooltip,
-		"default": default_val,
-		"value": default_val,
-		"menu_pos": _next_pos(),
-		"category": category
-	}
-	value.merge(extra)
-	config.set_value(section, key, value)
-
-
-static func create_template(config: ConfigFile) -> void:
-	config.set_value("Category", "General", { "menu_pos": 0 })
-	_set_config_entry(config, "Bool", "General", "static_enabled", "Radio static", "Play the radio hiss/static bed underneath the music", DEFAULT_ENABLED)
-	_set_config_entry(config, "Float", "General", "on_chance", "Radio on chance", "Percent chance each radio starts playing a random station on zone load", DEFAULT_ON_CHANCE, {
-		"minRange": CHANCE_MIN,
-		"maxRange": CHANCE_MAX
-	})
+# the hiss bed underneath the music
+@export var radio_static: bool = true
+# percent chance each radio starts playing a random station on zone load
+@export_range(0.0, 100.0, 1.0) var radio_on_chance: float = 75.0

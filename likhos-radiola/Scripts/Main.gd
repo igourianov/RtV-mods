@@ -1,6 +1,6 @@
 extends "../Lib/Main.gd"
 
-const ModConfig = preload("./ModConfig.gd")
+const Config = preload("./Config.gd")
 const RadioHook = preload("./Hooks/Radio.gd")
 const RadioBus = preload("./RadioBus.gd")
 
@@ -15,9 +15,5 @@ func setup(lib) -> void:
 	register_hook("radio-_physics_process-pre", _radio.on_physics_process_pre)
 
 
-func create_config(config: ConfigFile) -> void:
-	ModConfig.create_template(config)
-
-
-func load_config(config: ConfigFile) -> void:
-	ModConfig.apply_config(config)
+func get_config() -> Resource:
+	return Config.instance

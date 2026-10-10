@@ -21,7 +21,7 @@ Hook names below use the loader form (e.g. `handling-weaponhandling`). "replace"
 
 ## likhos-vostac
 
-Entry point: `Scripts/Main.gd` `setup()` registers every hook, the three input actions and the `BinocularsOverlay` node. MCM config lives in `Scripts/ModConfig.gd` (`create_template`, `apply_config`, `gated`, `locked`).
+Entry point: `Scripts/Main.gd` `setup()` registers every hook, the three input actions and the `BinocularsOverlay` node. LCM settings and shared runtime state live in `Scripts/Config.gd` (`instance`, `gated`, `locked`).
 
 Script abbreviations: `Hooks/` = `Scripts/Hooks/`, `Nodes/` = `Scripts/Nodes/`, `Cards/` = `Scripts/InspectCards/`.
 
@@ -42,7 +42,7 @@ Script abbreviations: `Hooks/` = `Scripts/Hooks/`, `Nodes/` = `Scripts/Nodes/`, 
 
 #### Hold breath
 * Hold Sprint while aiming to steady aim at the cost of stamina.
-* Files: `Hooks/Character.gd` (`on_stamina`, `_hold_breath`), `Hooks/Noise.gd` (`_apply_wobble`, `WOBBLE_MULT_HOLD_BREATH`), `ModConfig.gd` (`hold_breath_state`).
+* Files: `Hooks/Character.gd` (`on_stamina`, `_hold_breath`), `Hooks/Noise.gd` (`_apply_wobble`, `WOBBLE_MULT_HOLD_BREATH`), `Config.gd` (`hold_breath_state`).
 
 #### Kill counter
 * Scratch-tally card in weapon inspect mode, purple marks for bosses.
@@ -53,12 +53,12 @@ Script abbreviations: `Hooks/` = `Scripts/Hooks/`, `Nodes/` = `Scripts/Nodes/`, 
 ### Weapons and handling
 
 #### Adaptive Free Look mode (replaces lowered/patrol weapon mode)
-* Files: `Hooks/Handling.gd` (`_set_target_idle`, `_apply_target`, `_apply_left_arm`, `_stow_rotation`, `_stow_hold`), `ModConfig.gd` (`free_look`).
+* Files: `Hooks/Handling.gd` (`_set_target_idle`, `_apply_target`, `_apply_left_arm`, `_stow_rotation`, `_stow_hold`), `Config.gd` (`free_look`).
 * Sub-features: patrol position decoupled from the free look setting, separate pistol branch, fluid transitions, stow timing tweaks, left arm collapse while stowed (`_apply_left_arm`).
 
 #### Canted aim as independent action
 * Canted is separate from aim, with optional laser auto-on, and rotation with/without optic is split.
-* Files: `Hooks/Handling.gd` (`_resolve_aim_intent`, `_set_target`, `_SECONDARY_OPTIC_ROT_OFFSET`), `Hooks/Laser.gd` (`__process_post` auto-on latch), `ModConfig.gd` (`laser_auto_on`).
+* Files: `Hooks/Handling.gd` (`_resolve_aim_intent`, `_set_target`, `_SECONDARY_OPTIC_ROT_OFFSET`), `Hooks/Laser.gd` (`__process_post` auto-on latch), `Config.gd` (`laser_auto_on`).
 
 #### Handling speed by stance and optic
 * Red dot and LPVO 1x 115%, canted 130%, magnified 80%. Applies in and out of the state. Slowed speed for Inspect, Ammo Check and Insert.
@@ -86,7 +86,7 @@ Script abbreviations: `Hooks/` = `Scripts/Hooks/`, `Nodes/` = `Scripts/Nodes/`, 
 
 #### Cocked state and dry fire
 * All guns get a cocked state and click when firing empty but cocked. Also gates negligent discharge.
-* Files: `Nodes/WeaponRig_Fire.gd` (`_fire_input`, `_play_dry_click`), `Audio/AttachmentClickPlayer.gd`, `ModConfig.gd` (`negligent_discharge`).
+* Files: `Nodes/WeaponRig_Fire.gd` (`_fire_input`, `_play_dry_click`), `Audio/AttachmentClickPlayer.gd`, `Config.gd` (`negligent_discharge`).
 * Hook: `weaponrig-_physics_process` (replace with noop), `weaponrig-ads` (replace with noop).
 
 #### Inspect mode rework
@@ -103,8 +103,8 @@ Script abbreviations: `Hooks/` = `Scripts/Hooks/`, `Nodes/` = `Scripts/Nodes/`, 
 * Files: `Hooks/Handling.gd` (`on_rig_update_post`, `_set_target`, constant `_STOW_POS_OFFSET`).
 
 #### Negligent discharge toggle
-* MCM option to allow or block firing out of aim.
-* Files: `Nodes/WeaponRig_Fire.gd` `_fire_input`, `ModConfig.gd`.
+* LCM option to allow or block firing out of aim.
+* Files: `Nodes/WeaponRig_Fire.gd` `_fire_input`, `Config.gd`.
 
 ### Aiming and optics
 
@@ -126,8 +126,8 @@ Script abbreviations: `Hooks/` = `Scripts/Hooks/`, `Nodes/` = `Scripts/Nodes/`, 
   * FOV math reworked (prism scopes, eye relief scaling): `compute_angle`, `_update_optic_camera`.
   * Main camera FOV no longer narrows, LPVOs stay scoped at 1x: `WeaponRig_Optic._handle_ads`.
   * DOF scales with magnification, lerped, near-DOF enabled: `Hooks/Camera.gd` `on_scope_dof` (replace).
-  * PIP MSAA matches main viewport (MCM toggle): `Hooks/Optic.gd`.
-  * NVG-aware blur when aiming a magnified optic (MCM toggle): `Hooks/Optic.gd`.
+  * PIP MSAA matches main viewport (LCM toggle): `Hooks/Optic.gd`.
+  * NVG-aware blur when aiming a magnified optic (LCM toggle): `Hooks/Optic.gd`.
   * PIP shader injection refactored for compat with other scope shader mods: `Hooks/Optic.gd`.
   * Reticle in front of scope shadow, reticle tracks weapon in PIP: `WeaponRig_Optic._update_reticle`.
 
@@ -140,12 +140,12 @@ Script abbreviations: `Hooks/` = `Scripts/Hooks/`, `Nodes/` = `Scripts/Nodes/`, 
 * Files: `Nodes/WeaponRig_Optic.gd` `_validate_lens_distance` (protip `optic-too-close`).
 
 #### Scope catalogue (magnifications, rarity, tooltips)
-* New magnification ranges, MCM schema Short / Normalized / Discrete, acceleration, scoped sensitivity.
+* New magnification ranges, LCM schema Short / Normalized / Discrete, acceleration, scoped sensitivity.
 * Changes: Mark 8 (Leopard) 1.1-8x with fixed reticle, Vudu 1-10x and legendary, POSP 2-6x with fixed reticle and dovetail movement, HAMR legendary, PU moved back and real 3.5x.
 * Files: `ScopeCatalog.gd` (`DATA`, `get_mag_range`, `apply`), `ZoomAccelerator.gd` (`step`), `Nodes/WeaponRig_Optic.gd` (`_handle_zoom`), `Hooks/Tooltip.gd` (`on_update_post` shows real magnification and eye relief), `Main.gd` (`optic_zoom_in`, `optic_zoom_out` actions).
 
 #### LPVO zoom without aiming
-* Gated by the Rail movement modifier by default (MCM).
+* Gated by the Rail movement modifier by default (LCM).
 * Files: `Nodes/WeaponRig_Optic.gd` `_handle_zoom`.
 
 #### Explicit zoom bindings
@@ -154,13 +154,13 @@ Script abbreviations: `Hooks/` = `Scripts/Hooks/`, `Nodes/` = `Scripts/Nodes/`, 
 ### Movement and stamina
 
 #### Arm and leg stamina rework
-* Arm drain by weapon weight and stance, recovery and delay by Energy. Leg drain by inventory weight, recovery and delay by Hydration. Dynamic recovery delay. Overweight, fracture and zero leg stamina block sprint. Higher scope sway when out of arm stamina. Simplified drain logic with MCM toggle.
+* Arm drain by weapon weight and stance, recovery and delay by Energy. Leg drain by inventory weight, recovery and delay by Hydration. Dynamic recovery delay. Overweight, fracture and zero leg stamina block sprint. Higher scope sway when out of arm stamina. Simplified drain logic with LCM toggle.
 * Files: `Hooks/Character.gd` (`on_stamina` replace, `_body_stamina`, `_arm_stamina`, `_recovery_delay_threshold`), `Hooks/Noise.gd` (`_apply_wobble`, `_calculate_speed_factor`).
 
 #### Movement speeds
-* Crouch/walk/sprint 0.7 / 3 / 7, stance multipliers 0.6 / 0.75 / 0.3, editable in MCM.
-* Files: `Hooks/Controller.gd` (`on_movement_states` replace, `_update_state`, `_apply_speed`), `ModConfig.gd`.
-* Fix: walk speed MCM override not applying.
+* Crouch/walk/sprint 0.7 / 3 / 7, stance multipliers 0.6 / 0.75 / 0.3, editable in LCM.
+* Files: `Hooks/Controller.gd` (`on_movement_states` replace, `_update_state`, `_apply_speed`), `Config.gd`.
+* Fix: walk speed override not applying.
 
 #### Input priority (last action wins)
 * Crouch, Sprint, Aim and Canted override each other by last input. Aim and canted override sprint. Sprint overrides crouch.
@@ -169,7 +169,7 @@ Script abbreviations: `Hooks/` = `Scripts/Hooks/`, `Nodes/` = `Scripts/Nodes/`, 
 ### Controls and HUD
 
 #### Dynamic crosshair
-* Idle crosshair for interactions, hidden when aiming, canted or raised, MCM visibility and fade options.
+* Idle crosshair for interactions, hidden when aiming, canted or raised, LCM visibility and fade options.
 * Files: `Nodes/Crosshair.gd` (`_draw`, `_update_visibility`, `_update_tooltip`, `_is_interaction_blocked`), `Hooks/HUD.gd` (`_setup_crosshair`), `Hooks/UIPosition.gd` `on_physics_process_post`.
 * Sub-features: hides on zone transition prompt, unshifts interaction tooltip when crosshair is off.
 
@@ -179,7 +179,7 @@ Script abbreviations: `Hooks/` = `Scripts/Hooks/`, `Nodes/` = `Scripts/Nodes/`, 
 
 #### Protips
 * In-game hints about changed bindings.
-* Files: `Out.protip` calls in `Nodes/WeaponRig_Fire.gd`, `WeaponRig_Inspect.gd`, `WeaponRig_ManualReload.gd`, `WeaponRig_Reload.gd`, `WeaponRig_Optic.gd`, `ModConfig.gd` (`show_protips`).
+* Files: `Out.protip` calls in `Nodes/WeaponRig_Fire.gd`, `WeaponRig_Inspect.gd`, `WeaponRig_ManualReload.gd`, `WeaponRig_Reload.gd`, `WeaponRig_Optic.gd`, `Config.gd` (`show_protips`).
 
 ### Vanilla bug fixes
 
@@ -207,7 +207,7 @@ Pre/post: `rigmanager-updaterig-post`, `weaponrig-_ready-post`, `weaponrig-casin
 Renames weapons, attachments, magazines and ammo, sets real-life weights, and slims the tooltip. Loaded late (priority 10) so its values win.
 
 #### Renames and weights
-* Files: `Scripts/Catalog.gd` (`DATA` per item file name, applied through `lib.patch(ITEMS)`), `Scripts/ModConfig.gd` and `Scripts/Main.gd` (`create_config`, `load_config`: Russian vs English names).
+* Files: `Scripts/Catalog.gd` (`DATA` per item file name, applied through `lib.patch(ITEMS)`), `Scripts/Config.gd` and `Scripts/Main.gd` (`get_config`: Russian vs English names).
 
 #### Functional tweaks
 * KAR-21 (.308) mag 30 to 20, VSS penetration 3 to 4.
@@ -287,8 +287,8 @@ Shrinks AKS-74U, VSS, Remington 870, KP-31 and Mosin by one cell, and lets AKS-7
 * Each dynamic event gets its own roll, multiple events can be active. BTR/Police and Airdrop/CrashSite are exclusive, and skipped events carry a roll bonus to the next map load.
 * Files: `Scripts/EventSystem.gd` (`on_activate_dynamic_event` replace, `_activate_dynamic_event`, `_activate_delayed_event`, `blockers`, `_rollBonus`). Hook: `eventsystem-activatedynamicevent`.
 
-#### MCM probabilities
-* Files: `Scripts/ModConfig.gd` (`_create_config_template`, `_apply_config`, `get_probability`).
+#### LCM probabilities
+* Files: `Scripts/Config.gd` (`PROBABILITIES`, `get_probability`).
 
 #### Police van without sirens is no longer a dud
 * The siren-less variant triggers the Punisher, van speed capped at 15 (from 25).
@@ -322,8 +322,8 @@ Shrinks AKS-74U, VSS, Remington 870, KP-31 and Mosin by one cell, and lets AKS-7
 * Files: `Scripts/Hooks/Radio.gd` `on_update_tooltip_post`. Hook: `radio-updatetooltip-post`.
 
 #### Auto-play on find (random station)
-* The mod's MCM chance (default 75%) replaces vanilla's 0.2.0.0 random-on roll (about 5%). Radios that pass pick uniformly between the vanilla broadcast and each pack station. The gathering radio is left alone.
-* Files: `Scripts/Hooks/Radio.gd` `on_physics_process_pre`, `Scripts/ModConfig.gd`. Hook: `radio-_physics_process-pre`.
+* The mod's LCM chance (default 75%) replaces vanilla's 0.2.0.0 random-on roll (about 5%). Radios that pass pick uniformly between the vanilla broadcast and each pack station. The gathering radio is left alone.
+* Files: `Scripts/Hooks/Radio.gd` `on_physics_process_pre`, `Scripts/Config.gd`. Hook: `radio-_physics_process-pre`.
 
 #### Wall-clock playback
 * Stations do not restart on activation.
@@ -342,7 +342,7 @@ Shrinks AKS-74U, VSS, Remington 870, KP-31 and Mosin by one cell, and lets AKS-7
 
 Shared base library copied into every mod as `Lib/` by the build.
 
-* `Main.gd`: base class with `setup`, `register_hook`, `register_action`, `remove_action`, `create_key_input`, `create_mouse_input`, `create_config` and `load_config`.
+* `Main.gd`: base class with `setup`, `register_hook`, `register_action`, `remove_action`, `create_key_input`, `create_mouse_input`, `get_config` and `config_applied`.
 * `Out.gd`: normalised debug, warning and `protip` output.
 * `Inputs.gd`: in-game action binding control (`get_binding`).
 * `Tooltip.gd`: base tooltip helpers (`_hide_row`) used by tag and vostac.

@@ -1,6 +1,6 @@
 extends "../Lib/Main.gd"
 
-const ModConfig = preload("./ModConfig.gd")
+const Config = preload("./Config.gd")
 const Handling = preload("./Hooks/Handling.gd")
 const WeaponRig = preload("./Hooks/WeaponRig.gd")
 const Camera = preload("./Hooks/Camera.gd")
@@ -33,7 +33,6 @@ var _controller
 var _noise
 var _tilt
 var _hud
-var _config
 var _recoil
 var _character
 var _optic
@@ -126,9 +125,5 @@ func setup(lib):
 	add_child(_binoculars)
 
 
-func load_config(config: ConfigFile) -> void:
-	ModConfig.apply_config(config)
-
-
-func create_config(config: ConfigFile) -> void:
-	ModConfig.create_template(config)
+func get_config() -> Resource:
+	return Config.instance

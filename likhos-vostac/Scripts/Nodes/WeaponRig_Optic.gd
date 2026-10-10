@@ -34,8 +34,8 @@ func _handle_zoom(event: InputEvent, optic: Node3D) -> bool:
 
 	var zoomIn := event.is_action_pressed("optic_zoom_in", true)
 	var zoomOut := event.is_action_pressed("optic_zoom_out", true)
-	var zoomAllowed: bool = (gameData.isAiming || ModConfig.lpvo_ooa_zoom == &"enabled"
-		|| (ModConfig.lpvo_ooa_zoom == &"rail" && Input.is_action_pressed("rail_movement")))
+	var zoomAllowed: bool = (gameData.isAiming || config.zoom_out_of_aim == Config.ZoomOutOfAim.ENABLED
+		|| (config.zoom_out_of_aim == Config.ZoomOutOfAim.RAIL_MOVEMENT && Input.is_action_pressed("rail_movement")))
 
 	if !zoomAllowed || !(zoomIn || zoomOut):
 		return false
@@ -99,12 +99,12 @@ func _handle_ads(delta: float) -> void:
 		var sizes: Vector3 = att.reticleSizeP if gameData.PIP else att.reticleSize
 		var mags = ScopeCatalog.get_mag_range(att.file)
 		if mags.size() > 1 && geom.isFFP:
-			var t := clampf(inverse_lerp(mags[0], mags[-1], ModConfig.current_scope_mag), 0.0, 1.0)
+			var t := clampf(inverse_lerp(mags[0], mags[-1], config.current_scope_mag), 0.0, 1.0)
 			rig.reticleSize = lerp(rig.reticleSize, lerp(sizes.x, sizes.z, t), delta * 10.0)
 		else:
 			rig.reticleSize = sizes.x
 		if !gameData.PIP:
-			gameData.aimFOV = gameData.baseFOV / ModConfig.current_scope_mag
+			gameData.aimFOV = gameData.baseFOV / config.current_scope_mag
 	else:
 		rig.reticleSize = att.reticleSize.x
 
@@ -121,7 +121,7 @@ func _validate_lens_distance(rig: WeaponRig, lens_distance: float, target_lens_d
 	gameData.damage = true
 	gameData.health -= 2.0
 
-	ModConfig.optic_shiner = true
+	config.optic_shiner = true
 
 	var audio = audioInstance2D.instantiate()
 	rig.add_child(audio)
@@ -142,7 +142,7 @@ func _update_optic_camera(optic: Node3D, delta: float, optic_angle: float) -> vo
 	if optic_angle <= 0.0:
 		return
 
-	var target_fov: float = rad_to_deg(optic_angle / ModConfig.current_scope_mag)
+	var target_fov: float = rad_to_deg(optic_angle / config.current_scope_mag)
 	optic.camera.fov = lerp(optic.camera.fov, target_fov, delta * 10.0)
 
 

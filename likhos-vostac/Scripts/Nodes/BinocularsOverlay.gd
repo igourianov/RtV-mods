@@ -1,6 +1,6 @@
 extends CanvasLayer
 
-const ModConfig := preload("../ModConfig.gd")
+const Config := preload("../Config.gd")
 const Out := preload("../../Lib/Out.gd")
 const ZoomAccelerator := preload("../ZoomAccelerator.gd")
 const _LENS_SHADER := preload("res://mods/likhos-vostac/Shaders/BinocularsLens.gdshader")
@@ -13,6 +13,7 @@ const _HUD_PATH := "/root/Map/Core/UI/HUD"
 const ZoomClickPlayer := preload("../Audio/ZoomClickPlayer.gd")
 const InputBus := preload("./InputBus.gd")
 
+var config := Config.instance
 var gameData := preload("res://Resources/GameData.tres")
 var _bus: InputBus
 var _click_audio: ZoomClickPlayer
@@ -156,14 +157,14 @@ func _change_zoom(dir: int) -> void:
 	var next := _zoom.step(dir, _index, _MAGS.size())
 	if next != _index:
 		_index = next
-		ModConfig.binoculars_mag = _MAGS[_index]
+		config.binoculars_mag = _MAGS[_index]
 		_click_audio.click()
 
 
 func _can_raise() -> bool:
 	if !_resolve_camera():
 		return false
-	return !(ModConfig.gated() || gameData.isOccupied || gameData.NVG)
+	return !(config.gated() || gameData.isOccupied || gameData.NVG)
 
 
 # takes the raise state from what the input bus resolved
@@ -178,7 +179,7 @@ func _follow_bus() -> void:
 		_rect.visible = true
 		_base_fov = gameData.baseFOV
 		_current_fov = _camera.fov
-		ModConfig.binoculars_mag = _MAGS[_index]
+		config.binoculars_mag = _MAGS[_index]
 		gameData.isOccupied = true
 		gameData.isFiring = false
 	elif !wanted && _state == State.ACTIVE:
@@ -199,18 +200,18 @@ func _process(delta: float) -> void:
 	elif _state == State.ACTIVE && _raise_state < 1.0:
 		_raise_state += delta / _RAISE_TIME
 
-	if !_resolve_camera() || ModConfig.gated() || _raise_state < 0.0:
+	if !_resolve_camera() || config.gated() || _raise_state < 0.0:
 		_state = State.INACTIVE
 		_bus.withdraw_binoculars()
 		_rect.visible = false
 		_reticle_rect.visible = false
 		_range_label.visible = false
-		ModConfig.binoculars_active = false
+		config.binoculars_active = false
 		gameData.isOccupied = false
 		_apply_loot_light(false)
 		return
 
-	ModConfig.binoculars_active = _state == State.ACTIVE
+	config.binoculars_active = _state == State.ACTIVE
 
 	_apply(smoothstep(0.0, 1.0, _raise_state), delta)
 	_apply_loot_light(true)

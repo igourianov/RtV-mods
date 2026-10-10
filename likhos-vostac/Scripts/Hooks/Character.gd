@@ -1,6 +1,6 @@
 extends RefCounted
 
-const ModConfig := preload("../ModConfig.gd")
+const Config := preload("../Config.gd")
 const Out := preload("../../Lib/Out.gd")
 const AudioChunkPlayer := preload("../../Lib/AudioChunkPlayer.gd")
 const InputBus := preload("../Nodes/InputBus.gd")
@@ -24,6 +24,7 @@ const HOLD_BREATH_STREAM: String = "res://mods/likhos-vostac/Audio/hold_breath.m
 const HOLD_BREATH_INTRO: float = 0.5
 const HOLD_BREATH_OUTRO_START: float = 0.5
 
+var config := Config.instance
 var _lib
 var _bus: InputBus
 var _interface
@@ -46,11 +47,11 @@ func on_stamina(delta: float) -> void:
 
 	_hold_breath(chr, delta)
 
-	if ModConfig.custom_stamina:
+	if config.custom_stamina:
 		_lib.skip_super()
 		_body_stamina(chr, delta)
 		_arm_stamina(chr, delta)
-	elif ModConfig.hold_breath_state > 0.0:
+	elif config.hold_breath_state > 0.0:
 		gameData.armStamina = clampf(gameData.armStamina + delta * ARM_STAMINA_HOLD_BREATH, 0.0, 100.0)
 
 
@@ -62,7 +63,7 @@ func _hold_breath(chr: Node, delta: float) -> void:
 
 	var intent: bool = _bus.hold_breath()
 	var allowed: bool = gameData.isAiming && gameData.armStamina > 0.0
-	var holding: bool = ModConfig.hold_breath_state > 0.0
+	var holding: bool = config.hold_breath_state > 0.0
 
 	if holding:
 		_hold_breath_time += delta
@@ -72,13 +73,13 @@ func _hold_breath(chr: Node, delta: float) -> void:
 	if !holding && intent && allowed:
 		if !_breath_sound.playing:
 			_breath_sound.play_chunk(0.0, HOLD_BREATH_INTRO)
-		ModConfig.hold_breath_state = 0.001
+		config.hold_breath_state = 0.001
 	elif holding && (!intent || !allowed):
 		if _hold_breath_time > HOLD_BREATH_OUTRO_MIN_HOLD:
 			_breath_sound.play_chunk(HOLD_BREATH_OUTRO_START, 0.0)
-		ModConfig.hold_breath_state = 0.0
+		config.hold_breath_state = 0.0
 	elif holding:
-		ModConfig.hold_breath_state = clampf(_hold_breath_time / HOLD_BREATH_SETTLE, 0.0, 1.0)
+		config.hold_breath_state = clampf(_hold_breath_time / HOLD_BREATH_SETTLE, 0.0, 1.0)
 
 
 func _body_stamina(chr: Node, delta: float) -> void:
@@ -108,12 +109,12 @@ func _body_stamina(chr: Node, delta: float) -> void:
 
 func _arm_stamina(chr: Node, delta: float) -> void:
 	var stamina: float = 0.0
-	var weight_factor: float = ModConfig.current_weapon_weight / ModConfig.BASE_WEAPON_WEIGHT
+	var weight_factor: float = config.current_weapon_weight / Config.BASE_WEAPON_WEIGHT
 	var energy_factor: float = gameData.energy / 100.0
 
 	if gameData.isAiming:
 		stamina = ARM_STAMINA_AIM * weight_factor
-		if ModConfig.hold_breath_state > 0.0:
+		if config.hold_breath_state > 0.0:
 			stamina += ARM_STAMINA_HOLD_BREATH
 		_arm_recovery_delay = 0.0
 	elif gameData.isCanted || gameData.weaponPosition == 2:

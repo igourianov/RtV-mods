@@ -1,9 +1,10 @@
 extends RefCounted
 
-const ModConfig := preload("../ModConfig.gd")
+const Config := preload("../Config.gd")
 const ScopeCatalog := preload("../ScopeCatalog.gd")
 const Out := preload("../../Lib/Out.gd")
 const InputBus := preload("../Nodes/InputBus.gd")
+var config := Config.instance
 var gameData = preload("res://Resources/GameData.tres")
 
 enum IdleCategory { Default, Pistol, FuddGrip, SMG, StocklessSMG }
@@ -113,7 +114,7 @@ func on_rig_update_post(_animate: bool) -> void:
 	if !_baseline_captured:
 		_manager_local_baseline = manager.transform
 		_baseline_captured = true
-	elif ModConfig.free_look:
+	elif config.free_look:
 		manager.transform = _manager_local_baseline
 
 	var rig = manager.get_child(manager.get_child_count() - 1) if manager.get_child_count() else null
@@ -122,9 +123,9 @@ func on_rig_update_post(_animate: bool) -> void:
 
 	# save weapon weight for the handling speed calc, and the action for the reload lock
 	var weapon = rig.weaponSlot.get_children()[0] if rig && rig.weaponSlot else null
-	ModConfig.current_weapon_weight = weapon.Weight() if weapon else 0.0
-	ModConfig.current_weapon_action = data.weaponAction if data else ""
-	Out.debug("weapon weight: %.1fkg" % ModConfig.current_weapon_weight)
+	config.current_weapon_weight = weapon.Weight() if weapon else 0.0
+	config.current_weapon_action = data.weaponAction if data else ""
+	Out.debug("weapon weight: %.1fkg" % config.current_weapon_weight)
 
 	ScopeCatalog.sync_optic_state(rig)
 
@@ -164,16 +165,16 @@ func on_clear_rig_post() -> void:
 
 # only overrides the tiers vanilla mis-gates; the clean case falls through to vanilla's weapon_high/low handling
 func on_weapon_position() -> void:
-	if ModConfig.gated():
+	if config.gated():
 		_lib.skip_super()
 		return
 
-	if ModConfig.locked():
+	if config.locked():
 		gameData.weaponPosition = 1
 		_lib.skip_super()
 		return
 
-	if gameData.isCanted || ModConfig.binoculars_active || gameData.isRunning || gameData.isColliding:
+	if gameData.isCanted || config.binoculars_active || gameData.isRunning || gameData.isColliding:
 		_lib.skip_super()
 		return
 
@@ -184,7 +185,7 @@ func on_weapon_handling(delta: float) -> void:
 		return
 	_lib.skip_super()
 
-	if ModConfig.gated():
+	if config.gated():
 		return
 
 	gameData.isColliding = h.collision.is_colliding()
@@ -198,9 +199,9 @@ func on_weapon_handling(delta: float) -> void:
 
 
 func _resolve_aim_intent() -> void:
-	if ModConfig.optic_shiner:
+	if config.optic_shiner:
 		_bus.withdraw_aim()
-		ModConfig.optic_shiner = false
+		config.optic_shiner = false
 
 	# the bus already accounts for locks and for binoculars taking over the arms
 	gameData.isAiming = _bus.aim()
@@ -241,7 +242,7 @@ func _set_target(h: Node) -> void:
 		return
 
 	# binos has no weapon pose of its own; stow the rig out of the camera while glassing
-	if ModConfig.binoculars_active:
+	if config.binoculars_active:
 		h.targetPosition = data.lowPosition + _STOW_POS_OFFSET
 		h.targetRotation = _stow_rot
 		return
@@ -261,7 +262,7 @@ func _set_target(h: Node) -> void:
 		return
 
 	if gameData.isAiming:
-		if optic && ModConfig.current_scope_mag > 1.5:
+		if optic && config.current_scope_mag > 1.5:
 			_handlingMode = HandlingMode.Zoom
 		elif optic:
 			_handlingMode = HandlingMode.RDS
@@ -296,12 +297,12 @@ func _set_target_idle(h: Node) -> void:
 		h.targetRotation = data.lowRotation
 		return
 
-	if ModConfig.free_look && _stow_hold > 0.0:
+	if config.free_look && _stow_hold > 0.0:
 		h.targetPosition = data.lowPosition + _STOW_POS_OFFSET
 		h.targetRotation = _stow_rot
 		return
 
-	if !ModConfig.patrol_position:
+	if !config.patrol_position:
 		h.targetPosition = data.lowPosition
 		h.targetRotation = data.lowRotation
 		return
@@ -330,7 +331,7 @@ func _apply_target(h: Node, delta: float) -> void:
 	var target_quat := Quaternion.from_euler(Vector3(deg_to_rad(h.targetRotation.x), deg_to_rad(h.targetRotation.y), deg_to_rad(h.targetRotation.z)))
 	h.quaternion = h.quaternion.slerp(target_quat, t)
 
-	if !_baseline_captured || !ModConfig.free_look:
+	if !_baseline_captured || !config.free_look:
 		return
 
 	var rig: Node3D = h.get_parent()

@@ -1,3 +1,6 @@
+# 1.1.71
+* settings moved from MCM to Likho's Config Manager (LCM): the mod is no longer listed in MCM, and settings saved through MCM are not carried over
+
 # 1.1.70
 * worked around an MCM bug with MML profiles: saved settings were not applied on game start when a non-default profile is selected
 

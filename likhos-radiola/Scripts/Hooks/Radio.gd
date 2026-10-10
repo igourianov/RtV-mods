@@ -3,7 +3,7 @@ extends RefCounted
 const RadioRegistry = preload("../RadioRegistry.gd")
 const RadioPlayer = preload("../Nodes/RadioPlayer.gd")
 const RadioStation = preload("../RadioStation.gd")
-const ModConfig = preload("../ModConfig.gd")
+const Config = preload("../Config.gd")
 const META_PLAYER := "radio_player"
 const META_AUTOROLL := "radio_autoroll"
 
@@ -62,7 +62,7 @@ func on_physics_process_pre(_delta: float) -> void:
 
 	# The mod's chance replaces vanilla's random-on roll, so discard whatever vanilla rolled.
 	radio.active = false
-	if randf() * 100.0 >= ModConfig.on_chance:
+	if randf() * 100.0 >= Config.instance.radio_on_chance:
 		return
 
 	var stations := RadioRegistry.STATIONS

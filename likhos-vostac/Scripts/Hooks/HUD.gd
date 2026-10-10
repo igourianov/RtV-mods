@@ -1,12 +1,13 @@
 extends RefCounted
 
-const ModConfig := preload("../ModConfig.gd")
+const Config := preload("../Config.gd")
 const InspectCard := preload("../InspectCards/InspectCard.gd")
 const FireModeCard := preload("../InspectCards/FireModeCard.gd")
 const AmmoCardReplacer := preload("../InspectCards/AmmoCardReplacer.gd")
 const ChamberCardReplacer := preload("../InspectCards/ChamberCardReplacer.gd")
 const KillCounterCard := preload("../InspectCards/KillCounterCard.gd")
 const Crosshair := preload("../Nodes/Crosshair.gd")
+var config := Config.instance
 var gameData := preload("res://Resources/GameData.tres")
 
 var _lib
@@ -110,16 +111,16 @@ func on_physics_process_post(delta: float) -> void:
 
 func _update_ammo_cards(hud, rig: WeaponRig) -> void:
 	var enabled := false
-	if gameData.isChecking && ModConfig.ammo_check_view:
-		enabled = ModConfig.ammo_cards_check
+	if gameData.isChecking && config.ammo_check_view:
+		enabled = config.ammo_cards_check
 	elif gameData.isInspecting:
-		enabled = ModConfig.ammo_cards_inspect
+		enabled = config.ammo_cards_inspect
 	elif gameData.isInserting:
-		enabled = ModConfig.ammo_cards_manual_reload
+		enabled = config.ammo_cards_manual_reload
 
 	var has_mag: bool = rig && (!rig.magazine || rig.magazine.visible)
 	var is_manual: bool = rig && rig.data && rig.data.weaponAction == "Manual"
-	var show_chamber: bool = ModConfig.chamber_card_mode == "enabled" || (ModConfig.chamber_card_mode == "manual" && is_manual)
+	var show_chamber: bool = config.chamber_card_mode == Config.ChamberCardMode.ENABLED || (config.chamber_card_mode == Config.ChamberCardMode.MANUAL_GUNS_ONLY && is_manual)
 
 	hud.magazine.visible = enabled && has_mag
 	hud.chamber.visible = enabled && show_chamber
@@ -139,7 +140,7 @@ func _update_attachment_cards(hud: Node, rig: WeaponRig) -> void:
 		if is_instance_valid(card):
 			card.hide()
 
-	if !ModConfig.attachment_cards || !gameData.isInspecting || !_camera || !rig || !rig.slotData || !rig.attachments:
+	if !config.attachment_cards || !gameData.isInspecting || !_camera || !rig || !rig.slotData || !rig.attachments:
 		return
 
 	for nested in rig.slotData.nested:
@@ -164,7 +165,7 @@ func _update_firemode_card(rig: WeaponRig) -> void:
 	if !is_instance_valid(_firemode_card):
 		return
 
-	if !ModConfig.firemode_card || !gameData.isInspecting || !_camera || !rig || !rig.skeleton || !rig.data || rig.data.weaponAction != "Semi-Auto":
+	if !config.firemode_card || !gameData.isInspecting || !_camera || !rig || !rig.skeleton || !rig.data || rig.data.weaponAction != "Semi-Auto":
 		_firemode_card.hide()
 		return
 
@@ -183,8 +184,8 @@ func _update_kill_cards(rig: WeaponRig) -> void:
 	if !is_instance_valid(_kill_container):
 		return
 
-	var kills := ModConfig.kills
-	if !ModConfig.kill_counter_card || !gameData.isInspecting || kills.is_empty() || !_camera || !rig || !rig.skeleton:
+	var kills := config.kills
+	if !config.kill_counter_card || !gameData.isInspecting || kills.is_empty() || !_camera || !rig || !rig.skeleton:
 		_kill_container.hide()
 		return
 

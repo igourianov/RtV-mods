@@ -1,7 +1,7 @@
 extends RefCounted
 
 const Out = preload("../Lib/Out.gd")
-const ModConfig := preload("./ModConfig.gd")
+const Config := preload("./Config.gd")
 
 var _lib
 var _config
@@ -19,7 +19,7 @@ const blockers := {
 }
 
 
-func _init(lib, config: ModConfig) -> void:
+func _init(lib, config: Config) -> void:
 	_lib = lib
 	_config = config
 

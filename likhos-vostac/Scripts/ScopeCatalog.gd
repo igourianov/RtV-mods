@@ -1,5 +1,5 @@
 const Out := preload("../Lib/Out.gd")
-const ModConfig := preload("./ModConfig.gd")
+const Config := preload("./Config.gd")
 
 static var gameData := preload("res://Resources/GameData.tres")
 
@@ -63,9 +63,9 @@ const DATA := {
 static func get_mag_range(key: String) -> Array:
 	var entry: Dictionary = DATA.get(key, {})
 	var field := "mag_range"
-	match ModConfig.mag_schema:
-		&"discrete": field = "mag_range_discrete"
-		&"normalized": field = "mag_range_normalized"
+	match Config.instance.magnification_schema:
+		Config.MagnificationSchema.DISCRETE: field = "mag_range_discrete"
+		Config.MagnificationSchema.NORMALIZED: field = "mag_range_normalized"
 	return entry.get(field, entry.get("mag_range", _FALLBACK_MAG))
 
 
@@ -83,9 +83,9 @@ static func sync_optic_state(rig: WeaponRig) -> void:
 	gameData.isScoped = optic && (optic.attachmentData.scope || optic.attachmentData.variable) && !gameData.secondaryOptic
 	if gameData.isScoped:
 		var mags := get_mag_range(optic.attachmentData.file)
-		ModConfig.current_scope_mag = mags[clamp(rig.slotData.zoom, 1, mags.size()) - 1]
+		Config.instance.current_scope_mag = mags[clamp(rig.slotData.zoom, 1, mags.size()) - 1]
 	else:
-		ModConfig.current_scope_mag = 1.0
+		Config.instance.current_scope_mag = 1.0
 
 	if rig:
 		if !optic:

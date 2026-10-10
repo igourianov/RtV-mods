@@ -2,18 +2,14 @@ extends "../Lib/Main.gd"
 
 const Catalog = preload("./Catalog.gd")
 const Tooltip = preload("./Tooltip.gd")
-const ModConfig = preload("./ModConfig.gd")
+const Config = preload("./Config.gd")
 
 
 var _tooltip
 
 
-func create_config(config: ConfigFile) -> void:
-	ModConfig.create(config)
-
-
-func load_config(config: ConfigFile) -> void:
-	ModConfig.apply(config)
+func get_config() -> Resource:
+	return Config.instance
 
 
 func setup(lib) -> void:

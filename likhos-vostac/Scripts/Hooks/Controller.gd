@@ -1,9 +1,10 @@
 extends RefCounted
 
-const ModConfig := preload("../ModConfig.gd")
+const Config := preload("../Config.gd")
 const Out := preload("../../Lib/Out.gd")
 const InputBus := preload("../Nodes/InputBus.gd")
 
+var config := Config.instance
 var gameData := preload("res://Resources/GameData.tres")
 var _lib
 var _bus: InputBus
@@ -49,10 +50,10 @@ func _update_state(ctrl: Node) -> void:
 
 
 func _apply_speed(ctrl: Node, delta: float) -> void:
-	var useOverride: bool = ModConfig.override_movement_speeds
-	var crouchSpeed: float = ModConfig.crouch_speed if useOverride else ctrl.crouchSpeed
-	var walkSpeed: float = ModConfig.walk_speed if useOverride else ctrl.walkSpeed
-	var sprintSpeed: float = ModConfig.sprint_speed if useOverride else ctrl.sprintSpeed
+	var useOverride: bool = config.override_movement_speeds
+	var crouchSpeed: float = config.crouch_speed if useOverride else ctrl.crouchSpeed
+	var walkSpeed: float = config.walk_speed if useOverride else ctrl.walkSpeed
+	var sprintSpeed: float = config.sprint_speed if useOverride else ctrl.sprintSpeed
 
 	var target: float = walkSpeed
 	var rate: float = 2.5
@@ -65,12 +66,12 @@ func _apply_speed(ctrl: Node, delta: float) -> void:
 	elif gameData.isRunning:
 		target = sprintSpeed
 		rate = 1.0
-	elif gameData.isAiming && gameData.isScoped && ModConfig.current_scope_mag >= 2.0:
-		target = walkSpeed * ModConfig.walk_scope_mult
+	elif gameData.isAiming && gameData.isScoped && config.current_scope_mag >= 2.0:
+		target = walkSpeed * config.walk_scope_mult
 	elif gameData.isAiming:
-		target = walkSpeed * ModConfig.walk_aim_mult
+		target = walkSpeed * config.walk_aim_mult
 	elif gameData.isCanted:
-		target = walkSpeed * ModConfig.walk_cant_mult
+		target = walkSpeed * config.walk_cant_mult
 
 	ctrl.currentSpeed = lerp(ctrl.currentSpeed, target, delta * rate)
 
@@ -98,12 +99,12 @@ func _mouse_input(ctrl: Node, evt: InputEvent) -> void:
 
 
 func _target_sensitivity() -> float:
-	if ModConfig.binoculars_active:
-		return gameData.lookSensitivity / max(ModConfig.binoculars_mag, 1.0)
+	if config.binoculars_active:
+		return gameData.lookSensitivity / max(config.binoculars_mag, 1.0)
 	if gameData.isCanted:
 		return gameData.aimSensitivity
 	if gameData.isAiming && gameData.isScoped:
-		return gameData.scopeSensitivity / ModConfig.current_scope_mag
+		return gameData.scopeSensitivity / config.current_scope_mag
 	if gameData.isAiming:
 		return gameData.aimSensitivity
 	return gameData.lookSensitivity

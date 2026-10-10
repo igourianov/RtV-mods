@@ -10,14 +10,14 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 
 ## Weapons & Handling
 
-* Reworked lowered weapon mode into [Adaptive Free Look](https://www.youtube.com/watch?v=I1lY93vEe-s) mode (disable in MCM)
+* Reworked lowered weapon mode into [Adaptive Free Look](https://www.youtube.com/watch?v=I1lY93vEe-s) mode (disable in LCM)
 * New `Canted Aim (quick)` binding: canted aim independent from aim, with optional laser auto-activation (unbound by default)
 * Weapon handling speed (how fast you transition into the desired state) now scales with stance and optic: red dot and LPVO 1x **115%**, canted **130%**, magnified scope **80%**
 * Reworked insert and ammo check mechanics to use hold action instead of toggle + can now reload directly from ammo check
 * Reworked the inspect mode and associated bindings
 * Reworked manual action gun reload animations to be more fluid (reduced animation lockout time)
 * Mosin and 870 can now cycle the bolt on both full and empty mag, like the real guns do (you will lose ammo) + dry fire click on empty chamber
-* Negligent discharge (firing out of aim) is allowed (disable in MCM)
+* Negligent discharge (firing out of aim) is allowed (disable in LCM)
 
 ## Aiming & Optics
 
@@ -27,21 +27,21 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 * Mosin and M28 (not the MOD) can switch between the PU scope and iron sights on the `Secondary Optic` binding, same way the HAMR switches to its top dot
 * Reworked the PIP scope mode for realism
 * Reworked all optics with real eye relief (only in PIP) and magnification values.
-* LPVO zoom is now accessible without aiming - gated by the Rail movement modifier by default to avoid collision with lower/raise weapon (change in MCM)
+* LPVO zoom is now accessible without aiming - gated by the Rail movement modifier by default to avoid collision with lower/raise weapon (change in LCM)
 * Added explicit bindings to the base game settings for optic zoom in/out (it was hardcoded to mouse wheel)
 
 ## Movement & Stamina
 
 * Reworked arm and leg stamina mechanics to drain based on weight and recover based on vitals.
-* Changed movement speed Crouch/walk/sprint from vanilla **1 / 2.5 / 5** to **0.7 / 3 / 7** (editable in MCM)
-* New movement breakpoints walk-canted/walk-aiming-1×/walk-scoped as a multiplier of the walk speed **0.6 / 0.75 / 0.3** (editable in MCM)
+* Changed movement speed Crouch/walk/sprint from vanilla **1 / 2.5 / 5** to **0.7 / 3 / 7** (editable in LCM)
+* New movement breakpoints walk-canted/walk-aiming-1×/walk-scoped as a multiplier of the walk speed **0.6 / 0.75 / 0.3** (editable in LCM)
 
 ## Controls & HUD
 
 * Reworked input priority for Crouch/Sprint/Aim/Canted actions. Last action wins instead of following hardcoded order. Hold action always wins over toggle.
 * New bindings for optic zoom.
-* Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in MCM)
-* Additional weapon cards in Inspect/Ammo Check/Insert modes + icon replacers for ammo count and chamber status (check MCM settings)
+* Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in LCM)
+* Additional weapon cards in Inspect/Ammo Check/Insert modes + icon replacers for ammo count and chamber status (check LCM settings)
 * Likho's protips in-game to make the user aware of the changed bindings
 
 ## Flashlights
@@ -76,8 +76,8 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 - *Main camera FOV no longer narrows when scoped* — only the inside of the optic magnifies
 - *LPVOs stay "scoped" at 1x* — realistic lens distortion and DOF even at 1x
 - *Scope DOF reworked:* scales with magnification, near-DOF enabled for foreground/background softening
-- *PIP MSAA matches main viewport:* the optic's SubViewport now mirrors the antialiasing settings used by the rest of the game - vanilla left it disabled (disable in MCM if it causes performance issues)
-- *NVG-aware PIP blur:* when night vision is active and you aim a magnified optic, the PIP image will now blur. Real scopes cannot work under NVG because of eye relief differences (disable in MCM)
+- *PIP MSAA matches main viewport:* the optic's SubViewport now mirrors the antialiasing settings used by the rest of the game - vanilla left it disabled (disable in LCM if it causes performance issues)
+- *NVG-aware PIP blur:* when night vision is active and you aim a magnified optic, the PIP image will now blur. Real scopes cannot work under NVG because of eye relief differences (disable in LCM)
 
 ### Optics
 * All optics now have eye relief values and create scope shadow if mounted outside ideal eye relief (ACOG will suck on Combloc rifles!)
@@ -88,7 +88,7 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 * HAMR is now legendary
 * PU moved back on the gun and it is now real 3.5x zoom
 * Input acceleration for zoom bindings to quick flick from min to max or vice versa
-* MCM setting for magnification control scheme
+* LCM setting for magnification control scheme
 	- *Short:* 3 zoom levels spread evenly along scope's magnification range - like vanilla but mid-point is visually middle. Choose this if you're more CoD than Tarkov guy.
 	- *Discrete:* literal, physical zoom levels. E.g. for Vudu: 1, 2, 3, 4,...,10. Input acceleration makes this setting tolerable.
 	- *Normalized:* a comfortable middle ground between the two options above.
@@ -108,7 +108,7 @@ Both stamina bars are now dynamic and much more realistic.
 * Rail movement now works only in inspect mode. Rail movement binding is now unused.
 * Weapon rotation in inspect mode is now done with the Canted aim binding instead of mouse wheel.
 * Stamina drain removed
-* Added ammo and attachment cards to the inspect mode (disable via MCM menu)
+* Added ammo and attachment cards to the inspect mode (disable in LCM)
 
 ### Ammo check & insert
 Ammo check receives much-needed love. 
@@ -126,7 +126,7 @@ These changes started out as separate mods. The catch is that Road to Vostok's s
 
 - Road to Vostok 0.2.0.0 (Godot 4.6.3)
 - [Metro Mod Loader (MML)](https://vostokmods.net/mod/metro-mod-loader) v3.4.1 or later (separate install, not bundled with the game)
-- [Mod Configuration Menu (MCM)](https://vostokmods.net/mod/mod-configuration-menu) (optional)
+- Likho's Config Manager (LCM) (optional, the mod runs on its default settings without it)
 
 ## Compatibility
 

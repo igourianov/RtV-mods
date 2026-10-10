@@ -4,9 +4,10 @@ const Out := preload("../../Lib/Out.gd")
 const Inputs := preload("../../Lib/Inputs.gd")
 const AudioEventPlayer := preload("../../Lib/AudioEventPlayer.gd")
 const ZoomClickPlayer := preload("../Audio/ZoomClickPlayer.gd")
-const ModConfig := preload("../ModConfig.gd")
+const Config := preload("../Config.gd")
 
 
+var config := Config.instance
 var gameData := preload("res://Resources/GameData.tres")
 var _audio_player: AudioEventPlayer
 var _zoom_audio: ZoomClickPlayer
