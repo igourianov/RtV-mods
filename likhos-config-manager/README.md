@@ -62,9 +62,39 @@ var current_weapon_weight := 0.0
 - Settings appear in declaration order. `@export_group` starts a section with a header. Settings outside of any section are shown first, without a header.
 - A setting's label is its field name turned into words: `walk_speed` shows as `Walk Speed`. There are no tooltips.
 
-### 2. Config resource
+### 2. Config object
 
-`Config.tres` in your mod. The script path has to be the absolute path the mod has in game:
+LCM works on one instance of that script. Every script that reads settings has to read that same instance. There are three ways to get there. Pick one.
+
+**A. Create it and pass it on.** No extra file. Fits when one script reads the settings, or when you hand the object to the others yourself:
+
+```gdscript
+const Config := preload("res://mods/my-mod/Scripts/Config.gd")
+
+var config := Config.new()
+```
+
+**B. A static holder on the config script.** No extra file. Any script that preloads the config script reaches the same instance:
+
+```gdscript
+# in Config.gd
+extends Resource
+
+static var instance := new()
+
+@export var debug_enabled := false
+```
+
+```gdscript
+# anywhere else
+const Config := preload("res://mods/my-mod/Scripts/Config.gd")
+
+
+func _process(delta: float) -> void:
+	position.x += Config.instance.walk_speed * delta
+```
+
+**C. A `.tres` resource.** The way the game shares its own `GameData`. `Config.tres` in your mod, with the script path being the absolute path the mod has in game:
 
 ```
 [gd_resource type="Resource" load_steps=2 format=3]
@@ -75,20 +105,23 @@ var current_weapon_weight := 0.0
 script = ExtResource("1")
 ```
 
-Every script that needs settings preloads this file and reads the fields directly. All of them get the same instance:
+Every script preloads this file and gets the same instance:
 
 ```gdscript
 var config := preload("res://mods/my-mod/Config.tres")
 ```
 
-Hold it in a `var`, not a `const`, if the script also writes to it.
+Hold it in a `var`, not a `const`, if the script also writes to it. A value saved in the `.tres` replaces the default written in the script.
 
 ### 3. Registration
 
+Pass the instance from step 2, whichever way you made it:
+
 ```gdscript
 const LCM_PATH := "res://mods/likhos-config-manager/Scripts/LCM.gd"
+const Config := preload("res://mods/my-mod/Scripts/Config.gd")
 
-var config := preload("res://mods/my-mod/Config.tres")
+var config := Config.new()
 
 
 func _ready() -> void:
@@ -166,12 +199,12 @@ enum CantMode { DEFAULT, RAIL, OFF }
 @export var weapon_offset := Vector3(0.1, -0.2, 0.3)
 ```
 
-Reading them is plain field access on the preloaded object:
+Reading them is plain field access on the config object, here with the static holder from step 2:
 
 ```gdscript
 const Config := preload("res://mods/my-mod/Scripts/Config.gd")
 
-var config := preload("res://mods/my-mod/Config.tres")
+var config := Config.instance
 
 
 func _process(delta: float) -> void:

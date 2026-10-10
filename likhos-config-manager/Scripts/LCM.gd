@@ -36,12 +36,10 @@ static func RegisterConfig(mod_uid: String, mod_name: String, config: Resource, 
 	mods[mod_uid] = entry
 
 	var group: String = ""
-	for property in config.get_property_list():
+	# the script's own list, because the object's list opens with the engine's "Resource" group
+	# and only an editor build emits the category entry that would end that group before the script's fields
+	for property in config.get_script().get_script_property_list():
 		var usage: int = property.usage
-		# a group declared by a base class ends where the next class begins
-		if usage & PROPERTY_USAGE_CATEGORY:
-			group = ""
-			continue
 		if usage & PROPERTY_USAGE_GROUP:
 			group = property.name
 			continue

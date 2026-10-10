@@ -9,7 +9,8 @@ A new mod, Likho's Config Manager (LCM), replaces MCM as the way these mods expo
 Constraints:
 
 * Godot's export annotations carry a field's type, range, enum options and group. None of them carries a label or a tooltip.
-* `get_property_list()` on a config object reports `@export` fields with their hint and hint string, and `@export_group` entries, in declaration order. Checked in Godot 4.6.2.
+* The property list of a config object's script reports `@export` fields with their hint and hint string, and `@export_group` entries, in declaration order. Checked in Godot 4.6.2.
+* The object's own property list is not usable for this. It opens with the engine's built-in `Resource` group, and the category entry that separates it from the script's fields exists in the editor build but not in the game, where the first ungrouped settings then show under a `Resource` header.
 * A `.tres` pointing at a script loads through `preload` as one shared instance for every script that preloads it.
 * A script loaded by the same path from several scripts is one cached script, so its static state is shared.
 * A lambda kept in a script's static state until the engine exits crashes it. A method callable does not. The registry is therefore emptied when LCM's autoload leaves the tree.
@@ -52,7 +53,11 @@ Context only:
 
 ### Config object
 
-A config object is a `Resource` script with `@export` fields, plus a `.tres` of it shipped in the mod. Scripts that need settings `preload` the `.tres` and read fields directly, as vanilla scripts do with `GameData.tres`.
+A config object is one instance of a `Resource` script with `@export` fields. Scripts that need settings read its fields directly. LCM only needs the instance and does not care how the mod creates or shares it. The README documents three ways as equal options:
+
+* Created with `new()` where the mod registers it, and passed on by the mod.
+* Held in a static variable of the config script, so every script that preloads the script reaches the same instance.
+* A `.tres` of the script shipped in the mod and preloaded, as vanilla scripts do with `GameData.tres`.
 
 * An `@export` field is a setting. Its value in the `.tres`, or the script initializer, is its default.
 * A field without `@export` is not a setting. LCM never reads, shows or stores it, so the object can carry runtime state next to settings.
