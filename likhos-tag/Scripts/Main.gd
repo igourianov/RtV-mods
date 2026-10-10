@@ -3,15 +3,15 @@ extends "../Lib/Main.gd"
 var LCM = load("res://mods/likhos-config-manager/Scripts/LCM.gd")
 const Catalog = preload("./Catalog.gd")
 const Tooltip = preload("./Tooltip.gd")
-const Config = preload("./Config.gd")
 
 
+var config := preload("./Config.gd").instance
 var _tooltip
 
 
 func setup(lib) -> void:
 	if is_instance_valid(LCM):
-		LCM.register_config(mod_id, mod_name, Config.instance)
+		LCM.register_config(mod_id, mod_name, config)
 
 	Catalog.apply(lib)
 

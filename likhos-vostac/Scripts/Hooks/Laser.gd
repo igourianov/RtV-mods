@@ -1,5 +1,4 @@
 
-const Config := preload("../Config.gd")
 
 const _AUTO_ON_LATCH := &"likho_laser_latch"
 const _RECOLOR_LATCH := &"likho_laser_recolor"
@@ -12,7 +11,7 @@ const _POINT_LIGHT_ENERGY: float = 0.1
 const ZERO_DISTANCE: float = 30.0
 const FADE_DISTANCE: float = 50.0
 
-var config := Config.instance
+var config := preload("../Config.gd").instance
 var _lib
 var gameData := preload("res://Resources/GameData.tres")
 var _auto_on_latch := false

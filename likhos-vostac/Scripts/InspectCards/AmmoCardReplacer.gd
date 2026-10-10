@@ -1,6 +1,5 @@
 extends Control
 
-const Config := preload("../Config.gd")
 
 const _FILL_DURATION := 0.5
 const _FILL_DELAY := 0.5
@@ -10,7 +9,7 @@ const _BAR_THICKNESS := 3
 const _BAR_GAP := 3
 const _PLACEHOLDER := Color(0.3, 0.3, 0.3)
 
-var config := Config.instance
+var config := preload("../Config.gd").instance
 var _rig
 var _label: Label
 var _prev_visible := false

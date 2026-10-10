@@ -1,8 +1,6 @@
 extends RefCounted
 
-const Config := preload("../Config.gd")
-
-var config := Config.instance
+var config := preload("../Config.gd").instance
 var _lib
 
 

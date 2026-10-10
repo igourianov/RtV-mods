@@ -1,4 +1,4 @@
-extends Resource
+extends RefCounted
 
 enum CrosshairStyle { OFF, DOT, SEGMENTED_CROSS }
 # DEFAULT follows the game's Aim Mode

@@ -1,9 +1,8 @@
 extends RefCounted
 
-const Config := preload("../Config.gd")
 const BLUR_SPEED := 1.0
 
-var config := Config.instance
+var config := preload("../Config.gd").instance
 var _lib
 
 

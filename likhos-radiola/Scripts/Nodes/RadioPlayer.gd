@@ -2,7 +2,6 @@ extends Node3D
 
 const AudioChunkPlayer3D = preload("../../Lib/AudioChunkPlayer3D.gd")
 const StaticNoisePlayer3D = preload("StaticNoisePlayer3D.gd")
-const Config = preload("../Config.gd")
 const RadioBus = preload("../RadioBus.gd")
 const RadioStation = preload("../RadioStation.gd")
 
@@ -11,6 +10,7 @@ const UNIT_SIZE := 3.0
 const MAX_DISTANCE := 20.0
 const STATIC_VOLUME := -10.0
 
+var config := preload("../Config.gd").instance
 var playing := false
 var station: RadioStation
 
@@ -59,7 +59,7 @@ func _play_current() -> void:
 
 
 func _sync_static() -> void:
-	var enabled := Config.instance.radio_static
+	var enabled := config.radio_static
 	if enabled && !_static.playing:
 		_static.start()
 	elif !enabled && _static.playing:

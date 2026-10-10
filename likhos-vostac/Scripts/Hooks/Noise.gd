@@ -1,12 +1,11 @@
 extends RefCounted
 
-const Config := preload("../Config.gd")
 
 const WOBBLE_MULT: float = 3.0
 const WOBBLE_MULT_HOLD_BREATH: float = 0.5
 const WOBBLE_FREQ_MULT_EXHAUSTED: float = 2.0
 
-var config := Config.instance
+var config := preload("../Config.gd").instance
 var _lib
 
 var _wobble_frequency: float = 0.0

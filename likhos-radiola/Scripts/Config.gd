@@ -1,4 +1,4 @@
-extends Resource
+extends RefCounted
 
 static var instance := new()
 

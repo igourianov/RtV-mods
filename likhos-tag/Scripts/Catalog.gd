@@ -1,7 +1,7 @@
 extends RefCounted
 
 const Out = preload("../Lib/Out.gd")
-const Config = preload("./Config.gd")
+static var config := preload("./Config.gd").instance
 
 const EXTRAS := ["grau", "model", "load"]
 const DATA := {
@@ -410,7 +410,7 @@ const DATA := {
 
 
 static func apply(lib) -> void:
-	var idx = 0 if Config.instance.force_english_names else 1
+	var idx = 0 if config.force_english_names else 1
 	for file in DATA:
 		var fields := {}
 		for key in DATA[file]:

@@ -1,4 +1,4 @@
-extends Resource
+extends RefCounted
 
 # event function -> the setting that holds its probability
 const PROBABILITIES: Dictionary[String, StringName] = {

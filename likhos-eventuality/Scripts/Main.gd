@@ -3,11 +3,10 @@ extends "../Lib/Main.gd"
 var LCM = load("res://mods/likhos-config-manager/Scripts/LCM.gd")
 const EventSystem := preload("./EventSystem.gd")
 const Police := preload("./Police.gd")
-const Config := preload("./Config.gd")
 
 var _event_system: EventSystem
 var _police: Police
-var _config := Config.new()
+var _config := preload("./Config.gd").new()
 
 
 func setup(lib) -> void:

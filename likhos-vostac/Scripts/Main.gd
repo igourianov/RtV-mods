@@ -1,7 +1,7 @@
 extends "../Lib/Main.gd"
 
 var LCM = load("res://mods/likhos-config-manager/Scripts/LCM.gd")
-const Config = preload("./Config.gd")
+var config := preload("./Config.gd").instance
 const Handling = preload("./Hooks/Handling.gd")
 const WeaponRig = preload("./Hooks/WeaponRig.gd")
 const Camera = preload("./Hooks/Camera.gd")
@@ -54,7 +54,7 @@ func setup(lib):
 	# LCM reports only the values it loaded from its store, so Out is set up from the defaults here
 	_on_config_applied()
 	if is_instance_valid(LCM):
-		LCM.register_config(mod_id, mod_name, Config.instance, _on_config_applied)
+		LCM.register_config(mod_id, mod_name, config, _on_config_applied)
 
 	ScopeCatalog.apply(lib)
 	RigOpticPatches.apply(lib)
@@ -132,5 +132,5 @@ func setup(lib):
 
 
 func _on_config_applied() -> void:
-	Out.debug_enabled = Config.instance.debug_enabled
-	Out.show_protips = Config.instance.show_protips
+	Out.debug_enabled = config.debug_enabled
+	Out.show_protips = config.show_protips

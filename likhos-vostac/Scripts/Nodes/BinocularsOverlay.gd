@@ -1,6 +1,5 @@
 extends CanvasLayer
 
-const Config := preload("../Config.gd")
 const Out := preload("../../Lib/Out.gd")
 const ZoomAccelerator := preload("../ZoomAccelerator.gd")
 const _LENS_SHADER := preload("res://mods/likhos-vostac/Shaders/BinocularsLens.gdshader")
@@ -13,7 +12,7 @@ const _HUD_PATH := "/root/Map/Core/UI/HUD"
 const ZoomClickPlayer := preload("../Audio/ZoomClickPlayer.gd")
 const InputBus := preload("./InputBus.gd")
 
-var config := Config.instance
+var config := preload("../Config.gd").instance
 var gameData := preload("res://Resources/GameData.tres")
 var _bus: InputBus
 var _click_audio: ZoomClickPlayer

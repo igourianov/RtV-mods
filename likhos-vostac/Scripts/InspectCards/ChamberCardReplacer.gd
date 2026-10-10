@@ -1,6 +1,5 @@
 extends Control
 
-const Config := preload("../Config.gd")
 
 const _BULLET_W := 8.0
 const _BULLET_BODY_H := 14.0
@@ -11,7 +10,7 @@ const _CHAMBER_TOP_OFFSET := 2.0
 const _CHAMBER_HEIGHT_FACTOR := 0.7
 const _CHAMBER_THICKNESS := 2.0
 
-var config := Config.instance
+var config := preload("../Config.gd").instance
 var _rig
 var _label: Label
 var _chambered := false

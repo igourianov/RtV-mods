@@ -1,10 +1,9 @@
 extends RefCounted
 
-const Config := preload("../Config.gd")
 const Out := preload("../../Lib/Out.gd")
 const InputBus := preload("../Nodes/InputBus.gd")
 
-var config := Config.instance
+var config := preload("../Config.gd").instance
 var gameData := preload("res://Resources/GameData.tres")
 var _lib
 var _bus: InputBus
