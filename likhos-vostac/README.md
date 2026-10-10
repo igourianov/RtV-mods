@@ -48,6 +48,7 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 * All flashlights now throw a much wider and shorter beam: the cone is **80%** wider and the range is **50%** of vanilla
 * Flashlight now supports both toggle and hold actions on the same binding
 * Flashlight will now shine on the weapon while inspecting
+* Flashlight flickers briefly when its charge drops to **5%** and again at every percent below that. In the last percent it flickers continuously
 * Fixed flashlight draining battery while the game world is frozen.
 
 ## Vanilla Bug Fixes

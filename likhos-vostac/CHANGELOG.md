@@ -1,3 +1,6 @@
+# 3.1.2017
+* flashlights now flicker at low charge: a brief flicker at 5% and at every percent below it, then continuous flicker in the last percent
+
 # 3.0.2015
 * all flashlights now throw a much wider and shorter beam: the cone is 80% wider and the range is 50% of vanilla
 * fixed a possible flashlight script error in the first moments after a scene loads
