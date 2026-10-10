@@ -1,16 +1,16 @@
 extends RefCounted
 
+const BatteryUtil := preload("./BatteryUtil.gd")
+
 var _lib
-var _battery
 
 
-func _init(lib, battery) -> void:
+func _init(lib) -> void:
 	_lib = lib
-	_battery = battery
 
 
 func on_update_post(slotData: SlotData) -> void:
-	if !_battery.is_removable(slotData):
+	if !BatteryUtil.is_removable(slotData):
 		return
 
 	# Vanilla gives the nested items the first Remove buttons, in order. The battery takes the next one, which keeps it at the bottom of the menu with them.
@@ -19,7 +19,7 @@ func on_update_post(slotData: SlotData) -> void:
 	if !is_instance_valid(button):
 		return
 
-	button.text = "Remove (" + _battery.data.display + ")"
+	button.text = "Remove (" + BatteryUtil.data.display + ")"
 	button.show()
 
 	# Vanilla Update sized and placed the panel before this button was shown.

@@ -27,7 +27,7 @@ Owned: the new mod folder `likhos-battery/`.
 
 * `mod.txt`
 * `Scripts/Main.gd`
-* `Scripts/Battery.gd`, the shared contract
+* `Scripts/BatteryUtil.gd`, the shared contract
 * hook handler scripts under `Scripts/`, one per hooked vanilla script, following the convention of `likhos-tacmed/Scripts/Interface.gd`
 
 Context only: vanilla `Interface.gd` (`Charge`, `Combine`, `CombineCheck`, `ContextRemove`, `Create`, `Return`), `Context.gd` (`Update`), `Item.gd` (`Value`, `UpdateDetails`), `Tooltip.gd`, `Flashlight.gd`, `NVG.gd`, `mod-lib/Main.gd`.
@@ -73,9 +73,9 @@ For the `Batteries` item and for every battery-powered device, the handler retur
 
 Removing or inserting a battery therefore never changes the combined price of the device and the battery.
 
-### Shared contract: `Scripts/Battery.gd`
+### Shared contract: `Scripts/BatteryUtil.gd`
 
-`Main.gd` creates one instance and hands it to every handler. Through it the handlers share one test for "battery-powered device" as defined in the constraints, and resolve the `Batteries` item data once. Removal additionally requires charge above 0. Pricing applies at any charge.
+A static utility script that the handlers reference directly. `Main.gd` stores the `Batteries` item data in it during setup. Through it the handlers share one test for "battery-powered device" as defined in the constraints, and resolve the `Batteries` item data once. Removal additionally requires charge above 0. Pricing applies at any charge.
 
 ### Observable result
 

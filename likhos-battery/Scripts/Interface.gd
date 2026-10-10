@@ -1,13 +1,13 @@
 extends RefCounted
 
+const BatteryUtil := preload("./BatteryUtil.gd")
+
 var _lib
-var _battery
 var gameData := preload("res://Resources/GameData.tres")
 
 
-func _init(lib, battery) -> void:
+func _init(lib) -> void:
 	_lib = lib
-	_battery = battery
 
 
 func on_charge(targetItem: Item, sourceItem: Item) -> void:
@@ -65,14 +65,14 @@ func on_context_remove(nestedIndex: int) -> void:
 	_lib.skip_super()
 
 	# A switched-on device can drain to 0 while the menu is open.
-	if !_battery.is_removable(device.slotData):
+	if !BatteryUtil.is_removable(device.slotData):
 		iface.HideContext()
 		iface.Reset()
 		iface.PlayError()
 		return
 
 	var slotData := SlotData.new()
-	slotData.itemData = _battery.data
+	slotData.itemData = BatteryUtil.data
 	slotData.condition = device.slotData.condition
 	device.slotData.condition = 0.0
 	device.UpdateDetails()

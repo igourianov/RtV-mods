@@ -1,12 +1,12 @@
 extends RefCounted
 
+const BatteryUtil := preload("./BatteryUtil.gd")
+
 var _lib
-var _battery
 
 
-func _init(lib, battery) -> void:
+func _init(lib) -> void:
 	_lib = lib
-	_battery = battery
 
 
 func on_value() -> int:
@@ -17,9 +17,9 @@ func on_value() -> int:
 
 	# Vanilla exempts all Electronics from condition pricing.
 	# A device is priced as itself plus one full battery, so a battery and a device both lose the same amount for the charge they are missing.
-	if slotData.itemData.file == _battery.data.file || _battery.powers(slotData.itemData):
+	if slotData.itemData.file == BatteryUtil.FILE || BatteryUtil.powers(slotData.itemData):
 		# A draining device can end a frame slightly below 0.
 		var missing: float = 1.0 - clampf(slotData.condition, 0.0, 100.0) * 0.01
-		value -= roundi(_battery.data.value * missing)
+		value -= roundi(BatteryUtil.data.value * missing)
 
 	return value
