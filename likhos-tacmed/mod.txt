@@ -1,7 +1,7 @@
 [mod]
 name="Likho's TacMed"
 id="likhos-tacmed"
-version="1.4.155"
+version="1.4.156"
 prefix="[likho-tacmed]"
 description="Likho's mod overhauling advanced healing consumables"
 debug=false
@@ -15,3 +15,6 @@ LikhosTacMed="res://mods/likhos-tacmed/Scripts/Main.gd"
 
 [registry]
 enabled=true
+
+[updates]
+source="vostokmods:likhos-tacmed"

@@ -1,3 +1,6 @@
+# 3.2.2031
+* added the Vostok Mods source to mod.txt, so the mod loader shows the mod's thumbnail and checks for updates
+
 # 3.2.2029
 * settings moved from MCM to Likho's Config Manager (LCM): the mod is no longer listed in MCM, and settings saved through MCM are not carried over
 

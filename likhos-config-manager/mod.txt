@@ -1,10 +1,13 @@
 [mod]
 name="Likho's Config Manager"
 id="likhos-config-manager"
-version="1.0.30"
+version="1.0.31"
 
 [hooks]
 "res://Scripts/Settings.gd"="_ready"
 
 [autoload]
 LikhosConfigManager="res://mods/likhos-config-manager/Scripts/Main.gd"
+
+[updates]
+source="vostokmods:likhos-config-manager"

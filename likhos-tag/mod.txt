@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Tag"
 id="likhos-tag"
-version="1.1.73"
+version="1.1.74"
 prefix="[likho-tag]"
 description="Likho's comprehensive renaming and property tweaks for weapons and attachments"
 debug=false
@@ -15,3 +15,6 @@ LikhosTag="res://mods/likhos-tag/Scripts/Main.gd"
 
 [registry]
 enabled=true
+
+[updates]
+source="vostokmods:likhos-tag"

@@ -1,3 +1,6 @@
+# 1.3.98
+* added the Vostok Mods source to mod.txt, so the mod loader shows the mod's thumbnail and checks for updates
+
 # 1.3.97
 * fixed new load order clobbering kit refill recipe
 

@@ -1,3 +1,6 @@
+# 1.4.156
+* added the Vostok Mods source to mod.txt, so the mod loader shows the mod's thumbnail and checks for updates
+
 # 1.4.155
 * fixed AFAK heal time being accidentally set to 5 seconds
 
