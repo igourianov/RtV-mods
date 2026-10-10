@@ -2,10 +2,6 @@
 name="Likho's Config Manager"
 id="likhos-config-manager"
 version="1.0.25"
-prefix="[likho-lcm]"
-description="Likho's lightweight settings menu for mods"
-debug=false
-priority=-100
 
 [hooks]
 "res://Scripts/Settings.gd"="_ready"
