@@ -34,8 +34,9 @@ function Get-ModFolders {
 		}
 		return ,(Get-Item -LiteralPath $p)
 	}
+	# MCM is a reference clone, not a mod of this repo
 	return Get-ChildItem -LiteralPath $repoRoot -Directory | Where-Object {
-		Test-Path -LiteralPath (Join-Path $_.FullName 'mod.txt')
+		$_.Name -ne 'MCM' -and (Test-Path -LiteralPath (Join-Path $_.FullName 'mod.txt'))
 	}
 }
 
