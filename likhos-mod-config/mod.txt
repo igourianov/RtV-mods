@@ -1,0 +1,14 @@
+[mod]
+name="Likho's Mod Config"
+id="likhos-mod-config"
+version="1.0.0"
+prefix="[likho-lmc]"
+description="Likho's lightweight settings menu for mods"
+debug=false
+priority=-100
+
+[hooks]
+"res://Scripts/Settings.gd"="_ready"
+
+[autoload]
+LikhosModConfig="res://mods/likhos-mod-config/Scripts/Main.gd"
