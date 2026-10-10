@@ -17,26 +17,7 @@ Settings are saved per mod in `%APPDATA%\Road to Vostok\LCM\<mod-id>.cfg`.
 - Road to Vostok 0.2.0.0 (Godot 4.6.3)
 - [Metro Mod Loader (MML)](https://vostokmods.net/mod/metro-mod-loader) v3.4.1 or later (separate install, not bundled with the game)
 
-## Compatibility
-
-This mod hooks vanilla methods through Metro Mod Loader:
-
-**Hooks** (post, vanilla still runs):
-- `Settings.gd`: `_ready`
-
-## Install / Uninstall
-
-Drop `likhos-config-manager.vmz` into your game's `mods/` folder. On a default Steam install:
-
-```
-<Steam>\steamapps\common\Road to Vostok\mods\
-```
-
-Launch the game. The mod loader picks it up automatically.
-
-To uninstall simply delete `likhos-config-manager.vmz` from the `mods/` folder and relaunch the game.
-
-## For mod authors
+## Usage (for mod authors)
 
 A mod describes its settings as a class with `@export` fields and registers an instance of it with one call. LCM builds the settings page from the fields, loads the player's saved values into the object and saves changes. The mod never deals with files.
 
@@ -86,10 +67,10 @@ static var instance := new()
 
 ```gdscript
 # anywhere else
-const Config := preload("./Config.gd")
+const config := preload("./Config.gd").instance
 
 func _process(delta: float) -> void:
-	position.x += Config.instance.walk_speed * delta
+	position.x += config.walk_speed * delta
 ```
 
 **C. A `.tres` resource.** Best if your mod already manages various resources or you prefer a declarative approach. This is the same way the game shares its own `GameData`.
@@ -124,7 +105,8 @@ Load LCM and pass it the instance from step 2, whichever way you made it.
 Always check the loaded script with `is_instance_valid` before calling it. When LCM is not installed, `load()` returns `null`, and calling `register_config` on that `null` crashes the script.
 
 ```gdscript
-var config := preload("./Config.gd").new()
+# in Main.gd
+var config := preload("./Config.gd").instance
 var LCM = load("res://mods/likhos-config-manager/Scripts/LCM.gd")
 
 func _ready() -> void:
@@ -148,10 +130,11 @@ Returns `true` when the config is registered. Returns `false` and logs a warning
 Pass a callback only when config changes need to trigger an immediate action, such as rebuilding a UI element or copying new values somewhere:
 
 ```gdscript
+const config := preload("./Config.gd").instance
+
 func _ready() -> void:
 	if is_instance_valid(LCM):
 		LCM.register_config("my-mod", "My Mod", config, _on_config_applied)
-
 
 func _on_config_applied() -> void:
 	# act on the new settings
@@ -214,16 +197,6 @@ enum CantMode { DEFAULT, RAIL, OFF }
 # a number box per component
 @export var hud_offset := Vector2(16, 24)
 @export var weapon_offset := Vector3(0.1, -0.2, 0.3)
-```
-
-Reading them is plain field access on the config object, here with the singleton from step 2:
-
-```gdscript
-var config := preload("res://mods/my-mod/Scripts/Config.gd").instance
-
-func _process(delta: float) -> void:
-	if config.cant_mode == Config.CantMode.RAIL:
-		position += config.weapon_offset * config.walk_speed * delta
 ```
 
 ### Good to know
