@@ -53,7 +53,7 @@ func setup(lib):
 
 	# LCM reports only the values it loaded from its store, so Out is set up from the defaults here
 	_on_config_applied()
-	if LCM:
+	if is_instance_valid(LCM):
 		LCM.register_config(mod_id, mod_name, Config.instance, _on_config_applied)
 
 	ScopeCatalog.apply(lib)

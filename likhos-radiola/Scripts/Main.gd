@@ -9,7 +9,7 @@ var _radio
 
 
 func setup(lib) -> void:
-	if LCM:
+	if is_instance_valid(LCM):
 		LCM.register_config(mod_id, mod_name, Config.instance)
 
 	RadioBus.apply()

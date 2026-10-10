@@ -92,12 +92,11 @@ static var instance := new()
 # anywhere else
 const Config := preload("./Config.gd")
 
-
 func _process(delta: float) -> void:
 	position.x += Config.instance.walk_speed * delta
 ```
 
-**C. A `.tres` resource.** Best if your mod already manages various resources.
+**C. A `.tres` resource.** Best if your mod already manages various resources or you prefer data-driven approach.
 
 The same way the game shares its own `GameData`. This is the only option that needs the config class to be a resource, since a `.tres` cannot hold anything else. Declare it with `extends Resource` instead of `extends RefCounted`. Everything else about the class stays the same.
 
@@ -122,18 +121,17 @@ Hold it in a `var`, not a `const`, if the script also writes to it. A value save
 
 ### 3. Registration
 
-Pass the instance from step 2, whichever way you made it:
+Load LCM and pass it the instance from step 2, whichever way you made it.
+
+Always check the loaded script with `is_instance_valid` before calling it. When LCM is not installed, `load()` returns `null`, and calling `register_config` on that `null` crashes the script.
 
 ```gdscript
-const LCM_PATH := "res://mods/likhos-config-manager/Scripts/LCM.gd"
-const Config := preload("./Config.gd")
-
-var config := Config.new()
-
+var config := preload("./Config.gd").new()
+var LCM = load("res://mods/likhos-config-manager/Scripts/LCM.gd")
 
 func _ready() -> void:
-	if ResourceLoader.exists(LCM_PATH):
-		load(LCM_PATH).register_config("my-mod", "My Mod", config, _on_config_applied)
+	if is_instance_valid(LCM):
+		LCM.register_config("my-mod", "My Mod", config, _on_config_applied)
 
 
 func _on_config_applied() -> void:
@@ -153,7 +151,8 @@ Returns `true` when the config is registered. Returns `false` and logs a warning
 A mod that reads its settings straight from the config object needs no callback. Leave the argument out:
 
 ```gdscript
-load(LCM_PATH).register_config("my-mod", "My Mod", config)
+if is_instance_valid(LCM):
+	LCM.register_config("my-mod", "My Mod", config)
 ```
 
 `Callable()` in its place does the same. `null` is not accepted and fails the call.

@@ -13,7 +13,7 @@ var _config := Config.new()
 func setup(lib) -> void:
 	# LCM reports only the values it loaded from its store, so Out is set up from the defaults here
 	_on_config_applied()
-	if LCM:
+	if is_instance_valid(LCM):
 		LCM.register_config(mod_id, mod_name, _config, _on_config_applied)
 
 	_event_system = EventSystem.new(lib, _config)
