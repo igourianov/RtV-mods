@@ -19,6 +19,7 @@ A flashlight that is running out of battery should show it. As the charge drains
 * VosTac replaces `Flashlight._physics_process` but still calls `ResetCheck` every physics tick, so the activation cadence is the vanilla one.
 * Ruled out: bursts at random or accelerating intervals set in seconds. The flicker window scales with the drain rate and is only 12.5 s on the Phoenix in winter, where a gap of several seconds can leave a single burst.
 * Ruled out: telling a drain apart from another change in charge that lands exactly one whole percent lower, such as a swapped battery, another light or a loaded save. It plays one stray burst and that does not matter.
+* Ruled out: clearing a burst that was cut short when the charge comes back at the same or a lower whole percent. Its leftover dips, up to 1 s, play at the next switch-on even after the battery or the light was swapped. A leftover burst is cleared only when the charge comes back higher.
 * Ruled out: a flicker owned by Likho's Battery. It uses nothing from that mod, and it would need a second handler, hook registration and guard on a method VosTac already hooks.
 * Ruled out: the weapon-mounted light driven by `RigManager.gd`. It has no battery.
 * Ruled out: NVG. It has a charge but is not a flashlight.
@@ -87,7 +88,7 @@ No restore step exists. Vanilla rewrites the full energy on the next activation,
 4. Charge drains through 4%, 3% and 2%. Each one starts another burst.
 5. Charge drains through 1%. Bursts now follow each other without a break and the light strobes.
 6. Charge reaches 0%. Vanilla `ResetCheck` deactivates the light.
-7. The player charges the light or swaps in another battery. Nothing flickers until the charge next drains through a burst point or is at or below 1%.
+7. The player charges the light or swaps in another battery. A burst that was running is dropped if the charge is now higher. After that nothing flickers until the charge next drains through a burst point or is at or below 1%.
 
 ### Expected result
 
