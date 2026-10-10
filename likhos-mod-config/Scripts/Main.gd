@@ -3,8 +3,9 @@ extends "../Lib/Main.gd"
 const LMC := preload("./LMC.gd")
 const ModMenu := preload("./ModMenu.gd")
 
-const BUTTON_SIZE := Vector2(170, 40)
-# clears the corner MCM puts its own 55px button in, 30px off the edges
+# the size of MCM's own button, which sits in the corner 30px off the edges
+const BUTTON_SIZE := Vector2(55, 55)
+# one slot to the left of MCM's
 const BUTTON_MARGIN := Vector2(95, 30)
 
 
@@ -24,7 +25,7 @@ func _on_settings_ready_post() -> void:
 	settings.get_parent().add_child(menu)
 
 	var button := Button.new()
-	button.text = "Mod Config"
+	button.text = "LMC"
 	button.tooltip_text = "Likho's Mod Config"
 	button.set_anchors_preset(Control.PRESET_TOP_RIGHT)
 	button.offset_left = -BUTTON_MARGIN.x - BUTTON_SIZE.x

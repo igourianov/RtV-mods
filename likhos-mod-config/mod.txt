@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Mod Config"
 id="likhos-mod-config"
-version="1.0.0"
+version="1.0.19"
 prefix="[likho-lmc]"
 description="Likho's lightweight settings menu for mods"
 debug=false

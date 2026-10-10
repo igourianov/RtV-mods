@@ -2,7 +2,7 @@
 
 A lightweight settings menu for mods. Every mod that supports it gets an entry in one list and its own settings page.
 
-* Opens from the `Mod Config` button in the top right corner of the game's settings screen, in the main menu and in game.
+* Opens from the `LMC` button in the top right corner of the game's settings screen, in the main menu and in game.
 * Changes take effect when you leave a mod's page or close the menu.
 * `Reset` next to a setting restores its default.
 * Settings are shared by all Mod Loader profiles.
