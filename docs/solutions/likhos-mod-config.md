@@ -9,7 +9,6 @@ A new mod, Likho's Mod Config (LMC), replaces MCM as the way these mods expose s
 Constraints:
 
 * Godot's export annotations carry a field's type, range, enum options and group. None of them carries a label or a tooltip.
-* The Mod Loader's active profile is `settings/active_profile` in `user://mod_config.cfg`. MCM reads it the same way in its `Main.gd`.
 * `get_property_list()` on a config object reports `@export` fields with their hint and hint string, and `@export_group` entries, in declaration order. Checked in Godot 4.6.2.
 * A `.tres` pointing at a script loads through `preload` as one shared instance for every script that preloads it.
 * A script loaded by the same path from several scripts is one cached script, so its static state is shared.
@@ -20,6 +19,7 @@ Constraints:
 Ruled out:
 
 * Any integration with MCM: hosting LMC pages in MCM's menu or registering through `MCM_Config`. Shelved by the user. LMC and MCM run side by side without knowing about each other.
+* Settings per Mod Loader profile. LMC does not read the loader's settings file, so it does not know the active profile and never shows or uses one.
 * Tooltips and explicit labels for settings.
 * MCM's template dictionaries, `menu_pos`, per value change callbacks and the `Create*Value` builder. Declaration order and export hints replace them.
 * Keycode, array and dictionary settings. Key bindings go through mod-lib `Inputs` and the vanilla bindings screen.
@@ -68,7 +68,7 @@ LMC's API is one script of static functions at `res://mods/likhos-mod-config/Scr
 * `mod_uid` is the mod's id from `mod.txt`. It keys the store. A second registration under the same id is rejected with a warning.
 * `mod_name` is the name of the mod's entry in the menu.
 * LMC takes the object's values at the time of the call as the defaults.
-* When the active profile has a stored file for the mod, LMC writes its values into the object before returning and then calls `on_applied` once. Without a stored file the object stays on its defaults and `on_applied` is not called.
+* When the mod has a stored file, LMC writes its values into the object before returning and then calls `on_applied` once. Without a stored file the object stays on its defaults and `on_applied` is not called.
 * `on_applied` takes no arguments. Besides registration, LMC calls it every time the player's changes are applied.
 
 ### Field mapping
@@ -92,14 +92,14 @@ LMC builds a mod's settings page from the config object's property list alone.
 
 ### Store
 
-* LMC keeps one file per mod per Mod Loader profile under its own folder in `user://`. Consumers never see a path, a file or a profile name.
+* LMC keeps one file per mod under its own folder in `user://`, shared by every Mod Loader profile. Consumers never see a path or a file.
 * A file holds only the settings whose value differs from the default, keyed by field name. A default changed in a mod update reaches every player who never touched that setting.
 * A stored value whose field is gone, or whose type no longer matches the field, is ignored and dropped on the next save.
-* A profile without a file starts from the defaults.
+* A mod without a file starts from the defaults.
 
 ### Menu
 
-The menu copies MCM's layout: a searchable list of registered mods on the left, the selected mod's settings page on the right, a back control and the active profile's name.
+The menu copies MCM's layout: a searchable list of registered mods on the left, the selected mod's settings page on the right and a back control.
 
 * It opens from a button LMC puts on the vanilla settings screen, in the main menu and in game, and replaces that screen while open. Back or the `settings` action returns to it.
 * The button and the menu are there whether or not MCM is installed.
@@ -120,12 +120,13 @@ The menu copies MCM's layout: a searchable list of registered mods on the left, 
 * A mod with a config object and LMC installed: the vanilla settings screen has an LMC button. The menu lists the mod under the name it registered with, shows its settings grouped and ordered as declared, and changes take effect when the page is left.
 * The same with MCM installed: both buttons and both menus are there. The mod is listed in LMC's menu only.
 * Without LMC: the mod runs on its defaults.
-* Switching the Mod Loader profile and restarting: the mod has that profile's values.
+* Switching the Mod Loader profile: the mod keeps the same values.
 * An existing mod on the template bridge behaves as today in every combination.
 
 ## Tradeoffs
 
 * A static API script loaded by path over an instance published as engine meta. The cost is a path every consumer hardcodes, so the script can never move or be renamed. The gain is no dependency on autoload order.
+* One store for all Mod Loader profiles over a store per profile. The cost is that two profiles cannot hold different settings for the same mod. The gain is no dependency on the loader's settings file.
 * A separate menu next to MCM's over hosting pages inside MCM's menu. The cost is that a player with both installed has two config menus.
 * Labels from field names over explicit labels and tooltips. The cost is that a label such as `Fighter Jets (Area 05)` cannot be expressed and a setting cannot be explained in the menu. The field has to be named for what the player should read.
 * Applying on leaving the page over writing through on every change. The cost is no live preview while dragging a slider.

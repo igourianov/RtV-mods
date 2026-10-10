@@ -5,7 +5,7 @@ A lightweight settings menu for mods. Every mod that supports it gets an entry i
 * Opens from the `Mod Config` button in the top right corner of the game's settings screen, in the main menu and in game.
 * Changes take effect when you leave a mod's page or close the menu.
 * `Reset` next to a setting restores its default.
-* Settings are kept separately for each Mod Loader profile.
+* Settings are shared by all Mod Loader profiles.
 * Runs next to Mod Configuration Menu (MCM). The two menus are separate and each lists its own mods.
 
 Without this mod installed, mods that rely on it run on their default settings.
@@ -36,7 +36,7 @@ To uninstall simply delete `likhos-mod-config.vmz` from the `mods/` folder and r
 
 ## For mod authors
 
-A mod describes its settings as a `Resource` with `@export` fields and registers it with one call. LMC builds the settings page from the fields, loads the player's saved values into the object and saves changes. The mod never deals with files or Mod Loader profiles.
+A mod describes its settings as a `Resource` with `@export` fields and registers it with one call. LMC builds the settings page from the fields, loads the player's saved values into the object and saves changes. The mod never deals with files.
 
 LMC is an optional dependency. When it is not installed the config object keeps its default values.
 

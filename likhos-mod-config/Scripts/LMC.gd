@@ -5,7 +5,6 @@ const Out := preload("../Lib/Out.gd")
 
 const STORE_DIR := "user://LMC"
 const STORE_SECTION := "values"
-const LOADER_CONFIG := "user://mod_config.cfg"
 const EXPORTED := PROPERTY_USAGE_SCRIPT_VARIABLE | PROPERTY_USAGE_EDITOR
 const SUPPORTED_TYPES: Array[int] = [TYPE_BOOL, TYPE_INT, TYPE_FLOAT, TYPE_STRING, TYPE_COLOR, TYPE_VECTOR2, TYPE_VECTOR3]
 
@@ -22,7 +21,6 @@ class Entry:
 
 # static rather than autoload state, so a consumer can register before this mod's Main runs
 static var mods: Dictionary[String, Entry] = {}
-static var _profile: String
 
 
 static func RegisterConfig(mod_uid: String, mod_name: String, config: Resource, on_applied: Callable = Callable()) -> void:
@@ -97,13 +95,5 @@ static func apply(mod_uid: String, values: Dictionary) -> void:
 		entry.on_applied.call()
 
 
-static func get_profile() -> String:
-	if !_profile:
-		var loader_config := ConfigFile.new()
-		loader_config.load(LOADER_CONFIG)
-		_profile = str(loader_config.get_value("settings", "active_profile", "Default"))
-	return _profile
-
-
 static func _store_path(mod_uid: String) -> String:
-	return "%s/%s/%s.cfg" % [STORE_DIR, mod_uid, get_profile().validate_filename()]
+	return "%s/%s.cfg" % [STORE_DIR, mod_uid]

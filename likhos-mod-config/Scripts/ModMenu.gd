@@ -54,22 +54,14 @@ func _init(settings: Control) -> void:
 	margin.add_child(layout)
 
 	var header := HBoxContainer.new()
-	header.add_theme_constant_override("separation", 40)
 	layout.add_child(header)
 
 	var caption := Label.new()
 	caption.text = "Likho's Mod Config"
 	caption.theme_type_variation = &"HeaderLarge"
 	caption.add_theme_font_size_override("font_size", 24)
+	caption.size_flags_horizontal = SIZE_EXPAND_FILL
 	header.add_child(caption)
-
-	var profile := Label.new()
-	profile.text = "Current Profile: " + LMC.get_profile()
-	profile.theme_type_variation = &"HeaderLarge"
-	profile.add_theme_font_size_override("font_size", 18)
-	profile.add_theme_color_override("font_color", DIMMED)
-	profile.size_flags_horizontal = SIZE_EXPAND_FILL
-	header.add_child(profile)
 
 	var back := Button.new()
 	back.text = "← Return"
