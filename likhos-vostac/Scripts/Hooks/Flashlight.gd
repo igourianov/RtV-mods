@@ -1,11 +1,36 @@
 
 const Out := preload("../../Lib/Out.gd")
 
+# Tunable: beam shape as multiples of the vanilla range and cone angle.
+const RANGE_FACTOR := 0.6
+const CONE_FACTOR := 1.8
+
 var _lib
+var _authored_cone: float
 
 
 func _init(lib) -> void:
 	_lib = lib
+
+
+func on_activate_post() -> void:
+	var caller = _lib._caller
+	var data = caller.lightData
+
+	# Vanilla writes a range only for a light with a power tier.
+	# Without that write the range is still the one scaled last time, and scaling it again would compound.
+	if !data || data.power == data.Power.None:
+		return
+
+	var beam: SpotLight3D = caller.lightWorld
+
+	# Vanilla never writes the cone and every flashlight node comes from the same scene, so the first cone seen is the authored one.
+	# Scaling the node's current cone instead would compound on every activation.
+	if !_authored_cone:
+		_authored_cone = beam.spot_angle
+
+	beam.spot_range *= RANGE_FACTOR
+	beam.spot_angle = _authored_cone * CONE_FACTOR
 
 
 func on_physics_process(delta: float) -> void:
