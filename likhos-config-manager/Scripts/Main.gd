@@ -1,7 +1,7 @@
 extends "../Lib/Main.gd"
 
 const LCM := preload("./LCM.gd")
-const ModMenu := preload("./ModMenu.gd")
+const ModMenu := preload("../Scenes/ModMenu.tscn")
 
 # the size of MCM's own button, which sits in the corner 30px off the edges
 const BUTTON_SIZE := Vector2(55, 55)
@@ -21,7 +21,8 @@ func _exit_tree() -> void:
 # the settings screen is its own instance in the main menu and in every map
 func _on_settings_ready_post() -> void:
 	var settings: Control = _lib._caller
-	var menu := ModMenu.new(settings)
+	var menu := ModMenu.instantiate()
+	menu.settings = settings
 	settings.get_parent().add_child(menu)
 
 	var button := Button.new()

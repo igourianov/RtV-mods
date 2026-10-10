@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[node name="SettingRow" type="HBoxContainer"]
+custom_minimum_size = Vector2(0, 36)
+
+[node name="Label" type="Label" parent="."]
+size_flags_horizontal = 3
+vertical_alignment = 1
+
+[node name="Input" type="HBoxContainer" parent="."]
+; one fixed width and no share of the row's spare space, so the inputs of all rows line up in a column
+custom_minimum_size = Vector2(380, 0)
+
+[node name="Revert" type="Button" parent="."]
+tooltip_text = "Revert to default value"
+text = "Reset"

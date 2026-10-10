@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[node name="GroupHeader" type="HBoxContainer"]
+custom_minimum_size = Vector2(0, 36)
+theme_override_constants/separation = 16
+
+[node name="Label" type="Label" parent="."]
+theme_override_colors/font_color = Color(1, 1, 1, 0.47)
+theme_override_font_sizes/font_size = 24
+vertical_alignment = 1
+
+[node name="Line" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(0, 1)
+size_flags_horizontal = 3
+size_flags_vertical = 4
+color = Color(1, 1, 1, 0.09)

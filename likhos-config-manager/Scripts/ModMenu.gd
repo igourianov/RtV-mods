@@ -1,93 +1,25 @@
 extends Control
 
 const LCM := preload("./LCM.gd")
+const SettingRow := preload("../Scenes/SettingRow.tscn")
+const GroupHeader := preload("../Scenes/GroupHeader.tscn")
 
-const ROW_HEIGHT := 36
-const INPUT_WIDTH := 380
 const FLOAT_STEP := 0.001
-const DIMMED := Color(1, 1, 1, 0.47)
 const AXES := "XYZ"
 
-# the vanilla settings screen this menu is opened from and returns to
-var _settings: Control
+# the vanilla settings screen this menu is opened from and returns to, set by whoever instantiates the menu
+var settings: Control
 var _mod_uid: String
 # pending value per field of the shown mod, written into its config object when the page is left
 var _values: Dictionary[String, Variant]
 var _reverts: Dictionary[String, Button]
 
-var _title: Label
-var _mod_list: VBoxContainer
-var _rows: VBoxContainer
+@onready var _title: Label = %PageTitle
+@onready var _mod_list: VBoxContainer = %ModList
+@onready var _rows: VBoxContainer = %Rows
 
 
-func _init(settings: Control) -> void:
-	_settings = settings
-	theme = load("res://UI/Themes/Theme.tres")
-	# the settings screen is shown while the game is paused
-	process_mode = PROCESS_MODE_ALWAYS
-	set_anchors_preset(PRESET_FULL_RECT)
-	hide()
-
-	var backdrop := TextureRect.new()
-	backdrop.texture = load("res://Editor/RTV_Background.png")
-	backdrop.material = load("res://UI/Effects/MT_Menu.tres")
-	backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	backdrop.set_anchors_preset(PRESET_FULL_RECT)
-	add_child(backdrop)
-
-	var shade := ColorRect.new()
-	shade.color = Color(0, 0, 0, 0.8)
-	shade.set_anchors_preset(PRESET_FULL_RECT)
-	add_child(shade)
-
-	var margin := MarginContainer.new()
-	margin.set_anchors_preset(PRESET_FULL_RECT)
-	margin.add_theme_constant_override("margin_left", 80)
-	margin.add_theme_constant_override("margin_right", 80)
-	margin.add_theme_constant_override("margin_top", 50)
-	margin.add_theme_constant_override("margin_bottom", 50)
-	add_child(margin)
-
-	var layout := VBoxContainer.new()
-	layout.add_theme_constant_override("separation", 40)
-	margin.add_child(layout)
-
-	var header := HBoxContainer.new()
-	layout.add_child(header)
-
-	var caption := _create_label("Likho's Config Manager")
-	caption.theme_type_variation = &"HeaderLarge"
-	caption.add_theme_font_size_override("font_size", 24)
-	caption.size_flags_horizontal = SIZE_EXPAND_FILL
-	header.add_child(caption)
-
-	var back := Button.new()
-	back.text = "← Return"
-	back.custom_minimum_size = Vector2(256, 40)
-	back.pressed.connect(close)
-	header.add_child(back)
-
-	var columns := HBoxContainer.new()
-	columns.size_flags_vertical = SIZE_EXPAND_FILL
-	columns.add_theme_constant_override("separation", 32)
-	layout.add_child(columns)
-
-	var mods_column := _add_column(columns, 1.0)
-	_add_column_title(mods_column, "Mods")
-	var search := LineEdit.new()
-	search.placeholder_text = "Search mods..."
-	search.clear_button_enabled = true
-	search.custom_minimum_size.y = 32
-	search.text_changed.connect(_on_search_text_changed)
-	mods_column.add_child(search)
-	_mod_list = _add_scroll_list(mods_column)
-
-	var page_column := _add_column(columns, 4.0)
-	_title = _add_column_title(page_column, "Settings")
-	_rows = _add_scroll_list(page_column)
-	_rows.add_theme_constant_override("separation", 10)
-
+func _ready() -> void:
 	var entries: Array[LCM.Entry] = []
 	entries.assign(LCM.mods.values())
 	entries.sort_custom(func(a: LCM.Entry, b: LCM.Entry) -> bool: return a.name.naturalnocasecmp_to(b.name) < 0)
@@ -117,16 +49,16 @@ func _input(event: InputEvent) -> void:
 
 func open() -> void:
 	_build_page()
-	_settings.hide()
+	settings.hide()
 	show()
-	_settings.PlayClick()
+	settings.PlayClick()
 
 
 func close() -> void:
 	_apply_page()
 	hide()
-	_settings.show()
-	_settings.PlayClick()
+	settings.show()
+	settings.PlayClick()
 
 
 func _apply_page() -> void:
@@ -154,27 +86,26 @@ func _build_page() -> void:
 		var field_name: String = field.name
 		_values[field_name] = entry.config.get(field_name)
 		if field.group != group:
-			_add_group_header(field.group)
+			var header := GroupHeader.instantiate()
+			var header_label: Label = header.get_node("Label")
+			header_label.text = field.group
+			_rows.add_child(header)
 		group = field.group
 
-		var row := HBoxContainer.new()
-		row.custom_minimum_size.y = ROW_HEIGHT
+		var row := SettingRow.instantiate()
 		_rows.add_child(row)
 
+		var label: Label = row.get_node("Label")
 		var label_text := field_name.replace("_", " ")
-		var label := _create_label(label_text[0].to_upper() + label_text.substr(1))
-		label.size_flags_horizontal = SIZE_EXPAND_FILL
-		row.add_child(label)
+		label.text = label_text[0].to_upper() + label_text.substr(1)
 
-		var revert := Button.new()
-		revert.text = "Reset"
-		revert.tooltip_text = "Revert to default value"
-		revert.pressed.connect(_on_revert_pressed.bind(field, row))
+		var slot: HBoxContainer = row.get_node("Input")
+		var revert: Button = row.get_node("Revert")
+		revert.pressed.connect(_on_revert_pressed.bind(field, slot))
 		_reverts[field_name] = revert
 		_set_value(field_name, _values[field_name])
 
-		row.add_child(_create_input(field))
-		row.add_child(revert)
+		slot.add_child(_create_input(field))
 
 
 func _set_value(field_name: String, value: Variant) -> void:
@@ -262,16 +193,19 @@ func _create_input(field: Dictionary) -> Control:
 		input = HBoxContainer.new()
 		input.add_theme_constant_override("separation", 12)
 		for axis: int in (2 if field.type == TYPE_VECTOR2 else 3):
-			input.add_child(_create_label(AXES[axis] + ":"))
+			var axis_label := Label.new()
+			axis_label.text = AXES[axis] + ":"
+			# the row stretches the label taller than its text
+			axis_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			input.add_child(axis_label)
 			var on_axis_changed := func(number: float) -> void:
 				var vector: Variant = _values[field_name]
 				vector[axis] = number
 				_set_value(field_name, vector)
 			input.add_child(_create_spin_box(value[axis], FLOAT_STEP, on_axis_changed))
 
-	# one fixed width and no share of the row's spare space, so the inputs of all rows line up in a column
-	input.custom_minimum_size.x = INPUT_WIDTH
-	input.size_flags_horizontal = SIZE_FILL
+	# takes the whole width of the row's input slot
+	input.size_flags_horizontal = SIZE_EXPAND_FILL
 	return input
 
 
@@ -292,80 +226,22 @@ func _create_spin_box(value: float, step: float, on_changed: Callable, min_value
 	return spin_box
 
 
-func _add_group_header(text: String) -> void:
-	var header := HBoxContainer.new()
-	header.custom_minimum_size.y = ROW_HEIGHT
-	header.add_theme_constant_override("separation", 16)
-	_rows.add_child(header)
-
-	var label := _create_label(text)
-	label.add_theme_font_size_override("font_size", 24)
-	label.add_theme_color_override("font_color", DIMMED)
-	header.add_child(label)
-
-	var line := ColorRect.new()
-	line.color = Color(1, 1, 1, 0.09)
-	line.custom_minimum_size.y = 1
-	line.size_flags_horizontal = SIZE_EXPAND_FILL
-	line.size_flags_vertical = SIZE_SHRINK_CENTER
-	header.add_child(line)
-
-
-func _add_column(parent: Control, stretch_ratio: float) -> VBoxContainer:
-	var column := VBoxContainer.new()
-	column.size_flags_horizontal = SIZE_EXPAND_FILL
-	column.size_flags_stretch_ratio = stretch_ratio
-	column.add_theme_constant_override("separation", 10)
-	parent.add_child(column)
-	return column
-
-
-func _add_column_title(column: VBoxContainer, text: String) -> Label:
-	var panel := PanelContainer.new()
-	panel.custom_minimum_size.y = 50
-	column.add_child(panel)
-	var label := _create_label(text)
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	panel.add_child(label)
-	return label
-
-
-# text centered in the label's own height, which matters where a container stretches the label taller than its text
-func _create_label(text: String) -> Label:
-	var label := Label.new()
-	label.text = text
-	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	return label
-
-
-func _add_scroll_list(column: VBoxContainer) -> VBoxContainer:
-	var scroll := ScrollContainer.new()
-	scroll.size_flags_vertical = SIZE_EXPAND_FILL
-	column.add_child(scroll)
-	var list := VBoxContainer.new()
-	list.size_flags_horizontal = SIZE_EXPAND_FILL
-	scroll.add_child(list)
-	return list
-
-
 func _on_mod_pressed(mod_uid: String) -> void:
 	_apply_page()
 	_mod_uid = mod_uid
 	_build_page()
-	_settings.PlayClick()
+	settings.PlayClick()
 
 
-func _on_revert_pressed(field: Dictionary, row: HBoxContainer) -> void:
+func _on_revert_pressed(field: Dictionary, slot: HBoxContainer) -> void:
 	var field_name: String = field.name
 	_set_value(field_name, LCM.mods[_mod_uid].defaults[field_name])
 	# a fresh input shows the default, which spares every input type a way to be set from outside
-	var stale := row.get_child(1)
-	row.remove_child(stale)
+	var stale := slot.get_child(0)
+	slot.remove_child(stale)
 	stale.queue_free()
-	var input := _create_input(field)
-	row.add_child(input)
-	row.move_child(input, 1)
-	_settings.PlayClick()
+	slot.add_child(_create_input(field))
+	settings.PlayClick()
 
 
 func _on_search_text_changed(text: String) -> void:
