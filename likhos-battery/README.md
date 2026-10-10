@@ -6,7 +6,6 @@ Batteries keep their charge and can be taken out of any device that accepts them
 * Right click a charged device and pick `Remove (Batteries)` to get a battery with the device's charge. The device drops to 0%.
 * Dropping a battery on a charged device swaps their charge. A device at 0% consumes the battery, same as vanilla.
 * Prices follow charge. A battery is worth its charge and a device loses the price of the charge it is missing. Narva: 180€ at 100%, 80€ at 0%.
-* A flashlight below 5% charge flickers. The short bursts of dimming come more often as the battery runs out.
 
 ## Requirements
 
@@ -25,7 +24,6 @@ This mod uses the registry API and hooks vanilla methods through Metro Mod Loade
 - `Interface.ContextRemove` (replace)
 - `Item.Value` (replace)
 - `Context.Update` (post)
-- `Flashlight.Activate` (post)
 
 ## Install / Uninstall
 
