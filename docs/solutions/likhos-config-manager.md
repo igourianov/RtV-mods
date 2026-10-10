@@ -68,10 +68,11 @@ A config object is one instance of a `Resource` script with `@export` fields. Sc
 
 LCM's API is one script of static functions at `res://mods/likhos-config-manager/Scripts/LCM.gd`. That path is the contract with consumers and does not change. A consumer checks that the script exists, loads it and calls its one function:
 
-`RegisterConfig(mod_uid: String, mod_name: String, config: Resource, on_applied: Callable = Callable())`
+`register_config(mod_uid: String, mod_name: String, config: Resource, on_applied: Callable = Callable()) -> bool`
 
 * The registered mods are static state of the API script, not of LCM's autoload. A consumer can register at any point of startup, before or after LCM's `Main` runs.
-* `mod_uid` is the mod's id from `mod.txt`. It keys the store. A second registration under the same id is rejected with a warning.
+* It returns whether the config got registered.
+* `mod_uid` is the mod's id from `mod.txt`. It keys the store and names the store file, so it can only contain `a-z`, `0-9`, `-` and `_`. A registration under any other id is rejected with a warning. A second registration under the same id replaces the first with a warning.
 * `mod_name` is the name of the mod's entry in the menu.
 * LCM takes the object's values at the time of the call as the defaults.
 * When the mod has a stored file, LCM writes its values into the object before returning and then calls `on_applied` once. Without a stored file the object stays on its defaults and `on_applied` is not called.

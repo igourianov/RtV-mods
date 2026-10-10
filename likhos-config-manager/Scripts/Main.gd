@@ -28,7 +28,7 @@ func _ready() -> void:
 
 # a lambda kept in static state past the scene tree crashes the engine on exit
 func _exit_tree() -> void:
-	LCM.mods.clear()
+	LCM._mods.clear()
 
 
 # the settings screen is its own instance in the main menu and in every map

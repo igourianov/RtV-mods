@@ -50,7 +50,7 @@ func _init_config():
 	if !ResourceLoader.exists(LCM_PATH):
 		Out.warning("Likho's Config Manager is not installed, settings stay on their defaults")
 		return
-	load(LCM_PATH).RegisterConfig(mod_id, mod_name, config, _on_config_applied)
+	load(LCM_PATH).register_config(mod_id, mod_name, config, _on_config_applied)
 
 
 func _on_config_applied() -> void:

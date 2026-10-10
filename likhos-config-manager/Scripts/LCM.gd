@@ -20,20 +20,26 @@ class Entry:
 
 
 # static rather than autoload state, so a consumer can register before this mod's Main runs
-static var mods: Dictionary[String, Entry] = {}
+static var _mods: Dictionary[String, Entry] = {}
+# the uid names the store file, so it is held to what is a safe file name on every platform and cannot collide by case
+static var _uid_pattern := RegEx.create_from_string("^[a-z0-9_-]+$")
 
 
-static func RegisterConfig(mod_uid: String, mod_name: String, config: Resource, on_applied: Callable = Callable()) -> void:
-	if mods.has(mod_uid):
-		Out.warning("config for %s is already registered" % mod_uid)
-		return
+# returns whether the config got registered
+static func register_config(mod_uid: String, mod_name: String, config: Resource, on_applied: Callable = Callable()) -> bool:
+	if _uid_pattern.search(mod_uid) == null:
+		Out.warning("config for \"%s\" is not registered, a mod uid can only contain a-z, 0-9, - and _" % mod_uid)
+		return false
+		
+	if _mods.has(mod_uid):
+		Out.warning("config for %s is already registered and will be replaced" % mod_uid)
 
 	var entry := Entry.new()
 	entry.uid = mod_uid
 	entry.name = mod_name
 	entry.config = config
 	entry.on_applied = on_applied
-	mods[mod_uid] = entry
+	_mods[mod_uid] = entry
 
 	var group: String = ""
 	# the script's own list, because the object's list opens with the engine's "Resource" group
@@ -54,7 +60,7 @@ static func RegisterConfig(mod_uid: String, mod_name: String, config: Resource, 
 
 	var store := ConfigFile.new()
 	if store.load(_store_path(mod_uid)) != OK:
-		return
+		return true
 
 	for field in entry.fields:
 		var field_name: String = field.name
@@ -66,11 +72,12 @@ static func RegisterConfig(mod_uid: String, mod_name: String, config: Resource, 
 			config.set(field_name, value)
 	if on_applied.is_valid():
 		on_applied.call()
+	return true
 
 
 # values holds a value for every field of the mod
-static func apply(mod_uid: String, values: Dictionary) -> void:
-	var entry := mods[mod_uid]
+static func _apply(mod_uid: String, values: Dictionary) -> void:
+	var entry := _mods[mod_uid]
 	var config := entry.config
 	var store := ConfigFile.new()
 	var changed: bool = false

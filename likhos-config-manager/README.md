@@ -126,16 +126,18 @@ var config := Config.new()
 
 func _ready() -> void:
 	if ResourceLoader.exists(LCM_PATH):
-		load(LCM_PATH).RegisterConfig("my-mod", "My Mod", config, _on_config_applied)
+		load(LCM_PATH).register_config("my-mod", "My Mod", config, _on_config_applied)
 
 
 func _on_config_applied() -> void:
 	pass
 ```
 
-`RegisterConfig(mod_uid, mod_name, config, on_applied = Callable())`
+`register_config(mod_uid, mod_name, config, on_applied = Callable()) -> bool`
 
-- `mod_uid`: the mod's id from `mod.txt`. One registration per id.
+Returns `true` when the config is registered. Returns `false` and logs a warning when the uid is invalid.
+
+- `mod_uid`: the mod's id from `mod.txt`. Can only contain `a-z`, `0-9`, `-` and `_`. Registering again under the same id replaces the earlier config and logs a warning.
 - `mod_name`: the name shown in the menu.
 - `config`: the config object. Its values at the time of the call are the defaults.
 - `on_applied`: optional, takes no arguments. Called once during registration if the player has saved values, after they are written into the object. Called again every time the player changes settings in the menu. It is not called when there is nothing saved.

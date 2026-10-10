@@ -21,7 +21,7 @@ var _reverts: Dictionary[String, Button]
 
 func _ready() -> void:
 	var entries: Array[LCM.Entry] = []
-	entries.assign(LCM.mods.values())
+	entries.assign(LCM._mods.values())
 	entries.sort_custom(func(a: LCM.Entry, b: LCM.Entry) -> bool: return a.name.naturalnocasecmp_to(b.name) < 0)
 	var mod_buttons := ButtonGroup.new()
 	for entry in entries:
@@ -63,7 +63,7 @@ func close() -> void:
 
 func _apply_page() -> void:
 	if _mod_uid:
-		LCM.apply(_mod_uid, _values)
+		LCM._apply(_mod_uid, _values)
 
 
 func _build_page() -> void:
@@ -75,7 +75,7 @@ func _build_page() -> void:
 	if !_mod_uid:
 		return
 
-	var entry := LCM.mods[_mod_uid]
+	var entry := LCM._mods[_mod_uid]
 	_title.text = entry.name + " Settings"
 	# fields outside any group lead the page without a header, wherever they are declared
 	# filter keeps the declaration order within both parts
@@ -110,7 +110,7 @@ func _build_page() -> void:
 
 func _set_value(field_name: String, value: Variant) -> void:
 	_values[field_name] = value
-	var is_default: bool = value == LCM.mods[_mod_uid].defaults[field_name]
+	var is_default: bool = value == LCM._mods[_mod_uid].defaults[field_name]
 	var revert := _reverts[field_name]
 	revert.disabled = is_default
 	# hidden rather than removed, so the inputs of every row stay aligned
@@ -235,7 +235,7 @@ func _on_mod_pressed(mod_uid: String) -> void:
 
 func _on_revert_pressed(field: Dictionary, slot: HBoxContainer) -> void:
 	var field_name: String = field.name
-	_set_value(field_name, LCM.mods[_mod_uid].defaults[field_name])
+	_set_value(field_name, LCM._mods[_mod_uid].defaults[field_name])
 	# a fresh input shows the default, which spares every input type a way to be set from outside
 	var stale := slot.get_child(0)
 	slot.remove_child(stale)
