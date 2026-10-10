@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Theme" path="res://UI/Themes/Theme.tres" id="theme"]
-[ext_resource type="Script" path="res://mods/likhos-config-manager/Scripts/ModMenu.gd" id="script"]
+[ext_resource type="Script" path="../Scripts/ModMenu.gd" id="script"]
 [ext_resource type="Texture2D" path="res://Editor/RTV_Background.png" id="background"]
 [ext_resource type="Material" path="res://UI/Effects/MT_Menu.tres" id="menu_material"]
 
