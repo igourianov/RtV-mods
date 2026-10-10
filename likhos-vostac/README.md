@@ -24,6 +24,7 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 * Laser aiming devices are now zeroed at 30m and fade out at 50m instead of being parallel to infinity
 * Mouse sensitivity scales with stance and progressively with zoom level + lerp() on transition instead of snapping
 * Ability to toggle the secondary optic out of aim, with a visual cue of the toggle
+* Mosin and M28 (not the MOD) can switch between the PU scope and iron sights on the `Secondary Optic` binding, same way the HAMR switches to its top dot
 * Reworked the PIP scope mode for realism
 * Reworked all optics with real eye relief (only in PIP) and magnification values.
 * LPVO zoom is now accessible without aiming - gated by the Rail movement modifier by default to avoid collision with lower/raise weapon (change in MCM)

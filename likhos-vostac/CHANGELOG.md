@@ -1,3 +1,6 @@
+# 3.2.2025
+* Mosin and M28 (not the MOD) with a PU scope can now toggle between the scope and iron sights using the `Secondary Optic` binding, same way the HAMR switches to its top dot
+
 # 3.1.2017
 * flashlights now flicker at low charge: a brief flicker at 5% and at every percent below it, then continuous flicker in the last percent
 

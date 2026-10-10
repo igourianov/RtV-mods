@@ -5,6 +5,12 @@ static var gameData := preload("res://Resources/GameData.tres")
 
 const _FALLBACK_MAG: Array[float] = [1.0]
 
+# weapon file -> scope file: rifles whose iron sights stay usable under that scope
+const _IRON_SIGHTS: Dictionary[String, String] = {
+	"Mosin": "PU",
+	"M28": "PU",
+}
+
 static var _lens_geometry_cache := {}
 
 const DATA := {
@@ -63,10 +69,16 @@ static func get_mag_range(key: String) -> Array:
 	return entry.get(field, entry.get("mag_range", _FALLBACK_MAG))
 
 
+# an optic's own top dot, or the iron sights of a listed weapon and scope pair
+static func has_secondary_sight(rig: WeaponRig) -> bool:
+	var optic = rig.activeOptic if rig else null
+	return optic && (optic.secondary || _IRON_SIGHTS.get(rig.data.file) == optic.attachmentData.file)
+
+
 static func sync_optic_state(rig: WeaponRig) -> void:
 	var optic = rig.activeOptic if rig else null
 	# BUGFIX: vanilla forgets to reset secondaryOptic when equipping another optic, breaking other scopes in PIP mode
-	if gameData.secondaryOptic && !(optic && optic.secondary):
+	if gameData.secondaryOptic && !has_secondary_sight(rig):
 		gameData.secondaryOptic = false
 	gameData.isScoped = optic && (optic.attachmentData.scope || optic.attachmentData.variable) && !gameData.secondaryOptic
 	if gameData.isScoped:
@@ -78,11 +90,14 @@ static func sync_optic_state(rig: WeaponRig) -> void:
 	if rig:
 		if !optic:
 			rig.aimOffset = 0.0
-		elif gameData.secondaryOptic:
+		elif !gameData.secondaryOptic:
+			rig.aimOffset = optic.position.y
+		elif optic.secondary:
 			# BUGFIX: vanilla fails to factor optic.scale, causing incorrect Y offset on several guns
 			rig.aimOffset = optic.position.y + optic.secondary.position.y * optic.scale.y
 		else:
-			rig.aimOffset = optic.position.y
+			# iron sights: Handling poses an optic aim at -aimOffset, so this lands on the no-optic aim pose
+			rig.aimOffset = -rig.data.aimPosition.y
 
 
 static func get_optic_geometry(optic: Node3D) -> Dictionary:

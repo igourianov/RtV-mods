@@ -24,7 +24,7 @@ func _input(event: InputEvent) -> void:
 	if _handle_zoom(event, optic):
 		return
 
-	if _handle_secondary_optic(event, optic):
+	if _handle_secondary_optic(event):
 		return
 
 
@@ -52,12 +52,13 @@ func _handle_zoom(event: InputEvent, optic: Node3D) -> bool:
 	return true
 
 
-func _handle_secondary_optic(event: InputEvent, optic: Node3D) -> bool:
-	if !optic || !optic.secondary || !event.is_action_pressed("secondary_optic"):
+func _handle_secondary_optic(event: InputEvent) -> bool:
+	var rig = get_parent()
+	if !event.is_action_pressed("secondary_optic") || !ScopeCatalog.has_secondary_sight(rig):
 		return false
 
 	gameData.secondaryOptic = !gameData.secondaryOptic
-	ScopeCatalog.sync_optic_state(get_parent())
+	ScopeCatalog.sync_optic_state(rig)
 
 	return true
 
