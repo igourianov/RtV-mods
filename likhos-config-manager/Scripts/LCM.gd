@@ -1,9 +1,9 @@
-# Public API of Likho's Mod Config.
+# Public API of Likho's Config Manager.
 # Consumers load this script by its path, so it can never move or be renamed.
 
 const Out := preload("../Lib/Out.gd")
 
-const STORE_DIR := "user://LMC"
+const STORE_DIR := "user://LCM"
 const STORE_SECTION := "values"
 const EXPORTED := PROPERTY_USAGE_SCRIPT_VARIABLE | PROPERTY_USAGE_EDITOR
 const SUPPORTED_TYPES: Array[int] = [TYPE_BOOL, TYPE_INT, TYPE_FLOAT, TYPE_STRING, TYPE_COLOR, TYPE_VECTOR2, TYPE_VECTOR3]

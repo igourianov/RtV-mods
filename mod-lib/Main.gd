@@ -2,7 +2,7 @@ extends Node
 
 const MCM_PATH := "res://ModConfigurationMenu/Scripts/Doink Oink/MCM_Helpers.tres"
 const MCM_CONFIG_PATH := "res://ModConfigurationMenu/Scripts/MCM_Config.gd"
-const LMC_PATH := "res://mods/likhos-mod-config/Scripts/LMC.gd"
+const LCM_PATH := "res://mods/likhos-config-manager/Scripts/LCM.gd"
 const MCM_SIMPLE_TYPES := ["Bool", "Int", "Float", "String", "Color", "Vector2", "Vector3"]
 # template key -> MCM value setter
 const MCM_SETTERS := {
@@ -56,10 +56,10 @@ func _init_config():
 
 	var config_object := get_config()
 	if config_object:
-		if !ResourceLoader.exists(LMC_PATH):
-			Out.warning("Likho's Mod Config is not installed, settings stay on their defaults")
+		if !ResourceLoader.exists(LCM_PATH):
+			Out.warning("Likho's Config Manager is not installed, settings stay on their defaults")
 			return
-		load(LMC_PATH).RegisterConfig(mod_id, mod_name, config_object, config_applied)
+		load(LCM_PATH).RegisterConfig(mod_id, mod_name, config_object, config_applied)
 		return
 
 	var config := ConfigFile.new()
@@ -173,7 +173,7 @@ func create_key_input(keycode: int, ctrl_pressed: bool = false, shift_pressed: b
 func setup(lib):
 	pass
 
-# a Resource with @export fields for Likho's Mod Config, replaces create_config and load_config
+# a Resource with @export fields for Likho's Config Manager, replaces create_config and load_config
 func get_config() -> Resource:
 	return null
 

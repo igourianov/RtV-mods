@@ -1,8 +1,8 @@
-# Likho's Mod Config
+# Likho's Config Manager
 
 ## Intent
 
-A new mod, Likho's Mod Config (LMC), replaces MCM as the way these mods expose settings to the player. A mod describes its settings as a typed config object, the way the game describes its state in `GameData`, and hands it to LMC through one call. LMC derives the menu from the object's fields and export hints, keeps the object's values in sync with what the player saved and hides where and how the values are stored.
+A new mod, Likho's Config Manager (LCM), replaces MCM as the way these mods expose settings to the player. A mod describes its settings as a typed config object, the way the game describes its state in `GameData`, and hands it to LCM through one call. LCM derives the menu from the object's fields and export hints, keeps the object's values in sync with what the player saved and hides where and how the values are stored.
 
 ## Constraints and assumptions
 
@@ -12,14 +12,14 @@ Constraints:
 * `get_property_list()` on a config object reports `@export` fields with their hint and hint string, and `@export_group` entries, in declaration order. Checked in Godot 4.6.2.
 * A `.tres` pointing at a script loads through `preload` as one shared instance for every script that preloads it.
 * A script loaded by the same path from several scripts is one cached script, so its static state is shared.
-* A lambda kept in a script's static state until the engine exits crashes it. A method callable does not. The registry is therefore emptied when LMC's autoload leaves the tree.
+* A lambda kept in a script's static state until the engine exits crashes it. A method callable does not. The registry is therefore emptied when LCM's autoload leaves the tree.
 * `Settings.gd` is the script of the settings screen both in the main menu, under `Menu/Settings`, and in game, under the `UIManager` node. Each scene has its own instance.
 * A node later in the tree receives `_input` before `UIManager`, so a menu added after the settings screen can consume the `settings` action first.
 
 Ruled out:
 
-* Any integration with MCM: hosting LMC pages in MCM's menu or registering through `MCM_Config`. Shelved by the user. LMC and MCM run side by side without knowing about each other.
-* Settings per Mod Loader profile. LMC does not read the loader's settings file, so it does not know the active profile and never shows or uses one.
+* Any integration with MCM: hosting LCM pages in MCM's menu or registering through `MCM_Config`. Shelved by the user. LCM and MCM run side by side without knowing about each other.
+* Settings per Mod Loader profile. LCM does not read the loader's settings file, so it does not know the active profile and never shows or uses one.
 * Tooltips and explicit labels for settings.
 * MCM's template dictionaries, `menu_pos`, per value change callbacks and the `Create*Value` builder. Declaration order and export hints replace them.
 * Keycode, array and dictionary settings. Key bindings go through mod-lib `Inputs` and the vanilla bindings screen.
@@ -30,20 +30,20 @@ Ruled out:
 Assumptions, unverified:
 
 * The property list, shared instance and shared static state constraints above hold the same way in the exported game on Godot 4.6.3, with scripts and a `.tres` mounted from a mod archive.
-* A mod that is not installed or is disabled in the Mod Loader has none of its files under `res://`, so the existence of the API script tells whether LMC is active.
+* A mod that is not installed or is disabled in the Mod Loader has none of its files under `res://`, so the existence of the API script tells whether LCM is active.
 * A post hook on `Settings.gd` `_ready` fires for every instance of the settings screen, after its awaited start, with the instance as the hook's caller.
-* LMC's button and MCM's button fit in the top right corner of the vanilla settings screen together.
+* LCM's button and MCM's button fit in the top right corner of the vanilla settings screen together.
 
 ## Scope
 
 Owned:
 
-* `likhos-mod-config/`: the new mod. Its `mod.txt`, scripts and `README.md`. The README covers both players and mod authors, and does not mention mod-lib, which is private to these mods.
-* `mod-lib/Main.gd`: handing a mod's config object to LMC.
+* `likhos-config-manager/`: the new mod. Its `mod.txt`, scripts and `README.md`. The README covers both players and mod authors, and does not mention mod-lib, which is private to these mods.
+* `mod-lib/Main.gd`: handing a mod's config object to LCM.
 
 Context only:
 
-* `MCM/`: the menu LMC copies the look of.
+* `MCM/`: the menu LCM copies the look of.
 * Vanilla settings UI under `src/`.
 * The existing mods and their `ModConfig.gd`. They stay on mod-lib's MCM template bridge.
 * `build.ps1`, `CLAUDE.md` and the other project docs.
@@ -55,26 +55,26 @@ Context only:
 A config object is a `Resource` script with `@export` fields, plus a `.tres` of it shipped in the mod. Scripts that need settings `preload` the `.tres` and read fields directly, as vanilla scripts do with `GameData.tres`.
 
 * An `@export` field is a setting. Its value in the `.tres`, or the script initializer, is its default.
-* A field without `@export` is not a setting. LMC never reads, shows or stores it, so the object can carry runtime state next to settings.
-* The mod owns its config object's lifecycle and manages it where that is needed. LMC keeps a reference to the object for the run and never frees, copies or validates it.
+* A field without `@export` is not a setting. LCM never reads, shows or stores it, so the object can carry runtime state next to settings.
+* The mod owns its config object's lifecycle and manages it where that is needed. LCM keeps a reference to the object for the run and never frees, copies or validates it.
 * Settings appear in the menu in declaration order, except that fields outside any group come first.
 
 ### Registration
 
-LMC's API is one script of static functions at `res://mods/likhos-mod-config/Scripts/LMC.gd`. That path is the contract with consumers and does not change. A consumer checks that the script exists, loads it and calls its one function:
+LCM's API is one script of static functions at `res://mods/likhos-config-manager/Scripts/LCM.gd`. That path is the contract with consumers and does not change. A consumer checks that the script exists, loads it and calls its one function:
 
 `RegisterConfig(mod_uid: String, mod_name: String, config: Resource, on_applied: Callable = Callable())`
 
-* The registered mods are static state of the API script, not of LMC's autoload. A consumer can register at any point of startup, before or after LMC's `Main` runs.
+* The registered mods are static state of the API script, not of LCM's autoload. A consumer can register at any point of startup, before or after LCM's `Main` runs.
 * `mod_uid` is the mod's id from `mod.txt`. It keys the store. A second registration under the same id is rejected with a warning.
 * `mod_name` is the name of the mod's entry in the menu.
-* LMC takes the object's values at the time of the call as the defaults.
-* When the mod has a stored file, LMC writes its values into the object before returning and then calls `on_applied` once. Without a stored file the object stays on its defaults and `on_applied` is not called.
-* `on_applied` takes no arguments. Besides registration, LMC calls it every time the player's changes are applied.
+* LCM takes the object's values at the time of the call as the defaults.
+* When the mod has a stored file, LCM writes its values into the object before returning and then calls `on_applied` once. Without a stored file the object stays on its defaults and `on_applied` is not called.
+* `on_applied` takes no arguments. Besides registration, LCM calls it every time the player's changes are applied.
 
 ### Field mapping
 
-LMC builds a mod's settings page from the config object's property list alone.
+LCM builds a mod's settings page from the config object's property list alone.
 
 | Field | Row |
 |---|---|
@@ -94,7 +94,7 @@ LMC builds a mod's settings page from the config object's property list alone.
 
 ### Store
 
-* LMC keeps one file per mod under its own folder in `user://`, shared by every Mod Loader profile. Consumers never see a path or a file.
+* LCM keeps one file per mod under its own folder in `user://`, shared by every Mod Loader profile. Consumers never see a path or a file.
 * A file holds only the settings whose value differs from the default, keyed by field name. A default changed in a mod update reaches every player who never touched that setting.
 * A stored value whose field is gone, or whose type no longer matches the field, is ignored and dropped on the next save.
 * A mod without a file starts from the defaults.
@@ -103,25 +103,25 @@ LMC builds a mod's settings page from the config object's property list alone.
 
 The menu copies MCM's layout: a searchable list of registered mods on the left, the selected mod's settings page on the right and a back control.
 
-* It opens from a button LMC puts on the vanilla settings screen, in the main menu and in game, and replaces that screen while open. Back or the `settings` action returns to it.
+* It opens from a button LCM puts on the vanilla settings screen, in the main menu and in game, and replaces that screen while open. Back or the `settings` action returns to it.
 * The button and the menu are there whether or not MCM is installed.
 * The page edits pending values. The config object does not change while the player moves a control.
 * Leaving a page applies it. Leaving is selecting another mod or closing the menu. Apply writes the changed values into the config object, saves the store and calls `on_applied` once. A page left without changes does none of that.
-* LMC reaches the vanilla UI through loader hooks, not through script takeover.
+* LCM reaches the vanilla UI through loader hooks, not through script takeover.
 
 ### mod-lib
 
 `mod-lib/Main.gd` gives a mod one place to supply its config object and one overridable method that runs when settings are applied.
 
-* A mod that supplies a config object is registered with LMC under its `mod_id` and `mod_name`, with the overridable method as `on_applied`. mod-lib finds LMC by the API script's path, the way it finds MCM today.
-* Without LMC installed the object keeps its defaults, the overridable method does not run and a warning is logged.
+* A mod that supplies a config object is registered with LCM under its `mod_id` and `mod_name`, with the overridable method as `on_applied`. mod-lib finds LCM by the API script's path, the way it finds MCM today.
+* Without LCM installed the object keeps its defaults, the overridable method does not run and a warning is logged.
 * A mod that supplies no config object goes through `create_config` and `load_config` and the MCM template bridge, as today. A mod that supplies one does not.
 
 ### Observable result
 
-* A mod with a config object and LMC installed: the vanilla settings screen has an LMC button. The menu lists the mod under the name it registered with, shows its settings grouped and ordered as declared, and changes take effect when the page is left.
-* The same with MCM installed: both buttons and both menus are there. The mod is listed in LMC's menu only.
-* Without LMC: the mod runs on its defaults.
+* A mod with a config object and LCM installed: the vanilla settings screen has an LCM button. The menu lists the mod under the name it registered with, shows its settings grouped and ordered as declared, and changes take effect when the page is left.
+* The same with MCM installed: both buttons and both menus are there. The mod is listed in LCM's menu only.
+* Without LCM: the mod runs on its defaults.
 * Switching the Mod Loader profile: the mod keeps the same values.
 * An existing mod on the template bridge behaves as today in every combination.
 

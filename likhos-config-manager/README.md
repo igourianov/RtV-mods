@@ -1,8 +1,8 @@
-# Likho's Mod Config
+# Likho's Config Manager
 
 A lightweight settings menu for mods. Every mod that supports it gets an entry in one list and its own settings page.
 
-* Opens from the `LMC` button in the top right corner of the game's settings screen, in the main menu and in game.
+* Opens from the `LCM` button in the top right corner of the game's settings screen, in the main menu and in game.
 * Changes take effect when you leave a mod's page or close the menu.
 * `Reset` next to a setting restores its default.
 * Settings are shared by all Mod Loader profiles.
@@ -24,7 +24,7 @@ This mod hooks vanilla methods through Metro Mod Loader:
 
 ## Install / Uninstall
 
-Drop `likhos-mod-config.vmz` into your game's `mods/` folder. On a default Steam install:
+Drop `likhos-config-manager.vmz` into your game's `mods/` folder. On a default Steam install:
 
 ```
 <Steam>\steamapps\common\Road to Vostok\mods\
@@ -32,13 +32,13 @@ Drop `likhos-mod-config.vmz` into your game's `mods/` folder. On a default Steam
 
 Launch the game. The mod loader picks it up automatically.
 
-To uninstall simply delete `likhos-mod-config.vmz` from the `mods/` folder and relaunch the game.
+To uninstall simply delete `likhos-config-manager.vmz` from the `mods/` folder and relaunch the game.
 
 ## For mod authors
 
-A mod describes its settings as a `Resource` with `@export` fields and registers it with one call. LMC builds the settings page from the fields, loads the player's saved values into the object and saves changes. The mod never deals with files.
+A mod describes its settings as a `Resource` with `@export` fields and registers it with one call. LCM builds the settings page from the fields, loads the player's saved values into the object and saves changes. The mod never deals with files.
 
-LMC is an optional dependency. When it is not installed the config object keeps its default values.
+LCM is an optional dependency. When it is not installed the config object keeps its default values.
 
 ### 1. Config script
 
@@ -58,7 +58,7 @@ var current_weapon_weight := 0.0
 ```
 
 - An `@export` field is a setting. Its initial value is the default.
-- A field without `@export` is ignored by LMC and can hold runtime state.
+- A field without `@export` is ignored by LCM and can hold runtime state.
 - Settings appear in declaration order. `@export_group` starts a section with a header. Settings outside of any section are shown first, without a header.
 - A setting's label is its field name turned into words: `walk_speed` shows as `Walk Speed`. There are no tooltips.
 
@@ -86,14 +86,14 @@ Hold it in a `var`, not a `const`, if the script also writes to it.
 ### 3. Registration
 
 ```gdscript
-const LMC_PATH := "res://mods/likhos-mod-config/Scripts/LMC.gd"
+const LCM_PATH := "res://mods/likhos-config-manager/Scripts/LCM.gd"
 
 var config := preload("res://mods/my-mod/Config.tres")
 
 
 func _ready() -> void:
-	if ResourceLoader.exists(LMC_PATH):
-		load(LMC_PATH).RegisterConfig("my-mod", "My Mod", config, _on_config_applied)
+	if ResourceLoader.exists(LCM_PATH):
+		load(LCM_PATH).RegisterConfig("my-mod", "My Mod", config, _on_config_applied)
 
 
 func _on_config_applied() -> void:
@@ -185,4 +185,4 @@ func _process(delta: float) -> void:
 - Only values that differ from the default are saved. A default you change in an update reaches every player who has not changed that setting.
 - A saved value is dropped when its field is removed or changes its type.
 - Key bindings are not supported.
-- The config object is yours. LMC keeps a reference to it for as long as the game runs and never frees or replaces it.
+- The config object is yours. LCM keeps a reference to it for as long as the game runs and never frees or replaces it.

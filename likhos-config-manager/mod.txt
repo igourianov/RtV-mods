@@ -1,8 +1,8 @@
 [mod]
-name="Likho's Mod Config"
-id="likhos-mod-config"
+name="Likho's Config Manager"
+id="likhos-config-manager"
 version="1.0.19"
-prefix="[likho-lmc]"
+prefix="[likho-lcm]"
 description="Likho's lightweight settings menu for mods"
 debug=false
 priority=-100
@@ -11,4 +11,4 @@ priority=-100
 "res://Scripts/Settings.gd"="_ready"
 
 [autoload]
-LikhosModConfig="res://mods/likhos-mod-config/Scripts/Main.gd"
+LikhosConfigManager="res://mods/likhos-config-manager/Scripts/Main.gd"

@@ -1,6 +1,6 @@
 extends Control
 
-const LMC := preload("./LMC.gd")
+const LCM := preload("./LCM.gd")
 
 const ROW_HEIGHT := 36
 const INPUT_WIDTH := 380
@@ -57,7 +57,7 @@ func _init(settings: Control) -> void:
 	layout.add_child(header)
 
 	var caption := Label.new()
-	caption.text = "Likho's Mod Config"
+	caption.text = "Likho's Config Manager"
 	caption.theme_type_variation = &"HeaderLarge"
 	caption.add_theme_font_size_override("font_size", 24)
 	caption.size_flags_horizontal = SIZE_EXPAND_FILL
@@ -89,9 +89,9 @@ func _init(settings: Control) -> void:
 	_rows = _add_scroll_list(page_column)
 	_rows.add_theme_constant_override("separation", 10)
 
-	var entries: Array[LMC.Entry] = []
-	entries.assign(LMC.mods.values())
-	entries.sort_custom(func(a: LMC.Entry, b: LMC.Entry) -> bool: return a.name.naturalnocasecmp_to(b.name) < 0)
+	var entries: Array[LCM.Entry] = []
+	entries.assign(LCM.mods.values())
+	entries.sort_custom(func(a: LCM.Entry, b: LCM.Entry) -> bool: return a.name.naturalnocasecmp_to(b.name) < 0)
 	var mod_buttons := ButtonGroup.new()
 	for entry in entries:
 		var button := Button.new()
@@ -132,7 +132,7 @@ func close() -> void:
 
 func _apply_page() -> void:
 	if _mod_uid:
-		LMC.apply(_mod_uid, _values)
+		LCM.apply(_mod_uid, _values)
 
 
 func _build_page() -> void:
@@ -144,7 +144,7 @@ func _build_page() -> void:
 	if !_mod_uid:
 		return
 
-	var entry := LMC.mods[_mod_uid]
+	var entry := LCM.mods[_mod_uid]
 	_title.text = entry.name + " Settings"
 	# fields outside any group lead the page without a header, wherever they are declared
 	# filter keeps the declaration order within both parts
@@ -180,7 +180,7 @@ func _build_page() -> void:
 
 func _set_value(field_name: String, value: Variant) -> void:
 	_values[field_name] = value
-	var is_default: bool = value == LMC.mods[_mod_uid].defaults[field_name]
+	var is_default: bool = value == LCM.mods[_mod_uid].defaults[field_name]
 	var revert := _reverts[field_name]
 	revert.disabled = is_default
 	# hidden rather than removed, so the inputs of every row stay aligned
@@ -352,7 +352,7 @@ func _on_mod_pressed(mod_uid: String) -> void:
 
 func _on_revert_pressed(field: Dictionary, row: HBoxContainer) -> void:
 	var field_name: String = field.name
-	_set_value(field_name, LMC.mods[_mod_uid].defaults[field_name])
+	_set_value(field_name, LCM.mods[_mod_uid].defaults[field_name])
 	# a fresh input shows the default, which spares every input type a way to be set from outside
 	var stale := row.get_child(1)
 	row.remove_child(stale)
