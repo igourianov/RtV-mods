@@ -1,6 +1,7 @@
-extends "../Lib/Main.gd"
+extends Node
 
 const LCM := preload("./LCM.gd")
+const Out := preload("./Out.gd")
 const ModMenu := preload("../Scenes/ModMenu.tscn")
 
 # the size of MCM's own button, which sits in the corner 30px off the edges
@@ -9,8 +10,20 @@ const BUTTON_MARGIN := Vector2(30, 30)
 const BUTTON_GAP := 10
 
 
-func setup(lib) -> void:
-	register_hook("settings-_ready-post", _on_settings_ready_post)
+var _lib
+
+
+func _ready() -> void:
+	_lib = Engine.get_meta("RTVModLib", null)
+	if _lib == null:
+		Out.warning("RTVModLib not available")
+		return
+
+	await _lib.frameworks_ready
+	if _lib.hook("settings-_ready-post", _on_settings_ready_post) < 0:
+		Out.warning("failed to hook the settings screen, the LCM button is unavailable")
+		return
+	Out.debug("settings screen hooked")
 
 
 # a lambda kept in static state past the scene tree crashes the engine on exit

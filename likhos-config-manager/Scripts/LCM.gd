@@ -1,7 +1,7 @@
 # Public API of Likho's Config Manager.
 # Consumers load this script by its path, so it can never move or be renamed.
 
-const Out := preload("../Lib/Out.gd")
+const Out := preload("./Out.gd")
 
 const STORE_DIR := "user://LCM"
 const STORE_SECTION := "values"
