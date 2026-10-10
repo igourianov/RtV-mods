@@ -13,10 +13,14 @@ func on_update_post(slotData: SlotData) -> void:
 	if !_battery.is_removable(slotData):
 		return
 
-	# Vanilla shows Unload only for magazines and weapons, so it is free for devices.
+	# Vanilla gives the nested items the first Remove buttons, in order. The battery takes the next one, which keeps it at the bottom of the menu with them.
 	var context = _lib._caller
-	context.unloadButton.text = "Remove (" + _battery.data.display + ")"
-	context.unloadButton.show()
+	var button: Button = context.buttons.get_node_or_null("Remove_" + str(slotData.nested.size()))
+	if !is_instance_valid(button):
+		return
+
+	button.text = "Remove (" + _battery.data.display + ")"
+	button.show()
 
 	# Vanilla Update sized and placed the panel before this button was shown.
 	var mouse: Vector2 = context.get_global_mouse_position()

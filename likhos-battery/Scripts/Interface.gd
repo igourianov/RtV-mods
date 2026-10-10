@@ -16,13 +16,9 @@ func on_charge(targetItem: Item, sourceItem: Item) -> void:
 
 
 func _charge(iface: Node, device: Item, battery: Item) -> void:
-	var charge: float = battery.slotData.condition
-	var previous: float = device.slotData.condition
-
 	gameData.isOccupied = true
 
 	# Vanilla Combine resets the drag state as soon as this yields, so the battery goes back to where it was dragged from now.
-	# It stays there untouched until the progress completes.
 	var grid: Grid = iface.returnGrid
 	iface.Return(battery)
 
@@ -35,9 +31,12 @@ func _charge(iface: Node, device: Item, battery: Item) -> void:
 	iface.activeProgress = prog
 
 	await prog.completed
-	# A cleared activeProgress means the progress was cancelled, same guard as vanilla Charge. Nothing is exchanged.
+	# Same guard as vanilla Charge. Vanilla has no cancel path today, so this only covers one being added.
 	if gameData.isDead || !iface.activeProgress: return
 
+	# Read only now: a switched-on device keeps draining while the progress runs.
+	var charge: float = battery.slotData.condition
+	var previous: float = device.slotData.condition
 	if previous > 0:
 		battery.slotData.condition = previous
 		battery.UpdateDetails()
@@ -55,13 +54,22 @@ func _charge(iface: Node, device: Item, battery: Item) -> void:
 	iface.Reset()
 
 
-func on_context_unload() -> void:
+func on_context_remove(nestedIndex: int) -> void:
 	var iface = _lib._caller
 	var device = iface.contextItem
-	if !is_instance_valid(device) || !_battery.is_removable(device.slotData):
+	# Only the button one past the nested items is the battery entry. Vanilla owns the indexes below it.
+	if !is_instance_valid(device) || nestedIndex != device.slotData.nested.size():
 		return
 
+	# Vanilla would index past the nested items, so it never runs for this button.
 	_lib.skip_super()
+
+	# A switched-on device can drain to 0 while the menu is open.
+	if !_battery.is_removable(device.slotData):
+		iface.HideContext()
+		iface.Reset()
+		iface.PlayError()
+		return
 
 	var slotData := SlotData.new()
 	slotData.itemData = _battery.data
@@ -69,7 +77,7 @@ func on_context_unload() -> void:
 	device.slotData.condition = 0.0
 	device.UpdateDetails()
 
-	# An equipped device has no grid. Its battery goes to the inventory, as in vanilla ContextRemove.
+	# An equipped device has no grid. Vanilla ContextRemove falls back to the inventory the same way.
 	iface.Create(slotData, iface.contextGrid if iface.contextGrid else iface.inventoryGrid, true)
 	iface.HideContext()
 	iface.PlayAttach()

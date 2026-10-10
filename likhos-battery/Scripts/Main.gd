@@ -19,6 +19,6 @@ func setup(lib) -> void:
 	_item = Item.new(lib, battery)
 
 	register_hook("interface-charge", _interface.on_charge)
-	register_hook("interface-contextunload", _interface.on_context_unload)
+	register_hook("interface-contextremove", _interface.on_context_remove)
 	register_hook("context-update-post", _context.on_update_post)
 	register_hook("item-value", _item.on_value)

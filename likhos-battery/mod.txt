@@ -1,13 +1,13 @@
 [mod]
 name="Likho's Battery"
 id="likhos-battery"
-version="1.0.0"
+version="1.0.3"
 prefix="[likho-battery]"
 description="Likho's mod making batteries removable and keeping their charge"
 debug=false
 
 [hooks]
-"res://Scripts/Interface.gd"="Charge,ContextUnload"
+"res://Scripts/Interface.gd"="Charge,ContextRemove"
 "res://Scripts/Context.gd"="Update"
 "res://Scripts/Item.gd"="Value"
 
