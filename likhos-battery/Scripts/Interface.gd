@@ -35,7 +35,8 @@ func _charge(iface: Node, device: Item, battery: Item) -> void:
 	iface.activeProgress = prog
 
 	await prog.completed
-	if gameData.isDead: return
+	# A cleared activeProgress means the progress was cancelled, same guard as vanilla Charge. Nothing is exchanged.
+	if gameData.isDead || !iface.activeProgress: return
 
 	if previous > 0:
 		battery.slotData.condition = previous
