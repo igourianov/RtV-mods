@@ -14,6 +14,7 @@ Mods for the Godot game **Road to Vostok** (`config/name="Road to Vostok"`, vers
 
 Mods live at the repo root, one folder per mod. Can be identified by having `mod.txt` at the root of the mod folder.
 
+* `likhos-config-manager/` (LCM) - library mod used by other mods to manage their settings.
 * `likhos-vostac/` - tactical realism and weapon mechanics mod. Major game overhaul. Includes many features nd fixes. Also known as `VosTac`.
 * `likhos-magdump/` - small mod for magazine compatibility between different rifles
 * `likhos-eventuality/` - small mod affecting in-game dynamic events. Fxes event probability and provides small enhancements.
