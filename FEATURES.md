@@ -207,7 +207,7 @@ Pre/post: `rigmanager-updaterig-post`, `weaponrig-_ready-post`, `weaponrig-casin
 Renames weapons, attachments, magazines and ammo, sets real-life weights, and slims the tooltip. Loaded late (priority 10) so its values win.
 
 #### Renames and weights
-* Files: `Scripts/Catalog.gd` (`DATA` per item file name, applied through `lib.patch(ITEMS)`), `Scripts/Config.gd` and `Scripts/Main.gd` (`get_config`: Russian vs English names).
+* Files: `Scripts/Catalog.gd` (`DATA` per item file name, applied through `lib.patch(ITEMS)`), `Scripts/Config.gd` and `Scripts/Main.gd` (LCM registration: Russian vs English names).
 
 #### Functional tweaks
 * KAR-21 (.308) mag 30 to 20, VSS penetration 3 to 4.
@@ -342,7 +342,7 @@ Shrinks AKS-74U, VSS, Remington 870, KP-31 and Mosin by one cell, and lets AKS-7
 
 Shared base library copied into every mod as `Lib/` by the build.
 
-* `Main.gd`: base class with `setup`, `register_hook`, `register_action`, `remove_action`, `create_key_input`, `create_mouse_input`, `get_config` and `config_applied`.
+* `Main.gd`: base class with `setup`, `register_hook`, `register_action`, `remove_action`, `create_key_input` and `create_mouse_input`.
 * `Out.gd`: normalised debug, warning and `protip` output.
 * `Inputs.gd`: in-game action binding control (`get_binding`).
 * `Tooltip.gd`: base tooltip helpers (`_hide_row`) used by tag and vostac.

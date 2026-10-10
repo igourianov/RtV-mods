@@ -1,5 +1,6 @@
 extends "../Lib/Main.gd"
 
+var LCM = load("res://mods/likhos-config-manager/Scripts/LCM.gd")
 const Config = preload("./Config.gd")
 const Handling = preload("./Hooks/Handling.gd")
 const WeaponRig = preload("./Hooks/WeaponRig.gd")
@@ -49,6 +50,11 @@ var _kill_counter
 
 
 func setup(lib):
+
+	# LCM reports only the values it loaded from its store, so Out is set up from the defaults here
+	_on_config_applied()
+	if LCM:
+		LCM.register_config(mod_id, mod_name, Config.instance, _on_config_applied)
 
 	ScopeCatalog.apply(lib)
 	RigOpticPatches.apply(lib)
@@ -125,5 +131,6 @@ func setup(lib):
 	add_child(_binoculars)
 
 
-func get_config() -> Resource:
-	return Config.instance
+func _on_config_applied() -> void:
+	Out.debug_enabled = Config.instance.debug_enabled
+	Out.show_protips = Config.instance.show_protips

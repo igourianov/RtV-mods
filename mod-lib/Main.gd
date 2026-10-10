@@ -1,6 +1,5 @@
 extends Node
 
-const LCM_PATH := "res://mods/likhos-config-manager/Scripts/LCM.gd"
 const Out := preload("./Out.gd")
 const Inputs := preload("./Inputs.gd")
 
@@ -22,7 +21,6 @@ func _ready() -> void:
 		Out.warning("RTVModLib not available")
 		return
 
-	_init_config()
 	_init_setup()
 
 
@@ -36,31 +34,6 @@ func _load_mod_info():
 	Out.mod_main = self
 	Out.prefix = config.get_value("mod", "prefix", "[likho-lib]")
 	Out.debug_enabled = bool(config.get_value("mod", "debug", true))
-
-
-func _init_config():
-
-	var config := get_config()
-	if !config:
-		return
-
-	# LCM reports only the values it loaded from its store, so state derived from the defaults is set up here
-	_on_config_applied()
-
-	if !ResourceLoader.exists(LCM_PATH):
-		Out.warning("Likho's Config Manager is not installed, settings stay on their defaults")
-		return
-	load(LCM_PATH).register_config(mod_id, mod_name, config, _on_config_applied)
-
-
-func _on_config_applied() -> void:
-	var config := get_config()
-	# settings of the lib itself, picked up from the mods that declare them
-	if "debug_enabled" in config:
-		Out.debug_enabled = config.debug_enabled
-	if "show_protips" in config:
-		Out.show_protips = config.show_protips
-	config_applied()
 
 
 func _init_setup():
@@ -130,14 +103,5 @@ func create_key_input(keycode: int, ctrl_pressed: bool = false, shift_pressed: b
 
 
 func setup(lib):
-	pass
-
-# an object with @export fields for Likho's Config Manager, the same object on every call
-# its debug_enabled and show_protips fields, when declared, drive Out
-func get_config() -> RefCounted:
-	return null
-
-# runs once on startup with the defaults, then every time stored or changed settings are written into the object from get_config
-func config_applied() -> void:
 	pass
 
