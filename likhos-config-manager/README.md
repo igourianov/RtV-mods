@@ -1,12 +1,12 @@
 # Likho's Config Manager
 
-A lightweight settings menu for mods. Meant to serve as a replacement for MCM.
+A lightweight settings menu for mods. Meant as a replacement for MCM.
 
 ## Features
 
-* Clean API with minimal footprint for mod makers. No pages of crude metadata required.
-* Clean, transparent config files, that save only values and only if they deviate from defaults, making migrations a breeze.
-* Opens from the `LCM` button in the top right corner of the game's settings screen (placed next to MCM button).
+- Clean API with minimal footprint for mod makers. No pages of crude metadata required.
+- Clean, transparent config files that save only values and only if they deviate from defaults, making migrations a breeze.
+- Opens from the `LCM` button in the top right corner of the game's settings screen (placed next to MCM button).
 
 Without this mod installed, mods that rely on it run on their default settings.
 
@@ -22,7 +22,7 @@ This mod hooks vanilla methods through Metro Mod Loader:
 **Hooks** (post, vanilla still runs):
 - `Settings.gd`: `_ready`
 
-## Install / Uninstall
+## Install/Uninstall
 
 Drop `likhos-config-manager.vmz` into your game's `mods/` folder. On a default Steam install:
 
@@ -60,11 +60,11 @@ var current_weapon_weight := 0.0
 - An `@export` field is a setting. Its initial value is the default.
 - A field without `@export` is ignored by LCM and can hold runtime state.
 - Settings appear in declaration order. `@export_group` starts a section with a header. Settings outside of any section are shown first, without a header.
-- A setting's label is its field name with underscores turned into spaces and the first letter capitalized. The rest keeps the field's capitalization: `walk_speed` shows as `Walk speed` and `NVG_blur` shows as `NVG blur`. Write abbreviations in capitals in the field name. There are no tooltips.
+- A setting's label is its field name with underscores turned into spaces and the first letter capitalized. The rest keeps the field's capitalization: `walk_speed` shows as `Walk speed` and `NVG_blur` shows as `NVG blur`. Write abbreviations in capitals in the field name.
 
 ### 2. Set up shared instance
 
-LCM works on a singleton of the above class. Every script that reads settings has to read that same instance. There are three ways to get there. **PICK ONE**.
+LCM works on a singleton of the above class. Every script that reads settings has to read that same instance. There are three ways to get there. Pick one.
 
 **A. Create it and pass it everywhere.**
 
@@ -96,7 +96,7 @@ func _process(delta: float) -> void:
 	position.x += Config.instance.walk_speed * delta
 ```
 
-**C. A `.tres` resource.** Best if your mod already manages various resources or you prefer data-driven approach.
+**C. A `.tres` resource.** Best if your mod already manages various resources or you prefer a data-driven approach.
 
 The same way the game shares its own `GameData`. This is the only option that needs the config class to be a resource, since a `.tres` cannot hold anything else. Declare it with `extends Resource` instead of `extends RefCounted`. Everything else about the class stays the same.
 
@@ -117,7 +117,9 @@ Every script preloads this file and gets the same instance:
 var config := preload("res://mods/my-mod/Config.tres")
 ```
 
-Hold it in a `var`, not a `const`, if the script also writes to it. A value saved in the `.tres` replaces the default written in the script.
+Hold it in a `var`, not a `const`, if the script also writes to it.
+
+A value saved in the `.tres` replaces the default written in the script.
 
 ### 3. Registration
 
@@ -135,13 +137,13 @@ func _ready() -> void:
 
 
 func _on_config_applied() -> void:
-	# you only need this is config changes need to perform immediate action
+	# you only need this if config changes need to perform immediate action
 	# ignore if your mod simply reads settings from the config object
 ```
 
 `register_config(mod_uid, mod_name, config, on_applied = Callable()) -> bool`
 
-Returns `true` when the config is registered. Returns `false` and logs a warning when the uid is invalid.
+Returns `true` when the config is registered. Returns `false` and logs a warning when the id is invalid.
 
 - `mod_uid`: the mod's id from `mod.txt`. Can only contain `a-z`, `0-9`, `-` and `_`. Registering again under the same id replaces the earlier config and logs a warning.
 - `mod_name`: the name shown in the menu.
@@ -233,6 +235,6 @@ func _process(delta: float) -> void:
 
 - Values are written into the config object when the player leaves the mod's page or closes the menu, not while a control is being moved.
 - Only values that differ from the default are saved. A default you change in an update reaches every player who has not changed that setting.
-- A saved value is ignored when its field is removed or changes its type. Dropped on next save.
+- A saved value is ignored when its field is removed or changes its type. It is dropped on the next save.
 - Key bindings are not supported.
 - The config object is yours. LCM keeps a reference to it for as long as the game runs and never frees or replaces it.
