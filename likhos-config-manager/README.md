@@ -15,6 +15,15 @@ Settings are saved per mod in `%APPDATA%\Road to Vostok\LCM\<mod-id>.cfg`.
 
 Every Metro Mod Loader profile has its own settings, kept in that file under a section named after the profile. A new profile starts on the defaults. So does a renamed profile and a copy of an existing one.
 
+```ini
+[Default]
+walk_speed=3.5
+
+[Tester]
+walk_speed=2.0
+aim_mode=Toggle
+```
+
 ## Requirements
 
 - Road to Vostok 0.2.0.0 (Godot 4.6.3)
@@ -48,16 +57,7 @@ var current_weapon_weight := 0.0
 
 ### 2. Set up shared instance
 
-Your mod should use a singleton of the above class. Every script that reads settings has to read that same instance. There are three ways to get there. **Pick one.**
-
-**A. Create it and pass it everywhere.** Best for simple, single file mods.
-
-```gdscript
-var config := preload("./Config.gd").new()
-var myModHook := MyModHook.new(config)
-```
-
-**B. A classic singleton.** Best for multi-file, mostly-code mods.
+Your mod should use a singleton of the above class. Every script that reads settings has to read that same instance. This can be done by adding a static instance to the config class:
 
 ```gdscript
 # in Config.gd
@@ -68,6 +68,8 @@ static var instance := new()
 @export var walk_speed := 3.0
 ```
 
+Any other script gets the same object by preloading the class:
+
 ```gdscript
 # anywhere else
 const config := preload("./Config.gd").instance
@@ -76,41 +78,16 @@ func _process(delta: float) -> void:
 	position.x += config.walk_speed * delta
 ```
 
-**C. A `.tres` resource.** Best if your mod already manages various resources or you prefer a declarative approach. This is the same way the game shares its own `GameData`.
-
-This is the only option that needs the config class to be a resource, since a `.tres` cannot hold anything else. Declare it with `extends Resource` instead of `extends RefCounted`. Everything else about the class stays the same.
-
-`Config.tres` in your mod, with the script path being the absolute path the mod has in game:
-
-```
-[gd_resource type="Resource" load_steps=2 format=3]
-
-[ext_resource type="Script" path="res://mods/my-mod/Scripts/Config.gd" id="1"]
-
-[resource]
-script = ExtResource("1")
-```
-
-Every script preloads this file and gets the same instance:
-
-```gdscript
-var config := preload("res://mods/my-mod/Config.tres")
-```
-
-Hold it in a `var`, not a `const`, if the script also writes to it.
-
-A value saved in the `.tres` replaces the default written in the script.
-
 ### 3. Registration
 
-Load LCM and pass it the instance from step 2, whichever way you made it.
+Load LCM and pass it the instance from step 2.
 
 Always check the loaded script with `is_instance_valid` before calling it. When LCM is not installed, `load()` returns `null`, and calling `register_config` on that `null` crashes the script.
 
 ```gdscript
 # in Main.gd
 var config := preload("./Config.gd").instance
-var LCM = load("res://mods/likhos-config-manager/Scripts/LCM.gd")
+var LCM = load("res://mods/likhos-config-manager/Scripts/LCM.gd") # will print error and return null if not installed
 
 func _ready() -> void:
 	if is_instance_valid(LCM):
