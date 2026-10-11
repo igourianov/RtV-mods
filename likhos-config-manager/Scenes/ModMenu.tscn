@@ -39,12 +39,18 @@ theme_override_constants/margin_bottom = 50
 theme_override_constants/separation = 40
 
 [node name="Header" type="HBoxContainer" parent="Margin/Layout"]
+theme_override_constants/separation = 24
 
 [node name="Caption" type="Label" parent="Margin/Layout/Header"]
 size_flags_horizontal = 3
 theme_type_variation = &"HeaderLarge"
 theme_override_font_sizes/font_size = 24
 text = "Likho's Config Manager"
+vertical_alignment = 1
+
+[node name="Profile" type="Label" parent="Margin/Layout/Header"]
+unique_name_in_owner = true
+text = "Profile"
 vertical_alignment = 1
 
 [node name="Back" type="Button" parent="Margin/Layout/Header"]

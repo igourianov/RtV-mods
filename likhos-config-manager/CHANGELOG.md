@@ -1,3 +1,6 @@
+# 1.1.35
+* the menu header now shows the active Metro Mod Loader profile
+
 # 1.1.34
 * settings are now saved per Metro Mod Loader profile, each under its own section of the mod's config file
 

@@ -22,6 +22,9 @@ var _reverts: Dictionary[String, Button]
 
 
 func _ready() -> void:
+	var profile: Label = %Profile
+	profile.text = "MML Profile: " + LCM._active_profile()
+
 	var entries: Array[LCM.Entry] = []
 	entries.assign(LCM._mods.values())
 	entries.sort_custom(func(a: LCM.Entry, b: LCM.Entry) -> bool: return a.name.naturalnocasecmp_to(b.name) < 0)
