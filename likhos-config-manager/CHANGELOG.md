@@ -1,3 +1,6 @@
+# 1.0.32
+* fixed the LCM menu rendering, when opened from the main menu without loading the game
+
 # 1.0.31
 * added the Vostok Mods source to mod.txt, so the mod loader shows the mod's thumbnail and checks for updates
 

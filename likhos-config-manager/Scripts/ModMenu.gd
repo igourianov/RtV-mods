@@ -7,8 +7,10 @@ const GroupHeader := preload("../Scenes/GroupHeader.tscn")
 const FLOAT_STEP := 0.001
 const AXES := "XYZ"
 
-# the vanilla settings screen this menu is opened from and returns to, set by whoever instantiates the menu
+# the vanilla settings screen this menu is opened from, set by whoever instantiates the menu
 var settings: Control
+# what the menu replaces while it is open and returns to, set the same way
+var screen: Control
 var _mod_uid: String
 # pending value per field of the shown mod, written into its config object when the page is left
 var _values: Dictionary[String, Variant]
@@ -49,7 +51,7 @@ func _input(event: InputEvent) -> void:
 
 func open() -> void:
 	_build_page()
-	settings.hide()
+	screen.hide()
 	show()
 	settings.PlayClick()
 
@@ -57,7 +59,7 @@ func open() -> void:
 func close() -> void:
 	_apply_page()
 	hide()
-	settings.show()
+	screen.show()
 	settings.PlayClick()
 
 

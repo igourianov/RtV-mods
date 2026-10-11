@@ -38,9 +38,16 @@ func _exit_tree() -> void:
 # the settings screen is its own instance in the main menu and in every map
 func _on_settings_ready_post() -> void:
 	var settings: Control = _lib._caller
+	# In a map the settings screen fills the UI root, so the menu replaces the screen itself.
+	# In the main menu it sits in a zero size node at the screen centre, next to a header and a return button, so the menu replaces that whole node.
+	# Either way the parent of what is replaced is a full screen control.
+	var in_main_menu: bool = settings.gameData.menu
+	var screen: Control = settings.get_parent() if in_main_menu else settings
+	var root: Control = screen.get_parent()
 	var menu := ModMenu.instantiate()
 	menu.settings = settings
-	settings.get_parent().add_child(menu)
+	menu.screen = screen
+	root.add_child(menu)
 
 	# MCM creates its button a frame later, so it cannot be looked up here.
 	# Its autoload renames itself to this in _ready. With it loaded the corner slot is MCM's and ours is the next one to the left.
@@ -61,9 +68,15 @@ func _on_settings_ready_post() -> void:
 	button.offset_top = BUTTON_MARGIN.y
 	button.offset_bottom = BUTTON_MARGIN.y + BUTTON_SIZE.y
 	button.pressed.connect(menu.open)
-	settings.add_child(button)
-	# under the exit confirmation and the blocker that swallows clicks while the scene unloads
-	settings.move_child(button, settings.get_node("Warning").get_index())
-	# the exit confirmation replaces the options without hiding the screen itself
+	if in_main_menu:
+		# the settings screen has no corner there and is scaled down
+		root.add_child(button)
+	else:
+		settings.add_child(button)
+		# under the exit confirmation and the blocker that swallows clicks while the scene unloads
+		settings.move_child(button, settings.get_node("Warning").get_index())
+	# The exit confirmation replaces the options without hiding the screen itself.
+	# In the main menu the button is outside the screen, so it does not hide with it either.
 	var options: Control = settings.get_node("Settings")
-	options.visibility_changed.connect(func() -> void: button.visible = options.visible)
+	button.visible = options.is_visible_in_tree()
+	options.visibility_changed.connect(func() -> void: button.visible = options.is_visible_in_tree())
