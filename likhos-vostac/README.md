@@ -27,6 +27,7 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 * Mosin and M28 (not the MOD) can switch between the PU scope and iron sights on the `Secondary Optic` binding, same way the HAMR switches to its top dot
 * Reworked the PIP scope mode for realism
 * Reworked all optics with real eye relief (only in PIP) and magnification values.
+* Scopes lose brightness at dusk and at night according to their exit pupil (only in PIP, adjust in LCM). At full night the light transmission is: ACOG 100%, HAMR and PU 73%, POSP at 6x 33%, Leopard at 8x 18% and Vudu at 10x 16%.
 * LPVO zoom is now accessible without aiming - gated by the Rail movement modifier by default to avoid collision with lower/raise weapon (change in LCM)
 * Added explicit bindings to the base game settings for optic zoom in/out (it was hardcoded to mouse wheel)
 
@@ -78,9 +79,11 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 - *Scope DOF reworked:* scales with magnification, near-DOF enabled for foreground/background softening
 - *PIP MSAA matches main viewport:* the optic's SubViewport now mirrors the antialiasing settings used by the rest of the game - vanilla left it disabled (disable in LCM if it causes performance issues)
 - *NVG-aware PIP blur:* when night vision is active and you aim a magnified optic, the PIP image will now blur. Real scopes cannot work under NVG because of eye relief differences (disable in LCM)
+- *Low light dimming:* a scope passes on only as much light as its exit pupil (objective diameter divided by magnification) lets through. In daylight every scope is at full brightness. At dusk and at night an ACOG 4x32 stays bright, a HAMR or PU keeps about 73% and a Vudu at 10x keeps about 16%. Zoom out to get the image back. Shelters are unaffected (adjust strength in LCM). Idea borrowed from the ExitPupil mod.
 
 ### Optics
 * All optics now have eye relief values and create scope shadow if mounted outside ideal eye relief (ACOG will suck on Combloc rifles!)
+* All scopes now have real objective lens diameters, shown in the tooltip next to magnification and eye relief
 * Changed Mark 8 ("Leopard") to 1.1-8x zoom and fixed reticle size at 1x
 * Changed Vudu to 1-10x zoom and made it legendary rarity
 * Changed POSP to be the 2-6x variant and fixed reticle size
@@ -167,6 +170,8 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `Item.UpdateDetails` (post)
 - `AI.Death` (pre)
 - `Loader.LoadScene` (pre)
+
+**ExitPupil** is replaced by the built-in low light dimming. Remove it, the two are not meant to run together.
 
 ## Install / Uninstall
 

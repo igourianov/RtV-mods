@@ -6,12 +6,22 @@ const BLUR_RADIUS := 12.0
 
 const _NVG_PIP_SHADER := preload("res://mods/likhos-vostac/Shaders/PIP_NVG.gdshader")
 const Out := preload("../../Lib/Out.gd")
+const ScopeCatalog := preload("../ScopeCatalog.gd")
 var config := preload("../Config.gd").instance
 var gameData := preload("res://Resources/GameData.tres")
 
 # Vanilla scene defaults for the optic's SubViewport, applied when AA mirror is off.
 const _VANILLA_PIP_MSAA := 0
 const _VANILLA_PIP_SSAA := 1
+
+# Eye pupil diameter in mm: contracted in daylight, fully dilated at night.
+const _EYE_PUPIL_DAY := 2.5
+const _EYE_PUPIL_NIGHT := 7.0
+# Simulation.time values at which vanilla World.TOD swaps the sun for the moon.
+const _SUNRISE := 600.0
+const _SUNSET := 1800.0
+# Half-width of the dusk and dawn ramps in Simulation.time units, 100 being one hour.
+const _TWILIGHT := 100.0
 
 
 
@@ -38,9 +48,29 @@ func on_physics_process_pre(_delta: float) -> void:
 	if pip_mat && pip_mat.shader:
 		if !("shader_parameter/blur_radius" in pip_mat):
 			pip_mat.shader = _NVG_PIP_SHADER
-		var blur_on: bool = gameData.isScoped && gameData.PIP && gameData.NVG && config.NVG_PIP_blur
+		var scoped: bool = gameData.isScoped && gameData.PIP
+		var blur_on: bool = scoped && gameData.NVG && config.NVG_PIP_blur
 		var radius: float = BLUR_RADIUS if blur_on else 0.0
 		pip_mat.set_shader_parameter("blur_radius", radius)
+		# The rig's unmounted optics run this hook too, and current_scope_mag belongs to the mounted one.
+		if scoped && optic.visible:
+			pip_mat.set_shader_parameter("transmission", _low_light_transmission(optic))
+
+
+# Share of the scene's brightness that reaches the eye: the area of the exit pupil over the area of the eye pupil.
+# An exit pupil wider than the eye pupil adds nothing, so every scope is at full brightness in daylight.
+func _low_light_transmission(optic: Node3D) -> float:
+	var objective: float = ScopeCatalog.DATA.get(optic.attachmentData.file, {}).get("objective", 0.0)
+	# shelters are lit from the inside and never run the day cycle
+	if objective <= 0.0 || gameData.shelter:
+		return 1.0
+
+	var time: float = Simulation.time
+	var daylight: float = smoothstep(_SUNRISE - _TWILIGHT, _SUNRISE + _TWILIGHT, time) - smoothstep(_SUNSET - _TWILIGHT, _SUNSET + _TWILIGHT, time)
+	var eye_pupil: float = lerpf(_EYE_PUPIL_NIGHT, _EYE_PUPIL_DAY, daylight)
+	var exit_pupil: float = objective / config.current_scope_mag
+	var transmission: float = minf(1.0, (exit_pupil / eye_pupil) ** 2)
+	return lerpf(1.0, transmission, config.scope_low_light_dimming)
 
 
 # preferences.antialiasing 1..4 -> Viewport.MSAA enum (0..3)

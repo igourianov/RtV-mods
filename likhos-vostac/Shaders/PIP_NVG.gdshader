@@ -4,6 +4,8 @@ render_mode unshaded;
 uniform sampler2D viewport : source_color, filter_linear;
 uniform bool active = true;
 uniform float blur_radius = 0.0;
+// Share of the scene's brightness the scope passes on to the eye. 1.0 leaves the image as vanilla.
+uniform float transmission = 1.0;
 const float brightness = 0.8;
 const float contrast = 0.99;
 
@@ -31,7 +33,7 @@ void fragment() {
 		color = texture(viewport, UV).rgb;
 	}
 
-	color *= brightness;
+	color *= brightness * transmission;
 	color = (color - 0.5) * contrast + 0.5;
 
 	if (active) {

@@ -16,12 +16,14 @@ static var _lens_geometry_cache := {}
 const DATA := {
 	"ACOG": {
 		"mag_range": [4.0],
+		"objective": 32.0, # mm
 		"eye_relief": Vector2(2.5, 4.5),
 		"lens_radius": 0.013,
 		"lens_center": Vector3(0.0, 0.0, -0.102),
 	},
 	"HMR": {
 		"mag_range": [4.0],
+		"objective": 24.0,
 		"eye_relief": Vector2(5.5, 8.0),
 		"lens_radius": 0.017,
 		"lens_center": Vector3(0.0, 0.0, -0.069),
@@ -29,12 +31,14 @@ const DATA := {
 	"POSP": {
 		"mag_range": [2.0, 3.5, 6.0],
 		"mag_range_discrete": [2.0, 3.0, 4.0, 5.0, 6.0],
+		"objective": 24.0,
 		"eye_relief": Vector2(6.5, 9.0),
 		"lens_radius": 0.012,
 		"lens_center": Vector3(0.0, 0.0, -0.078),
 	},
 	"PU": {
 		"mag_range": [3.5],
+		"objective": 21.0,
 		"eye_relief": Vector2(6.5, 8.5),
 		"lens_radius": 0.0115,
 		"lens_center": Vector3(0.0, 0.0, -0.081),
@@ -44,6 +48,7 @@ const DATA := {
 		"mag_range": [1.0, 3.2, 10.0],
 		"mag_range_normalized": [1.0, 1.6, 2.5, 4.0, 6.3, 10.0],
 		"mag_range_discrete": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
+		"objective": 28.0,
 		"eye_relief": Vector2(6.5, 12.5),
 		"lens_radius": 0.020,
 		"lens_center": Vector3(0.0, 0.0, -0.131),
@@ -53,6 +58,7 @@ const DATA := {
 		"mag_range": [1.1, 3.0, 8.0],
 		"mag_range_normalized": [1.1, 1.7, 2.8, 4.8, 8.0],
 		"mag_range_discrete": [1.1, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
+		"objective": 24.0,
 		"eye_relief": Vector2(7.0, 11.5),
 		"lens_radius": 0.0185,
 		"lens_center": Vector3(0.0, 0.0, -0.177),
