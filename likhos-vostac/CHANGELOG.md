@@ -1,3 +1,6 @@
+# 3.3.2034
+* fixed the scope picture losing its outer edge to a wide black ring at night, even with the scope mounted within its eye relief
+
 # 3.3.2032
 * integrated the abandoned [ExitPupil mod](https://github.com/heikkit/exitpupil-vostok-mod) by heikkit (remove it if you still have it)
 	* scopes now lose brightness at dusk and at night according to their exit pupil (objective lens diameter vs magnification): an ACOG stays bright, a Vudu at 10x keeps about 16% of the light. Daylight and shelters are unaffected.

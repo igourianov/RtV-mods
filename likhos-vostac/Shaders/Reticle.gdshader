@@ -10,6 +10,8 @@ uniform float shadow : hint_range(0.0, 1.0, 0.001) = 0.0;
 
 // Per-optic `size` values are authored against vanilla's view-direction UV; this rescales them onto lens UV.
 const float RETICLE_SCALE = 3.0;
+// Width of the lens rim that fades the image out, in lens UV. The lens radius is 0.5.
+const float RIM_WIDTH = 0.05;
 
 varying float occlusion;
 varying float spherical;
@@ -42,12 +44,15 @@ void fragment()
 
 	// Occlusion ----------------------------------------
 
-	float edge = smoothstep(occlusion - 0.15, occlusion, length(UV - 0.5));
+	float r = length(UV - 0.5);
+	float edge = smoothstep(occlusion - 0.15, occlusion, r);
 	edge = 1.0 - edge;
+	// This surface is lit black, so whatever it covers turns pure black once no skylight reflects off it.
+	// Vanilla covers the image with the full edge ring, which at night blacks out the outer 30% of the lens radius.
+	float rim = 1.0 - smoothstep(occlusion - RIM_WIDTH, occlusion, r);
 
 	// Shadow ----------------------------------------
 
-	float r = length(UV - 0.5);
 	float aperture_outer = mix(0.58, 0.0, shadow);
 	float aperture_inner = aperture_outer - 0.08;
 	float shadowMask = scope ? smoothstep(aperture_inner, aperture_outer, r) : 0.0;
@@ -69,7 +74,7 @@ void fragment()
 	// Output ----------------------------------------
 
 	vec3 color = mix(vec3(0.0), reticleColor, opacity);
-	float alpha = mix(1.0, max(shadowMask, reticleAlpha), opacity * edge);
+	float alpha = mix(1.0, max(shadowMask, reticleAlpha), opacity * rim);
 
 	ALBEDO = color;
 	ALPHA = alpha;
