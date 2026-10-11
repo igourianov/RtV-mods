@@ -1,3 +1,11 @@
+# 3.3.2032
+* integrated the abandoned ExitPupil mod (remove it if you still have it)
+	* scopes now lose brightness at dusk and at night according to their exit pupil (objective lens diameter vs magnification): an ACOG stays bright, a Vudu at 10x keeps about 16% of the light. Daylight and shelters are unaffected.
+	* PIP mode only
+	* Set the strength in LCM to 0 to disable
+	* Scope tooltip now shows the objective lens diameter
+* All credit to the original mod's author, who's name I cannot find now :(
+
 # 3.2.2031
 * added the Vostok Mods source to mod.txt, so the mod loader shows the mod's thumbnail and checks for updates
 
