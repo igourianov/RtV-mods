@@ -13,6 +13,8 @@ Without this mod installed, mods that rely on it run on their default settings.
 
 Settings are saved per mod in `%APPDATA%\Road to Vostok\LCM\<mod-id>.cfg`.
 
+Every Metro Mod Loader profile has its own settings, kept in that file under a section named after the profile. A new profile starts on the defaults. So does a renamed profile and a copy of an existing one.
+
 ## Requirements
 
 - Road to Vostok 0.2.0.0 (Godot 4.6.3)
@@ -124,7 +126,7 @@ Returns `true` when the config is registered. Returns `false` and logs a warning
 - `mod_uid`: identifier to distinguish different mods. It also names the config file, `<mod_uid>.cfg`. Can only contain `a-z`, `0-9`, `-` and `_`. Registering again under the same id replaces the earlier config and logs a warning.
 - `mod_name`: the name shown in the menu. Purely cosmetic.
 - `config`: the config object defined above. Its values at the time of the call become the defaults.
-- `on_applied`: optional callback, takes no arguments. Called once during registration if the player has saved values, after they are written into the object. Called again every time the player changes settings in the menu. It is not called when there is nothing saved.
+- `on_applied`: optional callback, takes no arguments. Called once during registration if the player has saved values in the active mod loader profile, after they are written into the object. Called again every time the player changes settings in the menu. It is not called when the profile has nothing saved.
 
 #### Reacting to changes (special case)
 
@@ -204,5 +206,6 @@ enum CantMode { DEFAULT, RAIL, OFF }
 
 - Values are written into the config object when the player leaves the mod's page or closes the menu, not while a control is being moved.
 - Only values that differ from the default are saved. A default you change in an update reaches every player who has not changed that setting.
-- A saved value is ignored when its field is removed or changes its type. It is dropped on the next save.
+- A saved value is ignored when its field is removed or changes its type. A value of a changed type is replaced on the next save. A value of a removed field stays in the file unused.
+- Values are saved per mod loader profile. A profile without saved values runs on your defaults and never takes values from another profile.
 - The config object is yours. LCM keeps a reference to it for as long as the game runs and never frees or replaces it.

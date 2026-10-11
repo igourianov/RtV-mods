@@ -4,7 +4,8 @@
 const Out := preload("./Out.gd")
 
 const STORE_DIR := "user://LCM"
-const STORE_SECTION := "values"
+const LOADER_CONFIG := "user://mod_config.cfg"
+const DEFAULT_PROFILE := "Default"
 const EXPORTED := PROPERTY_USAGE_SCRIPT_VARIABLE | PROPERTY_USAGE_EDITOR
 const SUPPORTED_TYPES: Array[int] = [TYPE_BOOL, TYPE_INT, TYPE_FLOAT, TYPE_STRING, TYPE_COLOR, TYPE_VECTOR2, TYPE_VECTOR3]
 
@@ -23,6 +24,8 @@ class Entry:
 static var _mods: Dictionary[String, Entry] = {}
 # the uid names the store file, so it is held to what is a safe file name on every platform and cannot collide by case
 static var _uid_pattern := RegEx.create_from_string("^[a-z0-9_-]+$")
+# read once, because the loader can rename the active profile without a restart
+static var _profile: String
 
 
 static func register_config(mod_uid: String, mod_name: String, config: RefCounted, on_applied: Callable = Callable()) -> bool:
@@ -56,15 +59,16 @@ static func register_config(mod_uid: String, mod_name: String, config: RefCounte
 		entry.fields.append(property)
 		entry.defaults[property.name] = config.get(property.name)
 
-	var store := ConfigFile.new()
-	if store.load(_store_path(mod_uid)) != OK:
+	var profile := _active_profile()
+	var store := _load_store(mod_uid)
+	if !store.has_section(profile):
 		return true
 
 	for field in entry.fields:
 		var field_name: String = field.name
-		if !store.has_section_key(STORE_SECTION, field_name):
+		if !store.has_section_key(profile, field_name):
 			continue
-		var value: Variant = store.get_value(STORE_SECTION, field_name)
+		var value: Variant = store.get_value(profile, field_name)
 		# a value stored for a field that has since changed its type stays out, and the next save drops it
 		if typeof(value) == field.type:
 			config.set(field_name, value)
@@ -77,7 +81,8 @@ static func register_config(mod_uid: String, mod_name: String, config: RefCounte
 static func _apply(mod_uid: String, values: Dictionary) -> void:
 	var entry := _mods[mod_uid]
 	var config := entry.config
-	var store := ConfigFile.new()
+	var profile := _active_profile()
+	var store := _load_store(mod_uid)
 	var changed: bool = false
 	for field in entry.fields:
 		var field_name: String = field.name
@@ -86,8 +91,8 @@ static func _apply(mod_uid: String, values: Dictionary) -> void:
 			config.set(field_name, value)
 			changed = true
 		# only what differs from the default is stored, so a default changed by a mod update reaches untouched settings
-		if value != entry.defaults[field_name]:
-			store.set_value(STORE_SECTION, field_name, value)
+		# null erases the key
+		store.set_value(profile, field_name, value if value != entry.defaults[field_name] else null)
 	if !changed:
 		return
 
@@ -96,6 +101,33 @@ static func _apply(mod_uid: String, values: Dictionary) -> void:
 	store.save(path)
 	if entry.on_applied.is_valid():
 		entry.on_applied.call()
+
+
+static func _active_profile() -> String:
+	if !_profile:
+		var loader_config := ConfigFile.new()
+		# the loader has no accessor for it, and treats a missing file or key as Default
+		loader_config.load(LOADER_CONFIG)
+		_profile = str(loader_config.get_value("settings", "active_profile", DEFAULT_PROFILE))
+	return _profile
+
+
+static func _load_store(mod_uid: String) -> ConfigFile:
+	var store := ConfigFile.new()
+	store.load(_store_path(mod_uid))
+	_adopt_legacy_section(store)
+	return store
+
+
+# Temporary, delete with its call once pre-profile files are gone.
+# Such a file holds only a "values" section, which belongs to the Default profile.
+static func _adopt_legacy_section(store: ConfigFile) -> void:
+	const LEGACY_SECTION := "values"
+	if store.get_sections() != PackedStringArray([LEGACY_SECTION]):
+		return
+	for key in store.get_section_keys(LEGACY_SECTION):
+		store.set_value(DEFAULT_PROFILE, key, store.get_value(LEGACY_SECTION, key))
+	store.erase_section(LEGACY_SECTION)
 
 
 static func _store_path(mod_uid: String) -> String:

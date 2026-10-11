@@ -1,3 +1,6 @@
+# 1.1.34
+* settings are now saved per Metro Mod Loader profile, each under its own section of the mod's config file
+
 # 1.0.32
 * fixed the LCM menu rendering, when opened from the main menu without loading the game
 
