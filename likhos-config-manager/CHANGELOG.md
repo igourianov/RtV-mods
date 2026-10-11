@@ -1,3 +1,6 @@
+# 1.1.36
+* `Vector2` and `Vector3` settings can now be limited to a range with `@export_custom(PROPERTY_HINT_RANGE, "min,max,step")`
+
 # 1.1.35
 * the menu header now shows the active Metro Mod Loader profile
 

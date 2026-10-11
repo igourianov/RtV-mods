@@ -127,14 +127,17 @@ Registration can happen at any point of startup. It does not depend on mod load 
 | Field | Shown as |
 |---|---|
 | `bool` | Off and On buttons |
+| `int`, `float` | Number box |
 | `int`, `float` with `@export_range(min, max, step)` | Slider with a number box |
-| `int`, `float` without a range | Number box |
 | `String` | Text box |
-| `String` or `int` with `@export_enum`, or a field typed as an enum of the script | Dropdown |
+| `String` or `int` with `@export_enum` or `enum` type  | Dropdown |
 | `Color` | Color picker |
 | `Vector2`, `Vector3` | A number box per component |
+| `Vector2`, `Vector3` with `@export_custom(PROPERTY_HINT_RANGE, "min,max,step")` | A limited number box per component |
 
 A field of any other type is skipped with a warning in the log.
+
+GDScript does not support `@export_range` on a `Vector2` or `Vector3`. A script that uses it fails to parse. `@export_custom(PROPERTY_HINT_RANGE, "min,max,step")` is the workaround, and its range applies to every component.
 
 One example per kind of row:
 
@@ -146,18 +149,21 @@ enum CantMode { DEFAULT, RAIL, OFF }
 # Off and On buttons
 @export var show_crosshair := true
 
-# slider from 0 to 20 in steps of 0.1
-@export_range(0.0, 20.0, 0.1) var walk_speed := 3.0
+# number boxes that take any value
+@export var kill_limit := 100
+@export var recoil_scale := 1.5
 
 # slider over whole numbers from 1 to 10
 @export_range(1, 10) var max_cards := 4
 
-# number boxes that take any value
-@export var recoil_scale := 1.5
-@export var kill_limit := 100
+# slider from 0 to 20 in steps of 0.1
+@export_range(0.0, 20.0, 0.1) var walk_speed := 3.0
 
 # text box
 @export var player_tag := "Likho"
+
+# dropdown over an enum of the script, listed as Default, Rail and Off
+@export var cant_mode: CantMode = CantMode.RAIL
 
 # dropdown that stores the text of the option
 @export_enum("Cross", "Dot", "None") var crosshair_style: String = "Dot"
@@ -168,15 +174,16 @@ enum CantMode { DEFAULT, RAIL, OFF }
 # dropdown that stores the number given after the colon
 @export_enum("Slow:30", "Average:60", "Fast:200") var tick_rate: int = 60
 
-# dropdown over an enum of the script, listed as Default, Rail and Off
-@export var cant_mode: CantMode = CantMode.RAIL
-
 # color picker
 @export var crosshair_color := Color(0, 1, 0.04, 0.55)
 
 # a number box per component
 @export var hud_offset := Vector2(16, 24)
 @export var weapon_offset := Vector3(0.1, -0.2, 0.3)
+
+# a number box per component, each limited from -1 to 1 in steps of 0.05
+# GDScript does not accept @export_range on a vector, so the range goes through @export_custom
+@export_custom(PROPERTY_HINT_RANGE, "-1,1,0.05") var sway_scale := Vector2(0.2, 0.1)
 ```
 
 ### Good to know

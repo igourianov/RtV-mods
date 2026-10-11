@@ -158,14 +158,8 @@ func _create_input(field: Dictionary) -> Control:
 
 	elif field.type == TYPE_INT || field.type == TYPE_FLOAT:
 		var is_int: bool = field.type == TYPE_INT
-		var on_changed := func(number: float) -> void: _set_value(field_name, int(number) if is_int else number)
+		var spin_box := _create_spin_box(field, value, func(number: float) -> void: _set_value(field_name, int(number) if is_int else number))
 		if field.hint == PROPERTY_HINT_RANGE:
-			# "min,max" or "min,max,step", possibly followed by flags
-			var limits: PackedStringArray = field.hint_string.split(",")
-			var step: float = 1.0 if is_int else FLOAT_STEP
-			if limits.size() > 2 && limits[2].is_valid_float():
-				step = float(limits[2])
-			var spin_box := _create_spin_box(value, step, on_changed, float(limits[0]), float(limits[1]))
 			# its share of the row next to the slider is too narrow for a number
 			spin_box.custom_minimum_size.x = 100
 			var slider := HSlider.new()
@@ -179,7 +173,7 @@ func _create_input(field: Dictionary) -> Control:
 			input.add_child(slider)
 			input.add_child(spin_box)
 		else:
-			input = _create_spin_box(value, 1.0 if is_int else FLOAT_STEP, on_changed)
+			input = spin_box
 
 	elif field.type == TYPE_STRING:
 		var line_edit := LineEdit.new()
@@ -206,23 +200,27 @@ func _create_input(field: Dictionary) -> Control:
 				var vector: Variant = _values[field_name]
 				vector[axis] = number
 				_set_value(field_name, vector)
-			input.add_child(_create_spin_box(value[axis], FLOAT_STEP, on_axis_changed))
+			input.add_child(_create_spin_box(field, value[axis], on_axis_changed))
 
 	# takes the whole width of the row's input slot
 	input.size_flags_horizontal = SIZE_EXPAND_FILL
 	return input
 
 
-# without limits the box takes any number
-func _create_spin_box(value: float, step: float, on_changed: Callable, min_value: float = 0.0, max_value: float = 0.0) -> SpinBox:
+# the range hint of the field limits the box, and without one the box takes any number
+func _create_spin_box(field: Dictionary, value: float, on_changed: Callable) -> SpinBox:
 	var spin_box := SpinBox.new()
-	var unlimited: bool = min_value == max_value
+	var unlimited: bool = field.hint != PROPERTY_HINT_RANGE
 	spin_box.allow_lesser = unlimited
 	spin_box.allow_greater = unlimited
+	spin_box.step = 1.0 if field.type == TYPE_INT else FLOAT_STEP
 	if !unlimited:
-		spin_box.min_value = min_value
-		spin_box.max_value = max_value
-	spin_box.step = step
+		# "min,max" or "min,max,step", possibly followed by flags
+		var limits: PackedStringArray = field.hint_string.split(",")
+		spin_box.min_value = float(limits[0])
+		spin_box.max_value = float(limits[1])
+		if limits.size() > 2 && limits[2].is_valid_float():
+			spin_box.step = float(limits[2])
 	spin_box.value = value
 	spin_box.size_flags_horizontal = SIZE_EXPAND_FILL
 	# connected last, so setting the box up does not count as a change by the player
