@@ -190,7 +190,7 @@ const DATA := {
 		"caliber": "5.56 NATO",
 	},
 	"Mosin": {
-		"name": ["Mosin-Nagant M1891", "Трёхлинейка 1891/30"],
+		"name": ["Mosin M91/30", "Трёхлинейка 1891/30"],
 		"inventory": "Mosin",
 	},
 	"MP5": {

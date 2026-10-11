@@ -1,3 +1,6 @@
+# 1.1.75
+* renamed the Mosin M1891 to M91/30 (thanks Commie Czar for noting proper model)
+
 # 1.1.74
 * added the Vostok Mods source to mod.txt, so the mod loader shows the mod's thumbnail and checks for updates
 

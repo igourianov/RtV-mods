@@ -31,7 +31,7 @@ The recipe names retain vanilla weapon names. The name is used as a look up key,
 | M78 | Valmet M78 | 4.8 → 5.0 |
 | Karov | Makarov | |
 | KM18 | Mk 18 Mod 1 | |
-| Mosin | Mosin-Nagant M1891 | |
+| Mosin | M91/30 | |
 | PM5 | H&K MP5A3 | 2.6 → 3.1 |
 | PM5-K | H&K MP5K | |
 | PM5-SD | H&K MP5SD | 2.8 → 3.4 |
