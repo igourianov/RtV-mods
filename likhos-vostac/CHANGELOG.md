@@ -4,7 +4,7 @@
 	* PIP mode only
 	* Set the strength in LCM to 0 to disable
 	* Scope tooltip now shows the objective lens diameter
-* All credit to the original mod's author, who's name I cannot find now :(
+* All credit to the original mod's author, whose name I cannot find now :(
 
 # 3.2.2031
 * added the Vostok Mods source to mod.txt, so the mod loader shows the mod's thumbnail and checks for updates
@@ -48,7 +48,7 @@
 * nomad kills now show green on the kill counter
 
 # 2.20.1982
-* number of compat updates for the game Build 2 (MML 3.4.1 is required!)
+* a number of compat updates for the game Build 2 (MML 3.4.1 is required!)
 
 # 2.19.1969
 * fixed soft lock when opening inventory while holding reload to check ammo
@@ -159,7 +159,7 @@
 # 2.11.1481
 * fixed mag showing empty on reload
 * fixed aiming camera position for a number of guns (in PIP mode only)
-* POSP can now move on the dovetail rail same way other scopes move on the picatinny rail
+* POSP can now move on the dovetail rail same way other scopes move on the Picatinny rail
 * fixed PU position on Mosin (it was way too far forward)
 * fixed several vanilla bugs with optic positioning outside of declared min/max rail ranges (HAMR and ACOG on M78 and T2 on M4A1)
 * fixed vanilla bug with floating point math when checking rail movement constraints allowing scopes sometimes to move further/less than was intended
