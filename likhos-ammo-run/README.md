@@ -6,7 +6,7 @@ Makes 4.6x30 and 9x39 available from Gunsmith. Reworks "Ammo Delivery" task.
 
 Gunsmith now sells 4.6x30, 9x39 and 7.62x54R ammo. The idea is to make exotic ammo actually usable in game instead of being a safe queen.
 
-The "Ammo Delivery" task reowrked:
+The "Ammo Delivery" task reworked:
 
 | | Vanilla | Modded |
 |---|---|---|
