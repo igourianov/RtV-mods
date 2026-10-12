@@ -14,6 +14,10 @@ func _show_row(tooltip: Node, node_name: String, title: String, text: String) ->
 	row.get_child(1).text = text
 	row.show()
 
+	# Vanilla Update fits the panel to its content and centers the tooltip on it as its last step, before a post hook can show a row.
+	tooltip.panel.size = Vector2(256, 0)
+	tooltip.interface.tooltipOffset = tooltip.panel.size.y / 2.0
+
 
 func _hide_row(tooltip: Node, node_name: String) -> void:
 	var row := _get_row(tooltip, node_name)

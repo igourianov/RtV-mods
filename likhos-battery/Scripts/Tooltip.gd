@@ -30,8 +30,3 @@ func on_update_post(item: Item) -> void:
 			var charge: float = BatteryUtil.attachment_holder(slotData, nested).condition
 			_show_row(tooltip, row, nested.display + ":", str(roundi(charge)) + "%")
 			_rows.append(row)
-
-	# Vanilla Update sized the panel and centered the tooltip before these rows were shown.
-	if !_rows.is_empty():
-		tooltip.panel.size = Vector2(256, 0)
-		tooltip.interface.tooltipOffset = tooltip.panel.size.y / 2.0

@@ -59,14 +59,19 @@ Owned in `likhos-vostac/`:
 * `Scripts/Hooks/Flashlight.gd`. It holds the beam shaping, the `_physics_process` replacement and the input driver. It holds no flicker.
 * `README.md`. The line about the flashlight flicker.
 
+Owned in `mod-lib/`:
+
+* `Tooltip.gd`. The row helpers shared by every mod.
+
 Context only, not modified:
 
 * Vanilla `src/Scripts/Laser.gd`, `Flashlight.gd`, `Interface.gd`, `Item.gd`, `Tooltip.gd`, `Context.gd`, `SlotData.gd`, `RigManager.gd`, `WeaponRig.gd`, `LootContainer.gd`, `LootSimulation.gd`.
 * `likhos-vostac/Scripts/Main.gd` and `likhos-vostac/mod.txt`. The `Flashlight.Activate` post hook stays registered for the beam shaping.
 * `likhos-vostac/Scripts/Hooks/Laser.gd` and `Scripts/AttachmentMounts.gd`. The other writer of `active` and the runtime laser mounts.
-* `mod-lib/Tooltip.gd` and `mod-lib/Main.gd`.
+* `mod-lib/Main.gd`.
+* `likhos-vostac/Scripts/Hooks/Tooltip.gd`. The other user of the row helpers.
 
-Not owned: other mods, `mod-lib/`, repo documentation and the `CHANGELOG.md` of both mods.
+Not owned: other mods, the rest of `mod-lib/`, repo documentation and the `CHANGELOG.md` of both mods.
 
 ## Solution
 
@@ -192,6 +197,8 @@ One laser is live at a time, so the flicker state is kept once and not per node.
 ### Tooltip: post hooks on `Tooltip.Update` and `Tooltip.Reset`
 
 `Scripts/Tooltip.gd` extends `Lib/Tooltip.gd` and uses its row helpers, the way VosTac adds optic rows. The tooltip of a weapon shows one row per powered attachment, titled with the attachment's display name and holding its charge as a whole percent. The rows are hidden for every other item and on reset.
+
+Vanilla `Tooltip.Update` fits the panel to its content and centers the tooltip on it as its last step, so a row shown from a post hook lands in a panel already sized without it. `mod-lib/Tooltip.gd` owns the correction: showing a row through its helper fits and centers the panel again, the way vanilla does. Handlers in the mods do no sizing of their own, and VosTac's optic rows get the same correction.
 
 ### VosTac
 
