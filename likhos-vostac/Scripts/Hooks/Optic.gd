@@ -17,11 +17,6 @@ const _VANILLA_PIP_SSAA := 1
 # Eye pupil diameter in mm: contracted in daylight, fully dilated at night.
 const _EYE_PUPIL_DAY := 2.5
 const _EYE_PUPIL_NIGHT := 7.0
-# Simulation.time values at which vanilla World.TOD swaps the sun for the moon.
-const _SUNRISE := 600.0
-const _SUNSET := 1800.0
-# Half-width of the dusk and dawn ramps in Simulation.time units, 100 being one hour.
-const _TWILIGHT := 100.0
 
 
 
@@ -61,13 +56,10 @@ func on_physics_process_pre(_delta: float) -> void:
 # An exit pupil wider than the eye pupil adds nothing, so every scope is at full brightness in daylight.
 func _low_light_transmission(optic: Node3D) -> float:
 	var objective: float = ScopeCatalog.DATA.get(optic.attachmentData.file, {}).get("objective", 0.0)
-	# shelters are lit from the inside and never run the day cycle
-	if objective <= 0.0 || gameData.shelter:
+	if objective <= 0.0:
 		return 1.0
 
-	var time: float = Simulation.time
-	var daylight: float = smoothstep(_SUNRISE - _TWILIGHT, _SUNRISE + _TWILIGHT, time) - smoothstep(_SUNSET - _TWILIGHT, _SUNSET + _TWILIGHT, time)
-	var eye_pupil: float = lerpf(_EYE_PUPIL_NIGHT, _EYE_PUPIL_DAY, daylight)
+	var eye_pupil: float = lerpf(_EYE_PUPIL_NIGHT, _EYE_PUPIL_DAY, ScopeCatalog.daylight())
 	var exit_pupil: float = objective / config.current_scope_mag
 	var transmission: float = minf(1.0, (exit_pupil / eye_pupil) ** 2)
 	return lerpf(1.0, transmission, config.scope_low_light_dimming)

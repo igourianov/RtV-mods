@@ -1,3 +1,7 @@
+# 3.4.2038
+* reticle illumination is now switchable on Vudu, Leopard, HAMR and POSP
+* LCM toggle to control illumination behavior
+
 # 3.3.2034
 * fixed the scope picture losing its outer edge to a wide black ring at night, even with the scope mounted within its eye relief
 

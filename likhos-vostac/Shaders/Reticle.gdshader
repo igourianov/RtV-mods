@@ -7,6 +7,9 @@ uniform float opacity : hint_range(0.0, 1.0, 0.1) = 1.0;
 uniform float size : hint_range(0.0, 1.0, 0.01) = 0.1;
 uniform float intensity : hint_range(0.0, 10.0, 1.0) = 5.0;
 uniform float shadow : hint_range(0.0, 1.0, 0.001) = 0.0;
+uniform bool lit = true;
+// Lights every opaque texel instead of only the ones the texture authors red.
+uniform bool lit_whole = false;
 
 // Per-optic `size` values are authored against vanilla's view-direction UV; this rescales them onto lens UV.
 const float RETICLE_SCALE = 3.0;
@@ -64,7 +67,8 @@ void fragment()
 	vec2 reticleUV = (UV - vec2(0.5)) / (size * RETICLE_SCALE);
 	vec4 reticleSample = texture(reticle, reticleUV + vec2(0.5, 0.5));
 	float reticleAlpha = reticleSample.a;
-	vec3 reticleColor = reticleSample.rgb * vec3(intensity, 0.0, 0.0) * reticleAlpha;
+	float glow = lit ? (lit_whole ? 1.0 : reticleSample.r) : 0.0;
+	vec3 reticleColor = vec3(glow * intensity, 0.0, 0.0) * reticleAlpha;
 
 	// Reflection ----------------------------------------
 

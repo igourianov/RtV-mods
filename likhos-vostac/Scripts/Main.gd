@@ -121,6 +121,7 @@ func setup(lib):
 
 	register_action("optic_zoom_in", "Optic Zoom In", create_mouse_input(MOUSE_BUTTON_WHEEL_UP))
 	register_action("optic_zoom_out", "Optic Zoom Out", create_mouse_input(MOUSE_BUTTON_WHEEL_DOWN))
+	register_action("reticle_illumination", "Reticle Illumination", create_key_input(KEY_Y))
 	register_action("binoculars", "Binoculars", create_key_input(KEY_B))
 	register_action("hold_breath", "Hold Breath", "sprint")
 	register_action("canted_standalone", "Canted Aim (quick)")

@@ -5,6 +5,15 @@ static var gameData := preload("res://Resources/GameData.tres")
 
 const _FALLBACK_MAG: Array[float] = [1.0]
 
+# What a reticle lights up: the texels its texture authors red, or all of them.
+enum Illumination { NONE, AUTHORED, WHOLE }
+
+# Simulation.time values at which vanilla World.TOD swaps the sun for the moon.
+const _SUNRISE := 600.0
+const _SUNSET := 1800.0
+# Half-width of the dusk and dawn ramps in Simulation.time units, 100 being one hour.
+const _TWILIGHT := 100.0
+
 # weapon file -> scope file: rifles whose iron sights stay usable under that scope
 const _IRON_SIGHTS: Dictionary[String, String] = {
 	"Mosin": "PU",
@@ -23,6 +32,7 @@ const DATA := {
 	},
 	"HMR": {
 		"mag_range": [4.0],
+		"illumination": Illumination.AUTHORED,
 		"objective": 24.0,
 		"eye_relief": Vector2(5.5, 8.0),
 		"lens_radius": 0.017,
@@ -31,6 +41,7 @@ const DATA := {
 	"POSP": {
 		"mag_range": [2.0, 3.5, 6.0],
 		"mag_range_discrete": [2.0, 3.0, 4.0, 5.0, 6.0],
+		"illumination": Illumination.WHOLE, # the texture authors nothing red
 		"objective": 24.0,
 		"eye_relief": Vector2(6.5, 9.0),
 		"lens_radius": 0.012,
@@ -48,6 +59,7 @@ const DATA := {
 		"mag_range": [1.0, 3.2, 10.0],
 		"mag_range_normalized": [1.0, 1.6, 2.5, 4.0, 6.3, 10.0],
 		"mag_range_discrete": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
+		"illumination": Illumination.AUTHORED,
 		"objective": 28.0,
 		"eye_relief": Vector2(6.5, 12.5),
 		"lens_radius": 0.020,
@@ -58,6 +70,7 @@ const DATA := {
 		"mag_range": [1.1, 3.0, 8.0],
 		"mag_range_normalized": [1.1, 1.7, 2.8, 4.8, 8.0],
 		"mag_range_discrete": [1.1, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
+		"illumination": Illumination.AUTHORED,
 		"objective": 24.0,
 		"eye_relief": Vector2(7.0, 11.5),
 		"lens_radius": 0.0185,
@@ -73,6 +86,19 @@ static func get_mag_range(key: String) -> Array:
 		Config.MagnificationSchema.DISCRETE: field = "mag_range_discrete"
 		Config.MagnificationSchema.NORMALIZED: field = "mag_range_normalized"
 	return entry.get(field, entry.get("mag_range", _FALLBACK_MAG))
+
+
+static func get_illumination(key: String) -> Illumination:
+	return DATA.get(key, {}).get("illumination", Illumination.NONE)
+
+
+# 1 in full daylight, 0 at night, ramping through dusk and dawn.
+static func daylight() -> float:
+	# shelters are lit from the inside and never run the day cycle
+	if gameData.shelter:
+		return 1.0
+	var time: float = Simulation.time
+	return smoothstep(_SUNRISE - _TWILIGHT, _SUNRISE + _TWILIGHT, time) - smoothstep(_SUNSET - _TWILIGHT, _SUNSET + _TWILIGHT, time)
 
 
 # an optic's own top dot, or the iron sights of a listed weapon and scope pair

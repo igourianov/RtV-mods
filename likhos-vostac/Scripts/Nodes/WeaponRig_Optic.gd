@@ -2,15 +2,21 @@ extends "./WeaponRig_Base.gd"
 
 const ScopeCatalog := preload("../ScopeCatalog.gd")
 const ZoomAccelerator := preload("../ZoomAccelerator.gd")
+const AttachmentClickPlayer := preload("../Audio/AttachmentClickPlayer.gd")
 const _RETICLE_SHADER := preload("res://mods/likhos-vostac/Shaders/Reticle.gdshader")
+# slotData meta: the weapon's manual illumination switch.
+# Vanilla SlotData.Update copies no meta, so a map transition, a load or a drop and pick up resets it.
+const _LIT_META := &"reticle_lit"
 
 var audioLibrary := preload("res://Resources/AudioLibrary.tres")
 var audioInstance2D := preload("res://Resources/AudioInstance2D.tscn")
 
 var _zoom := ZoomAccelerator.new()
+var _illumination_audio := AttachmentClickPlayer.new()
 
 
 func _ready() -> void:
+	add_child(_illumination_audio)
 	set_process_input(true)
 	set_process(true)
 
@@ -25,6 +31,9 @@ func _input(event: InputEvent) -> void:
 		return
 
 	if _handle_secondary_optic(event):
+		return
+
+	if _handle_illumination(event, optic):
 		return
 
 
@@ -60,6 +69,22 @@ func _handle_secondary_optic(event: InputEvent) -> bool:
 	gameData.secondaryOptic = !gameData.secondaryOptic
 	ScopeCatalog.sync_optic_state(rig)
 
+	return true
+
+
+func _handle_illumination(event: InputEvent, optic: Node3D) -> bool:
+	if !event.is_action_pressed("reticle_illumination") || config.reticle_illumination != Config.ReticleIllumination.MANUAL:
+		return false
+	if !optic || ScopeCatalog.get_illumination(optic.attachmentData.file) == ScopeCatalog.Illumination.NONE:
+		return false
+
+	var slotData: SlotData = get_parent().slotData
+	var lit: bool = !slotData.get_meta(_LIT_META, false)
+	slotData.set_meta(_LIT_META, lit)
+	if lit:
+		_illumination_audio.click_in()
+	else:
+		_illumination_audio.click_out()
 	return true
 
 
@@ -154,5 +179,16 @@ func _update_reticle(rig: WeaponRig, optic: Node3D, shadow: float) -> void:
 		if !("shader_parameter/shadow" in optic.reticle):
 			optic.reticle.shader = _RETICLE_SHADER
 		optic.reticle.set_shader_parameter("shadow", shadow)
+
+		var mode: Config.ReticleIllumination = config.reticle_illumination
+		var illumination := ScopeCatalog.get_illumination(att.file)
+		# an optic without illumination, and every optic in DISABLED mode, renders as authored: lit and not whole
+		var switchable: bool = illumination != ScopeCatalog.Illumination.NONE && mode != Config.ReticleIllumination.DISABLED
+		var lit := true
+		if switchable:
+			lit = rig.slotData.get_meta(_LIT_META, false) if mode == Config.ReticleIllumination.MANUAL else ScopeCatalog.daylight() < 0.5
+		# the material is shared by every instance of this optic, so the weapon in hands pushes its state each frame
+		optic.reticle.set_shader_parameter("lit", lit)
+		optic.reticle.set_shader_parameter("lit_whole", switchable && illumination == ScopeCatalog.Illumination.WHOLE)
 	optic.reticle.set_shader_parameter("size", rig.reticleSize)
 	optic.reticle.set_shader_parameter("opacity", rig.ocularOpacity)
