@@ -135,6 +135,8 @@ A single value means unchanged from vanilla and is listed for comparison only.
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
 |--------------|---------------|-----------------------------|
 | PV7 | AN/PVS-7 | 1.2 → 0.9 |
+| Armor Plate (II) | | 1.5 → 0.3 |
+| Armor Plate (IIIA) | | 2.0 → 0.5 |
 
 ## Requirements
 

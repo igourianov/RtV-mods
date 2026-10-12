@@ -430,6 +430,12 @@ const DATA := {
 		"inventory": "PVS-7",
 		"weight": 0.9,
 	},
+	"Armor_Plate_II": {
+		"weight": 0.3,
+	},
+	"Armor_Plate_IIIA": {
+		"weight": 0.5,
+	},
 }
 
 
