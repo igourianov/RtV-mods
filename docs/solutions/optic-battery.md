@@ -226,7 +226,8 @@ The reticle is drawn by a material of its own, layered with the lens material th
 * BP's shader fades the reticle with the aim by the `opacity` it reads from the lens material, as both lens shaders do.
 * Placed the vanilla way, the reticle is hidden under the vanilla shader's shadow, which BP's shader repeats. Placed from the lens UV, nothing masks it, so it stays visible through VosTac's eye shadow.
 * BP's shader draws the reticle in one of three states: lit as authored (red texels glow, black texels are black), lit whole (every opaque texel glows) and unlit (every opaque texel is black). A fourth state draws nothing. The glow matches vanilla's in strength and color.
-* Every frame the node pushes to the reticle materials of the weapon in hands: the state of each consumer, with a flicker dip counting as not powered, and the `size` and `opacity` it reads from the lens material.
+* While scope illumination is powered, BP's shader also draws a faint red glow on the rim of the scope's lens. The glow fades in as the reticle fades out with the aim, so it shows on a weapon held out of aim and is gone when aimed. It is emissive, so it reads the same at night. A dot and a consumer whose setting is `Disabled` have no glow.
+* Every frame the node pushes to the reticle materials of the weapon in hands: the state of each consumer and whether the rim glows, with a flicker dip counting as not powered, and the `size` and `opacity` it reads from the lens material.
 
 | Consumer | Powered | Not powered |
 |---|---|---|
@@ -266,6 +267,7 @@ With BP, with or without VosTac:
 * An HMR at 0% has no top dot and a black ring and center dot. Its crosshairs stay usable.
 * An HMR in hands drains like a red dot while its illumination is off and five times faster while it is lit.
 * With `Scope Power Draw` on `Manual` a Vudu, Leopard, HMR or POSP is unlit on first aim. The key lights it while the scope has charge.
+* A scope with its illumination lit shows a faint red glow on the rim of its lens while the rifle is held out of aim. The glow is absent while unlit and at 0%, and blinks with the reticle at low charge.
 * On `Light Sensor` the four scopes light from sunset to sunrise while they have charge.
 * On `Disabled` the four scopes look as in vanilla and their illumination never drains.
 * With `Red Dot Power Draw` on `Disabled` every dot shows at any charge and never drains.

@@ -105,12 +105,13 @@ func _process(delta: float) -> void:
 		powered = _draw_power(rig.slotData, item, rate, delta)
 
 	var dot: Reticle = Reticle.LIT if powered || !dot_on_battery else Reticle.NONE
+	var illuminated: bool = lit && powered
 	var scope: Reticle = Reticle.LIT
-	if scope_on_battery && !(lit && powered):
+	if scope_on_battery && !illuminated:
 		scope = Reticle.UNLIT
 	elif scope_on_battery && sight == Sight.SCOPE_WHOLE:
 		scope = Reticle.LIT_WHOLE
-	_push(optic.reticle, dot if sight == Sight.DOT else scope)
+	_push(optic.reticle, dot if sight == Sight.DOT else scope, illuminated)
 
 	if sight == Sight.SCOPE_DOT:
 		# The second dot is one more surface of the scope's mesh, with a lens material that is not `optic.reticle`.
@@ -118,7 +119,7 @@ func _process(delta: float) -> void:
 		for surface in mesh.get_surface_override_material_count():
 			var lens := mesh.get_surface_override_material(surface) as ShaderMaterial
 			if lens && lens != optic.reticle && lens.get_shader_parameter("reticle"):
-				_push(lens, dot)
+				_push(lens, dot, false)
 
 
 # Whether the weapon's scope illumination is on: by its own switch, or by the clock with the light sensor.
@@ -160,7 +161,7 @@ func _sighted_rig() -> WeaponRig:
 
 
 # A lens material is shared by every instance of its sight, so the weapon in hands pushes its state each frame.
-func _push(lens: ShaderMaterial, state: Reticle) -> void:
+func _push(lens: ShaderMaterial, state: Reticle, rim_glow: bool) -> void:
 	var reticle := lens.next_pass as ShaderMaterial
 	if !reticle || reticle.shader != _RETICLE_SHADER:
 		reticle = ShaderMaterial.new()
@@ -174,6 +175,7 @@ func _push(lens: ShaderMaterial, state: Reticle) -> void:
 		lens.set_shader_parameter("reticle", _blank)
 
 	reticle.set_shader_parameter("state", state)
+	reticle.set_shader_parameter("rim_glow", rim_glow)
 	# Vanilla or VosTac wrote these two for the frame.
 	reticle.set_shader_parameter("size", lens.get_shader_parameter("size"))
 	reticle.set_shader_parameter("opacity", lens.get_shader_parameter("opacity"))

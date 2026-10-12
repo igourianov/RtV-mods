@@ -12,6 +12,12 @@ uniform float intensity : hint_range(0.0, 10.0, 1.0) = 5.0;
 uniform float lens_uv_scale = 0.0;
 // OpticPower.Reticle: 0 nothing, 1 unlit, 2 lit as authored, 3 lit whole.
 uniform int state = 2;
+// A scope with its illumination running shows it on the rim of its lens while the reticle is faded out of view.
+uniform bool rim_glow = false;
+
+// Tunable: the rim glow. Width in lens UV, where the lens radius is 0.5.
+const float GLOW_WIDTH = 0.05;
+const float GLOW_STRENGTH = 0.05;
 
 varying vec3 shadowVertex;
 varying vec3 shadowPosition;
@@ -58,10 +64,13 @@ void fragment()
 	// Output ----------------------------------------
 
 	float glow = state == 3 ? 1.0 : (state == 2 ? reticleSample.r : 0.0);
+	float rim = rim_glow ? smoothstep(0.5 - GLOW_WIDTH, 0.5, length(UV - vec2(0.5))) * (1.0 - opacity) : 0.0;
 
 	ALBEDO = vec3(glow * intensity, 0.0, 0.0) * reticleAlpha;
+	// Emission, so the rim reads the same in the dark, where lit albedo would fade with the scene.
+	EMISSION = vec3(rim, 0.0, 0.0);
 	// Both lens shaders fade the reticle with the aim and leave it unmasked on the rim.
-	ALPHA = state == 0 ? 0.0 : reticleAlpha * opacity;
+	ALPHA = state == 0 ? 0.0 : max(reticleAlpha * opacity, rim * GLOW_STRENGTH);
 	ROUGHNESS = 1.0;
 	SPECULAR = 0.0;
 	BACKLIGHT = vec3(1.0);

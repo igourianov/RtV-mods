@@ -1,3 +1,6 @@
+# 2.0.22
+* a scope with lit reticle illumination shows a faint red glow on the rim of its lens while out of aim
+
 # 2.0.19
 * red dot sights and scope reticle illumination now run on batteries
 * reticle illumination moved here from VosTac (update both mods)
