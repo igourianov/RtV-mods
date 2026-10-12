@@ -5,10 +5,10 @@ const DELIVER := {
 	"res://Items/Ammo/Ammo_762x39/Ammo_762x39.tres": 300,
 	"res://Items/Ammo/Ammo_223/Ammo_223.tres": 300,
 }
-# item path -> boxes received
+# item path -> rounds received in one stack
 const RECEIVE := {
-	"res://Items/Ammo/Ammo_46x30/Ammo_46x30.tres": 3,
-	"res://Items/Ammo/Ammo_9x39/Ammo_9x39.tres": 3,
+	"res://Items/Ammo/Ammo_46x30/Ammo_46x30.tres": 150,
+	"res://Items/Ammo/Ammo_9x39/Ammo_9x39.tres": 60,
 }
 # the ammo the task asks for in vanilla, sold by the Gunsmith instead
 const GUNSMITH_STOCK := ["Ammo_46x30", "Ammo_9x39", "Ammo_762x54R"]
@@ -25,24 +25,21 @@ func setup(lib) -> void:
 		if !lib.patch(lib.Registry.ITEMS, file, {"gunsmith": true}):
 			Out.warning("patch failed for %s" % file)
 
-	var deliver: Array[ItemData] = []
-	for path in DELIVER:
-		var ammo: ItemData = load(path)
-		deliver.append(ammo)
-		_amounts[ammo] = DELIVER[path]
-
-	# a task has no per-item amounts, every entry of the reward is one box
-	var receive: Array[ItemData] = []
-	for path in RECEIVE:
-		var ammo: ItemData = load(path)
-		for i in RECEIVE[path]:
-			receive.append(ammo)
-
 	_task = load("res://Traders/Gunsmith/Tasks/05_Ammo_Delivery.tres")
-	if !lib.patch(lib.Registry.TRADER_TASKS, _task, {"deliver": deliver, "receive": receive}):
+	if !lib.patch(lib.Registry.TRADER_TASKS, _task, {"deliver": _load_stacks(DELIVER), "receive": _load_stacks(RECEIVE)}):
 		Out.warning("patch failed for %s" % _task.name)
 
 	register_hook("task-initialize-post", _on_task_initialize_post)
+
+
+# a task has no per-item amounts, so the rounds are kept aside for the slots
+func _load_stacks(stacks: Dictionary) -> Array[ItemData]:
+	var items: Array[ItemData] = []
+	for path in stacks:
+		var ammo: ItemData = load(path)
+		items.append(ammo)
+		_amounts[ammo] = stacks[path]
+	return items
 
 
 func _on_task_initialize_post(task: TaskData, _interface) -> void:
@@ -50,7 +47,8 @@ func _on_task_initialize_post(task: TaskData, _interface) -> void:
 		return
 
 	# vanilla sets every slot to defaultAmount (one box)
-	for element in _lib._caller.inputGrid.get_children():
+	var caller = _lib._caller
+	for element in caller.inputGrid.get_children() + caller.outputGrid.get_children():
 		# the placeholders Initialize has just freed are still in the tree
 		if !element.is_queued_for_deletion():
 			element.slotData.amount = _amounts[element.slotData.itemData]
