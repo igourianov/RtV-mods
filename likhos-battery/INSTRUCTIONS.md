@@ -24,8 +24,8 @@ This mod uses the registry API and hooks vanilla methods through Metro Mod Loade
 **Hooks** (other mods that also replace these will conflict, pick one):
 - `Interface.Charge` (replace)
 - `Interface.ContextRemove` (replace)
-- `Interface.CombineCheck` (replace)
 - `Item.Value` (replace)
+- `Interface.Hover` (post)
 - `Interface.Create` (pre)
 - `Item.Remove` (pre)
 - `Item.CombineSwap` (pre)

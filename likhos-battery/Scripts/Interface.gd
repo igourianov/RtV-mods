@@ -10,14 +10,31 @@ func _init(lib) -> void:
 	_lib = lib
 
 
-func on_combine_check(targetItem: Item, combineItem: Item) -> int:
-	_lib.skip_super()
+# Vanilla offers charging for Electronics only: it refuses a battery on a weapon and would nest one into a laser.
+# Its verdict is the drag flags Hover leaves behind, which Highlight and Release read next, so they are corrected here and CombineCheck needs no replace hook.
+func on_hover_post() -> void:
+	var iface = _lib._caller
+	var battery = iface.itemDragged
+	if !battery || battery.slotData.itemData.file != BatteryUtil.FILE:
+		return
 
-	# Vanilla offers charging for Electronics only: it refuses a battery on a weapon and would nest one into a laser.
-	if combineItem.slotData.itemData.file == BatteryUtil.FILE && BatteryUtil.charge_target(targetItem.slotData):
-		return 5
+	# Vanilla checks the hovered grid item first and the item in the hovered slot otherwise.
+	var slot = iface.hoverSlot
+	var target = iface.hoverItem
+	if !target && slot && slot.get_child_count() != 0:
+		target = slot.get_child(0)
 
-	return _lib._caller._rtv_vanilla_CombineCheck(targetItem, combineItem)
+	if !target || !BatteryUtil.charge_target(target.slotData):
+		return
+
+	# The flags vanilla sets for a charge.
+	iface.canCombine = false
+	iface.canCombineSwap = false
+	iface.canCombineLoad = false
+	iface.canCombineCharge = true
+	# On a grid item the stack flag is what lights the highlight and blocks a grid swap. Vanilla leaves it alone on a slot.
+	if iface.hoverItem:
+		iface.canCombineStack = true
 
 
 func on_create_pre(slotData: SlotData, _targetGrid: Node, _useDrop: bool) -> void:

@@ -40,7 +40,7 @@ func setup(lib) -> void:
 	_tooltip = Tooltip.new(lib)
 
 	register_hook("interface-charge", _interface.on_charge)
-	register_hook("interface-combinecheck", _interface.on_combine_check)
+	register_hook("interface-hover-post", _interface.on_hover_post)
 	register_hook("interface-contextremove", _interface.on_context_remove)
 	register_hook("interface-create-pre", _interface.on_create_pre)
 	register_hook("context-update-post", _context.on_update_post)

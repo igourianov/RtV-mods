@@ -53,6 +53,7 @@ static func holders(slotData: SlotData) -> Array[SlotData]:
 
 
 # The holder a battery dropped on the item exchanges charge with. With several the emptiest one takes it.
+# Polled on every hover tick while a battery is dragged over an item.
 static func charge_target(slotData: SlotData) -> SlotData:
 	var target: SlotData
 	for holder: SlotData in holders(slotData):

@@ -14,7 +14,9 @@ Likho's Battery (`likhos-battery`) manages batteries for weapon laser modules th
 * Every path that moves an item (grid, slot, pickup, container, save and load) copies its `SlotData` through `SlotData.Update`, which copies the named fields only. Resource metadata on a `SlotData` does not survive. `storage` is one of the copied fields and vanilla uses it for furniture only.
 * `SlotData.Update` duplicates the `storage` array, not its entries. Two copies of a weapon's `SlotData` share the charge entries until one of them is discarded.
 * Vanilla `Interface.CombineCheck` returns 5 (charge) only for the `Batteries` item on an `Electronics` target that lists it in `compatible`. A battery on a weapon returns 0. A battery on a non `Electronics` item that lists it returns 1, which nests the battery as an attachment.
-* Code 5 is honoured for a target in a grid and for a target in an equipment slot, so a battery can be dropped on a weapon in the inventory and on an equipped one.
+* `Interface.Hover` is the only caller of `CombineCheck`. It turns the code into the `canCombine`, `canCombineSwap`, `canCombineLoad`, `canCombineStack` and `canCombineCharge` flags. `Highlight` runs right after `Hover` and reads them, and `Release` reads them on drop, where `canCombineCharge` sends the pair to `Interface.Charge`.
+* For code 5 on a grid item vanilla sets `canCombineCharge` and `canCombineStack` and clears the other three. The stack flag is what lights the highlight and blocks a grid swap there. On an item in an equipment slot it sets `canCombineCharge` and clears `canCombine`. A charge is therefore possible on a weapon in the inventory and on an equipped one.
+* Replace hooks are single-owner, and a mod built on `mod-lib/Main.gd` rolls back all of its hooks when one registration fails. `CombineCheck` sits on every drag and drop, so this mod does not replace it.
 * Vanilla detaches an attachment in two places, `Interface.ContextRemove` and the swap branch of `Interface.Combine`. Both build a fresh `SlotData` at condition 100 and hand it to `Interface.Create` in the same call. Both go through `Item.Remove` or `Item.CombineSwap`. Attaching goes through `Item.Combine`.
 * Vanilla `Item.Value` scales every non `Electronics` item by condition, so a laser with a charge below 100 would lose a share of its own price.
 * VosTac replaces `Laser._input` and has a post hook on `Laser._process` that switches the laser on by itself in canted aim. Replace hooks are single-owner, so this mod does not hook `Laser._input` and does not depend on who toggles `active`.
@@ -36,7 +38,7 @@ Likho's Battery (`likhos-battery`) manages batteries for weapon laser modules th
 * Ruled out: flicker for the NVG and for the weapon-mounted light driven by `RigManager.gd`.
 * Ruled out: AI lasers. `AI.gd` attaches lasers to its weapons but never runs `Laser.gd`.
 * Assumption, unverified: nothing in vanilla misreads a non-empty `storage` on a weapon, and the entries survive drop, pickup, container transfer, decor placement, save and load. Seen so far: `Item.UpdateDetails` reads it for `Furniture` only and `Interface` forwards it to the pickup in decor mode. If this fails the design needs revisiting.
-* Assumption, unverified: `Interface.CombineCheck`, `Interface.Create`, `Item.Combine`, `Item.Remove`, `Item.CombineSwap`, `Laser._process`, `Flashlight.Activate`, `Tooltip.Update` and `Tooltip.Reset` can be hooked from this mod. `Interface.gd` and `Item.gd` are already hooked by it for other methods, the rest are hooked by VosTac.
+* Assumption, unverified: `Interface.Hover`, `Interface.Create`, `Item.Combine`, `Item.Remove`, `Item.CombineSwap`, `Laser._process`, `Flashlight.Activate`, `Tooltip.Update` and `Tooltip.Reset` can be hooked from this mod. `Interface.gd` and `Item.gd` are already hooked by it for other methods, the rest are hooked by VosTac.
 * Assumption, unverified: hooks dispatch on a script's internal calls, so `Interface.Create` called from inside `ContextRemove` and `Combine` reaches the pre hook. VosTac's hook on `Flashlight.Activate` relies on the same for calls from `ResetCheck`.
 * Assumption, unverified: every `Laser.gd` node has a `WeaponRig` as `owner`. VosTac sets the owner on the lasers it mounts at runtime.
 * Assumption, unverified: a post hook registered with a higher priority value runs after VosTac's on `Laser._process`. If it runs before, a dead laser switched on by canted aim shows for one frame.
@@ -132,9 +134,9 @@ In `setup`, next to the existing `Batteries` patch, every laser item found in th
 
 `Main.gd` creates the handlers and registers the hooks below.
 
-### Insert: `Interface.CombineCheck` and `Interface.Charge`
+### Insert: `Interface.Hover` and `Interface.Charge`
 
-`CombineCheck` is a replace hook that returns the vanilla result, except that the `Batteries` item dragged onto any item with a charge holder returns 5. That covers a detached laser, where vanilla would nest the battery, and a weapon carrying a laser, where vanilla refuses. A weapon without a powered attachment still refuses.
+A post hook on `Hover` overrules vanilla's verdict for one pair: the `Batteries` item dragged over an item with a charge holder, in a grid or in an equipment slot. For that pair it leaves the drag flags as vanilla sets them for code 5. `CombineCheck` itself is untouched and every other pair keeps vanilla's flags. That covers a detached laser, where vanilla would nest the battery, and a weapon carrying a laser, where vanilla refuses. A weapon without a powered attachment still refuses. The highlight and the drop then follow vanilla's own path into `Charge`.
 
 The `Charge` replace hook exchanges charge between the battery and the charge holder the contract picks for the target, with the 2 second progress and these rules: the holder takes the battery's charge, the battery survives with the holder's previous charge or is destroyed if that was 0. On a weapon the progress bar covers the weapon item and the weapon's own condition is untouched.
 
@@ -210,7 +212,8 @@ Vanilla `Tooltip.Update` fits the panel to its content and centers the tooltip o
 
 | script | methods | kind |
 |---|---|---|
-| `Interface.gd` | `Charge`, `ContextRemove`, `CombineCheck` | replace |
+| `Interface.gd` | `Charge`, `ContextRemove` | replace |
+| `Interface.gd` | `Hover` | post |
 | `Interface.gd` | `Create` | pre |
 | `Item.gd` | `Value` | replace |
 | `Item.gd` | `Remove`, `CombineSwap` | pre |
@@ -250,6 +253,7 @@ Vanilla `Tooltip.Update` fits the panel to its content and centers the tooltip o
 * **The flashlight flicker moved into Likho's Battery over a copy of its rules.** One set of burst rules, owned by the mod that makes charge matter, and players without VosTac get the flashlight flicker. The cost is that VosTac alone no longer flickers, and a second post hook on `Flashlight.Activate` next to VosTac's.
 * **Drain by the vanilla power tiers over a rate of its own for lasers.** One table for flashlights and lasers, and another mod can tier its laser through `power`. The cost is that a Medium laser empties as fast as a Polaris, which is quicker than a real laser module.
 * **A battery dropped on a weapon goes to its lowest powered attachment over asking which one.** No extra UI and it is what the player wants in most cases. The cost is that with several powered attachments the player cannot pick the target without detaching one. Only one exists per weapon today.
-* **A replace hook on `Interface.CombineCheck`.** Pre and post hooks cannot change the return value. The cost is a single-owner hook on a method every drag and drop goes through.
+* **A post hook on `Interface.Hover` over a replace hook on `Interface.CombineCheck`.** The hook is additive, so another mod replacing either method does not knock this mod out and is not blocked by it. The cost is that the hook repeats vanilla's flag mapping for a charge and has to follow it if a game patch changes those flags, and that it is dispatched on every physics tick of the interface.
+* **`Interface.Charge` stays a replace hook over taking the drop in a pre hook on `Interface.Release`.** Vanilla keeps deciding what a release does. The cost is one single-owner hook, on a method only battery logic has a reason to replace.
 * **A tooltip row over a charge on the weapon's grid label.** The label keeps meaning weapon condition. The cost is that the attached laser's charge is one hover away.
 * **Lasers made devices by a registry patch over a subtype test in every handler.** The device test, context entry and vanilla charge display apply to lasers unchanged.
