@@ -1,19 +1,27 @@
-# Likho's Battery
+# Likho's Battery Powered
 
-Batteries keep their charge and can be taken out of any device that accepts them.
+Removable batteries. Powered lasers. Flicker at low charge.
 
 ## Features
 
 * Batteries show their own charge. A device takes exactly the charge of the battery you put in.
-* Right click a charged device and pick `Remove (Batteries)` to get a battery with the device's charge. The device drops to 0%.
+* Right-click a charged device and pick `Remove (Batteries)` to get a battery with the device's charge. The device drops to 0%.
 * Dropping a battery on a charged device swaps their charge. A device at 0% consumes the battery, same as vanilla.
-* Prices follow charge. A battery is worth its charge and a device loses the price of the charge it is missing. Narva: 180€ at 100%, 80€ at 0%.
-* Looted flashlights spawn with 20-75% charge instead of 25-100% to balance out increased supply.
-* Lasers run on batteries. A laser drains 1% every 10 seconds while its beam is on, twice as fast in winter, and goes dark at 0%.
-* Drop a battery on a detached laser or straight on the weapon that carries one. `Remove (Batteries)` is offered on a detached laser only.
-* A laser keeps its charge when you attach and detach it. The weapon tooltip shows the charge of the attached laser.
-* Looted lasers spawn with 20-75% charge. A laser found attached to a weapon gets a charge in the same range.
-* Flashlights and lasers flicker briefly when their charge drops to 5% and again at every percent below that. In the last percent they flicker continuously.
+* Prices are adjusted by charge. A battery is worth its charge and a device loses the price of the charge it is missing. Narva: 180€ at 100%, 80€ at 0%.
+* Looted flashlights and lasers spawn with 20-75% charge instead of 25-100% to balance out increased supply.
+
+## Lasers
+
+* Lasers now run on batteries at medium power (drains 1% every 10 sec).
+* Drop a battery on a detached laser or straight on the weapon that carries it.
+* The `Remove (Batteries)` menu item is offered on a detached laser only.
+* The weapon tooltip shows the charge of the attached laser.
+
+## Low charge flicker
+
+* A flashlight dims briefly when its charge drops to 5% and again at every percent below that. In the last percent it flickers continuously until it goes out.
+* A laser does the same, but its beam and dot blink off instead of dimming.
+* The flashlight flicker used to be part of VosTac. If you run both mods, update VosTac to 3.5.2048 or later, otherwise the flashlight dims twice.
 
 ## Requirements
 

@@ -54,12 +54,12 @@ Owned in `likhos-battery/`:
 * `Scripts/Flicker.gd`, the burst rules
 * `Scripts/Interface.gd`, `Scripts/Item.gd`, `Scripts/Loot.gd`, `Scripts/Context.gd`
 * `Scripts/Laser.gd`, `Scripts/Flashlight.gd` and `Scripts/Tooltip.gd`, one handler script per hooked vanilla script as the others
-* `README.md`, `INSTRUCTIONS.md`
+* `README.md`, `INSTRUCTIONS.md`, `CHANGELOG.md`
 
 Owned in `likhos-vostac/`:
 
 * `Scripts/Hooks/Flashlight.gd`. It holds the beam shaping, the `_physics_process` replacement and the input driver. It holds no flicker.
-* `README.md`. The line about the flashlight flicker.
+* `README.md` and `CHANGELOG.md`. The lines about the flashlight flicker and the tooltip sizing.
 
 Owned in `mod-lib/`:
 
@@ -73,7 +73,7 @@ Context only, not modified:
 * `mod-lib/Main.gd`.
 * `likhos-vostac/Scripts/Hooks/Tooltip.gd`. The other user of the row helpers.
 
-Not owned: other mods, the rest of `mod-lib/`, repo documentation and the `CHANGELOG.md` of both mods.
+Not owned: other mods, the rest of `mod-lib/` and repo documentation.
 
 ## Solution
 
@@ -204,9 +204,9 @@ Vanilla `Tooltip.Update` fits the panel to its content and centers the tooltip o
 
 ### VosTac
 
-`Hooks/Flashlight.gd` shapes the beam in the `Activate` post hook and replaces `_physics_process`, as before. It keeps no charge or burst state and never writes light energy. The README does not list the flashlight flicker.
+`Hooks/Flashlight.gd` shapes the beam in the `Activate` post hook and replaces `_physics_process`, as before. It keeps no charge or burst state and never writes light energy. The README does not list the flashlight flicker as a VosTac feature and points to Likho's Battery for it. The changelog notes the move and the tooltip sizing of the optic rows.
 
-### `mod.txt`, `INSTRUCTIONS.md`, `README.md` of Likho's Battery
+### `mod.txt`, `INSTRUCTIONS.md`, `README.md`, `CHANGELOG.md` of Likho's Battery
 
 `mod.txt` declares the hooks, `INSTRUCTIONS.md` lists them under Compatibility:
 
@@ -225,7 +225,7 @@ Vanilla `Tooltip.Update` fits the panel to its content and centers the tooltip o
 | `LootContainer.gd` | `CreateLoot` | post |
 | `LootSimulation.gd` | `SpawnItems` | post |
 
-`INSTRUCTIONS.md` also lists the registry changes on the laser items. The README's feature list covers laser charge and drain, the battery drop on the gun, removal from a detached laser only and the low charge flicker of flashlights and lasers. Its requirements name Metro Mod Loader 3.4.2 or later, the version the registry calls were confirmed in.
+`INSTRUCTIONS.md` also lists the registry changes on the laser items. The README's feature list covers laser charge and drain, the battery drop on the gun, removal from a detached laser only and the low charge flicker of flashlights and lasers. Its requirements name Metro Mod Loader 3.4.2 or later, the version the registry calls were confirmed in. The changelog carries the release note. Both mods tell a player who runs the two together to update the other one, since an older VosTac next to this mod dims the flashlight twice.
 
 ### Observable result
 
