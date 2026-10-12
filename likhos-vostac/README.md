@@ -14,6 +14,7 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 * Reworked lowered weapon mode into [Adaptive Free Look](https://www.youtube.com/watch?v=I1lY93vEe-s) mode (disable in LCM)
 * New `Canted Aim (quick)` binding: canted aim independent from aim, with optional laser auto-activation (unbound by default)
 * Weapon handling speed (how fast you transition into the desired state) now scales with stance and optic: red dot and LPVO 1x **115%**, canted **130%**, magnified scope **80%**
+* Weapon sway while aiming and canted now scales with the total weight of the weapon: **100%** at 5kg, more for heavier guns, less for lighter ones, down to **30%** at 3kg and under
 * Reworked insert and ammo check mechanics to use hold action instead of toggle + can now reload directly from ammo check
 * Reworked the inspect mode and associated bindings
 * Reworked manual action gun reload animations to be more fluid (reduced animation lockout time)

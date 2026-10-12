@@ -4,9 +4,9 @@ extends RefCounted
 const WOBBLE_MULT: float = 3.0
 const WOBBLE_MULT_HOLD_BREATH: float = 0.5
 const WOBBLE_FREQ_MULT_EXHAUSTED: float = 2.0
-# the weight factor is the line through (light, light mult) and (base, 1.0), not clamped at either end
+# the weight factor is the line through (light, light mult) and (base, 1.0), floored at light mult and open above
 const WOBBLE_WEIGHT_BASE: float = 5.0
-const WOBBLE_WEIGHT_LIGHT: float = 1.0
+const WOBBLE_WEIGHT_LIGHT: float = 3.0
 const WOBBLE_WEIGHT_LIGHT_MULT: float = 0.3
 
 var config := preload("../Config.gd").instance
@@ -41,9 +41,9 @@ func _apply_wobble(noise: Node, gd: GameData, delta: float) -> void:
 	if gd.isAiming && !gd.isFiring:
 		amplitude_mult = lerp(WOBBLE_MULT, WOBBLE_MULT_HOLD_BREATH, config.hold_breath_state)
 
-	# a weight of 0 means no weapon is resolved, the line would give it 12.5%
+	# a weight of 0 means no weapon is resolved, the floor would give it the light mult
 	if (gd.isAiming || gd.isCanted) && !gd.isFiring && config.current_weapon_weight > 0.0:
-		amplitude_mult *= remap(config.current_weapon_weight, WOBBLE_WEIGHT_LIGHT, WOBBLE_WEIGHT_BASE, WOBBLE_WEIGHT_LIGHT_MULT, 1.0)
+		amplitude_mult *= maxf(WOBBLE_WEIGHT_LIGHT_MULT, remap(config.current_weapon_weight, WOBBLE_WEIGHT_LIGHT, WOBBLE_WEIGHT_BASE, WOBBLE_WEIGHT_LIGHT_MULT, 1.0))
 
 	if gd.armStamina <= 0.0:
 		frequency_mult = WOBBLE_FREQ_MULT_EXHAUSTED

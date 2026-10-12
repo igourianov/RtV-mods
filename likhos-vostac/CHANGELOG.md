@@ -1,3 +1,6 @@
+# 3.6.2050
+* weapon sway while aiming and canted now scales with the total weight of the weapon, attachments and ammo included
+
 # 3.5.2048
 * the low charge flashlight flicker moved to Likho's Battery Powered mod
 * fixed occasional tooltip overflow
