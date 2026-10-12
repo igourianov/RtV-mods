@@ -1,6 +1,8 @@
 extends "../Lib/Main.gd"
 
 const BatteryUtil := preload("./BatteryUtil.gd")
+const Config := preload("./Config.gd")
+const OpticPower := preload("./OpticPower.gd")
 const Interface := preload("./Interface.gd")
 const Context := preload("./Context.gd")
 const Item := preload("./Item.gd")
@@ -8,6 +10,9 @@ const Loot := preload("./Loot.gd")
 const Flashlight := preload("./Flashlight.gd")
 const Laser := preload("./Laser.gd")
 const Tooltip := preload("./Tooltip.gd")
+
+var LCM = load("res://mods/likhos-config-manager/Scripts/LCM.gd")
+var _config := Config.new()
 
 var _interface
 var _context
@@ -19,17 +24,18 @@ var _tooltip
 
 
 func setup(lib) -> void:
+	if is_instance_valid(LCM):
+		LCM.register_config(mod_id, mod_name, _config)
+
 	lib.patch(lib.Registry.ITEMS, BatteryUtil.FILE, { "showCondition": true })
 	BatteryUtil.data = lib.get_entry(lib.Registry.ITEMS, BatteryUtil.FILE)
 
-	# Vanilla lasers have no charge. These three fields make one a battery powered device with a drain rate.
 	for found: Dictionary in lib.find(lib.Registry.ITEMS, func(entry) -> bool: return entry is ItemData && entry.subtype == "Laser"):
-		var laser: ItemData = found["entry"]
-		var fields: Dictionary[String, Variant] = { "showCondition": true }
-		if laser.power == ItemData.Power.None:
-			fields["power"] = ItemData.Power.Medium
-		lib.patch(lib.Registry.ITEMS, found["id"], fields)
-		lib.append(lib.Registry.ITEMS, found["id"], "compatible", BatteryUtil.data)
+		_make_device(lib, found["id"], found["entry"], ItemData.Power.Medium)
+
+	for file: String in OpticPower.SIGHTS:
+		var tier := BatteryUtil.POWER_DOT if OpticPower.SIGHTS[file] == OpticPower.Sight.DOT else BatteryUtil.POWER_ILLUMINATION
+		_make_device(lib, file, lib.get_entry(lib.Registry.ITEMS, file), tier)
 
 	_interface = Interface.new(lib)
 	_context = Context.new(lib)
@@ -56,3 +62,16 @@ func setup(lib) -> void:
 	# Later than VosTac's handler on the same hook, which switches the laser on in canted aim.
 	# Running first would let a dead laser show for a frame.
 	_hooks.append(lib.hook("laser-_process-post", _laser.on_process_post, 200) as int)
+
+	register_action("reticle_illumination", "Reticle Illumination", create_key_input(KEY_Y))
+	add_child(OpticPower.new(_config))
+
+
+# Vanilla lasers and sights have no charge. These three fields make one a battery powered device with a drain rate.
+# An item that already has a power tier keeps it.
+func _make_device(lib, id: String, item: ItemData, tier: int) -> void:
+	var fields: Dictionary[String, Variant] = { "showCondition": true }
+	if item.power == ItemData.Power.None:
+		fields["power"] = tier
+	lib.patch(lib.Registry.ITEMS, id, fields)
+	lib.append(lib.Registry.ITEMS, id, "compatible", BatteryUtil.data)

@@ -8,8 +8,6 @@ enum ChamberCardMode { ENABLED, MANUAL_GUNS_ONLY, DISABLED }
 enum ZoomOutOfAim { ENABLED, DISABLED, RAIL_MOVEMENT }
 # an optic that lacks the chosen schema falls back to SHORT
 enum MagnificationSchema { DISCRETE, NORMALIZED, SHORT }
-# DISABLED keeps every reticle as vanilla authors it, LIGHT_SENSOR lights it from sunset to sunrise
-enum ReticleIllumination { DISABLED, MANUAL, LIGHT_SENSOR }
 
 const BASE_WEAPON_WEIGHT := 4.0
 # a key released later than this after its press was held, not tapped
@@ -60,7 +58,6 @@ var gameData := preload("res://Resources/GameData.tres")
 @export var negligent_discharge: bool = true
 @export var zoom_out_of_aim: ZoomOutOfAim = ZoomOutOfAim.RAIL_MOVEMENT
 @export var magnification_schema: MagnificationSchema = MagnificationSchema.NORMALIZED
-@export var reticle_illumination: ReticleIllumination = ReticleIllumination.MANUAL
 @export var NVG_PIP_blur: bool = true
 @export_range(0.0, 1.0, 0.1) var scope_low_light_dimming: float = 1.0
 @export var PIP_anti_aliasing: bool = true

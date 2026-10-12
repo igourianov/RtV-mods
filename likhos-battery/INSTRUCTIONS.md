@@ -20,6 +20,8 @@ This mod uses the registry API and hooks vanilla methods through Metro Mod Loade
 - `lib.patch()` on `Batteries` to set `showCondition`
 - `lib.patch()` on every laser (`subtype` `Laser`) to set `showCondition`, and `power` to `Medium` where it has none
 - `lib.append()` on every laser to add `Batteries` to `compatible`
+- `lib.patch()` on the sights `SRO`, `RMR`, `PRO`, `MRO`, `Micro`, `EXPS`, `Kobra`, `Vudu`, `Leopard`, `POSP` and `HMR` to set `showCondition`, and `power` where it has none. The `power` values are 4 for a red dot and 5 for an illuminated scope, which vanilla does not name
+- `lib.append()` on the same sights to add `Batteries` to `compatible`
 
 **Hooks** (other mods that also replace these will conflict, pick one):
 - `Interface.Charge` (replace)
@@ -37,5 +39,11 @@ This mod uses the registry API and hooks vanilla methods through Metro Mod Loade
 - `Tooltip.Reset` (post)
 - `LootContainer.CreateLoot` (post)
 - `LootSimulation.SpawnItems` (post)
+- `Inputs.CreateActions` (pre and post)
+- `Inputs.ResetActions` (post)
+
+[Likho's Config Manager](https://vostokmods.net/mod/likhos-config-manager) is optional. Without it sights run in `Manual` mode.
+
+The reticle of every powered sight is drawn by a second material that this mod chains to the sight's lens material as `next_pass`, and the lens material's own reticle texture is replaced by a blank one. A mod that sets `next_pass` on those materials or swaps reticle textures at runtime will conflict.
 
 The charge of a laser attached to a weapon is kept in the weapon's `storage`, which vanilla uses for furniture only. A mod that reads or clears `storage` on weapons will conflict.

@@ -24,8 +24,8 @@ func on_spawn_items_post() -> void:
 			_roll(child.slotData)
 
 
-# Replaces the vanilla 25-100 roll for flashlights, and gives lasers a roll vanilla does not have. Weapons and NVGs keep the vanilla roll.
+# Replaces the vanilla 25-100 roll for flashlights, and gives lasers and powered sights a roll vanilla does not have. Weapons and NVGs keep the vanilla roll.
 func _roll(slotData: SlotData) -> void:
-	var subtype: String = slotData.itemData.subtype
-	if subtype == "Light" || subtype == "Laser":
+	var itemData: ItemData = slotData.itemData
+	if itemData.subtype == "Light" || (itemData.type == "Attachment" && BatteryUtil.powers(itemData)):
 		slotData.condition = randi_range(BatteryUtil.ROLL_MIN, BatteryUtil.ROLL_MAX)

@@ -4,7 +4,13 @@ const FILE := "Batteries"
 # Tunable: charge of a looted device and of a powered attachment first seen on a weapon, in whole percent.
 const ROLL_MIN := 20
 const ROLL_MAX := 75
+# Power tiers of this mod's own, the ItemData.power values after the ones vanilla names: a red dot, and the illumination of a scope reticle.
+const POWER_DOT := 4
+const POWER_ILLUMINATION := 5
+# Tunable: charge drained per second while a device is on, indexed by ItemData.power. The first four are the vanilla flashlight rates.
+const DRAIN: Array[float] = [0.0, 0.05, 0.1, 0.2, 0.005, 0.02]
 
+static var gameData := preload("res://Resources/GameData.tres")
 static var data: ItemData
 # The charge of the attachment vanilla is detaching, on its way to the item made of it.
 static var _detached: SlotData
@@ -16,6 +22,13 @@ static func powers(itemData: ItemData) -> bool:
 		if element.file == FILE:
 			return true
 	return false
+
+
+# Charge a device of that power tier drains per second while it is on.
+static func drain_rate(power: int) -> float:
+	# Same season test as vanilla Flashlight.Consumption.
+	var cold := 2.0 if gameData.season == 2 else 1.0
+	return DRAIN[power] * cold
 
 
 # A device holds a battery only while it has charge. At 0% there is nothing to take out.

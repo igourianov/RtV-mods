@@ -7,12 +7,9 @@ uniform float opacity : hint_range(0.0, 1.0, 0.1) = 1.0;
 uniform float size : hint_range(0.0, 1.0, 0.01) = 0.1;
 uniform float intensity : hint_range(0.0, 10.0, 1.0) = 5.0;
 uniform float shadow : hint_range(0.0, 1.0, 0.001) = 0.0;
-uniform bool lit = true;
-// Lights every opaque texel instead of only the ones the texture authors red.
-uniform bool lit_whole = false;
+// Rescales `size` onto lens UV. Set per material, where Likho's Battery Powered reads it to place its own reticle pass the same way.
+uniform float lens_uv_scale = 1.0;
 
-// Per-optic `size` values are authored against vanilla's view-direction UV; this rescales them onto lens UV.
-const float RETICLE_SCALE = 3.0;
 // Width of the lens rim that fades the image out, in lens UV. The lens radius is 0.5.
 const float RIM_WIDTH = 0.05;
 
@@ -64,11 +61,10 @@ void fragment()
 
 	// Deliberately lens UV, not view space. Vanilla's view-space derivation made the sight
 	// parallax-free, which held the point of aim still while the uncompensated laser dot moved.
-	vec2 reticleUV = (UV - vec2(0.5)) / (size * RETICLE_SCALE);
+	vec2 reticleUV = (UV - vec2(0.5)) / (size * lens_uv_scale);
 	vec4 reticleSample = texture(reticle, reticleUV + vec2(0.5, 0.5));
 	float reticleAlpha = reticleSample.a;
-	float glow = lit ? (lit_whole ? 1.0 : reticleSample.r) : 0.0;
-	vec3 reticleColor = vec3(glow * intensity, 0.0, 0.0) * reticleAlpha;
+	vec3 reticleColor = vec3(reticleSample.r * intensity, 0.0, 0.0) * reticleAlpha;
 
 	// Reflection ----------------------------------------
 

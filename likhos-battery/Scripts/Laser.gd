@@ -3,11 +3,7 @@ extends RefCounted
 const BatteryUtil := preload("./BatteryUtil.gd")
 const Flicker := preload("./Flicker.gd")
 
-# Tunable: charge drained per second with the beam on, indexed by ItemData.Power. The vanilla flashlight rates.
-const DRAIN: Array[float] = [0.0, 0.05, 0.1, 0.2]
-
 var _lib
-var gameData := preload("res://Resources/GameData.tres")
 var _flicker := Flicker.new()
 # Physics frame of the last flicker step, and whether that step was a dip.
 var _step_frame: int
@@ -43,9 +39,7 @@ func on_process_post(delta: float) -> void:
 
 	var holder := BatteryUtil.attachment_holder(weapon, laser)
 	if holder.condition > 0:
-		# Same season test as vanilla Flashlight.Consumption.
-		var cold := 2.0 if gameData.season == 2 else 1.0
-		holder.condition -= delta * DRAIN[laser.power] * cold
+		holder.condition -= delta * BatteryUtil.drain_rate(laser.power)
 
 	if holder.condition <= 0:
 		caller.active = false
