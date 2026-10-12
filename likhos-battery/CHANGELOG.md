@@ -1,3 +1,8 @@
+# 2.0.19
+* red dot sights and scope reticle illumination now run on batteries
+* reticle illumination moved here from VosTac (update both mods)
+* new LCM settings to disable power draw for red dots and scopes
+
 # 1.1.7
 * fixed a possible script error on saves that hold leftover data of the VRCETS Battery System mod
 
