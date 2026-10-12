@@ -1,3 +1,7 @@
+# 3.5.2043
+* VSS can now mount the OZ5 laser, under the suppressor
+* reduced POSP reticle size in PIP slightly
+
 # 3.4.2038
 * reticle illumination is now switchable on Vudu, Leopard, HAMR and POSP
 * LCM toggle to control illumination behavior

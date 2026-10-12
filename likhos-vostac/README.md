@@ -19,6 +19,7 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 * Reworked manual action gun reload animations to be more fluid (reduced animation lockout time)
 * Mosin and 870 can now cycle the bolt on both full and empty mag, like the real guns do (you will lose ammo) + dry fire click on empty chamber
 * Negligent discharge (firing out of aim) is allowed (disable in LCM)
+* VSS can now mount the OZ5 laser, under the suppressor
 
 ## Aiming & Optics
 
@@ -175,6 +176,7 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `Item.UpdateDetails` (post)
 - `AI.Death` (pre)
 - `Loader.LoadScene` (pre)
+- `Pickup._ready` (post)
 
 **ExitPupil** is replaced by the built-in low light dimming. Remove it, the two are not meant to run together.
 

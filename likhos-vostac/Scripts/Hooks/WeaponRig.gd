@@ -1,6 +1,7 @@
 extends RefCounted
 
 const Out := preload("../../Lib/Out.gd")
+const AttachmentMounts := preload("../AttachmentMounts.gd")
 const WeaponRig_Fire := preload("../Nodes/WeaponRig_Fire.gd")
 const WeaponRig_Reload := preload("../Nodes/WeaponRig_Reload.gd")
 const WeaponRig_ManualReload := preload("../Nodes/WeaponRig_ManualReload.gd")
@@ -24,6 +25,7 @@ func on_ready_post() -> void:
 	_inject_handler(rig, WeaponRig_ManualReload, "Likho_WeaponRig_ManualReload")
 	_inject_handler(rig, WeaponRig_Optic, "Likho_WeaponRig_Optic")
 	_inject_handler(rig, WeaponRig_Inspect, "Likho_WeaponRig_Inspect")
+	AttachmentMounts.mount(rig.attachments, rig.data.file, "rig", rig)
 
 
 func _inject_handler(rig: WeaponRig, klass: GDScript, node_name: String) -> void:
