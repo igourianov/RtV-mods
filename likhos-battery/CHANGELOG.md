@@ -1,3 +1,6 @@
+# 1.1.7
+* fixed a possible script error on saves that hold leftover data of the VRCETS Battery System mod
+
 # 1.1.6
 * lasers now run on batteries: they drain while the beam is on, keep their charge through attach and detach, and can be fed a battery on the weapon itself
 * looted lasers spawn with 20-75% charge

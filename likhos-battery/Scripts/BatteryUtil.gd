@@ -28,7 +28,8 @@ static func is_removable(slotData: SlotData) -> bool:
 # Found by item, never by position: every powered attachment has its own entry.
 static func attachment_holder(weapon: SlotData, attachment: ItemData) -> SlotData:
 	for entry: SlotData in weapon.storage:
-		if entry.itemData.file == attachment.file:
+		# Other mods keep entries of their own here, some of them without an item.
+		if entry.itemData && entry.itemData.file == attachment.file:
 			return entry
 
 	# AI drops, looted weapons and saves older than the entries carry a powered attachment without one.
