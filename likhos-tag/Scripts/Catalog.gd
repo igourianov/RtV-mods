@@ -134,6 +134,8 @@ const DATA := {
 		"name": "AKM",
 		"inventory": "AKM",
 		"weight": 3.1,
+		"damage": 45.0,
+		"penetration": 2,
 	},
 	"AKS_74U": {
 		"name": ["AKS-74U", "АКС-74У"],
@@ -143,6 +145,8 @@ const DATA := {
 	"Colt_1911": {
 		"name": "Colt 1911",
 		"inventory": "1911",
+		"damage": 55.0,
+		"penetration": 0,
 	},
 	"Glock_17": {
 		"name": "Glock 17",
@@ -153,6 +157,7 @@ const DATA := {
 		"inventory": "HK416",
 		"weight": 3.5,
 		"caliber": "5.56 NATO",
+		"penetration": 3,
 	},
 	"KAR_21_223": {
 		"name": "KAR-21 .223",
@@ -163,26 +168,36 @@ const DATA := {
 		"name": "KAR-21 .308",
 		"inventory": "KAR-21-308",
 		"caliber": ".308 Win",
+		"damage": 70.0,
 	},
 	"KP_31": {
 		"name": "Suomi KP-31",
 		"inventory": "KP-31",
+	},
+	"M28": {
+		"damage": 70.0,
+	},
+	"M28_MOD": {
+		"damage": 70.0,
 	},
 	"M4A1": {
 		"name": "Colt M4A1",
 		"inventory": "M4A1",
 		"weight": 3.3,
 		"caliber": "5.56 NATO",
+		"penetration": 3,
 	},
 	"M78": {
 		"name": "Valmet M78",
 		"inventory": "M78",
 		"weight": 5.0,
 		"caliber": ".308 Win",
+		"damage": 70.0,
 	},
 	"Makarov": {
 		"name": ["Makarov", "Макаров"],
 		"inventory": "PM",
+		"damage": 20.0,
 	},
 	"MK18": {
 		"name": "Mk 18 Mod 1",
@@ -192,6 +207,7 @@ const DATA := {
 	"Mosin": {
 		"name": ["Mosin M91/30", "Трёхлинейка 1891/30"],
 		"inventory": "Mosin",
+		"damage": 70.0,
 	},
 	"MP5": {
 		"name": "H&K MP5A3",
@@ -211,6 +227,7 @@ const DATA := {
 		"name": "H&K MP7",
 		"inventory": "MP7",
 		"weight": 2.0,
+		"damage": 35.0,
 	},
 	"P320": {
 		"name": "SIG Sauer P320",
@@ -221,31 +238,40 @@ const DATA := {
 		"inventory": "870",
 		"weight": 3.2,
 		"caliber": "12Ga",
+		"penetration": 1,
 	},
 	"RK_62": {
 		"name": "Valmet RK-62",
 		"inventory": "RK-62",
 		"weight": 3.5,
+		"damage": 45.0,
+		"penetration": 2,
 	},
 	"RK_62M": {
 		"name": "Millog RK-62M3",
 		"inventory": "RK-62M3",
 		"weight": 4.1,
+		"damage": 45.0,
+		"penetration": 2,
 	},
 	"RK_95": {
 		"name": "Sako RK-95 TP",
 		"inventory": "RK-95",
 		"weight": 3.7,
+		"damage": 45.0,
+		"penetration": 2,
 	},
 	"SVD": {
 		"name": ["Dragunov", "Драгунов"],
 		"inventory": "SVD",
 		"weight": 3.7,
+		"damage": 70.0,
 	},
 	"VSS": {
 		"name": ["Vintorez", "Винторез"],
 		"inventory": "VSS",
 		"weight": 1.8,
+		"damage": 50.0,
 		"penetration": 4,
 	},
 	"Ammo_223": {

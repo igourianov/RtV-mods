@@ -1,3 +1,6 @@
+# 1.1.76
+* rebalanced weapon damage and penetration across the board
+
 # 1.1.75
 * renamed the Mosin M1891 to M91/30 (thanks Commie Czar for noting proper model)
 

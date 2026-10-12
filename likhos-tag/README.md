@@ -1,7 +1,11 @@
 # Likho's Tag
 
-Real world names for weapons and attachments.
+Real names, weight and damage for guns and attagments.
 
+## Features
+
+* Rebalanced damage and penetration across the board to align closer with real world.
+	* Overall damage went up, while penetration went down. Making player more survivable and AI less so.
 * All weapons, attachments and magazines got real life names
 * Russian items got Russian names (switch to English in LCM, takes a game restart)
 * Real life item weights (it matters for VosTac)
@@ -9,11 +13,11 @@ Real world names for weapons and attachments.
 
 Functional changes:
 * KAR-21 (308) mag 30 -> 20
-* VSS penetration 3 -> 4
+* Damage and penetration rebalanced after real world armor ratings (see Ballistics)
 
 ## Out of scope / Will not fix
 
-The recipe names retain vanilla weapon names. The name is used as a look up key, and I can't change it without breaking every other mod touching recipes. Not worth it to just change the name.
+The recipe names retain vanilla weapon names. The name is used as a look up key, and I can't change it without breaking every other mod touching recipes. Not worth it to just change the name. My `Likho's No.9` mod replaces them with a more elegant repair kit solution.
 
 ## Weapons
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
@@ -112,6 +116,21 @@ The recipe names retain vanilla weapon names. The name is used as a look up key,
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
 |--------------|---------------|-----------------------------|
 | PV7 | AN/PVS-7 | 1.2 → 0.9 |
+
+## Ballistics
+
+A round is stopped by armor of the same or higher level. Armor levels: plate II and SSh-39 are 1, plate IIIA and police helmet are 2, plate III is 3, plate III+ is 4, plate IV is 5.
+
+| Caliber | Penetration (Vanilla → Override) | Damage (Vanilla → Override) |
+|---------|----------------------------------|-----------------------------|
+| 9x18mm | | 25 → 20 |
+| .45 ACP | 1 → 0 | 25 → 55 |
+| 12GA | 2 → 1 | |
+| 4.6x30mm | | 25 → 35 |
+| .223 Rem / 5.56 NATO | 4 → 3 | |
+| 7.62x39mm | 4 → 2 | 40 → 45 |
+| .308 Win / 7.62x54mmR | | 50 → 70 |
+| 9x39mm | 3 → 4 | 30 → 50 |
 
 ## Requirements
 
