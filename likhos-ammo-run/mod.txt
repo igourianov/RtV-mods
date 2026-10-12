@@ -1,0 +1,16 @@
+[mod]
+name="Likho's Ammo Run"
+id="likhos-ammo-run"
+version="1.0.1"
+prefix="[likho-ammo-run]"
+description="Likho's micro mod reworking the Gunsmith's Ammo Delivery task"
+debug=false
+
+[hooks]
+"res://Scripts/Task.gd"="Initialize"
+
+[autoload]
+LikhosAmmoRun="res://mods/likhos-ammo-run/Scripts/Main.gd"
+
+[registry]
+enabled=true
