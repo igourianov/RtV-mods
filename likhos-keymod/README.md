@@ -2,6 +2,8 @@
 
 Add loot room keys to traders. Balanced for end-game economy.
 
+## Features
+
 VERY low price of 5000 Euro + tip (while supplies last):
 
 * Gunsmith -> Gym key

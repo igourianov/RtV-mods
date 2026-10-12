@@ -1,6 +1,6 @@
 # Likho's Second Hand
 
-Resize inventory footprint and allow use in secondary slow for several guns
+Resize inventory footprint and allow use in secondary slot for several guns
 
 ## Affected weapons
 

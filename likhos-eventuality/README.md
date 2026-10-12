@@ -2,12 +2,14 @@
 
 Fix dynamic event spawning so that they closely represent declared probabilities. QoL.
 
+## Features
+
 * Fixed individual event probabilities to follow declared values
 * Police van without sirens is no longer a dud
 * Heli crash site now plays a sound to let you know it has spawned
 * Fighter jet repeats
 
-### Probability math
+## Probability math
 
 Vanilla stacks probabilities, resulting in much lower chances of individual event spawning than declared in the UI. 
 
@@ -24,7 +26,7 @@ Events skipped because of exclusivity will pass on their probability as a roll b
 E.g. if you got two Airdrops in a row, then the trigger chance for heli crash on the third map load will be 30% instead of 10%.
 
 
-### Punisher
+## Punisher
 
 Vanilla Punisher is incredibly hard to catch because of accumulating probabilities. This is compounded by the fact that Police van has two distinct modes (with sirens and without) activated 50/50, so the real chance of getting Punisher encounter is more like 1%.
 
@@ -32,15 +34,15 @@ Two main changes were made:
 - Event variant without sirens will now trigger the boss just the same
 - Van speed reduced from 25 to 15, so it's much easier to catch him (or to run away)
 
-### Heli crash site
+## Heli crash site
 
 The crash site will now trigger an audible explosion (5-20 sec delay after loading the map) whenever it spawns. Now you know to look for it.
 
-### Fighter jet
+## Fighter jet
 
 Once triggered, will repeat anywhere between 3-10 times at random intervals (60-300 seconds).
 
-### LCM config
+## LCM config
 
 Published all event probabilities as LCM config values. Note that probability does not override availability. E.g. Punisher won't be available before day 5, even if you set him to 100%.
 

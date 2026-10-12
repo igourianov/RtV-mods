@@ -2,6 +2,8 @@
 
 Cross-compatible magazines as they should be in real life.
 
+## Features
+
 Following guns can now use each other's magazines:
 * AK-74SU <-> AK-12
 * AKM <-> RK variants

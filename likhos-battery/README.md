@@ -2,6 +2,8 @@
 
 Batteries keep their charge and can be taken out of any device that accepts them.
 
+## Features
+
 * Batteries show their own charge. A device takes exactly the charge of the battery you put in.
 * Right click a charged device and pick `Remove (Batteries)` to get a battery with the device's charge. The device drops to 0%.
 * Dropping a battery on a charged device swaps their charge. A device at 0% consumes the battery, same as vanilla.
