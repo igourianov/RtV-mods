@@ -213,8 +213,8 @@ static func apply(lib) -> void:
 		"name": posp.name + " 2-6x",
 		"scope": false,
 		"variable": true,
-		"reticleSize": Vector3(0.3, 0.3, 0.3), # default X is very small
-		"reticleSizeP": Vector3(0.5, 0.5, 0.5), # default X is very small
+		"reticleSize": Vector3(0.3, 0.3, 0.3), # fixed size across mag range
+		"reticleSizeP": Vector3(0.35, 0.35, 0.35), # fixed size across mag range
 	})
 	lib.patch(lib.Registry.ITEMS, "Vudu", {
 		"rarity": 2, # legendary
