@@ -1,7 +1,7 @@
-# 1.1.77
+# 1.2.77
 * real life weights for the soft armor plates
 
-# 1.1.76
+# 1.2.76
 * rebalanced weapon damage and penetration across the board
 
 # 1.1.75
