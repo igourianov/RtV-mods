@@ -10,6 +10,20 @@ func _init(lib) -> void:
 	_lib = lib
 
 
+func on_combine_check(targetItem: Item, combineItem: Item) -> int:
+	_lib.skip_super()
+
+	# Vanilla offers charging for Electronics only: it refuses a battery on a weapon and would nest one into a laser.
+	if combineItem.slotData.itemData.file == BatteryUtil.FILE && BatteryUtil.charge_target(targetItem.slotData):
+		return 5
+
+	return _lib._caller._rtv_vanilla_CombineCheck(targetItem, combineItem)
+
+
+func on_create_pre(slotData: SlotData, _targetGrid: Node, _useDrop: bool) -> void:
+	BatteryUtil.claim(slotData)
+
+
 func on_charge(targetItem: Item, sourceItem: Item) -> void:
 	_lib.skip_super()
 	_charge(_lib._caller, targetItem, sourceItem) # no await deliberate
@@ -35,8 +49,10 @@ func _charge(iface: Node, device: Item, battery: Item) -> void:
 	if gameData.isDead || !iface.activeProgress: return
 
 	# Read only now: a switched-on device keeps draining while the progress runs.
+	# On a weapon the charge belongs to an attachment and the weapon's own condition is its wear.
+	var holder := BatteryUtil.charge_target(device.slotData)
 	var charge: float = battery.slotData.condition
-	var previous: float = device.slotData.condition
+	var previous: float = holder.condition
 	if previous > 0:
 		battery.slotData.condition = previous
 		battery.UpdateDetails()
@@ -44,7 +60,7 @@ func _charge(iface: Node, device: Item, battery: Item) -> void:
 		grid.Pick(battery)
 		battery.queue_free()
 
-	device.slotData.condition = charge
+	holder.condition = charge
 	device.UpdateDetails()
 	iface.PlayAttach()
 

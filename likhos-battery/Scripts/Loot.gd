@@ -1,5 +1,7 @@
 extends RefCounted
 
+const BatteryUtil := preload("./BatteryUtil.gd")
+
 var _lib
 var gameData := preload("res://Resources/GameData.tres")
 
@@ -22,8 +24,8 @@ func on_spawn_items_post() -> void:
 			_roll(child.slotData)
 
 
-# Replaces the vanilla 25-100 roll for the two battery powered subtypes it covers. Weapons share that roll and keep it.
+# Replaces the vanilla 25-100 roll for flashlights, and gives lasers a roll vanilla does not have. Weapons and NVGs keep the vanilla roll.
 func _roll(slotData: SlotData) -> void:
 	var subtype: String = slotData.itemData.subtype
-	if subtype == "Light":
-		slotData.condition = randi_range(20, 75)
+	if subtype == "Light" || subtype == "Laser":
+		slotData.condition = randi_range(BatteryUtil.ROLL_MIN, BatteryUtil.ROLL_MAX)

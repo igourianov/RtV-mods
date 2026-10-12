@@ -1,0 +1,61 @@
+extends RefCounted
+
+const BatteryUtil := preload("./BatteryUtil.gd")
+const Flicker := preload("./Flicker.gd")
+
+# Tunable: charge drained per second with the beam on, indexed by ItemData.Power. The vanilla flashlight rates.
+const DRAIN: Array[float] = [0.0, 0.05, 0.1, 0.2]
+
+var _lib
+var gameData := preload("res://Resources/GameData.tres")
+var _flicker := Flicker.new()
+# Physics frame of the last flicker step, and whether that step was a dip.
+var _step_frame: int
+var _dip: bool
+
+
+func _init(lib) -> void:
+	_lib = lib
+
+
+# Polls instead of owning the toggle: VosTac replaces Laser._input and also switches the laser on by itself.
+func on_process_post(delta: float) -> void:
+	var caller = _lib._caller
+
+	# A rig holds a node for every laser it can mount and vanilla shows the attached one only.
+	if !caller.visible || !caller.active:
+		return
+
+	var rig = caller.owner
+	if !rig || !rig.slotData:
+		return
+
+	# The node is named after its item's file.
+	var weapon: SlotData = rig.slotData
+	var laser: ItemData
+	for nested: ItemData in weapon.nested:
+		if nested.file == caller.name:
+			laser = nested
+			break
+
+	if !laser || !BatteryUtil.powers(laser):
+		return
+
+	var holder := BatteryUtil.attachment_holder(weapon, laser)
+	if holder.condition > 0:
+		# Same season test as vanilla Flashlight.Consumption.
+		var cold := 2.0 if gameData.season == 2 else 1.0
+		holder.condition -= delta * DRAIN[laser.power] * cold
+
+	if holder.condition <= 0:
+		caller.active = false
+		caller.laser.hide()
+		return
+
+	var frame := Engine.get_physics_frames()
+	if frame - _step_frame >= Flicker.STEP_FRAMES:
+		_step_frame = frame
+		_dip = _flicker.step(holder.condition)
+
+	# Outside a dip this matches what the toggle left: an active laser is shown.
+	caller.laser.visible = !_dip
