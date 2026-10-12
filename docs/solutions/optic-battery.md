@@ -62,7 +62,8 @@ Vanilla has 13 optics (`subtype` `Optic`):
 * A switch for red dots. They are always on.
 * Draining a holstered weapon. A weapon drains only while it is in hands.
 * Draining scope illumination only while aiming. It drains while lit, as a laser does while its beam is on.
-* An `Always On` mode in place of `Vanilla`, and a `Vanilla` mode that still powers dots. `Vanilla` means no power draw for any sight. A sight that carries a charge it never uses in that mode is accepted.
+* One setting for scopes and red dots together. Each kind of consumer has its own.
+* Hiding the charge of a sight whose setting is `Disabled`. It still shows a charge and accepts batteries it never uses.
 * Dimming a sight during a flicker dip. A dip takes the power away entirely, as it does for a laser.
 * Removing the battery from a sight while it is attached. As for lasers, the weapon's context menu gets no battery entry.
 * Brightness levels, a HUD indicator and persisting the manual switch state.
@@ -138,44 +139,53 @@ In `setup`, `Main.gd` patches every catalog sight the way it patches lasers: `Ba
 
 ### Setting
 
-`Config.gd` exports the power draw mode, so LCM lists it under BP as `Reticle Power Draw`. `Main.gd` registers the config with LCM when LCM is installed. Without LCM the mode is `Manual`.
+`Config.gd` exports two settings in a `Sights` group, one per kind of consumer, so LCM lists them under BP. `Main.gd` registers the config with LCM when LCM is installed. Without LCM both are at their defaults.
 
-| Mode | Scope illumination is on when | Dots | Key |
-|---|---|---|---|
-| `Vanilla` | No sight draws power. Every reticle renders as authored whatever the charge, so the POSP stays black | Always shown, whatever the charge | Does nothing |
-| `Manual`, the default | The weapon's switch is on | Powered | Flips the weapon's switch |
-| `Light Sensor` | It is dark outside | Powered | Does nothing |
+`Red Dot Power Draw` governs every dot, the HMR's top dot included:
 
-* `Vanilla` is the vanilla behavior for scopes and dots alike: nothing drains, nothing flickers and nothing goes dark at 0%. Sights still show a charge and accept batteries.
-* `Manual` and `Light Sensor` differ for scope illumination only. Dots behave the same in both.
+| Value | Dot |
+|---|---|
+| `Disabled` | Draws no power. Always shown, whatever the charge |
+| `Always On`, the default | Needs charge and drains it whenever the weapon is in hands |
 
+`Scope Power Draw` governs scope illumination:
+
+| Value | Scope illumination is on when | Key |
+|---|---|---|
+| `Disabled` | Draws no power. The reticle renders as authored whatever the charge, so the POSP stays black | Does nothing |
+| `Manual`, the default | The weapon's switch is on | Flips the weapon's switch |
+| `Light Sensor` | It is dark outside | Does nothing |
+
+* `Disabled` is the vanilla behavior of that consumer: it does not drain, does not flicker and does not go dark at 0%. The sight still shows a charge and accepts batteries.
+* The two settings are independent. Only the HMR has both consumers, so only there do they combine.
 * Dark is the stretch from sunset to sunrise, never in a shelter. BP computes it on its own from `Simulation.time` by the rule VosTac's daylight factor uses.
-* A mode change in LCM shows on the next frame.
+* A change in LCM shows on the next frame.
 
 ### Switch
 
 * `Main.gd` registers the action `reticle_illumination`, labeled `Reticle Illumination`, default `Y`.
 * The manual switch is an on or off state of the weapon, kept as meta on its `slotData`. It is off until toggled and is lost on a map transition, a load and a drop and pick up.
 * The optic power node handles the press itself as input. No `WeaponRig` method is hooked for it.
-* In `Manual` mode a press flips the switch of the weapon in hands when its active optic has scope illumination, in and out of aim, and plays a click. On any other sight, with no optic, or in another mode it does nothing. The press is ignored while the inventory or a menu is open.
+* With `Scope Power Draw` on `Manual` a press flips the switch of the weapon in hands when its active optic has scope illumination, in and out of aim, and plays a click. On any other sight, with no optic, or on another value it does nothing. The press is ignored while the inventory or a menu is open.
 * The switch still flips on an empty battery. Nothing lights.
 
 ### Power, every frame
 
 `OpticPower.gd` is a node owned by BP's `Main`. For the weapon in hands and its active optic it resolves each consumer:
 
-* In `Vanilla` mode no consumer wants power.
+* A consumer whose setting is `Disabled` wants no power and renders as authored.
 * Otherwise a dot wants power whenever the weapon is in hands.
-* Scope illumination wants power when the mode says it is on, aiming or not.
+* Scope illumination wants power when its setting says it is on, aiming or not.
 * A consumer that wants power and whose sight has charge is powered.
 * At 0% nothing is powered. A dot disappears and scope illumination goes dark until a battery is put in.
 
 A sight has one battery and one drain rate, taken from its `power` tier. It drains its charge holder, found through `BatteryUtil.attachment_holder`, while its own consumer is powered: the dot of a red dot sight, the illumination of a scope.
 
-A scope that also carries a secondary dot drains in two speeds, since the dot is always on:
+A scope that also carries a secondary dot drains by which of its two consumers want power:
 
-* While its illumination is powered, at its own rate times a fixed multiplier.
-* While only the dot is powered, at the rate of the dot tier.
+* Illumination and dot: its own rate times a fixed multiplier.
+* Illumination only, with dots `Disabled`: its own rate.
+* Dot only: the rate of the dot tier.
 
 `BatteryUtil` holds the one rate table, indexed by `power`, and the winter factor. The laser handler and the optic power node both take the rate from it. The table covers the vanilla tiers and two tiers of BP's own, stored as the next two int values after `High`:
 
@@ -200,8 +210,9 @@ The node owns one `Flicker`, since one sight is live at a time. While any consum
 
 * During a dip every consumer of the sight renders as not powered: a dot disappears and a lit reticle goes unlit. Outside a dip they render as powered.
 * Drain is unaffected by a dip.
-* A sight with nothing powered is not stepped, so a scope with its illumination off never flickers, and no sight flickers in `Vanilla` mode.
-* The HMR's dot and scope illumination dip together, as they share the battery.
+* A sight with nothing powered is not stepped, so a scope with its illumination off never flickers.
+* A consumer whose setting is `Disabled` never dips.
+* The HMR's dot and scope illumination dip together when both draw power, as they share the battery.
 
 At the rates above a dot gives its four warnings 200 seconds apart and then blinks without a break for its last 200 seconds. Lit scope illumination does the same on a 50 second scale. Both are halved in winter.
 
@@ -222,7 +233,7 @@ The reticle is drawn by a material of its own, layered with the lens material th
 | Scope illumination, `Vudu`, `Leopard`, `HMR` | Lit as authored | Unlit |
 | Scope illumination, `POSP` | Lit whole | Unlit |
 | Dot | Lit as authored | Nothing |
-| Any consumer in `Vanilla` mode | Lit as authored | Lit as authored |
+| Any consumer whose setting is `Disabled` | Lit as authored | Lit as authored |
 
 ### Placement contract
 
@@ -244,7 +255,7 @@ This one parameter is the whole contract between the two mods. Neither loads a s
 
 * `mod.txt` declares `Inputs.CreateActions` and `Inputs.ResetActions`, the hooks mod-lib uses to register an action. No other hook is new.
 * `INSTRUCTIONS.md` lists those two hooks, the registry changes on the 11 sights, LCM as an optional mod and that BP chains a second material to the lens material of every powered sight.
-* The README covers powered sights, the illumination key and its modes, and tells a player who runs VosTac to update it. An older VosTac next to this BP handles the key too and draws its own illumination.
+* The README covers powered sights, the illumination key and the two settings with their values, and tells a player who runs VosTac to update it. An older VosTac next to this BP handles the key too and draws its own illumination.
 
 ### Observable result
 
@@ -254,9 +265,11 @@ With BP, with or without VosTac:
 * Dropping a battery on the sight or on the rifle brings the dot back.
 * An HMR at 0% has no top dot and a black ring and center dot. Its crosshairs stay usable.
 * An HMR in hands drains like a red dot while its illumination is off and five times faster while it is lit.
-* In `Manual` mode a Vudu, Leopard, HMR or POSP is unlit on first aim. The key lights it while the scope has charge.
-* In `Light Sensor` mode the four scopes light from sunset to sunrise while they have charge.
-* In `Vanilla` mode every sight looks and works as in vanilla. Nothing drains, and a red dot at 0% still shows its dot.
+* With `Scope Power Draw` on `Manual` a Vudu, Leopard, HMR or POSP is unlit on first aim. The key lights it while the scope has charge.
+* On `Light Sensor` the four scopes light from sunset to sunrise while they have charge.
+* On `Disabled` the four scopes look as in vanilla and their illumination never drains.
+* With `Red Dot Power Draw` on `Disabled` every dot shows at any charge and never drains.
+* An HMR with dots `Disabled` and scopes on `Manual` drains only while its reticle is lit and keeps its top dot at 0%. With dots `Always On` and scopes `Disabled` it drains like a red dot and keeps its lit ring at 0%.
 * At 5%, 4%, 3% and 2% a dot blinks off one to three times in quick succession, and a lit reticle blinks to black. From 1% they blink without a break until the sight is empty.
 * The rifle's tooltip shows the sight's charge, e.g. `Micro: 60%`.
 * A rifle taken from an AI has its sight at a random 20-75%.
@@ -278,7 +291,8 @@ With both:
 * **A placement parameter published by VosTac over BP detecting VosTac's shader.** The contract is one named value. The cost is that a future change to how VosTac places reticles (zeroing, cant, parallax) has to be mirrored in BP's shader.
 * **Two tiers of BP's own on `ItemData.power` over a rate table keyed by consumer.** One table serves every powered device and another mod can retier a sight. The cost is `power` values vanilla does not name, which a flashlight or NVG given one would not understand.
 * **The laser's flicker rules unchanged over rules scaled to the slower drain.** One set of burst rules for every powered device. The cost is that the last percent, which blinks without a break, lasts 200 seconds on a dot against 10 on a laser.
-* **`Vanilla` as no power draw for any sight over an `Always On` mode.** The mode is a plain opt out of sight power. The cost is that sights in that mode show a charge and accept batteries they never use.
-* **One battery and one tier per sight, with a multiplier for a secondary dot, over a tier per consumer.** The HMR needs no second charge and no second tier. The cost is a rule in code that only the HMR uses: the dot tier's rate while unlit, its own rate times the multiplier while lit.
+* **A setting per kind of consumer over one setting for all sights.** A player can keep free red dots and still have switchable scope illumination, or the reverse. The cost is a second setting and an HMR whose two consumers can follow different rules.
+* **`Disabled` as a plain opt out over hiding the charge of an opted out sight.** The registry patch runs once at startup and the settings change while the game runs. The cost is that such a sight shows a charge and accepts batteries it never uses.
+* **One battery and one tier per sight, with a multiplier for a secondary dot, over a tier per consumer.** The HMR needs no second charge and no second tier. The cost is a rule in code that only the HMR uses: the dot tier's rate for the dot alone, its own rate for the illumination alone and its own rate times the multiplier for both.
 * **A battery dropped on a weapon goes to its emptiest powered attachment.** Existing rule. With sights powered, a weapon with a laser and a sight is common, and the player cannot pick the target without detaching one.
 * **Charge rolled on first need for sights on weapons.** Existing rule. Sights already mounted in an existing save lose their implicit full charge.

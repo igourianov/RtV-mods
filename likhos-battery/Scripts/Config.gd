@@ -1,7 +1,10 @@
 extends RefCounted
 
-# VANILLA draws no power: every sight looks and works as the game ships it.
+# DISABLED draws no power: the dot or the reticle looks and works as the game ships it, whatever the charge.
+enum RedDotPowerDraw { DISABLED, ALWAYS_ON }
 # LIGHT_SENSOR lights scope reticles from sunset to sunrise.
-enum ReticlePowerDraw { VANILLA, MANUAL, LIGHT_SENSOR }
+enum ScopePowerDraw { DISABLED, MANUAL, LIGHT_SENSOR }
 
-@export var reticle_power_draw: ReticlePowerDraw = ReticlePowerDraw.MANUAL
+@export_group("Sights")
+@export var red_dot_power_draw: RedDotPowerDraw = RedDotPowerDraw.ALWAYS_ON
+@export var scope_power_draw: ScopePowerDraw = ScopePowerDraw.MANUAL

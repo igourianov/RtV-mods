@@ -60,7 +60,7 @@ func _init(config: Config) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if !event.is_action_pressed("reticle_illumination") || _config.reticle_power_draw != Config.ReticlePowerDraw.MANUAL:
+	if !event.is_action_pressed("reticle_illumination") || _config.scope_power_draw != Config.ScopePowerDraw.MANUAL:
 		return
 	if gameData.freeze || gameData.isDead || gameData.interface || gameData.settings || gameData.isTransitioning || gameData.isCaching:
 		return
@@ -88,22 +88,29 @@ func _process(delta: float) -> void:
 	var optic = rig.activeOptic
 	var item: ItemData = optic.attachmentData
 	var sight: Sight = SIGHTS[item.file]
-	# In VANILLA mode nothing draws power and every reticle shows as authored, whatever the charge.
-	var vanilla: bool = _config.reticle_power_draw == Config.ReticlePowerDraw.VANILLA
-	var lit: bool = vanilla || _illumination_on(rig, sight)
-	# A dot draws power whenever the weapon is in hands, scope illumination while it is on.
-	var draws: bool = lit || sight == Sight.DOT || sight == Sight.SCOPE_DOT
-	var powered: bool = vanilla || (draws && _draw_power(rig.slotData, item, sight, lit, delta))
-	var dot: Reticle = Reticle.LIT if powered else Reticle.NONE
+	# A consumer whose setting is DISABLED draws no power and shows as authored, whatever the charge.
+	var scope_on_battery: bool = sight != Sight.DOT && _config.scope_power_draw != Config.ScopePowerDraw.DISABLED
+	var dot_on_battery: bool = (sight == Sight.DOT || sight == Sight.SCOPE_DOT) && _config.red_dot_power_draw != Config.RedDotPowerDraw.DISABLED
+	var lit: bool = scope_on_battery && _illumination_on(rig)
 
-	var state: Reticle = Reticle.LIT
-	if sight == Sight.DOT:
-		state = dot
-	elif !lit || !powered:
-		state = Reticle.UNLIT
-	elif sight == Sight.SCOPE_WHOLE && !vanilla:
-		state = Reticle.LIT_WHOLE
-	_push(optic.reticle, state)
+	# A dot draws power whenever the weapon is in hands, scope illumination while it is on.
+	var powered := false
+	if lit || dot_on_battery:
+		var rate := BatteryUtil.drain_rate(item.power)
+		# A scope with a second dot runs the dot alone at the dot tier's rate, and both at its own rate times the multiplier.
+		if sight == Sight.SCOPE_DOT && !lit:
+			rate = BatteryUtil.drain_rate(BatteryUtil.POWER_DOT)
+		elif sight == Sight.SCOPE_DOT && dot_on_battery:
+			rate *= SECONDARY_DRAIN
+		powered = _draw_power(rig.slotData, item, rate, delta)
+
+	var dot: Reticle = Reticle.LIT if powered || !dot_on_battery else Reticle.NONE
+	var scope: Reticle = Reticle.LIT
+	if scope_on_battery && !(lit && powered):
+		scope = Reticle.UNLIT
+	elif scope_on_battery && sight == Sight.SCOPE_WHOLE:
+		scope = Reticle.LIT_WHOLE
+	_push(optic.reticle, dot if sight == Sight.DOT else scope)
 
 	if sight == Sight.SCOPE_DOT:
 		# The second dot is one more surface of the scope's mesh, with a lens material that is not `optic.reticle`.
@@ -115,23 +122,17 @@ func _process(delta: float) -> void:
 
 
 # Whether the weapon's scope illumination is on: by its own switch, or by the clock with the light sensor.
-func _illumination_on(rig: WeaponRig, sight: Sight) -> bool:
-	if sight == Sight.DOT:
-		return false
-	if _config.reticle_power_draw == Config.ReticlePowerDraw.MANUAL:
+func _illumination_on(rig: WeaponRig) -> bool:
+	if _config.scope_power_draw == Config.ScopePowerDraw.MANUAL:
 		return rig.slotData.get_meta(_LIT_META, false)
 	# Night by the clock. Shelters are lit from the inside and never run the day cycle.
 	return !gameData.shelter && (Simulation.time < _SUNRISE || Simulation.time > _SUNSET)
 
 
-# Drains the sight for this frame. True while it has charge left and is not inside a low charge flicker dip.
-func _draw_power(weapon: SlotData, item: ItemData, sight: Sight, lit: bool, delta: float) -> bool:
+# Drains the sight for this frame at the given rate. True while it has charge left and is not inside a low charge flicker dip.
+func _draw_power(weapon: SlotData, item: ItemData, rate: float, delta: float) -> bool:
 	var holder := BatteryUtil.attachment_holder(weapon, item)
 	if holder.condition > 0:
-		var rate := BatteryUtil.drain_rate(item.power)
-		# A scope with a second dot has two speeds, as the dot is always on.
-		if sight == Sight.SCOPE_DOT:
-			rate = rate * SECONDARY_DRAIN if lit else BatteryUtil.drain_rate(BatteryUtil.POWER_DOT)
 		holder.condition -= delta * rate
 
 	if holder.condition <= 0:

@@ -26,8 +26,11 @@ Removable batteries. Powered lasers and sights. Flicker at low charge.
 * Drop a battery on a detached sight or straight on the weapon that carries it. On a weapon with a laser and a sight the emptier one takes the battery.
 * The `Remove (Batteries)` menu item is offered on a detached sight only.
 * The weapon tooltip shows the charge of the attached sight.
-* The `Reticle Power Draw` setting in LCM picks the mode:
-	- *Vanilla:* no sight draws power. Every reticle looks and works as the game ships it.
+* The `Red Dot Power Draw` setting in LCM:
+	- *Disabled:* dots draw no power and always show, as the game ships them.
+	- *Always On:* a dot needs charge and drains it while the weapon is in your hands.
+* The `Scope Power Draw` setting in LCM:
+	- *Disabled:* scope reticles draw no power and look as the game ships them.
 	- *Manual:* the binding switches scope illumination per weapon.
 	- *Light Sensor:* scope reticles light up on their own from sunset to sunrise and stay black in daylight and in shelters.
 * Reticle illumination used to be part of VosTac. If you run both mods, update VosTac to the latest version, otherwise both mods handle the binding.

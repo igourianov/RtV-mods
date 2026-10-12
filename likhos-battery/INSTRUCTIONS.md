@@ -42,7 +42,7 @@ This mod uses the registry API and hooks vanilla methods through Metro Mod Loade
 - `Inputs.CreateActions` (pre and post)
 - `Inputs.ResetActions` (post)
 
-[Likho's Config Manager](https://vostokmods.net/mod/likhos-config-manager) is optional. Without it sights run in `Manual` mode.
+[Likho's Config Manager](https://vostokmods.net/mod/likhos-config-manager) is optional. Without it sights run on the default settings: red dots need charge and scope illumination is switched by the binding.
 
 The reticle of every powered sight is drawn by a second material that this mod chains to the sight's lens material as `next_pass`, and the lens material's own reticle texture is replaced by a blank one. A mod that sets `next_pass` on those materials or swaps reticle textures at runtime will conflict.
 
