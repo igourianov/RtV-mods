@@ -1,3 +1,6 @@
+# 1.0.4
+* Gunsmith now also sells VSS and MP7 magazines
+
 # 1.0.3
 * Compressed "Ammo Delivery" reward into 2 stacks instead of 6 individual boxes
 

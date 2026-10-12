@@ -10,8 +10,8 @@ const RECEIVE := {
 	"res://Items/Ammo/Ammo_46x30/Ammo_46x30.tres": 150,
 	"res://Items/Ammo/Ammo_9x39/Ammo_9x39.tres": 60,
 }
-# the ammo the task asks for in vanilla, sold by the Gunsmith instead
-const GUNSMITH_STOCK := ["Ammo_46x30", "Ammo_9x39", "Ammo_762x54R"]
+# items sold by the Gunsmith: the ammo the task asks for in vanilla, plus VSS and MP7 magazines
+const GUNSMITH_STOCK := ["Ammo_46x30", "Ammo_9x39", "Ammo_762x54R", "VSS_Magazine", "MP7_Magazine"]
 
 # held for the whole session, so the trader loads this patched instance from the resource cache.
 # The registry keys the patch by instance id and does not keep the task alive.

@@ -4,7 +4,9 @@ Makes 4.6x30 and 9x39 available from Gunsmith. Reworks "Ammo Delivery" task.
 
 ## Features
 
-Gunsmith now sells 4.6x30, 9x39 and 7.62x54R ammo. The idea is to make exotic ammo actually usable in game instead of being a safe queen.
+The idea is to make high-end ammo actually usable in game instead of being an exotic safe queen.
+
+Gunsmith now sells 4.6x30, 9x39 and 7.62x54R ammo, plus VSS and MP7 magazines. 
 
 The "Ammo Delivery" task reworked:
 
@@ -25,7 +27,7 @@ Note that trader's supply is generated at random from a large pool of items, so 
 This mod uses the registry API and hooks vanilla methods through Metro Mod Loader:
 
 **Registry API** (patches item and task definitions):
-- `lib.patch()` on `Ammo_46x30`, `Ammo_9x39` and `Ammo_762x54R` to attach them to the Gunsmith
+- `lib.patch()` on `Ammo_46x30`, `Ammo_9x39`, `Ammo_762x54R`, `VSS_Magazine` and `MP7_Magazine` to attach them to the Gunsmith
 - `lib.patch()` on the "Ammo Delivery" trader task to change its `deliver` and `receive` lists
 
 Other mods that patch the `deliver` or `receive` list of the same task will conflict.
