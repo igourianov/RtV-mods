@@ -3,7 +3,6 @@ name="Likho's Keymod"
 id="likhos-keymod"
 version="1.2.17"
 prefix="[likho-keymod]"
-description="Likho's micro mod adding loot room keys to traders"
 debug=false
 
 [autoload]

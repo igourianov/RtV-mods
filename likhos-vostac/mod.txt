@@ -3,7 +3,6 @@ name="Likho's VosTac"
 id="likhos-vostac"
 version="3.5.2048"
 prefix="[likho-vostac]"
-description="Likho's collection of game fixes and realism improvements"
 debug=false
 
 [hooks]

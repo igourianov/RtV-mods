@@ -3,7 +3,6 @@ name="Likho's Ammo Run"
 id="likhos-ammo-run"
 version="1.0.4"
 prefix="[likho-ammo-run]"
-description="Likho's micro mod reworking the Gunsmith's Ammo Delivery task"
 debug=false
 
 [hooks]

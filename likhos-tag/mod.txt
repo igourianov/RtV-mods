@@ -3,7 +3,6 @@ name="Likho's Tag"
 id="likhos-tag"
 version="1.2.77"
 prefix="[likho-tag]"
-description="Likho's comprehensive renaming and property tweaks for weapons and attachments"
 debug=false
 
 [hooks]

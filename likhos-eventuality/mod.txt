@@ -3,7 +3,6 @@ name="Likho's Eventuality"
 id="likhos-eventuality"
 version="1.3.64"
 prefix="[likho-evt]"
-description="Likho's fixes/enhancements to the dynamic events"
 debug=false
 
 [hooks]

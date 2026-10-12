@@ -3,7 +3,6 @@ name="Likho's TacMed"
 id="likhos-tacmed"
 version="1.4.156"
 prefix="[likho-tacmed]"
-description="Likho's mod overhauling advanced healing consumables"
 debug=false
 
 [hooks]
