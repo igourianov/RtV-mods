@@ -135,7 +135,7 @@ const DATA := {
 		"inventory": "AKM",
 		"weight": 3.1,
 		"damage": 45.0,
-		"penetration": 2,
+		"penetration": 3,
 	},
 	"AKS_74U": {
 		"name": ["AKS-74U", "АКС-74У"],
@@ -145,8 +145,7 @@ const DATA := {
 	"Colt_1911": {
 		"name": "Colt 1911",
 		"inventory": "1911",
-		"damage": 55.0,
-		"penetration": 0,
+		"damage": 35.0,
 	},
 	"Glock_17": {
 		"name": "Glock 17",
@@ -245,21 +244,21 @@ const DATA := {
 		"inventory": "RK-62",
 		"weight": 3.5,
 		"damage": 45.0,
-		"penetration": 2,
+		"penetration": 3,
 	},
 	"RK_62M": {
 		"name": "Millog RK-62M3",
 		"inventory": "RK-62M3",
 		"weight": 4.1,
 		"damage": 45.0,
-		"penetration": 2,
+		"penetration": 3,
 	},
 	"RK_95": {
 		"name": "Sako RK-95 TP",
 		"inventory": "RK-95",
 		"weight": 3.7,
 		"damage": 45.0,
-		"penetration": 2,
+		"penetration": 3,
 	},
 	"SVD": {
 		"name": ["Dragunov", "Драгунов"],
@@ -272,7 +271,6 @@ const DATA := {
 		"inventory": "VSS",
 		"weight": 1.8,
 		"damage": 50.0,
-		"penetration": 4,
 	},
 	"Ammo_223": {
 		"name": "Fiocchi 223A", # full name

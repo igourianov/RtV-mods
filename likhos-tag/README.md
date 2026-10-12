@@ -1,23 +1,42 @@
 # Likho's Tag
 
-Real names, weight and damage for guns and attagments.
+Real names, weight and damage for guns and attachments.
 
 ## Features
 
-* Rebalanced damage and penetration across the board to align closer with real world.
-	* Overall damage went up, while penetration went down. Making player more survivable and AI less so.
-* All weapons, attachments and magazines got real life names
+* Rebalanced damage and penetration values across the board to align closer with the real world.
+	* Overall damage went up, while penetration went down, making the player more survivable and AI less so.
+	* Plates and helmets will last a bit longer.
+* All weapons, attachments and magazines now have real life names
 * Russian items got Russian names (switch to English in LCM, takes a game restart)
 * Real life item weights (it matters for VosTac)
+* KAR-21 (308) magazine size 30 -> 20
 * Item tooltip is now slightly less verbose and more useful
-
-Functional changes:
-* KAR-21 (308) mag 30 -> 20
-* Damage and penetration rebalanced after real world armor ratings (see Ballistics)
 
 ## Out of scope / Will not fix
 
 The recipe names retain vanilla weapon names. The name is used as a look up key, and I can't change it without breaking every other mod touching recipes. Not worth it to just change the name. My `Likho's No.9` mod replaces them with a more elegant repair kit solution.
+
+## Ballistics
+
+A round is stopped by armor of the same or higher level. Armor levels: plate II and SSh-39 are 1, plate IIIA and police helmet are 2, plate III is 3, plate III+ is 4, plate IV is 5.
+
+The game only checks penetration for shots that hit the player. It has no effect on the damage your own guns deal to enemies.
+
+A single value means unchanged from vanilla and is listed for comparison only.
+
+| Caliber | Penetration (Vanilla → Override) | Damage (Vanilla → Override) |
+|---------|----------------------------------|-----------------------------|
+| 9x18mm | 1 | 25 → 20 |
+| 9x19mm | 1 | 25 |
+| .45 ACP | 1 | 25 → 35 |
+| 12GA | 2 → 1 | 40 |
+| 4.6x30mm | 2 | 25 → 35 |
+| .223 Rem / 5.56 NATO | 4 → 3 | 40 |
+| 5.45x39mm | 3 | 40 |
+| 7.62x39mm | 4 → 3 | 40 → 45 |
+| .308 Win / 7.62x54mmR | 4 | 50 → 70 |
+| 9x39mm | 3 | 30 → 50 |
 
 ## Weapons
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
@@ -35,7 +54,7 @@ The recipe names retain vanilla weapon names. The name is used as a look up key,
 | M78 | Valmet M78 | 4.8 → 5.0 |
 | Karov | Makarov | |
 | KM18 | Mk 18 Mod 1 | |
-| Mosin | M91/30 | |
+| Mosin | Mosin M91/30 | |
 | PM5 | H&K MP5A3 | 2.6 → 3.1 |
 | PM5-K | H&K MP5K | |
 | PM5-SD | H&K MP5SD | 2.8 → 3.4 |
@@ -50,8 +69,8 @@ The recipe names retain vanilla weapon names. The name is used as a look up key,
 
 ## Magazines
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
-|--------------|---------------|---------| 
-| KA-12 Magazine | AK-12 mag | |
+|--------------|---------------|-----------------------------|
+| KA-12 Magazine | AK-12 mag | 0.2 → 0.19 |
 | KA-M Magazine | AKM mag | 0.3 → 0.43 |
 | KAS-74U Magazine | AK-74 Bakelite mag | 0.2 → 0.23 |
 | C1911 Magazine | Colt 1911 mag | 0.1 → 0.08 |
@@ -67,7 +86,7 @@ The recipe names retain vanilla weapon names. The name is used as a look up key,
 | RK Magazine | Sako RK mag | 0.2 → 0.17 |
 | STANAG Magazine | USGI STANAG mag | 0.2 → 0.17 |
 | VSD Magazine | SVD Waffle mag | → 0.21 |
-| SS Magazine | VSS Plum mag | |
+| SS Magazine | VSS Plum mag | 0.2 → 0.18 |
 
 ## Attachments
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
@@ -104,33 +123,18 @@ The recipe names retain vanilla weapon names. The name is used as a look up key,
 | .308 | Lapua S374 .308Win | 0.6 → 0.65 |
 | .45 ACP | GECO .45 Auto FMJ | 0.5 → 1.05 |
 | 4.6 | Fiocchi 46EXA 4.6x30mm | 0.5 → 0.35 |
-| 5.45 | Barnaul 5.45x39mm FMJ | 0.4 → 0.33 |
+| 5.45 | Barnaul 5.45 FMJ | 0.4 → 0.33 |
 | 7.62 | Lapua 7.62 Ball | 0.6 → 0.49 |
-| 7.62R | TulAmmo 7.62x54mmR FMJ | 0.6 → 0.46 |
-| 9x18 | GECO 9x18mm FMJ | 0.3 → 0.5 |
-| 9x19 | GECO 9x19 124gr FMJ | 0.4 → 0.6 |
-| 9x39 | WOLF 9x39mm Subsonic | 0.3 → 0.46 |
+| 7.62R | TulAmmo 7.62x54R FMJ | 0.6 → 0.46 |
+| 9x18 | GECO 9x18 FMJ | 0.3 → 0.5 |
+| 9x19 | GECO 9mm 124gr FMJ | 0.4 → 0.6 |
+| 9x39 | WOLF 9x39 Subsonic | 0.3 → 0.46 |
 | 12/70 | Hubertus 00 Buck | 0.3 → 0.44 |
 
-### Other
+## Other
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
 |--------------|---------------|-----------------------------|
 | PV7 | AN/PVS-7 | 1.2 → 0.9 |
-
-## Ballistics
-
-A round is stopped by armor of the same or higher level. Armor levels: plate II and SSh-39 are 1, plate IIIA and police helmet are 2, plate III is 3, plate III+ is 4, plate IV is 5.
-
-| Caliber | Penetration (Vanilla → Override) | Damage (Vanilla → Override) |
-|---------|----------------------------------|-----------------------------|
-| 9x18mm | | 25 → 20 |
-| .45 ACP | 1 → 0 | 25 → 55 |
-| 12GA | 2 → 1 | |
-| 4.6x30mm | | 25 → 35 |
-| .223 Rem / 5.56 NATO | 4 → 3 | |
-| 7.62x39mm | 4 → 2 | 40 → 45 |
-| .308 Win / 7.62x54mmR | | 50 → 70 |
-| 9x39mm | 3 → 4 | 30 → 50 |
 
 ## Requirements
 
@@ -145,7 +149,7 @@ This mod uses the registry API through Metro Mod Loader:
 **Registry API** (patches item definitions):
 - Uses `lib.patch()` on items to override naming and other properties (display, name, weight, etc.)
 
-Other mods that patch the same fields on the same items will conflict. Tag is intentionally loaded late (`priority=10`) so its values win over earlier mods.
+Other mods that patch the same fields on the same items will conflict.
 
 **Hooks:**
 * `Tooltip.Reset` (post)
