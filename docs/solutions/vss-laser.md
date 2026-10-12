@@ -25,7 +25,10 @@ The VSS accepts the green laser (`OZ5`). Vanilla gives the VSS no laser attachme
 * `RigManager` adds a rig to the tree and only then calls `UpdateRig`, so a node added in the `weaponrig-_ready-post` hook is found by the first update.
 * Every vanilla caller of `Pickup.UpdateAttachments` (dropping, placing and loading shelter items) adds the pickup to the tree first, so a node added in the `pickup-_ready-post` hook is in place.
 * A vanilla method is hookable only when the mod's `mod.txt` lists it under `[hooks]`.
-* Ruled out: the laser on the inventory icon of the VSS. The icon looks the same with and without it.
+* Vanilla shows a laser on the inventory icon of the weapons that host it. A weapon's `tetris` scene is its icon sprite with one hidden child sprite per attachment, named after the attachment's `file`. The attachment's own `tetris` scene, `OZ5_2x1.tscn` for the laser, is the sprite instanced there.
+* An item's `tetris` is a `PackedScene` shared by every inventory instance of the item, so a sprite that vanilla should find has to be in the scene itself. The scene is not edited in place: a copy with the extra sprite is packed and set as the item's `tetris` through the `ITEMS` registry. Only nodes owned by the scene root survive packing.
+* The VSS icon and the laser icon are both drawn side on with the muzzle to the right. On the VSS icon the suppressor is the right hand quarter, 24 px thick.
+* `likhos-second-hand` shrinks the VSS icon through scale and offset fields that apply to the weapon sprite, so child sprites follow.
 * Ruled out: a clamp or rail model. The laser clips into the suppressor instead.
 * Ruled out: the `ANPEQ` and any weapon other than the VSS.
 * Ruled out: an LCM setting for the mount. It is always on.
@@ -35,7 +38,7 @@ The VSS accepts the green laser (`OZ5`). Vanilla gives the VSS no laser attachme
 
 Owned:
 
-* `likhos-vostac/Scripts/AttachmentMounts.gd`: which weapon gains which attachment, where it sits, the compatibility and the nodes on a rig and on a pickup.
+* `likhos-vostac/Scripts/AttachmentMounts.gd`: which weapon gains which attachment, where it sits, the compatibility, the nodes on a rig and on a pickup and the sprite on the inventory icon.
 * `likhos-vostac/Scripts/Hooks/WeaponRig.gd`: only the call that mounts the attachments on a rig when it becomes ready.
 * `likhos-vostac/Scripts/Hooks/Pickup.gd`: the pickup hook, which mounts the attachments on a pickup when it becomes ready.
 * `likhos-vostac/Scripts/Main.gd`: applying the compatibility on setup and registering the pickup hook.
@@ -47,7 +50,7 @@ Context only:
 * `likhos-vostac/Scripts/RigOpticPatches.gd` and `WeaponPatches.gd`: the form a VosTac data table takes. A static module at the `Scripts/` root with a constant table and an `apply(lib)` called from `Main.setup`.
 * `likhos-vostac/Scripts/Hooks/WeaponRig.gd` beyond that one call: the handler nodes it injects into a rig.
 * `likhos-vostac/Scripts/Hooks/Laser.gd`: toggling, auto on and convergence of every `Laser.gd` instance, including this one.
-* `likhos-magdump/Scripts/CompatTable.gd`, `RigVisual.gd` and `Pickup.gd`: the pattern followed here. A compatibility table, nodes added to the live rig in `weaponrig-_ready-post` and to the live pickup in `pickup-_ready-post`.
+* `likhos-magdump/Scripts/CompatTable.gd`, `RigVisual.gd` and `Pickup.gd`: the pattern followed here. A compatibility table, a sprite baked into a repacked copy of the weapon's `tetris` scene, nodes added to the live rig in `weaponrig-_ready-post` and to the live pickup in `pickup-_ready-post`.
 * `likhos-tag/Scripts/Catalog.gd` and `likhos-second-hand/Scripts/Patches.gd`: patch other fields of the `VSS` and `OZ5` items through the same registry.
 * `mod-lib/Main.gd`: `register_hook`.
 * Vanilla `src/Scripts/RigManager.gd`, `Pickup.gd`, `AI.gd`, `Item.gd`, `Laser.gd` and the scenes under `src/Items/Weapons/VSS/` and `src/Items/Attachments/OZ5/`.
@@ -56,9 +59,9 @@ Context only:
 
 ### Mount table
 
-`AttachmentMounts.gd` is a static module like `RigOpticPatches.gd`. It holds a table keyed by weapon `file`, then by attachment `file`. An entry names the attachment's rig scene, its pickup scene and its placement, a transform in the weapon's `Attachments` frame. The table has one entry: `VSS` with `OZ5`, using `OZ5_Active.tscn` and `OZ5_Static.tscn`.
+`AttachmentMounts.gd` is a static module like `RigOpticPatches.gd`. It holds a table keyed by weapon `file`, then by attachment `file`. An entry names the attachment's rig scene, its pickup scene and its placement, a transform in the weapon's `Attachments` frame. It also names the attachment's icon scene and its placement on the weapon's icon, a 2D transform in the frame of the weapon sprite. The table has one entry: `VSS` with `OZ5`, using `OZ5_Active.tscn`, `OZ5_Static.tscn` and `OZ5_2x1.tscn`.
 
-The placement puts the laser under the suppressor ahead of the handguard, with its mounting face turned up into the suppressor and sunk into it, so the body reads as clamped on and the gap a rail would fill is hidden. The emitter stays clear of the suppressor. The values are tuned in game.
+The placement puts the laser under the suppressor ahead of the handguard, with its mounting face turned up into the suppressor and sunk into it, so the body reads as clamped on and the gap a rail would fill is hidden. The emitter stays clear of the suppressor. The icon placement mirrors it: the laser sprite is flipped upside down under the suppressor, at the scale that matches the weapon icon. The values are tuned in game.
 
 ### Compatibility
 
@@ -72,7 +75,11 @@ The placement puts the laser under the suppressor ahead of the handguard, with i
 
 `Hooks/Pickup.gd` handles `pickup-_ready-post` and hands the pickup to `AttachmentMounts`. For a pickup whose item is in the table, `AttachmentMounts` adds an instance of each attachment's pickup scene under the pickup's `Attachments`, named after the attachment's `file`, hidden, at the table placement. `Pickup.UpdateAttachments` shows it on a dropped or placed weapon that has the laser nested.
 
-A weapon scene that already carries a node of that name keeps its own, on the rig and on the pickup alike.
+### Inventory icon
+
+On setup, together with the compatibility, `AttachmentMounts` gives each table weapon a `tetris` scene that carries a sprite for each table attachment: an instance of the attachment's icon scene, named after the attachment's `file`, hidden, at the table's icon placement and drawn behind the weapon sprite. Drawing it behind hides the part of the laser that overlaps the suppressor, the way the 3D placement sinks the clamp. `Item.UpdateAttachments` then shows it on a weapon that has the laser nested. The compatibility and the `tetris` scene reach the registry as one patch of the weapon, so a weapon never gains the attachment without its icon sprite.
+
+A weapon scene that already carries a node of that name keeps its own, on the rig, on the pickup and on the icon alike.
 
 ### Release notes
 
@@ -86,12 +93,12 @@ A weapon scene that already carries a node of that name keeps its own, on the ri
 * The dot converges on the point of aim and canted aim switches the laser on, as on any other weapon.
 * A VSS dropped with the laser attached shows it on the world model.
 * A VSS without the laser looks as in vanilla everywhere.
-* The inventory icon of the VSS does not show the laser.
+* The inventory icon of a VSS with the laser attached shows it under the suppressor, in the inventory grid and in the weapon slot.
 
 ## Tradeoffs
 
 * Nodes added to live instances through `_ready` hooks over a replaced rig or pickup scene. The cost is a dependency on vanilla adding the instance to the tree before it updates the attachments, and a hook that runs for every pickup in the world. It avoids shipping a copy of a 5 MB vanilla scene that breaks on every game update.
 * The vanilla laser models with no clamp over new mount geometry. The cost is a laser that visibly intersects the suppressor on close inspection.
-* No laser on the inventory icon over a repacked tetris scene with a baked sprite. The cost is that a VSS with a laser cannot be told from one without it in the inventory, short of the tooltip.
+* A sprite baked into a repacked copy of the `tetris` scene over a hook that adds it to every inventory item instance. The cost is that the weapon's `tetris` is replaced as a whole, so another mod that sets the VSS `tetris` without building on the current value drops the laser sprite or loses its own.
 * A table with one entry over VSS and OZ5 written into the code. The cost is a little indirection now. It matches how VosTac states per weapon data and takes a second mount without new code.
 * VosTac as the owner over a standalone mod. The cost is that the mount is not available without the rest of VosTac.

@@ -1,3 +1,6 @@
+# 3.5.2044
+* VSS inventory icon now shows the mounted OZ5 laser
+
 # 3.5.2043
 * VSS can now mount the OZ5 laser, under the suppressor
 * reduced POSP reticle size in PIP slightly
