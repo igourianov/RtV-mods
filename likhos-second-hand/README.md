@@ -17,4 +17,4 @@ Mosin only resized.
 ## Requirements
 
 - Road to Vostok 0.2.0.0 (Godot 4.6.3)
-- [Metro Mod Loader (MML)](https://vostokmods.net/mod/metro-mod-loader) v3.4.1 or later (separate install, not bundled with the game)
+- [Metro Mod Loader (MML)](https://vostokmods.net/mod/metro-mod-loader) v3.4.1 or later

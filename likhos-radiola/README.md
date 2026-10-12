@@ -67,7 +67,7 @@ func _ready() -> void:
 ## Requirements
 
 - Road to Vostok 0.2.0.0 (Godot 4.6.3)
-- [Metro Mod Loader (MML)](https://vostokmods.net/mod/metro-mod-loader) v3.4.1 or later (separate install, not bundled with the game)
-- [Likho's Config Manager](https://vostokmods.net/mod/likhos-config-manager) (LCM) (optional, the mod runs on its default settings without it)
+- [Metro Mod Loader (MML)](https://vostokmods.net/mod/metro-mod-loader) v3.4.1 or later
+- [Likho's Config Manager](https://vostokmods.net/mod/likhos-config-manager) (LCM). Optional, the mod runs on its default settings without it.
 
 This mod is a shell. It ships no music of its own. Stations are separate "station pack" mods that register themselves at startup (see `README.md`). Without any pack installed the radio cycle only contains Off and the vanilla station.
