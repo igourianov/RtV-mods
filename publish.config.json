@@ -11,6 +11,8 @@
     "likhos-magdump": { "mod_id": 109, "file_id": 7716993 },
     "likhos-second-hand": { "mod_id": 111, "file_id": 7721556 },
     "likhos-tag": { "mod_id": 112, "file_id": 7721610 },
-    "likhos-config-manager": { "mod_id": 156, "file_id": 8127195 }
+    "likhos-config-manager": { "mod_id": 156, "file_id": 8127195 },
+    "likhos-battery": { "mod_id": 160, "file_id": 8147355 },
+    "likhos-ammo-run": { "mod_id": 161, "file_id": 8147439 }
   }
 }
