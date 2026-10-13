@@ -42,8 +42,8 @@ const SIGHTS: Dictionary[String, Sight] = {
 }
 
 var gameData := preload("res://Resources/GameData.tres")
+var config := Config.instance
 
-var _config: Config
 var _rig_manager: Node
 var _click := AudioChunkPlayer.new(_CLICK_AUDIO, _CLICK_VOLUME)
 var _blank := ImageTexture.create_from_image(Image.create_empty(1, 1, false, Image.FORMAT_RGBA8))
@@ -54,13 +54,12 @@ var _step_frame: int
 var _dip: bool
 
 
-func _init(config: Config) -> void:
-	_config = config
+func _init() -> void:
 	add_child(_click)
 
 
 func _input(event: InputEvent) -> void:
-	if !event.is_action_pressed("reticle_illumination") || _config.scope_power_draw != Config.ScopePowerDraw.MANUAL:
+	if !event.is_action_pressed("reticle_illumination") || config.scope_power_draw != Config.ScopePowerDraw.MANUAL:
 		return
 	if gameData.freeze || gameData.isDead || gameData.interface || gameData.settings || gameData.isTransitioning || gameData.isCaching:
 		return
@@ -89,8 +88,8 @@ func _process(delta: float) -> void:
 	var item: ItemData = optic.attachmentData
 	var sight: Sight = SIGHTS[item.file]
 	# A consumer whose setting is DISABLED draws no power and shows as authored, whatever the charge.
-	var scope_on_battery: bool = sight != Sight.DOT && _config.scope_power_draw != Config.ScopePowerDraw.DISABLED
-	var dot_on_battery: bool = (sight == Sight.DOT || sight == Sight.SCOPE_DOT) && _config.red_dot_power_draw != Config.RedDotPowerDraw.DISABLED
+	var scope_on_battery: bool = sight != Sight.DOT && config.scope_power_draw != Config.ScopePowerDraw.DISABLED
+	var dot_on_battery: bool = (sight == Sight.DOT || sight == Sight.SCOPE_DOT) && config.red_dot_power_draw != Config.RedDotPowerDraw.DISABLED
 	var lit: bool = scope_on_battery && _illumination_on(rig)
 
 	# A dot draws power whenever the weapon is in hands, scope illumination while it is on.
@@ -124,7 +123,7 @@ func _process(delta: float) -> void:
 
 # Whether the weapon's scope illumination is on: by its own switch, or by the clock with the light sensor.
 func _illumination_on(rig: WeaponRig) -> bool:
-	if _config.scope_power_draw == Config.ScopePowerDraw.MANUAL:
+	if config.scope_power_draw == Config.ScopePowerDraw.MANUAL:
 		return rig.slotData.get_meta(_LIT_META, false)
 	# Night by the clock. Shelters are lit from the inside and never run the day cycle.
 	return !gameData.shelter && (Simulation.time < _SUNRISE || Simulation.time > _SUNSET)

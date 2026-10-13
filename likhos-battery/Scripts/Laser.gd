@@ -1,7 +1,10 @@
 extends RefCounted
 
+const Config := preload("./Config.gd")
 const BatteryUtil := preload("./BatteryUtil.gd")
 const Flicker := preload("./Flicker.gd")
+
+var config := Config.instance
 
 var _lib
 var _flicker := Flicker.new()
@@ -20,6 +23,13 @@ func on_process_post(delta: float) -> void:
 
 	# A rig holds a node for every laser it can mount and vanilla shows the attached one only.
 	if !caller.visible || !caller.active:
+		return
+
+	if config.laser_power_draw == Config.LaserPowerDraw.DISABLED:
+		# Nothing else shows the beam again when the setting changes in the middle of a dip.
+		if _dip:
+			_dip = false
+			caller.laser.show()
 		return
 
 	var rig = caller.owner

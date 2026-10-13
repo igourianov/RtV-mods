@@ -87,7 +87,7 @@ Owned in `likhos-battery/`:
 * `Shaders/Reticle.gdshader`, new: the reticle drawn as its own pass.
 * `Scripts/Main.gd`: the registry patches for sights, LCM registration, the action, creating the optic power node.
 * `Scripts/BatteryUtil.gd`: the drain rate table and the winter factor shared by lasers and sights.
-* `Scripts/Laser.gd`: only where it takes its drain rate from.
+* `Scripts/Laser.gd`: where it takes its drain rate from, and its power draw setting.
 * `Scripts/Loot.gd`: the loot roll for detached sights.
 * `README.md`, `INSTRUCTIONS.md`, `CHANGELOG.md`.
 
@@ -139,7 +139,14 @@ In `setup`, `Main.gd` patches every catalog sight the way it patches lasers: `Ba
 
 ### Setting
 
-`Config.gd` exports two settings in a `Sights` group, one per kind of consumer, so LCM lists them under BP. `Main.gd` registers the config with LCM when LCM is installed. Without LCM both are at their defaults.
+`Config.gd` exports one setting in a `Lasers` group and two in a `Sights` group, one per kind of consumer, so LCM lists them under BP. `Main.gd` registers the config with LCM when LCM is installed. Without LCM all three are at their defaults.
+
+`Laser Power Draw` governs every laser, and the laser handler reads it:
+
+| Value | Laser |
+|---|---|
+| `Disabled` | Draws no power. The beam works whatever the charge |
+| `Enabled`, the default | Needs charge and drains it while the beam is on |
 
 `Red Dot Power Draw` governs every dot, the HMR's top dot included:
 
@@ -156,8 +163,8 @@ In `setup`, `Main.gd` patches every catalog sight the way it patches lasers: `Ba
 | `Manual`, the default | The weapon's switch is on | Flips the weapon's switch |
 | `Light Sensor` | It is dark outside | Does nothing |
 
-* `Disabled` is the vanilla behavior of that consumer: it does not drain, does not flicker and does not go dark at 0%. The sight still shows a charge and accepts batteries.
-* The two settings are independent. Only the HMR has both consumers, so only there do they combine.
+* `Disabled` is the vanilla behavior of that consumer: it does not drain, does not flicker and does not go dark at 0%. The laser or sight still shows a charge and accepts batteries.
+* The settings are independent. Only the HMR has both consumers, so only there do they combine.
 * Dark is the stretch from sunset to sunrise, never in a shelter. BP computes it on its own from `Simulation.time` by the rule VosTac's daylight factor uses.
 * A change in LCM shows on the next frame.
 

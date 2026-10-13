@@ -16,6 +16,9 @@ Removable batteries. Powered lasers and sights. Flicker at low charge.
 ## Lasers
 
 * Lasers run at medium power (drains 1% every 10 sec while the beam is on).
+* The `Laser Power Draw` setting in LCM:
+	- *Disabled:* lasers draw no power and work at any charge, as the game ships them.
+	- *Enabled:* a laser needs charge and drains it while the beam is on.
 
 ## Sights
 

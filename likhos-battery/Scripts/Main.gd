@@ -12,7 +12,7 @@ const Laser := preload("./Laser.gd")
 const Tooltip := preload("./Tooltip.gd")
 
 var LCM = load("res://mods/likhos-config-manager/Scripts/LCM.gd")
-var _config := Config.new()
+var config := Config.instance
 
 var _interface
 var _context
@@ -25,7 +25,7 @@ var _tooltip
 
 func setup(lib) -> void:
 	if is_instance_valid(LCM):
-		LCM.register_config(mod_id, mod_name, _config)
+		LCM.register_config(mod_id, mod_name, config)
 
 	lib.patch(lib.Registry.ITEMS, BatteryUtil.FILE, { "showCondition": true })
 	BatteryUtil.data = lib.get_entry(lib.Registry.ITEMS, BatteryUtil.FILE)
@@ -64,7 +64,7 @@ func setup(lib) -> void:
 	_hooks.append(lib.hook("laser-_process-post", _laser.on_process_post, 200) as int)
 
 	register_action("reticle_illumination", "Reticle Illumination", create_key_input(KEY_Y))
-	add_child(OpticPower.new(_config))
+	add_child(OpticPower.new())
 
 
 # Vanilla lasers and sights have no charge. These three fields make one a battery powered device with a drain rate.

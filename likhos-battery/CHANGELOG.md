@@ -1,3 +1,6 @@
+# 2.0.23
+* new LCM setting to disable power draw for lasers
+
 # 2.0.22
 * a scope with lit reticle illumination shows a faint red glow on the rim of its lens while out of aim
 
