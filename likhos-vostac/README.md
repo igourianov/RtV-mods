@@ -30,7 +30,6 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 * Reworked the PIP scope mode for realism
 * Reworked all optics with real eye relief (only in PIP) and magnification values.
 * Scopes lose brightness at dusk and at night according to their exit pupil (only in PIP, adjust in LCM). At full night the light transmission is: ACOG 100%, HAMR and PU 73%, POSP at 6x 33%, Leopard at 8x 18% and Vudu at 10x 16%.
-* Switchable reticle illumination used to be part of VosTac. It now comes with [Likho's Battery Powered](https://vostokmods.net/mod/likhos-battery), where sights run on batteries. If you run both mods, update Likho's Battery Powered too.
 * LPVO zoom is now accessible without aiming - gated by the Rail movement modifier by default to avoid collision with lower/raise weapon (change in LCM)
 * Added explicit bindings to the base game settings for optic zoom in/out (it was hardcoded to mouse wheel)
 
