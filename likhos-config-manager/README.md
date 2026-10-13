@@ -1,19 +1,19 @@
 # Likho's Config Manager
 
-A lightweight settings menu for mods. Meant as a replacement for MCM for mod builders.
+A lightweight settings menu for mods. A simpler alternative to MCM for mod authors.
 
 ## Features
 
 - Clean API with minimal footprint for mod makers. No pages of crude metadata required.
-- Clean, transparent config files that save only values and only if they deviate from defaults, making migrations a breeze.
-- Opens from the `LCM` button in the top right corner of the game's settings screen (placed next to MCM button).
-- Settings UI mimics MCM screen (credit to Doink for it) although completely different on the back end
+- Config files store only the values that differ from the defaults. This keeps migrations simple.
+- Opens from the `LCM` button in the top right corner of the game's settings screen (placed next to the MCM button).
+- The settings UI mimics the MCM screen (credit to Doink), but the implementation is entirely different.
 
 Without this mod installed, mods that rely on it run on their default settings.
 
 Settings are saved per mod in `%APPDATA%\Road to Vostok\LCM\<mod-id>.cfg`.
 
-Every Metro Mod Loader profile has its own settings, kept in that file under a section named after the profile. A new profile starts on the defaults. So does a renamed profile and a copy of an existing one.
+Every MML profile has its own section in the settings file. A new profile starts on the defaults.
 
 ```ini
 [Default]
@@ -31,7 +31,7 @@ aim_mode=Toggle
 
 ## Usage (for mod authors)
 
-A mod describes its settings as a class with `@export` fields and registers an instance of it with one call. LCM builds the settings page from the fields, loads the player's saved values into the object and saves changes. The mod never deals with files.
+The consuming mod describes its settings as a class with `@export` fields and registers its instance with one call. LCM builds the settings page from the fields, loads the player's saved values into the object and saves changes. The consuming mod never has to deal with config files or MML profiles or additional metadata.
 
 ### 1. Define config class
 
@@ -46,13 +46,13 @@ extends RefCounted
 @export_range(0.0, 20.0, 0.1) var walk_speed := 3.0
 @export_enum("Hold", "Toggle") var aim_mode: String = "Hold"
 
-# no @export, so it is not a setting
+# no @export - ignored by LCM
 var current_weapon_weight := 0.0
 ```
 
-- An `@export` field is a setting. Its initial value is the default.
+- The `@export` hint marks a field as a setting. Its initial value is the default.
 - A field without `@export` is ignored by LCM and can hold runtime state.
-- Settings appear in declaration order. `@export_group` starts a section with a header. Settings outside of any section are shown first, without a header.
+- Settings appear in declaration order. `@export_group` starts a section with a header. Settings outside any section are shown first, without a header.
 - A setting's label is derived from the field name. Example: `walk_speed` shows as `Walk speed` and `NVG_blur` shows as `NVG blur`.
 
 ### 2. Set up shared instance
@@ -80,7 +80,7 @@ func _process(delta: float) -> void:
 
 ### 3. Registration
 
-Load LCM and pass it the instance from step 2.
+Load LCM and pass it the instance from step 2. Registration can happen at any point during startup. It does not depend on mod load order.
 
 Always check the loaded script with `is_instance_valid` before calling it. When LCM is not installed, `load()` returns `null`, and calling `register_config` on that `null` crashes the script.
 
@@ -91,19 +91,10 @@ var LCM = load("res://mods/likhos-config-manager/Scripts/LCM.gd") # will print e
 
 func _ready() -> void:
 	if is_instance_valid(LCM):
-		LCM.register_config("my-mod", "My Mod", config)
+		LCM.register_config("my-mod-id", "My Mod Name", config)
 ```
 
 A mod that reads its settings straight from the config object needs nothing more. This is the default case.
-
-`register_config(mod_uid, mod_name, config, on_applied = Callable()) -> bool`
-
-Returns `true` when the config is registered. Returns `false` and logs a warning when the id is invalid.
-
-- `mod_uid`: identifier to distinguish different mods. It also names the config file, `<mod_uid>.cfg`. Can only contain `a-z`, `0-9`, `-` and `_`. Registering again under the same id replaces the earlier config and logs a warning.
-- `mod_name`: the name shown in the menu. Purely cosmetic.
-- `config`: the config object defined above. Its values at the time of the call become the defaults.
-- `on_applied`: optional callback, takes no arguments. Called once during registration if the player has saved values in the active mod loader profile, after they are written into the object. Called again every time the player changes settings in the menu. It is not called when the profile has nothing saved.
 
 #### Reacting to changes (special case)
 
@@ -114,13 +105,24 @@ const config := preload("./Config.gd").instance
 
 func _ready() -> void:
 	if is_instance_valid(LCM):
-		LCM.register_config("my-mod", "My Mod", config, _on_config_applied)
+		LCM.register_config("my-mod-id", "My Mod Name", config, _on_config_applied)
 
 func _on_config_applied() -> void:
 	# act on the new settings
 ```
 
-Registration can happen at any point of startup. It does not depend on mod load order.
+### API surface
+
+```gdscript
+register_config(mod_uid, mod_name, config, on_applied = Callable()) -> bool
+```
+
+Returns `true` when the config is registered. Returns `false` and logs a warning when the id is invalid.
+
+- `mod_uid`: Unique mod identifier. Also names the config file, `<mod_uid>.cfg`. Can only contain `a-z`, `0-9`, `-` and `_`. Registering again under the same id replaces the earlier config and logs a warning.
+- `mod_name`: The name shown in the menu. Purely cosmetic.
+- `config`: The config object defined above. Its values at the time of the call become the defaults.
+- `on_applied`: Optional callback, takes no arguments. Called once during registration, after saved values are written into the object. This happens only if the active mod loader profile has saved values. Called again every time the player changes settings in the menu.
 
 ### Supported fields
 
@@ -130,21 +132,19 @@ Registration can happen at any point of startup. It does not depend on mod load 
 | `int`, `float` | Number box |
 | `int`, `float` with `@export_range(min, max, step)` | Slider with a number box |
 | `String` | Text box |
-| `String` or `int` with `@export_enum` or `enum` type  | Dropdown |
+| `String` or `int` with `@export_enum` or `enum` type | Dropdown |
 | `Color` | Color picker |
 | `Vector2`, `Vector3` | A number box per component |
 | `Vector2`, `Vector3` with `@export_custom(PROPERTY_HINT_RANGE, "min,max,step")` | A limited number box per component |
 
 A field of any other type is skipped with a warning in the log.
 
-GDScript does not support `@export_range` on a `Vector2` or `Vector3`. A script that uses it fails to parse. `@export_custom(PROPERTY_HINT_RANGE, "min,max,step")` is the workaround, and its range applies to every component.
+Note that GDScript does not support `@export_range` hint on `Vector2` or `Vector3` fields. Use `@export_custom(PROPERTY_HINT_RANGE, "min,max,step")` hint to apply its range to every component.
 
 One example per kind of row:
 
 ```gdscript
 extends RefCounted
-
-enum CantMode { DEFAULT, RAIL, OFF }
 
 # Off and On buttons
 @export var show_crosshair := true
@@ -163,12 +163,13 @@ enum CantMode { DEFAULT, RAIL, OFF }
 @export var player_tag := "Likho"
 
 # dropdown over an enum of the script, listed as Default, Rail and Off
+enum CantMode { DEFAULT, RAIL, OFF }
 @export var cant_mode: CantMode = CantMode.RAIL
 
 # dropdown that stores the text of the option
 @export_enum("Cross", "Dot", "None") var crosshair_style: String = "Dot"
 
-# dropdown that stores the position of the option: 0 for Low, 1 for High
+# dropdown that stores the index of the option: 0 for Low, 1 for High
 @export_enum("Low", "High") var quality: int = 1
 
 # dropdown that stores the number given after the colon
@@ -190,6 +191,6 @@ enum CantMode { DEFAULT, RAIL, OFF }
 
 - Values are written into the config object when the player leaves the mod's page or closes the menu, not while a control is being moved.
 - Only values that differ from the default are saved. A default you change in an update reaches every player who has not changed that setting.
-- A saved value is ignored when its field is removed or changes its type. A value of a changed type is replaced on the next save. A value of a removed field stays in the file unused.
+- A saved value is ignored when its field is removed or changes its type. A value of a changed type is replaced on the next save. A value of a removed field stays in the file, unused.
 - Values are saved per mod loader profile. A profile without saved values runs on your defaults and never takes values from another profile.
 - The config object is yours. LCM keeps a reference to it for as long as the game runs and never frees or replaces it.
