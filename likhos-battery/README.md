@@ -38,7 +38,7 @@ Removable batteries. Powered lasers and sights. Flicker at low charge.
 ## Low charge flicker
 
 * QoL feature to let the user know visually when charge is running out.
-* Flashlights, lasers and sights flicker briefly at 5% charge and every % point below that.
+* Flashlights, night vision goggles, lasers and sights flicker briefly at 5% charge and every % point below that.
 * In the last percent they flicker continuously until they go out.
 * The flashlight flicker used to be part of VosTac. If you run both mods, update VosTac to 3.5.2048 or later, otherwise the flashlight dims twice.
 

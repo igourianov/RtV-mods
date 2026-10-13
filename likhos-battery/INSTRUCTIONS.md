@@ -35,6 +35,7 @@ This mod uses the registry API and hooks vanilla methods through Metro Mod Loade
 - `Context.Update` (post)
 - `Laser._process` (post)
 - `Flashlight.Activate` (post)
+- `NVG.Activate` (post)
 - `Tooltip.Update` (post)
 - `Tooltip.Reset` (post)
 - `LootContainer.CreateLoot` (post)

@@ -8,6 +8,7 @@ const Context := preload("./Context.gd")
 const Item := preload("./Item.gd")
 const Loot := preload("./Loot.gd")
 const Flashlight := preload("./Flashlight.gd")
+const NVG := preload("./NVG.gd")
 const Laser := preload("./Laser.gd")
 const Tooltip := preload("./Tooltip.gd")
 
@@ -19,6 +20,7 @@ var _context
 var _item
 var _loot
 var _flashlight
+var _nvg
 var _laser
 var _tooltip
 
@@ -42,6 +44,7 @@ func setup(lib) -> void:
 	_item = Item.new(lib)
 	_loot = Loot.new(lib)
 	_flashlight = Flashlight.new(lib)
+	_nvg = NVG.new(lib)
 	_laser = Laser.new(lib)
 	_tooltip = Tooltip.new(lib)
 
@@ -57,6 +60,7 @@ func setup(lib) -> void:
 	register_hook("lootcontainer-createloot-post", _loot.on_create_loot_post)
 	register_hook("lootsimulation-spawnitems-post", _loot.on_spawn_items_post)
 	register_hook("flashlight-activate-post", _flashlight.on_activate_post)
+	register_hook("nvg-activate-post", _nvg.on_activate_post)
 	register_hook("tooltip-update-post", _tooltip.on_update_post)
 	register_hook("tooltip-reset-post", _tooltip.on_reset_post)
 	# Later than VosTac's handler on the same hook, which switches the laser on in canted aim.

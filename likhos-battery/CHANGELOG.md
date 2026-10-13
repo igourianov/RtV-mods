@@ -1,3 +1,6 @@
+# 2.1.27
+* NVG now flicker at low charge, the same way flashlights do
+
 # 2.0.23
 * new LCM setting to disable power draw for lasers
 

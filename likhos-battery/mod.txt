@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Battery Powered"
 id="likhos-battery"
-version="2.0.23"
+version="2.1.27"
 prefix="[likho-battery]"
 debug=false
 
@@ -12,6 +12,7 @@ debug=false
 "res://Scripts/LootContainer.gd"="CreateLoot"
 "res://Scripts/LootSimulation.gd"="SpawnItems"
 "res://Scripts/Flashlight.gd"="Activate"
+"res://Scripts/NVG.gd"="Activate"
 "res://Scripts/Laser.gd"="_process"
 "res://Scripts/Tooltip.gd"="Update,Reset"
 "res://Scripts/Inputs.gd"="CreateActions,ResetActions"
