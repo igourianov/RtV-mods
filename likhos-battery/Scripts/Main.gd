@@ -34,7 +34,11 @@ func setup(lib) -> void:
 		_make_device(lib, found["id"], found["entry"], ItemData.Power.Medium)
 
 	for file: String in OpticPower.SIGHTS:
-		var tier := BatteryUtil.POWER_DOT if OpticPower.SIGHTS[file] == OpticPower.Sight.DOT else BatteryUtil.POWER_ILLUMINATION
+		var sight := OpticPower.SIGHTS[file]
+		# A fiber lit sight draws no power, so it stays the plain item vanilla ships.
+		if sight == OpticPower.Sight.FIBER:
+			continue
+		var tier := BatteryUtil.POWER_DOT if sight == OpticPower.Sight.DOT else BatteryUtil.POWER_ILLUMINATION
 		_make_device(lib, file, lib.get_entry(lib.Registry.ITEMS, file), tier)
 
 	_interface = Interface.new(lib)
