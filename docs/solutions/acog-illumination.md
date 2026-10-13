@@ -8,6 +8,8 @@ The ACOG's reticle should behave as a fiber optic lit reticle. Its brightness sh
 
 * The light signal is the renderer's own lighting of the lens surface. No light level is derived from the clock, the weather or the indoor detector, and nothing is read back from the GPU.
 * The reticle of every sight Battery handles is already drawn as lit albedo by `Shaders/Reticle.gdshader`, so sun, moon, ambient light and local lamps already reach it. That pass renders with `shadows_disabled`, which is why a reticle is as bright inside a building as on open ground.
+* The vanilla ACOG reticle texture authors red beyond the chevron: the upper part of the drop tree at full strength and the middle part at about half. It has no channel that separates the chevron from the tree.
+* Ruled out: limiting the glow to the chevron, as on a real TA31. The vanilla reticle is accepted as authored. A replacement texture loaded at runtime is uncompressed and takes about 22 MB of video memory.
 * Shadow reception is a render mode, fixed per shader. It cannot be switched per sight by a uniform.
 * A lens material is shared by every instance of its sight. The weapon in hands pushes the reticle state each frame, as it does for the other sights.
 * The fiber collects light where the scope is, not where it points. A player in a dark room aiming at a sunlit field has a dim reticle. This is the real behavior and is intended.
@@ -16,6 +18,7 @@ The ACOG's reticle should behave as a fiber optic lit reticle. Its brightness sh
 * Always on. No LCM setting. `Red Dot Power Draw` and `Scope Power Draw` do not apply to the ACOG, and the `Reticle Illumination` binding does nothing on it.
 * Works with and without VosTac. VosTac's lens shader and reticle placement are unchanged, and Battery reads `lens_uv_scale` from the lens material as it does today.
 * Ruled out: a brightness computed from game state (day cycle, overcast, `gameData.indoor`, `gameData.shelter`). It ignores lamps, fires and other lights, and dims only inside the areas vanilla marks as indoor.
+* Ruled out: vanilla's diffuse model for the fiber reticle. The lens normal points along the scope axis, so brightness would swing as the player turns and a high sun would barely count, which leaves little for shade to remove.
 * Ruled out: sampling scene luminance from a viewport. A readback stalls the frame.
 * Ruled out: smoothing the brightness over time. A fiber responds instantly.
 * Ruled out: any change to how the ACOG looks under night vision.
@@ -54,13 +57,14 @@ Context only, not modified:
 
 The ACOG's reticle is drawn by Battery's reticle pass over the lens material, placed the same way as every other sight: vanilla's view space placement, or VosTac's lens UV placement when `lens_uv_scale` is set.
 
-The fiber reticle differs from a battery lit one in three ways:
+The fiber reticle differs from a battery lit one in four ways:
 
 * It receives shadows. Under a roof, behind a wall or in tree shade the sun and the moon do not reach it.
+* It counts light from every direction equally. The angle between a light and the lens does not matter, and the brightness is uniform across the reticle. It does not use the lens normal or the backlight of vanilla's diffuse model.
 * Its lit brightness is the scene's light on the lens times a fiber gain.
 * It carries a constant emissive floor on the same texels, the tritium glow.
 
-The glow covers the texels the reticle texture authors red, as vanilla draws the ACOG today. The rest of the reticle stays black. The reticle fades with the aim like every other sight.
+The glow covers the texels the reticle texture authors red, as vanilla draws the ACOG today: the chevron and the upper half of the drop tree. The rest of the reticle stays black. The reticle fades with the aim like every other sight.
 
 ### Tunables
 
@@ -79,7 +83,8 @@ Starting values, to be confirmed in game.
 
 ### Expected result
 
-* Open ground at noon: the reticle is as bright as vanilla draws it today.
+* Open ground at noon: the reticle is at full brightness, at least as bright as vanilla draws it today.
+* Turning relative to the sun or a lamp does not change the brightness.
 * Overcast, dusk and dawn: visibly dimmer, following the sun.
 * Inside a building by day: dim. It brightens next to a lamp or a fire and where sunlight comes through an opening.
 * Night: the tritium floor, slightly brighter under a clear moon or near a light.

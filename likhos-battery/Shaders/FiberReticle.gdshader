@@ -11,9 +11,9 @@ uniform float size : hint_range(0.0, 1.0, 0.01) = 0.1;
 uniform float lens_uv_scale = 0.0;
 
 // Tunable: glow per unit of light on the lens. Starts at the vanilla `intensity` of the ACOG lens material.
-const float GAIN = 5.0;
+const float GAIN = 0.8;
 // Tunable: the tritium glow, as a share of the glow under one unit of light.
-const float TRITIUM = 0.05;
+const float TRITIUM = 0.0005;
 
 varying vec3 shadowVertex;
 varying vec3 shadowPosition;

@@ -1,5 +1,6 @@
-# 2.1.27
+# 2.1.31
 * NVG now flicker at low charge, the same way flashlights do
+* ACOG reticle brightness scales with ambient light
 
 # 2.0.23
 * new LCM setting to disable power draw for lasers

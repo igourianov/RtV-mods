@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Battery Powered"
 id="likhos-battery"
-version="2.1.27"
+version="2.1.31"
 prefix="[likho-battery]"
 debug=false
 
