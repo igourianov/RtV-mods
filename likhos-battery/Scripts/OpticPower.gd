@@ -5,6 +5,7 @@ const BatteryUtil := preload("./BatteryUtil.gd")
 const Flicker := preload("./Flicker.gd")
 const AudioChunkPlayer := preload("../Lib/AudioChunkPlayer.gd")
 const _RETICLE_SHADER := preload("res://mods/likhos-battery/Shaders/Reticle.gdshader")
+const _FIBER_SHADER := preload("res://mods/likhos-battery/Shaders/FiberReticle.gdshader")
 const _CLICK_AUDIO := preload("res://Audio/Character/Handling/Files/Gadget.wav")
 const _CLICK_VOLUME := -10.0
 const _RIG_MANAGER := "/root/Map/Core/Camera/Manager"
@@ -22,7 +23,8 @@ const SECONDARY_DRAIN := 1.25
 # SCOPE: illumination of the texels the reticle texture authors red.
 # SCOPE_WHOLE: illumination of the whole reticle, for a texture that authors nothing red.
 # SCOPE_DOT: a SCOPE that also carries an always-on dot on a lens surface of its own.
-enum Sight { DOT, SCOPE, SCOPE_WHOLE, SCOPE_DOT }
+# FIBER: a reticle lit by the light around the scope, with a tritium floor. Draws no power and has no switch.
+enum Sight { DOT, SCOPE, SCOPE_WHOLE, SCOPE_DOT, FIBER }
 # What the reticle pass draws. The values are the `state` uniform of Reticle.gdshader.
 enum Reticle { NONE, UNLIT, LIT, LIT_WHOLE }
 
@@ -39,6 +41,7 @@ const SIGHTS: Dictionary[String, Sight] = {
 	"Leopard": Sight.SCOPE,
 	"POSP": Sight.SCOPE_WHOLE,
 	"HMR": Sight.SCOPE_DOT,
+	"ACOG": Sight.FIBER,
 }
 
 var gameData := preload("res://Resources/GameData.tres")
@@ -66,7 +69,7 @@ func _input(event: InputEvent) -> void:
 
 	var rig := _sighted_rig()
 	var optic = rig.activeOptic if rig else null
-	if !optic || SIGHTS[optic.attachmentData.file] == Sight.DOT:
+	if !optic || SIGHTS[optic.attachmentData.file] in [Sight.DOT, Sight.FIBER]:
 		return
 
 	var slotData: SlotData = rig.slotData
@@ -87,6 +90,11 @@ func _process(delta: float) -> void:
 	var optic = rig.activeOptic
 	var item: ItemData = optic.attachmentData
 	var sight: Sight = SIGHTS[item.file]
+	if sight == Sight.FIBER:
+		# The renderer lights the pass, so there is no state to push beyond its placement.
+		_reticle_pass(optic.reticle, _FIBER_SHADER)
+		return
+
 	# A consumer whose setting is DISABLED draws no power and shows as authored, whatever the charge.
 	var scope_on_battery: bool = sight != Sight.DOT && config.scope_power_draw != Config.ScopePowerDraw.DISABLED
 	var dot_on_battery: bool = (sight == Sight.DOT || sight == Sight.SCOPE_DOT) && config.red_dot_power_draw != Config.RedDotPowerDraw.DISABLED
@@ -145,7 +153,7 @@ func _draw_power(weapon: SlotData, item: ItemData, rate: float, delta: float) ->
 	return !_dip
 
 
-# The weapon in hands, if its active optic is a powered sight.
+# The weapon in hands, if its active optic is a listed sight.
 func _sighted_rig() -> WeaponRig:
 	if !is_instance_valid(_rig_manager):
 		_rig_manager = get_node_or_null(_RIG_MANAGER)
@@ -161,11 +169,19 @@ func _sighted_rig() -> WeaponRig:
 
 # A lens material is shared by every instance of its sight, so the weapon in hands pushes its state each frame.
 func _push(lens: ShaderMaterial, state: Reticle, rim_glow: bool) -> void:
+	var reticle := _reticle_pass(lens, _RETICLE_SHADER)
+	reticle.set_shader_parameter("intensity", lens.get_shader_parameter("intensity"))
+	reticle.set_shader_parameter("state", state)
+	reticle.set_shader_parameter("rim_glow", rim_glow)
+
+
+# The reticle pass of a lens on the given shader, placed for the frame.
+func _reticle_pass(lens: ShaderMaterial, shader: Shader) -> ShaderMaterial:
 	var reticle := lens.next_pass as ShaderMaterial
-	if !reticle || reticle.shader != _RETICLE_SHADER:
+	if !reticle || reticle.shader != shader:
 		reticle = ShaderMaterial.new()
-		reticle.shader = _RETICLE_SHADER
-		for parameter: String in ["scope", "reticle", "intensity"]:
+		reticle.shader = shader
+		for parameter: String in ["scope", "reticle"]:
 			reticle.set_shader_parameter(parameter, lens.get_shader_parameter(parameter))
 		# Godot orders the passes of a surface by priority, not by the chain. The reticle goes over the lens and its shadow.
 		reticle.render_priority = lens.render_priority + 1
@@ -173,10 +189,9 @@ func _push(lens: ShaderMaterial, state: Reticle, rim_glow: bool) -> void:
 		# The lens shader goes on drawing glass, shadow and reflection, and no reticle of its own.
 		lens.set_shader_parameter("reticle", _blank)
 
-	reticle.set_shader_parameter("state", state)
-	reticle.set_shader_parameter("rim_glow", rim_glow)
 	# Vanilla or VosTac wrote these two for the frame.
 	reticle.set_shader_parameter("size", lens.get_shader_parameter("size"))
 	reticle.set_shader_parameter("opacity", lens.get_shader_parameter("opacity"))
 	# VosTac sets it on the lens materials it places from the lens UV. Absent, the pass keeps vanilla's placement.
 	reticle.set_shader_parameter("lens_uv_scale", lens.get_shader_parameter("lens_uv_scale"))
+	return reticle
