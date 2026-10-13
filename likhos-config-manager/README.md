@@ -1,6 +1,6 @@
 # Likho's Config Manager
 
-A lightweight settings menu for mods. Meant as a replacement for Mod Configuration Menu (MCM).
+A lightweight settings menu for mods. Meant as a replacement for MCM for mod builders.
 
 ## Features
 
