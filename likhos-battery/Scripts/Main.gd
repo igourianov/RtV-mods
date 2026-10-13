@@ -66,7 +66,6 @@ func setup(lib) -> void:
 	register_hook("flashlight-activate-post", _flashlight.on_activate_post)
 	register_hook("nvg-activate-post", _nvg.on_activate_post)
 	register_hook("tooltip-update-post", _tooltip.on_update_post)
-	register_hook("tooltip-reset-post", _tooltip.on_reset_post)
 	# Later than VosTac's handler on the same hook, which switches the laser on in canted aim.
 	# Running first would let a dead laser show for a frame.
 	_hooks.append(lib.hook("laser-_process-post", _laser.on_process_post, 200) as int)

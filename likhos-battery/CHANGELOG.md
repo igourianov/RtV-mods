@@ -1,3 +1,6 @@
+# 2.1.32
+* the weapon tooltip shows the charge of an attached laser or sight next to its name in the attachment list, in place of a separate row
+
 # 2.1.31
 * NVG now flicker at low charge, the same way flashlights do
 * ACOG reticle brightness scales with ambient light

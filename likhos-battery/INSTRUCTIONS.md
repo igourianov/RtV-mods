@@ -37,7 +37,6 @@ This mod uses the registry API and hooks vanilla methods through Metro Mod Loade
 - `Flashlight.Activate` (post)
 - `NVG.Activate` (post)
 - `Tooltip.Update` (post)
-- `Tooltip.Reset` (post)
 - `LootContainer.CreateLoot` (post)
 - `LootSimulation.SpawnItems` (post)
 - `Inputs.CreateActions` (pre and post)

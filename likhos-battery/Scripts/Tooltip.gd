@@ -1,32 +1,28 @@
-extends "../Lib/Tooltip.gd"
+extends RefCounted
 
 const BatteryUtil := preload("./BatteryUtil.gd")
 
-# A row keeps the title it was created with, so every attachment gets a row of its own.
-const ROW_PREFIX := "likho_charge_row_"
-
-# Rows shown by the last update.
-var _rows: Array[String]
+var _lib
 
 
-# Vanilla Update resets first, so this also clears the rows of the item hovered before.
-func on_reset_post() -> void:
-	var tooltip: Node = _lib._caller
-	for row: String in _rows:
-		_hide_row(tooltip, row)
-	_rows.clear()
+func _init(lib) -> void:
+	_lib = lib
 
 
 func on_update_post(item: Item) -> void:
-	var tooltip: Node = _lib._caller
 	if !item || !item.slotData || !item.slotData.itemData:
 		return
 
-	# A device shows its own charge through vanilla's condition line. Only attachments need a row.
 	var slotData: SlotData = item.slotData
+	if slotData.nested.is_empty():
+		return
+
+	# A device shows its own charge through vanilla's condition line. Only attachments carry theirs in the list.
+	# Same order and separator as vanilla CreateNestedString, whose text this replaces.
+	var entries: PackedStringArray
 	for nested: ItemData in slotData.nested:
+		var entry := String(nested.display)
 		if BatteryUtil.powers(nested):
-			var row := ROW_PREFIX + nested.file
-			var charge: float = BatteryUtil.attachment_holder(slotData, nested).condition
-			_show_row(tooltip, row, nested.display + ":", str(roundi(charge)) + "%")
-			_rows.append(row)
+			entry += " (%d%%)" % roundi(BatteryUtil.attachment_holder(slotData, nested).condition)
+		entries.append(entry)
+	_lib._caller.nested.get_child(0).text = ", ".join(entries)
