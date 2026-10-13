@@ -16,6 +16,7 @@ var _crosshair: Crosshair
 const _WRIST_BONE := "Wrist_R"
 const _KILL_BONE_OFFSET := Vector2(0.0, -10.0)
 const _KILL_CARD_SEP := 6
+const _BATTERY_FILE := "Batteries"
 
 var _kill_cards: Array = []
 var _kill_container: VBoxContainer
@@ -158,7 +159,32 @@ func _update_attachment_cards(hud: Node, rig: WeaponRig) -> void:
 			_att_cards[nested.subtype] = card
 
 		card.set_text(nested.name)
+		# cards are pooled by subtype, so one that showed a charge can next show an unpowered attachment
+		var holder := _charge_holder(rig.slotData, nested)
+		if holder:
+			card.set_condition(holder.condition)
+		else:
+			card.clear_condition()
 		card.point_at(_camera.unproject_position(_world_center(attachment)))
+
+
+# the entry Likho's Battery Powered keeps for the charge of a powered attachment, null without one.
+# repeats that mod's device test and storage layout (BatteryUtil.gd), so none of its scripts are needed and nothing matches without it.
+# read only: a missing entry is that mod's to create and roll
+static func _charge_holder(weapon: SlotData, attachment: ItemData) -> SlotData:
+	var powered := false
+	for element: ItemData in attachment.compatible:
+		if element.file == _BATTERY_FILE:
+			powered = true
+			break
+	if !powered:
+		return null
+
+	for entry: SlotData in weapon.storage:
+		# other mods keep entries of their own here, some of them without an item
+		if entry.itemData && entry.itemData.file == attachment.file:
+			return entry
+	return null
 
 
 func _update_firemode_card(rig: WeaponRig) -> void:

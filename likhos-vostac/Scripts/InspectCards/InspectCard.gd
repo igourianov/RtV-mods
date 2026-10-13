@@ -70,8 +70,10 @@ func set_text(text: String) -> void:
 
 
 func set_condition(value: float) -> void:
-	condition.text = "(%d%%)" % roundi(value)
-	condition.modulate = _condition_color(value)
+	# the colour follows the printed number, not the fraction behind it
+	var percent := roundi(value)
+	condition.text = "(%d%%)" % percent
+	condition.modulate = _condition_color(percent)
 	condition.show()
 
 

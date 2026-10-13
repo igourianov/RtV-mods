@@ -1,3 +1,6 @@
+# 3.6.2053
+* attachment cards in inspect mode show the charge of lasers and sights when Likho's Battery Powered mod is installed
+
 # 3.6.2052
 * reticle illumination, its binding and its LCM setting moved to Likho's Battery Powered mod, where sights run on batteries. VosTac alone shows every reticle as vanilla does
 	* if you run both mods, update Likho's Battery Powered too

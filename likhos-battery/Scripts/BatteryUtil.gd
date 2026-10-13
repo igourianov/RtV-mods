@@ -39,6 +39,7 @@ static func is_removable(slotData: SlotData) -> bool:
 # The charge of a powered attachment on a weapon.
 # An attached item is a bare ItemData in `nested`, so its charge is kept as a SlotData of its own in the weapon's `storage`, which vanilla copies and saves with the weapon.
 # Found by item, never by position: every powered attachment has its own entry.
+# VosTac's HUD reads this layout and repeats the `powers` test on its own, without this script (likhos-vostac/Scripts/Hooks/HUD.gd). A change to either is made there too.
 static func attachment_holder(weapon: SlotData, attachment: ItemData) -> SlotData:
 	for entry: SlotData in weapon.storage:
 		# Other mods keep entries of their own here, some of them without an item.
