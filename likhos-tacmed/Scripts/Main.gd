@@ -46,8 +46,10 @@ func _patch_items(lib) -> void:
 		"doctor": true
 	})
 
+	compatible = [lib.get_entry(lib.Registry.ITEMS, "Medkit")]
 	lib.patch(lib.Registry.ITEMS, "AFAK", {
 		"showCondition": true,
+		"compatible": compatible,
 		"value": 5000,
 		"weight": 3.0,
 		"health": 150.0,
