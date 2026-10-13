@@ -1,3 +1,6 @@
+# 1.4.157
+* AFAK can now be refilled by dragging a Medkit onto it, 50% per Medkit
+
 # 1.4.156
 * added the Vostok Mods source to mod.txt, so the mod loader shows the mod's thumbnail and checks for updates
 

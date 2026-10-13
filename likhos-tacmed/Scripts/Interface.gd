@@ -11,7 +11,8 @@ const TACMED := {
 		"replenishDefault": 10.0
 	},
 	"AFAK": {
-		"healTime": 3.0
+		"healTime": 3.0,
+		"replenishTime": 5.0
 	}
 }
 
@@ -114,7 +115,8 @@ func _combine(caller: Node, targetItem: Item, sourceItem: Item, extraData: Dicti
 
 	if gameData.isDead: return
 
-	var replenish: float = sourceItem.slotData.itemData.health
+	# condition is a percentage of the target's healing pool, so the source's healing value converts 1:1 into pool HP
+	var replenish: float = sourceItem.slotData.itemData.health * 100.0 / targetItem.slotData.itemData.health
 	if !replenish:
 		replenish = extraData.replenishDefault
 

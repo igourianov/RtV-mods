@@ -20,14 +20,15 @@ IFAK has been reworked from an exotic, safe queen to a healing workhorse.
 * Increased in weight from 0.5kg to 1kg.
 * It can now be sold by Doctor for a measly 1000€ + tip.
 
-Replenishment works 1:1 - consumed item's healing value vs IFAK condition. Tourniquet replenishes 10%.
+Replenishment works 1:1 - consumed item's healing value vs IFAK healing pool. Tourniquet replenishes 10%.
 
 ## AFAK
 
 AFAK got similar treatment to IFAK. It is now effectively an advanced version of a Medkit.
 
 * Reusable, consumes condition on heal
-* Refilled by a new recipe under Medical section: Used AFAK + 2x Medkit => AFAK (100%)
+* Refilled by dragging a Medkit onto it: 50% per Medkit, 5sec each. Same 1:1 rule as IFAK - Medkit's healing value vs AFAK healing pool.
+* Or refilled by a new recipe under Medical section: Used AFAK + 2x Medkit => AFAK (100%)
 * 150 HP healing pool
 * Removed Energy/Hydration/Mental (why was it even doing that?)
 * Weight increase 1.2 -> 3.0kg
