@@ -142,4 +142,4 @@ A single value means unchanged from vanilla and is listed for comparison only.
 
 - Road to Vostok 0.2.0.0 (Godot 4.6.3)
 - [Metro Mod Loader (MML)](https://vostokmods.net/mod/metro-mod-loader) v3.4.1 or later
-- [Likho's Config Manager](https://vostokmods.net/mod/likhos-config-manager) (LCM). Optional, the mod runs on its default settings without it.
+- [Likho's Config Manager (LCM)](https://vostokmods.net/mod/likhos-config-manager). Optional, the mod runs on its default settings without it.
