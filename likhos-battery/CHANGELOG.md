@@ -1,3 +1,6 @@
+# 2.1.35
+* a long attachment list in the weapon tooltip wraps onto extra lines, in place of being cut off with an ellipsis
+
 # 2.1.32
 * the weapon tooltip shows the charge of an attached laser or sight next to its name in the attachment list, in place of a separate row
 

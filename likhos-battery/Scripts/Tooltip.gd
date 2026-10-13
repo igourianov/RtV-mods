@@ -1,12 +1,6 @@
-extends RefCounted
+extends "../Lib/Tooltip.gd"
 
 const BatteryUtil := preload("./BatteryUtil.gd")
-
-var _lib
-
-
-func _init(lib) -> void:
-	_lib = lib
 
 
 func on_update_post(item: Item) -> void:

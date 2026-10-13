@@ -55,9 +55,6 @@ func on_update_post(item: Item) -> void:
 	if extra_data.load:
 		_show_row(tooltip, BULLET_WEIGHT, "Load:", "%dgr" % extra_data.load)
 
-	tooltip.panel.size = Vector2(256, 0)
-	tooltip.interface.tooltipOffset = tooltip.panel.size.y / 2.0
-
 
 func _get_caliber(data: ItemData) -> String:
 	if data.type == "Ammo":

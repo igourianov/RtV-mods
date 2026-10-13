@@ -1,7 +1,7 @@
 [mod]
 name="Likho's Tag"
 id="likhos-tag"
-version="1.2.77"
+version="1.2.78"
 prefix="[likho-tag]"
 debug=false
 
