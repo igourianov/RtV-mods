@@ -16,6 +16,7 @@ var _crosshair: Crosshair
 const _WRIST_BONE := "Wrist_R"
 const _KILL_BONE_OFFSET := Vector2(0.0, -10.0)
 const _KILL_CARD_SEP := 6
+const _KILL_SCREEN_MARGIN := 20.0
 const _BATTERY_FILE := "Batteries"
 
 var _kill_cards: Array = []
@@ -240,7 +241,10 @@ func _update_kill_cards(rig: WeaponRig) -> void:
 	var origin := skeleton.get_bone_global_pose(bone).origin
 	var screen := _camera.unproject_position(skeleton.to_global(origin))
 	var size := _kill_container.get_combined_minimum_size()
-	_kill_container.position = Vector2(screen.x - size.x * 0.5, screen.y - size.y) + _KILL_BONE_OFFSET
+	var pos := Vector2(screen.x - size.x * 0.5, screen.y - size.y) + _KILL_BONE_OFFSET
+	# Some rigs (VSS) put the wrist bone below the screen edge, so keep the stack fully visible.
+	pos.y = minf(pos.y, _camera.get_viewport().get_visible_rect().size.y - size.y - _KILL_SCREEN_MARGIN)
+	_kill_container.position = pos
 	_kill_container.show()
 
 

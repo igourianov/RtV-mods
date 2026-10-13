@@ -1,4 +1,5 @@
-# 3.6.2053
+# 3.6.2057
+* fixed the kill counter card sliding off the bottom of the screen in inspect mode on the VSS
 * attachment cards in inspect mode show the charge of lasers and sights when Likho's Battery Powered mod is installed
 
 # 3.6.2052
