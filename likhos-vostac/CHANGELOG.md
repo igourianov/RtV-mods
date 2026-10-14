@@ -1,4 +1,9 @@
-# 3.7.2072
+# 3.8.2072
+* footsteps cadence and noice now match the player speed
+* head bob and weapon bob now stay in step with the footsteps
+* defaults for aiming and canted walk speed lowered to **40%** of walk speed (was 60% and 75%)
+
+# 3.7.2064
 * weapon handling speed now scales with the total weight of the weapon, attachments and ammo included. Light guns move faster, heavy guns slower
 * empty containers show no interaction prompt outside shelters, so you can tell which ones are worth opening (but can still be opened)
 
