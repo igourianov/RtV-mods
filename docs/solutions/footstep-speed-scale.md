@@ -7,7 +7,7 @@ In VosTac the player's footsteps should follow how fast the player actually move
 * Step cadence follows actual speed in every ground state: walk, crouch and sprint, with every speed multiplier and speed override applied.
 * The head bob slows and speeds up together with the steps.
 * The weapon bob stays in step with the footsteps.
-* Steps get quieter only below walk speed. The volume falls linearly with speed and never rises above today's level.
+* Steps get quieter only below walk speed. The volume falls slightly faster than speed and never rises above today's level.
 
 ## Constraints and assumptions
 
@@ -60,8 +60,7 @@ Context only:
 |---|---|---|---|
 | scoped walk | 0.9m/s | 0.57 | 1.59 |
 | crouch | 0.7m/s | 0.89 | 1.27 |
-| aim walk | 1.8m/s | 1.15 | 1.59 |
-| canted walk | 2.25m/s | 1.43 | 1.59 |
+| aim and canted walk | 1.2m/s | 0.76 | 1.59 |
 | walk | 3.0m/s | 1.91 | 1.59 |
 | sprint | 7.0m/s | 4.46 | 3.18 |
 
@@ -69,26 +68,26 @@ Context only:
 
 A step still goes through vanilla `PlayFootstep`, which keeps choosing the surface, razor and gear sounds. The hook then lowers the volume of every player that call spawned by one gain.
 
-The gain is planar speed over the effective walk speed, capped at 1.
+The gain is planar speed over the effective walk speed, capped at 1, raised to a named exponent of 1.2. The exponent scales the attenuation in dB, so every slowdown is 20% quieter in dB than a gain linear in speed.
 
-| movement, VosTac defaults | gain |
-|---|---|
-| walk and sprint, forward | 100% |
-| walk, strafing | 80%, -1.9dB |
-| canted walk | 75%, -2.5dB |
-| walk, overweight or fractured | 67%, -3.5dB |
-| aim walk | 60%, -4.4dB |
-| walk, backpedalling | 60%, -4.4dB |
-| scoped walk | 30%, -10.5dB |
-| crouch | 23%, -12.6dB |
+| movement, VosTac defaults | speed ratio | gain |
+|---|---|---|
+| walk and sprint, forward | 100% | 100% |
+| walk, strafing | 80% | 77%, -2.3dB |
+| walk, overweight or fractured | 67% | 61%, -4.2dB |
+| walk, backpedalling | 60% | 54%, -5.3dB |
+| aim and canted walk | 40% | 33%, -9.5dB |
+| scoped walk | 30% | 24%, -12.5dB |
+| crouch | 23% | 17%, -15.2dB |
 
-Slowdowns multiply, so backpedalling while aiming is at 36%.
+Slowdowns multiply in the speed ratio, so backpedalling while aiming is at 24% speed and 18% gain.
 
 ### Weapon bob
 
 `Hooks/Controller.gd` publishes the bob phase it advances. `Hooks/Noise.gd` receives the controller hook at construction and, in its existing post hook, recomputes the `Noise` node bob position from that phase instead of vanilla's own.
 
-* The curves, the canted offset, the intensity vanilla picked for the state, the easing and the return to rest are vanilla's.
+* The vertical curve carries vanilla's canted offset in every mode, so its dip lands just before the step trigger. Without the offset the dip comes a third of a cycle ahead of the step.
+* The horizontal curves, the intensity vanilla picked for the state, the easing and the return to rest are vanilla's.
 * The PIP scope scaling applies to the recomputed position, as it did to vanilla's.
 
 ### Flow
@@ -101,7 +100,7 @@ Slowdowns multiply, so backpedalling while aiming is at 36%.
 
 ### Observable result
 
-* The weapon bob peaks with every step in every ground state, sprint included.
+* The weapon bob dips with every step in every ground state, sprint included, canted or not.
 * Aiming, canting and scoping in slow the steps and the head bob in proportion to the walk multiplier, and quieten the steps by the same proportion.
 * Crouch steps are slow and faint.
 * Sprint steps at the default 7m/s come 40% faster than vanilla sprint, at today's volume.
@@ -116,7 +115,7 @@ Slowdowns multiply, so backpedalling while aiming is at 36%.
 * A replace hook on `Headbob` over correcting the phase from pre and post hooks. The cost: one more single-owner hook that conflicts with any other mod replacing `Headbob`, and vanilla changes to it no longer carry over.
 * Planar speed over `currentSpeed`. The cost: plain walking is no longer one cadence and one volume, since strafing and backpedalling count as slower. Steps in razor wire come at an erratic pace, as vanilla jitters the velocity there.
 * A stride per metre without a cadence cap. The cost: at high sprint speed settings the head bob gets fast.
-* A linear gain without a floor. The cost: crouch steps are close to inaudible, and stacked slowdowns go lower still.
+* A gain slightly steeper than linear, without a floor. The cost: crouch steps are close to inaudible, and stacked slowdowns go lower still.
 * The effective walk speed as the volume reference over the vanilla one. The cost: cadence and volume use different references, so a walk speed setting above vanilla speeds the steps up without making them louder.
 * Vanilla `PlayFootstep` keeps the sound selection, with the gain applied afterwards. The cost: the hook depends on vanilla spawning a step's players as children of the controller.
 * AI hearing left alone. The cost: quiet steps do not make the player harder to hear for AI.

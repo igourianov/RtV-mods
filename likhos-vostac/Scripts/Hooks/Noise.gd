@@ -40,7 +40,9 @@ func _apply_bob(noise: Node, gd: GameData, delta: float) -> void:
 	var target := Vector2.ZERO
 	if gd.isMoving && gd.isGrounded && !gd.freeze:
 		var phase: float = _controller.bob_phase
-		var curve: Vector2 = Vector2(sin(phase + 1.5), sin(phase - 1.5)) if gd.isCanted else Vector2(sin(phase / 2), sin(phase) * 2)
+		# a step plays a third of a cycle after the dip of sin(phase), vanilla's canted offset puts the dip just before it, so both modes use it
+		var vertical: float = sin(phase - 1.5)
+		var curve: Vector2 = Vector2(sin(phase + 1.5), vertical) if gd.isCanted else Vector2(sin(phase / 2), vertical * 2)
 		target = curve * noise.headbobIntensity
 
 	# vanilla has already overwritten the previous position by now, so the hook eases its own copy

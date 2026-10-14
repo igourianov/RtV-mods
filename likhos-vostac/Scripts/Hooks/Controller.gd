@@ -2,6 +2,8 @@ extends RefCounted
 
 const Out := preload("../../Lib/Out.gd")
 const InputBus := preload("../Nodes/InputBus.gd")
+# scales the step attenuation in dB, above 1 the steps quieten faster than speed drops
+const STEP_VOLUME_EXPONENT: float = 1.2
 
 var config := preload("../Config.gd").instance
 var gameData := preload("res://Resources/GameData.tres")
@@ -167,6 +169,6 @@ func on_headbob(delta: float) -> void:
 		# vanilla picks the sounds and adds one player per sound as the controller's last children
 		var first: int = ctrl.get_child_count()
 		ctrl.PlayFootstep()
-		var gain := linear_to_db(minf(speed / _walk_speed(ctrl), 1.0))
+		var gain := linear_to_db(pow(minf(speed / _walk_speed(ctrl), 1.0), STEP_VOLUME_EXPONENT))
 		for i in range(first, ctrl.get_child_count()):
 			ctrl.get_child(i).volume_db += gain

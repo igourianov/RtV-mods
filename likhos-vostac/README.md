@@ -38,7 +38,7 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 
 * Reworked arm and leg stamina mechanics to drain based on weight and recover based on vitals.
 * Changed movement speed Crouch/walk/sprint from vanilla **1 / 2.5 / 5** to **0.7 / 3 / 7** (editable in LCM)
-* New movement breakpoints walk-canted/walk-aiming-1×/walk-scoped as a multiplier of the walk speed **0.6 / 0.75 / 0.3** (editable in LCM)
+* New movement breakpoints walk-canted/walk-aiming-1×/walk-scoped as a multiplier of the walk speed **0.4 / 0.4 / 0.3** (editable in LCM)
 
 ## Controls & HUD
 

@@ -70,8 +70,8 @@ var gameData := preload("res://Resources/GameData.tres")
 @export_range(0.0, 20.0, 0.1) var crouch_speed: float = 0.7
 @export_range(0.0, 20.0, 0.1) var walk_speed: float = 3.0
 @export_range(0.0, 20.0, 0.1) var sprint_speed: float = 7.0
-@export_range(0.1, 1.5, 0.05) var walk_aim_mult: float = 0.6
-@export_range(0.1, 1.5, 0.05) var walk_cant_mult: float = 0.75
+@export_range(0.1, 1.5, 0.05) var walk_aim_mult: float = 0.4
+@export_range(0.1, 1.5, 0.05) var walk_cant_mult: float = 0.4
 @export_range(0.1, 1.5, 0.05) var walk_scope_mult: float = 0.3
 
 
