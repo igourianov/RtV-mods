@@ -46,6 +46,7 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 * New bindings for optic zoom.
 * Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in LCM)
 * Additional weapon cards in Inspect/Ammo Check/Insert modes + icon replacers for ammo count and chamber status (check LCM settings)
+* Empty containers show no interaction prompt outside shelters, so you can tell which ones are worth opening. They can still be opened (disable in LCM)
 * Likho's protips in-game to make the user aware of the changed bindings
 
 ## Flashlights

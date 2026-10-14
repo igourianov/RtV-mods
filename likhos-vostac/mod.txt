@@ -28,6 +28,7 @@ debug=false
 "res://Scripts/AI.gd"="Death"
 "res://Scripts/Loader.gd"="LoadScene"
 "res://Scripts/Pickup.gd"="_ready"
+"res://Scripts/LootContainer.gd"="UpdateTooltip"
 
 [registry]
 enabled=true

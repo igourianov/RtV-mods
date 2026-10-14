@@ -1,5 +1,6 @@
-# 3.7.2059
+# 3.7.2072
 * weapon handling speed now scales with the total weight of the weapon, attachments and ammo included. Light guns move faster, heavy guns slower
+* empty containers show no interaction prompt outside shelters, so you can tell which ones are worth opening (but can still be opened)
 
 # 3.6.2057
 * fixed the kill counter card sliding off the bottom of the screen in inspect mode on the VSS

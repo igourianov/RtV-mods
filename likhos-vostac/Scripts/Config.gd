@@ -30,6 +30,8 @@ var gameData := preload("res://Resources/GameData.tres")
 # config vars
 @export var debug_enabled: bool = false
 @export var show_protips: bool = true
+@export var hide_empty_container_prompt: bool = true
+@export var custom_stamina: bool = true
 
 @export_group("Crosshair")
 @export var crosshair_style: CrosshairStyle = CrosshairStyle.SEGMENTED_CROSS
@@ -72,8 +74,6 @@ var gameData := preload("res://Resources/GameData.tres")
 @export_range(0.1, 1.5, 0.05) var walk_cant_mult: float = 0.75
 @export_range(0.1, 1.5, 0.05) var walk_scope_mult: float = 0.3
 
-@export_group("Stamina")
-@export var custom_stamina: bool = true
 
 
 # tier 1 - weapon handling concern does not run at all

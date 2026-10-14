@@ -20,6 +20,7 @@ const RigOpticPatches = preload("./RigOpticPatches.gd")
 const WeaponPatches = preload("./WeaponPatches.gd")
 const AttachmentMounts = preload("./AttachmentMounts.gd")
 const Pickup = preload("./Hooks/Pickup.gd")
+const LootContainer = preload("./Hooks/LootContainer.gd")
 const Tooltip = preload("./Hooks/Tooltip.gd")
 const Interactor = preload("./Hooks/Interactor.gd")
 const UIPosition = preload("./Hooks/UIPosition.gd")
@@ -50,6 +51,7 @@ var _bus
 var _item
 var _kill_counter
 var _pickup
+var _loot_container
 
 
 func setup(lib):
@@ -88,6 +90,7 @@ func setup(lib):
 	_item = Item.new(lib)
 	_kill_counter = KillCounter.new(lib)
 	_pickup = Pickup.new(lib)
+	_loot_container = LootContainer.new(lib)
 
 	register_hook("handling-weaponhandling", _handling.on_weapon_handling)
 	register_hook("handling-weaponposition", _handling.on_weapon_position)
@@ -124,6 +127,7 @@ func setup(lib):
 	register_hook("loader-loadscene-pre", _kill_counter.on_load_scene_pre)
 	register_hook("loader-loadscene-pre", _bus.on_load_scene_pre)
 	register_hook("pickup-_ready-post", _pickup.on_ready_post)
+	register_hook("lootcontainer-updatetooltip-post", _loot_container.on_update_tooltip_post)
 
 	register_action("optic_zoom_in", "Optic Zoom In", create_mouse_input(MOUSE_BUTTON_WHEEL_UP))
 	register_action("optic_zoom_out", "Optic Zoom Out", create_mouse_input(MOUSE_BUTTON_WHEEL_DOWN))

@@ -89,7 +89,8 @@ func _update_tooltip(hud: Node) -> void:
 		_tooltip_shifted = wantShift
 
 	var aimingMode := gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2
-	if aimingMode || _is_interaction_blocked():
+	# an empty text is how a hook asks for no prompt while leaving the interaction available
+	if aimingMode || _is_interaction_blocked() || gameData.tooltip == "":
 		hud.tooltip.visible = false
 
 

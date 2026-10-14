@@ -52,5 +52,6 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `AI.Death` (pre)
 - `Loader.LoadScene` (pre)
 - `Pickup._ready` (post)
+- `LootContainer.UpdateTooltip` (post)
 
 **ExitPupil** is replaced by the built-in low light dimming. Remove it, the two are not meant to run together.
