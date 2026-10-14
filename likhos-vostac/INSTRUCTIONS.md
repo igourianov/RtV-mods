@@ -24,6 +24,7 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `Controller.MovementStates`
 - `Controller._input`
 - `Controller.Crouch`
+- `Controller.Headbob`
 - `Laser._input`
 - `Flashlight._physics_process`
 - `NVG._physics_process`

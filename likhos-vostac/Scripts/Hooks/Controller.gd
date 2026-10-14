@@ -51,7 +51,7 @@ func _update_state(ctrl: Node) -> void:
 func _apply_speed(ctrl: Node, delta: float) -> void:
 	var useOverride: bool = config.override_movement_speeds
 	var crouchSpeed: float = config.crouch_speed if useOverride else ctrl.crouchSpeed
-	var walkSpeed: float = config.walk_speed if useOverride else ctrl.walkSpeed
+	var walkSpeed: float = _walk_speed(ctrl)
 	var sprintSpeed: float = config.sprint_speed if useOverride else ctrl.sprintSpeed
 
 	var target: float = walkSpeed
@@ -73,6 +73,10 @@ func _apply_speed(ctrl: Node, delta: float) -> void:
 		target = walkSpeed * config.walk_cant_mult
 
 	ctrl.currentSpeed = lerp(ctrl.currentSpeed, target, delta * rate)
+
+
+func _walk_speed(ctrl: Node) -> float:
+	return config.walk_speed if config.override_movement_speeds else ctrl.walkSpeed
 
 
 func on_input(evt: InputEvent) -> void:
@@ -120,3 +124,47 @@ func on_crouch(delta: float) -> void:
 	_lib.skip_super()
 
 	ctrl.pelvis.position.y = lerp(ctrl.pelvis.position.y, (0.5 if gameData.isCrouching else 1.0), delta * 5.0)
+
+
+func on_headbob(delta: float) -> void:
+	var ctrl = _lib._caller
+	# swimming keeps the vanilla bob and stroke sounds
+	if !ctrl || gameData.isSwimming:
+		return
+	_lib.skip_super()
+
+	# vanilla walk and sprint share one stride, crouch has a shorter one
+	# isWalking stays set while crouch walking, so crouch is checked first
+	var stride: float = ctrl.headbobWalkSpeed / ctrl.walkSpeed
+	var intensity: float = ctrl.headbobWalkIntensity
+	if gameData.isCrouching:
+		stride = ctrl.headbobCrouchSpeed / ctrl.crouchSpeed
+		intensity = ctrl.headbobCrouchIntensity
+	elif gameData.isRunning:
+		intensity = ctrl.headbobSprintIntensity
+
+	# read after Movement has run, so inertia, the overweight slowdown and collisions are in it
+	var speed: float = Vector2(ctrl.velocity.x, ctrl.velocity.z).length()
+	var index: float = ctrl.headbobIndex + stride * speed * delta
+	ctrl.headbobIndex = index
+
+	var bob: Node3D = ctrl.bob
+	var vector: Vector2 = ctrl.headbobVector
+	var target := Vector2.ZERO
+	if ctrl.is_on_floor() && ctrl.inputDirection != Vector2.ZERO:
+		vector = Vector2(sin(index / 2), sin(index))
+		ctrl.headbobVector = vector
+		target = Vector2(vector.x, vector.y * 2) * intensity * gameData.headbob
+	bob.position.x = lerp(bob.position.x, target.x, delta * ctrl.lerpSpeed)
+	bob.position.y = lerp(bob.position.y, target.y, delta * ctrl.lerpSpeed)
+
+	if vector.y < -0.5:
+		ctrl.canStep = true
+	elif vector.y > 0.5 && ctrl.canStep:
+		ctrl.canStep = false
+		# vanilla picks the sounds and adds one player per sound as the controller's last children
+		var first: int = ctrl.get_child_count()
+		ctrl.PlayFootstep()
+		var gain := linear_to_db(minf(speed / _walk_speed(ctrl), 1.0))
+		for i in range(first, ctrl.get_child_count()):
+			ctrl.get_child(i).volume_db += gain

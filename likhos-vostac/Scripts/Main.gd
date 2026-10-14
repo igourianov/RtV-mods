@@ -106,6 +106,7 @@ func setup(lib):
 	register_hook("controller-_physics_process-post", _controller.on_physics_process_post)
 	register_hook("controller-_input", _controller.on_input)
 	register_hook("controller-crouch", _controller.on_crouch)
+	register_hook("controller-headbob", _controller.on_headbob)
 	register_hook("noise-_physics_process-post", _noise.on_physics_process_post)
 	register_hook("tilt-_physics_process-pre", _tilt.on_physics_process_pre)
 	register_hook("hud-_ready-post", _hud.on_ready_post)
