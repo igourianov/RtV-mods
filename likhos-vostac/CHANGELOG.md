@@ -1,5 +1,5 @@
 # 3.8.2072
-* footsteps cadence and noice now match the player speed
+* footsteps cadence and noise now match the player speed
 * head bob and weapon bob now stay in step with the footsteps
 * defaults for aiming and canted walk speed lowered to **40%** of walk speed (was 60% and 75%)
 
