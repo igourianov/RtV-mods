@@ -133,7 +133,7 @@ const DATA := {
 	"AKM": {
 		"name": "AKM",
 		"inventory": "AKM",
-		"weight": 3.1,
+		"weight": 3.3,
 		"damage": 45.0,
 		"penetration": 3,
 	},
@@ -182,7 +182,7 @@ const DATA := {
 	"M4A1": {
 		"name": "Colt M4A1",
 		"inventory": "M4A1",
-		"weight": 3.3,
+		"weight": 2.9,
 		"caliber": "5.56 NATO",
 		"penetration": 3,
 	},
@@ -211,7 +211,7 @@ const DATA := {
 	"MP5": {
 		"name": "H&K MP5A3",
 		"inventory": "MP5",
-		"weight": 3.1,
+		"weight": 2.6,
 	},
 	"MP5K": {
 		"name": "H&K MP5K",
@@ -269,7 +269,7 @@ const DATA := {
 	"VSS": {
 		"name": ["Vintorez", "Винторез"],
 		"inventory": "VSS",
-		"weight": 1.8,
+		"weight": 2.6,
 		"damage": 50.0,
 	},
 	"Ammo_223": {

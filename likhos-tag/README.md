@@ -42,7 +42,7 @@ A single value means unchanged from vanilla and is listed for comparison only.
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
 |--------------|---------------|-----------------------------|
 | KA-12 | AK-12 Gen 1 | |
-| KA-M | AKM | 3.4 → 3.1 |
+| KA-M | AKM | 3.4 → 3.3 |
 | KAS-74U | AKS-74U | 2.8 → 2.7 |
 | C1911 | Colt 1911 | |
 | G7 | Glock 17 | |
@@ -50,12 +50,12 @@ A single value means unchanged from vanilla and is listed for comparison only.
 | KAR-21 (.223) | KAR-21 .223 | |
 | KAR-21 (.308) | KAR-21 .308 | |
 | KP-31 | Suomi KP-31 | |
-| M4A1 | Colt M4A1 | 3.0 → 3.3 |
+| M4A1 | Colt M4A1 | 3.0 → 2.9 |
 | M78 | Valmet M78 | 4.8 → 5.0 |
 | Karov | Makarov | |
 | KM18 | Mk 18 Mod 1 | |
 | Mosin | Mosin M91/30 | |
-| PM5 | H&K MP5A3 | 2.6 → 3.1 |
+| PM5 | H&K MP5A3 | |
 | PM5-K | H&K MP5K | |
 | PM5-SD | H&K MP5SD | 2.8 → 3.4 |
 | PM7 | H&K MP7 | 2.1 → 2.0 |
@@ -65,7 +65,7 @@ A single value means unchanged from vanilla and is listed for comparison only.
 | RK-62M | Millog RK-62M3 | 3.8 → 4.1 |
 | RK-95 | Sako RK-95 TP | 3.8 → 3.7 |
 | VSD | Dragunov | 5.3 → 3.7 |
-| SSV | Vintorez | 2.8 → 1.8 |
+| SSV | Vintorez | 2.8 → 2.6 |
 
 ## Magazines
 | Vanilla Name | Override Name | Weight (Vanilla → Override) |
