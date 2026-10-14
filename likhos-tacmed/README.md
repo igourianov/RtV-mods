@@ -2,38 +2,34 @@
 
 Reworks high-end medical consumables. Reloadable, reusable. Lore friendly.
 
-## IFAK/AFAK keybind
+## Quick heal keybind
 
 Added a new binding (defaults to `Z`) under vanilla settings to quickly access your IFAK/AFAK without opening inventory. 
 
 The associated logic will intelligently pick item to use to minimize waste. 
 
-## IFAK
+## IFAK and AFAK
 
-IFAK has been reworked from an exotic, safe queen to a healing workhorse.
+Both have been reworked from exotic safe queens into an advanced version of a Medkit.
 
-* IFAK is now **NOT CONSUMED** on use, but instead loses condition.
-* Heals for the exact value, no overflow - 100 HP healing pool.
-* Refilled by basic healing items like bandages - see compatible list.
-* It is slightly faster to use than a basic bandage (3sec vs 4sec default).
-* It now only removes bleeding, burning and poisoning conditions.
-* Increased in weight from 0.5kg to 1kg.
-* It can now be sold by Doctor for a measly 1000€ + tip.
+Both kits:
 
-Replenishment works 1:1 - consumed item's healing value vs IFAK healing pool. Tourniquet replenishes 10%.
+* Are **NOT CONSUMED** on use, but instead lose condition.
+* Heal for the exact value, no overflow.
+* Are refilled by dragging a compatible item onto them - see compatible list. Replenishment works 1:1 - consumed item's healing value vs the kit's healing pool.
+* Are slightly faster to use than a basic bandage (3sec vs 4sec default).
+* Can now be sold by Doctor.
 
-## AFAK
+| | IFAK | AFAK |
+|---|---|---|
+| Healing pool | 100 HP | 150 HP |
+| Refilled by | basic healing items like bandages 1:1, Tourniquet=10% | Medkit, 50% each |
+| Refill time | 1sec | 5sec |
+| Removes | bleeding, burning, poisoning | bleeding, fracture, burning, poisoning, rupture, headshot |
+| Weight | 0.5 -> 1.0kg | 1.2 -> 3.0kg |
+| Price | 440 -> 1000€ | 2850 -> 5000€ |
 
-AFAK got similar treatment to IFAK. It is now effectively an advanced version of a Medkit.
-
-* Reusable, consumes condition on heal
-* 150 HP healing pool
-* Refilled by dragging a Medkit onto it: 50% per Medkit, 5sec each.
-* Removed Energy/Hydration/Mental stats (why was it even doing that?)
-* Weight increase 1.2 -> 3.0kg
-* Price 2850 -> 5000€
-* Use speed 4.0 -> 3.0sec
-* Can now be sold by Doctor
+AFAK no longer restores Energy/Hydration/Mental stats (why was it even doing that?).
 
 ## Testing
 
