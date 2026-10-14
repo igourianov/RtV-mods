@@ -1,3 +1,6 @@
+# 3.8.2074
+* fixed weapon bob rate while sprinting being compically fast
+
 # 3.8.2072
 * footsteps cadence and noise now match the player speed
 * head bob and weapon bob now stay in step with the footsteps
