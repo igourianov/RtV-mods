@@ -1,3 +1,6 @@
+# 3.7.2059
+* weapon handling speed now scales with the total weight of the weapon, attachments and ammo included. Light guns move faster, heavy guns slower
+
 # 3.6.2057
 * fixed the kill counter card sliding off the bottom of the screen in inspect mode on the VSS
 * attachment cards in inspect mode show the charge of lasers and sights when Likho's Battery Powered mod is installed
