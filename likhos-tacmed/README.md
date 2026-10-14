@@ -27,10 +27,9 @@ Replenishment works 1:1 - consumed item's healing value vs IFAK healing pool. To
 AFAK got similar treatment to IFAK. It is now effectively an advanced version of a Medkit.
 
 * Reusable, consumes condition on heal
-* Refilled by dragging a Medkit onto it: 50% per Medkit, 5sec each. Same 1:1 rule as IFAK - Medkit's healing value vs AFAK healing pool.
-* Or refilled by a new recipe under Medical section: Used AFAK + 2x Medkit => AFAK (100%)
 * 150 HP healing pool
-* Removed Energy/Hydration/Mental (why was it even doing that?)
+* Refilled by dragging a Medkit onto it: 50% per Medkit, 5sec each.
+* Removed Energy/Hydration/Mental stats (why was it even doing that?)
 * Weight increase 1.2 -> 3.0kg
 * Price 2850 -> 5000€
 * Use speed 4.0 -> 3.0sec

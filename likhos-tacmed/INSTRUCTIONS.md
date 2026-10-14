@@ -18,7 +18,6 @@ This mod uses the registry API and hooks vanilla methods through Metro Mod Loade
 
 **Registry API** (patches item definitions):
 - `lib.patch()` on IFAK and AFAK items
-- `lib.register()` new recipe for AFAK refill
 
 **Hooks** (other mods that also replace these will conflict, pick one):
 - `Interface.Use` (replace)
