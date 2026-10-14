@@ -6,6 +6,7 @@ In VosTac the player's footsteps should follow how fast the player actually move
 
 * Step cadence follows actual speed in every ground state: walk, crouch and sprint, with every speed multiplier and speed override applied.
 * The head bob slows and speeds up together with the steps.
+* The weapon bob stays in step with the footsteps.
 * Steps get quieter only below walk speed. The volume falls linearly with speed and never rises above today's level.
 
 ## Constraints and assumptions
@@ -18,7 +19,9 @@ In VosTac the player's footsteps should follow how fast the player actually move
 * Cadence has no cap. It follows speed above vanilla sprint speed too.
 * `_update_state` sets `isWalking` while crouch walking, unlike vanilla. The stride is therefore chosen by `isCrouching` first, not by vanilla's walk, sprint, crouch order.
 * Ruled out: AI hearing. Vanilla `Sensor.PlayerHearDetection` detects the player by `isRunning` and `isWalking` within fixed distances and does not listen to sounds. It stays as it is.
-* Ruled out: the second, smaller bob that vanilla `Noise.gd` applies to the `Noise` node position. It keeps its constant rate per state.
+* The weapon bob is the bob vanilla `Noise.gd` applies to the `Noise` node position. It advances a phase of its own by a constant per state (walk and aim walk 10, sprint 15, crouch 8 per second), so even vanilla sprint drifts against the steps. It uses the same curves as the head bob, with a fixed phase offset while canted.
+* The `Noise` node is a descendant of the controller, so in each physics frame it runs after the controller's `Headbob`.
+* VosTac already rewrites the `Noise` node rotation in a post hook and leaves the position to vanilla, except for scaling it down while scoped with a PIP scope.
 * Ruled out: jump and landing sounds, swimming strokes and the bob while swimming. They are not steps at a speed.
 * Ruled out: AI footsteps (`AI.PlayFootstep`).
 * No LCM setting. The scaling is always active.
@@ -30,7 +33,8 @@ In VosTac the player's footsteps should follow how fast the player actually move
 Owned:
 
 * `likhos-vostac/Scripts/Hooks/Controller.gd`: the bob phase, the step trigger and the step volume.
-* `likhos-vostac/Scripts/Main.gd`: the hook registration.
+* `likhos-vostac/Scripts/Hooks/Noise.gd`: the weapon bob position.
+* `likhos-vostac/Scripts/Main.gd`: the hook registration and handing the controller hook to the noise hook.
 * `likhos-vostac/mod.txt`: the `[hooks]` declaration for `Controller.gd`.
 * `likhos-vostac/INSTRUCTIONS.md`: the replace hook list.
 
@@ -38,7 +42,8 @@ Context only:
 
 * Vanilla `src/Scripts/Controller.gd`: `Headbob`, `PlayFootstep`, `Movement`, `Inertia` and the `headbob*` constants.
 * Vanilla `src/Scripts/AudioInstance2D.gd`: `PlayInstance` sets the player's volume and starts it.
-* Vanilla `src/Scripts/Noise.gd` and `src/Scripts/Sensor.gd`: ruled out above.
+* Vanilla `src/Scripts/Noise.gd`: the weapon bob phase, intensity per state and easing.
+* Vanilla `src/Scripts/Sensor.gd`: ruled out above.
 * `likhos-vostac/Scripts/Config.gd`: the speed override and walk multiplier settings.
 
 ## Solution
@@ -79,15 +84,24 @@ The gain is planar speed over the effective walk speed, capped at 1.
 
 Slowdowns multiply, so backpedalling while aiming is at 36%.
 
+### Weapon bob
+
+`Hooks/Controller.gd` publishes the bob phase it advances. `Hooks/Noise.gd` receives the controller hook at construction and, in its existing post hook, recomputes the `Noise` node bob position from that phase instead of vanilla's own.
+
+* The curves, the canted offset, the intensity vanilla picked for the state, the easing and the return to rest are vanilla's.
+* The PIP scope scaling applies to the recomputed position, as it did to vanilla's.
+
 ### Flow
 
 1. Each physics frame vanilla `_physics_process` runs `Movement`, which sets the controller's velocity from `currentSpeed`, inertia and the overweight and fracture slowdown, then moves the body.
 2. It then calls `Headbob`. `controller-headbob` fires and `Controller.on_headbob` advances the phase from the resulting planar speed and updates the bob.
 3. When the phase completes a cycle on the ground, the hook calls vanilla `PlayFootstep` and applies the gain to the players it spawned.
 4. `MovementStates` runs after, as today, and sets the speed target for the next frame.
+5. Later in the same frame vanilla `Noise._physics_process` runs, then `noise-_physics_process-post` recomputes the weapon bob position from the phase the controller hook published.
 
 ### Observable result
 
+* The weapon bob peaks with every step in every ground state, sprint included.
 * Aiming, canting and scoping in slow the steps and the head bob in proportion to the walk multiplier, and quieten the steps by the same proportion.
 * Crouch steps are slow and faint.
 * Sprint steps at the default 7m/s come 40% faster than vanilla sprint, at today's volume.
@@ -106,4 +120,4 @@ Slowdowns multiply, so backpedalling while aiming is at 36%.
 * The effective walk speed as the volume reference over the vanilla one. The cost: cadence and volume use different references, so a walk speed setting above vanilla speeds the steps up without making them louder.
 * Vanilla `PlayFootstep` keeps the sound selection, with the gain applied afterwards. The cost: the hook depends on vanilla spawning a step's players as children of the controller.
 * AI hearing left alone. The cost: quiet steps do not make the player harder to hear for AI.
-* The `Noise` node bob left alone. The cost: two bobs run at different rates below and above vanilla speeds. The untouched one has a quarter of the amplitude.
+* The weapon bob position recomputed in the existing post hook over a replace hook on `Noise._physics_process`. The cost: vanilla still computes a position that is thrown away each frame, and the hook keeps its own copy of the bob position, since vanilla's previous one is already overwritten when the post hook runs.

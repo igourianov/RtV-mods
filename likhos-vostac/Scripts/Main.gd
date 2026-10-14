@@ -75,7 +75,7 @@ func setup(lib):
 	_handling = Handling.new(lib, _bus)
 	_camera = Camera.new(lib)
 	_controller = Controller.new(lib, _bus)
-	_noise = _Noise.new(lib)
+	_noise = _Noise.new(lib, _controller)
 	_tilt = Tilt.new(lib)
 	_hud = HUD.new(lib)
 	_recoil = Recoil.new(lib)

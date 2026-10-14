@@ -11,14 +11,17 @@ const WOBBLE_WEIGHT_LIGHT_MULT: float = 0.3
 
 var config := preload("../Config.gd").instance
 var _lib
+var _controller
 
+var _bob: Vector2 = Vector2.ZERO
 var _wobble_frequency: float = 0.0
 var _wobble_amplitude: float = 0.0
 var _wobble_offset: Vector3 = Vector3.ZERO
 
 
-func _init(lib) -> void:
+func _init(lib, controller) -> void:
 	_lib = lib
+	_controller = controller
 
 
 func on_physics_process_post(delta: float) -> void:
@@ -28,10 +31,24 @@ func on_physics_process_post(delta: float) -> void:
 
 	var gd = noise.gameData
 
-	if gd.isAiming && gd.isScoped && gd.PIP:
-		noise.position *= _calculate_speed_factor(gd)
-
+	_apply_bob(noise, gd, delta)
 	_apply_wobble(noise, gd, delta)
+
+
+func _apply_bob(noise: Node, gd: GameData, delta: float) -> void:
+	# vanilla advances a phase of its own at a fixed rate per state, the controller's phase keeps the weapon in step with the footsteps
+	var target := Vector2.ZERO
+	if gd.isMoving && gd.isGrounded && !gd.freeze:
+		var phase: float = _controller.bob_phase
+		var curve: Vector2 = Vector2(sin(phase + 1.5), sin(phase - 1.5)) if gd.isCanted else Vector2(sin(phase / 2), sin(phase) * 2)
+		target = curve * noise.headbobIntensity
+
+	# vanilla has already overwritten the previous position by now, so the hook eases its own copy
+	_bob = _bob.lerp(target, delta * noise.bobLerpSpeed)
+	if gd.isAiming && gd.isScoped && gd.PIP:
+		_bob *= _calculate_speed_factor(gd)
+	noise.position.x = _bob.x
+	noise.position.y = _bob.y
 
 
 func _apply_wobble(noise: Node, gd: GameData, delta: float) -> void:

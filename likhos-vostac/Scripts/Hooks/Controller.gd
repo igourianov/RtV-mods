@@ -8,6 +8,7 @@ var gameData := preload("res://Resources/GameData.tres")
 var _lib
 var _bus: InputBus
 var _current_sensitivity: float
+var bob_phase: float = 0.0
 
 
 func _init(lib, bus: InputBus) -> void:
@@ -147,6 +148,7 @@ func on_headbob(delta: float) -> void:
 	var speed: float = Vector2(ctrl.velocity.x, ctrl.velocity.z).length()
 	var index: float = ctrl.headbobIndex + stride * speed * delta
 	ctrl.headbobIndex = index
+	bob_phase = index
 
 	var bob: Node3D = ctrl.bob
 	var vector: Vector2 = ctrl.headbobVector
