@@ -2,12 +2,17 @@ extends "../Lib/Main.gd"
 
 const Interface := preload("./Interface.gd")
 const ItemData := preload("res://Scripts/ItemData.gd")
+const IFAK_UPGRADE := preload("../Recipes/IFAK_Upgrade.tres")
 
 var _interface: Node
 
 
 func setup(lib) -> void:
 	_patch_items(lib)
+	lib.register(lib.Registry.RECIPES, "tacmed_AFAK", {
+		"recipe": IFAK_UPGRADE,
+		"category": "medical",
+	})
 
 	_interface = Interface.new(lib)
 	add_child(_interface)

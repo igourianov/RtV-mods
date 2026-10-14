@@ -11,8 +11,9 @@ In TacMed the AFAK is refilled by dragging a Medkit onto it in the inventory, th
 * Vanilla `Interface.Release` would run its own `Combine` on a `canCombine` drop. TacMed's `interface-release-pre` hook takes the drop over by clearing the drag state before vanilla reads it.
 * Item healing values at runtime are the patched ones: Medkit 75 HP (vanilla), AFAK 150 HP and IFAK 100 HP (both set by TacMed's item patches). A Medkit is therefore half of the AFAK's pool.
 * A Medkit has no condition of its own. It is always a whole Medkit.
-* Decided: TacMed has no AFAK refill recipe. The former `tacmed_AFAK` recipe (Used AFAK + 2x Medkit gives AFAK at 100%) does not exist, and nothing replaces it in the crafting menu.
-* No vanilla recipe takes the AFAK as an input. The `repairs` flag of `ItemData` only marks an item as the one a repair recipe restores in place, so it has no use on the AFAK.
+* Decided: TacMed has no AFAK refill recipe. No recipe takes a used AFAK and returns it at 100%.
+* TacMed's one recipe, `tacmed_AFAK`, converts an IFAK and two Medkits into a new AFAK. It consumes the IFAK and is not a refill path. It is outside this solution.
+* No recipe, vanilla or TacMed's, takes the AFAK as an input. The `repairs` flag of `ItemData` only marks an item as the one a repair recipe restores in place, so it has no use on the AFAK.
 * The feature ships as TacMed 1.5.159. The recipe removal belongs to the same version and the same changelog section, and gets no version of its own.
 * Ruled out: any other item refilling the AFAK. Medkit only.
 * Ruled out: rejecting a Medkit that would overfill. As with the IFAK, a drop is refused only on a full AFAK. Otherwise the Medkit is consumed and the condition is capped at 100%, the excess lost.
@@ -24,10 +25,8 @@ In TacMed the AFAK is refilled by dragging a Medkit onto it in the inventory, th
 Owned:
 
 * `likhos-tacmed/Scripts/Interface.gd`: the `TACMED` table and the replenish path (`on_release_pre`, `_combine`).
-* `likhos-tacmed/Scripts/Main.gd`: the AFAK item patch in `_patch_items` and any recipe registration.
-* `likhos-tacmed/Recipes/`: the mod's recipe resources.
-* `likhos-tacmed/README.md`: the AFAK section and the IFAK replenishment sentence.
-* `likhos-tacmed/INSTRUCTIONS.md`: the Registry API list.
+* `likhos-tacmed/Scripts/Main.gd`: the AFAK item patch in `_patch_items`.
+* `likhos-tacmed/README.md`: what it says about refilling the kits.
 * `likhos-tacmed/CHANGELOG.md`: the 1.5.159 section.
 
 Context only:
@@ -35,7 +34,8 @@ Context only:
 * `likhos-tacmed/Scripts/Interface.gd` beyond that: the heal path (`on_use`, `_use`, `_use_anim`) and the quick heal keybind.
 * `likhos-tacmed/mod.txt`: the version, 1.5.159.
 * `likhos-tacmed/README.bbcode`: generated from the README, not edited by hand here.
-* `likhos-tacmed/INSTRUCTIONS.md` beyond that list.
+* `likhos-tacmed/Recipes/IFAK_Upgrade.tres` and its registration in `Main.gd`: the IFAK to AFAK conversion recipe.
+* `likhos-tacmed/INSTRUCTIONS.md`.
 * Vanilla `src/Scripts/Interface.gd`: `CombineCheck`, `Release`, `Combine`, `Reset`, `Return`.
 * Vanilla `src/Items/Medical/Medkit/Medkit.tres` and `AFAK/AFAK.tres`.
 
@@ -47,7 +47,7 @@ Context only:
 
 ### Recipes
 
-TacMed registers no crafting recipes and ships no recipe resources. `Main.gd` sets up the item patches, the interface hooks and the actions only.
+No recipe refills an AFAK. The conversion recipe yields a new AFAK at 100% from an IFAK and two Medkits, and leaves the refill of an AFAK the player already owns to drag and drop.
 
 ### Replenish table
 
@@ -65,7 +65,7 @@ The rest of the flow is the IFAK's: a drop on a kit at 100% is refused with the 
 
 ### Docs
 
-The README's AFAK section names a Medkit dragged onto the AFAK, 50% each, as the way to refill it, and mentions no recipe. Its replenishment sentence states the 1:1 rule against the kit's pool. The Registry API list in `INSTRUCTIONS.md` names the item patches only. The changelog's 1.5.159 section says the AFAK is refilled by dragging a Medkit onto it, 50% per Medkit, and that the refill recipe is removed.
+The README names a Medkit dragged onto the AFAK, 50% each, as the way to refill it, and mentions no refill recipe. Its replenishment sentence states the 1:1 rule against the kit's pool. The changelog's 1.5.159 section says the AFAK is refilled by dragging a Medkit onto it, 50% per Medkit, and that the refill recipe is removed.
 
 ### Observable result
 
@@ -81,7 +81,7 @@ The README's AFAK section names a Medkit dragged onto the AFAK, 50% each, as the
 
 ## Tradeoffs
 
-* **Drag and drop alone over keeping the recipe beside it.** One refill path, and no recipe that the partial refill makes redundant. The cost is that players used to the recipe lose it, and a full refill is two drops.
+* **Drag and drop alone over keeping a refill recipe beside it.** One refill path, and no recipe that the partial refill makes redundant. The cost is that players used to the recipe lose it, and a full refill is two drops.
 * **One 1:1 rule against the kit's pool over a fixed 50% for the AFAK.** Both kits share one calculation, and the README's 1:1 claim holds for both. The cost is that the 50% is derived: a change to the Medkit's healing value or to the AFAK's pool moves it.
 * **A 5 second bar per Medkit over the IFAK's 1 second.** A Medkit is a far larger refill than a bandage. The cost is 10 seconds for a full refill.
 * **Overfill consumed over refused.** It matches the IFAK and needs no extra rule. The cost is a Medkit partly wasted on an AFAK above 50%.

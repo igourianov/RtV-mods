@@ -31,6 +31,10 @@ Both kits:
 
 AFAK no longer restores Energy/Hydration/Mental stats (why was it even doing that?).
 
+## New recipe
+
+An IFAK can be converted into an AFAK by a new recipe under Medical section: IFAK + 2x Medkit => AFAK (100%)
+
 ## Testing
 
 You can now hurt yourself in the Tutorial room by pressing:
