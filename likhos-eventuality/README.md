@@ -42,6 +42,12 @@ The crash site will now trigger an audible explosion (5-20 sec delay after loadi
 
 Once triggered, will repeat anywhere between 3-10 times at random intervals (60-300 seconds).
 
+## Driver every day
+
+Optional LCM toggle. When enabled, Driver appears on Highway every day instead of only on Wednesday. Other vanilla requirements still apply (day 15 or later).
+
+Driver is a weekly event, and weekly events prevent dynamic events on that map for the day. With this toggle on, Highway gets no dynamic events.
+
 ## LCM config
 
 Published all event probabilities as LCM config values. Note that probability does not override availability. E.g. Punisher won't be available before day 5, even if you set him to 100%.

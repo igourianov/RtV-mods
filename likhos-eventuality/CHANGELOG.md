@@ -1,3 +1,6 @@
+# 1.3.67
+* added LCM toggle to make Driver appear on Highway every day instead of only on Wednesday
+
 # 1.3.64
 * added the Vostok Mods source to mod.txt, so the mod loader shows the mod's thumbnail and checks for updates
 

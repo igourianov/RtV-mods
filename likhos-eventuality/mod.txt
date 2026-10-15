@@ -1,12 +1,12 @@
 [mod]
 name="Likho's Eventuality"
 id="likhos-eventuality"
-version="1.3.64"
+version="1.3.67"
 prefix="[likho-evt]"
 debug=false
 
 [hooks]
-"res://Scripts/EventSystem.gd"="ActivateDynamicEvent, FighterJet, CrashSite"
+"res://Scripts/EventSystem.gd"="ActivateDynamicEvent, ActivateWeeklyEvent, FighterJet, CrashSite"
 "res://Scripts/Police.gd"="States, _ready"
 
 [autoload]

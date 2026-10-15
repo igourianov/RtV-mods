@@ -21,6 +21,10 @@ This mod hooks vanilla methods through Metro Mod Loader:
 - `EventSystem.ActivateDynamicEvent`
 - `EventSystem.CrashSite`
 
+**Pre hooks** (additive, run before vanilla, coexist with other mods cleanly):
+
+- `EventSystem.ActivateWeeklyEvent`
+
 **Post hooks** (additive, run after vanilla, coexist with other mods cleanly):
 
 - `EventSystem.FighterJet`

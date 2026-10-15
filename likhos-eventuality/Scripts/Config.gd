@@ -12,6 +12,7 @@ const PROBABILITIES: Dictionary[String, StringName] = {
 }
 
 @export var debug_enabled: bool = false
+@export var driver_every_day: bool = false
 
 @export_group("Probabilities")
 @export_range(0.0, 100.0, 1.0) var fighter_jets: float = 25.0

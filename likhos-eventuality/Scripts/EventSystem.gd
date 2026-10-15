@@ -9,6 +9,8 @@ var _rollBonus: Dictionary = {}
 var _jetCounter: int = 0
 
 const _AUDIO_LIBRARY := preload("res://Resources/AudioLibrary.tres")
+# same cached instance that Events.tres lists, so the has() check matches the vanilla entry on Wednesdays
+const _DRIVER_EVENT := preload("res://Events/List/D15_Driver.tres")
 var gameData = preload("res://Resources/GameData.tres")
 
 const blockers := {
@@ -22,6 +24,17 @@ const blockers := {
 func _init(lib, config: Config) -> void:
 	_lib = lib
 	_config = config
+
+
+func on_activate_weekly_event_pre() -> void:
+	var es: Node = _lib._caller
+	if es == null || !_config.driver_every_day || es.weeklyEvents.has(_DRIVER_EVENT):
+		return
+	if _DRIVER_EVENT.day > Simulation.day || _DRIVER_EVENT.map != es.map.mapName:
+		return
+	Out.debug("event added: %s | Every day" % _DRIVER_EVENT.function)
+	es.weeklyEvents.append(_DRIVER_EVENT)
+	es.availableEvents.append(_DRIVER_EVENT)
 
 
 func on_activate_dynamic_event() -> void:
