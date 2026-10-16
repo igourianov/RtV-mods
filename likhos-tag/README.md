@@ -47,6 +47,7 @@ A single value means unchanged from vanilla and is listed for comparison only.
 | C1911 | Colt 1911 | |
 | G7 | Glock 17 | |
 | K416 | H&K 416 | 3.8 → 3.5 |
+| HP-DA | FN High Power Double-Action | |
 | KAR-21 (.223) | KAR-21 .223 | |
 | KAR-21 (.308) | KAR-21 .308 | |
 | KP-31 | Suomi KP-31 | |

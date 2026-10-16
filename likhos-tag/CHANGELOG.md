@@ -1,3 +1,6 @@
+# 1.2.80
+* added real name for the HP-DA: FN High Power Double-Action
+
 # 1.2.78
 * corrected weights of the AKM (3.3), M4A1 (2.9), MP5A3 (2.6) and Vintorez (2.6) to better match real life items
 

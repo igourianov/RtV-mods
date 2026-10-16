@@ -158,6 +158,10 @@ const DATA := {
 		"caliber": "5.56 NATO",
 		"penetration": 3,
 	},
+	"HP_DA": {
+		"name": "FN High Power Double-Action",
+		"inventory": "HP-DA",
+	},
 	"KAR_21_223": {
 		"name": "KAR-21 .223",
 		"inventory": "KAR-21-223",
