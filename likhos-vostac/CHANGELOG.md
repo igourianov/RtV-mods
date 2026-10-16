@@ -1,3 +1,6 @@
+# 3.8.2077
+* reduced vertical weapon bob during sprint to original value (horizontal still doubled)
+
 # 3.8.2076
 * limited footsteps cadence to between **1** and **3.5** steps per second
 * doubled weapon bob amplitude while sprinting

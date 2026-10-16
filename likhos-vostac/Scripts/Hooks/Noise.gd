@@ -45,7 +45,9 @@ func _apply_bob(noise: Node, gd: GameData, delta: float) -> void:
 		# a step plays a third of a cycle after the dip of sin(phase), vanilla's canted offset puts the dip just before it, so both modes use it
 		var vertical: float = sin(phase - 1.5)
 		var curve: Vector2 = Vector2(sin(phase + 1.5), vertical) if gd.isCanted else Vector2(sin(phase / 2), vertical * 2)
-		target = curve * noise.headbobIntensity * (BOB_MULT_SPRINT if gd.isRunning else 1.0)
+		target = curve * noise.headbobIntensity
+		if gd.isRunning:
+			target.x *= BOB_MULT_SPRINT
 
 	# vanilla has already overwritten the previous position by now, so the hook eases its own copy
 	_bob = _bob.lerp(target, delta * noise.bobLerpSpeed)
