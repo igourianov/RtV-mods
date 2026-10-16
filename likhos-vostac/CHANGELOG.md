@@ -1,5 +1,9 @@
+# 3.8.2076
+* limited footsteps cadence to between **1** and **3.5** steps per second
+* doubled weapon bob amplitude while sprinting
+
 # 3.8.2074
-* fixed weapon bob rate while sprinting being compically fast
+* fixed weapon bob rate while sprinting being comically fast
 
 # 3.8.2072
 * footsteps cadence and noise now match the player speed

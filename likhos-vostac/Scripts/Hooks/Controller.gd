@@ -4,6 +4,9 @@ const Out := preload("../../Lib/Out.gd")
 const InputBus := preload("../Nodes/InputBus.gd")
 # scales the step attenuation in dB, above 1 the steps quieten faster than speed drops
 const STEP_VOLUME_EXPONENT: float = 1.2
+# footsteps per second while moving, applies to head and weapon bob too
+const STEP_RATE_MIN: float = 1.0
+const STEP_RATE_MAX: float = 3.5
 
 var config := preload("../Config.gd").instance
 var gameData := preload("res://Resources/GameData.tres")
@@ -148,7 +151,10 @@ func on_headbob(delta: float) -> void:
 
 	# read after Movement has run, so inertia, the overweight slowdown and collisions are in it
 	var speed: float = Vector2(ctrl.velocity.x, ctrl.velocity.z).length()
-	var index: float = ctrl.headbobIndex + stride * speed * delta
+	var rate: float = stride * speed
+	if ctrl.is_on_floor() && ctrl.inputDirection != Vector2.ZERO:
+		rate = clampf(rate, STEP_RATE_MIN * TAU, STEP_RATE_MAX * TAU)
+	var index: float = ctrl.headbobIndex + rate * delta
 	ctrl.headbobIndex = index
 	bob_phase = index
 
