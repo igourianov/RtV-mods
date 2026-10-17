@@ -4,134 +4,135 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 
 ## Novel features
 
-* **Binoculars!** Added tactical [6-12x binos](https://www.youtube.com/watch?v=6d0zPQRmM3s) for observation. Hold 'B' to activate (remap in game's vanilla bindings)
-* **Hold breath** Function to steady aim at the expense of increased stamina drain. Hold the `Hold Breath` binding while aiming (defaults to the Sprint key)
-* **Kill counter** Appears as a scratch list in weapon inspect mode (when you have kills). Green = nomad, purple = boss.
+* **Binoculars:** Added tactical [6-12x binos](https://www.youtube.com/watch?v=6d0zPQRmM3s) for observation. Hold `B` to activate (remap in game's vanilla bindings).
+* **Hold breath:** Function to steady aim at the expense of increased stamina drain. Hold the `Hold Breath` binding while aiming (defaults to the Sprint key).
+* **Kill counter:** Appears as a scratch list in weapon inspect mode (when you have kills). Green = nomad, purple = boss.
 
 ## Weapons & Handling
 
-* Reworked lowered weapon mode into [Adaptive Free Look](https://www.youtube.com/watch?v=I1lY93vEe-s) mode (disable in LCM)
-* New `Canted Aim (quick)` binding: canted aim independent from aim, with optional laser auto-activation (unbound by default)
-* Weapon handling speed (how fast you transition into the desired state) now scales with stance and optic: red dot and LPVO 1x **115%**, canted **130%**, magnified scope **80%**
-* Weapon handling speed also scales with the total weight of the weapon: **100%** at 5kg, faster for lighter guns up to **160%** at 3kg and under, slower for heavier ones down to **40%** at 7kg and over
-* Weapon sway while aiming and canted now scales with the total weight of the weapon: **100%** at 5kg, more for heavier guns, less for lighter ones, down to **30%** at 3kg and under
-* Reworked insert and ammo check mechanics to use hold action instead of toggle + can now reload directly from ammo check
-* Reworked the inspect mode and associated bindings
-* Reworked manual action gun reload animations to be more fluid (reduced animation lockout time)
-* Mosin and 870 can now cycle the bolt on both full and empty mag, like the real guns do (you will lose ammo) + dry fire click on empty chamber
-* Negligent discharge (firing out of aim) is allowed (disable in LCM)
-* VSS can now mount the OZ5 laser, under the suppressor
+* Reworked lowered weapon mode into [Adaptive Free Look](https://www.youtube.com/watch?v=I1lY93vEe-s) mode (disable in LCM).
+* New `Canted Aim (quick)` binding: canted aim independent from aim, with optional laser auto-activation (unbound by default).
+* Weapon handling speed (how fast you transition into the desired state) now scales with stance and optic: red dot and LPVO 1x **115%**, canted **130%**, magnified scope **80%**.
+* Weapon handling speed also scales with the total weight of the weapon: **100%** at 5kg, faster for lighter guns up to **160%** at 3kg and under, slower for heavier ones down to **40%** at 7kg and over.
+* Weapon sway while aiming and canted now scales with the total weight of the weapon: **100%** at 5kg, more for heavier guns, less for lighter ones, down to **30%** at 3kg and under.
+* Reworked insert and ammo check mechanics to use a hold action instead of a toggle. You can now reload directly from ammo check.
+* Reworked the inspect mode and associated bindings.
+* Reworked manual action gun reload animations to be more fluid (reduced animation lockout time).
+* Mosin and 870 can now cycle the bolt with a full or empty magazine, like the real guns do (you will lose ammo).
+* Mosin and 870 now play a dry fire click on an empty chamber.
+* Negligent discharge (firing out of aim) is allowed (disable in LCM).
+* VSS can now mount the OZ5 laser, under the suppressor.
+* Fixed weapon collision size being based on coarse length buckets instead of the actual weapon length. An MP7 deflected off walls it was nowhere near and a Mosin clipped through them. Suppressors now count too.
 
 ## Aiming & Optics
 
-* Laser aiming devices are now zeroed at 30m and fade out at 50m instead of being parallel to infinity
-* Mouse sensitivity scales with stance and progressively with zoom level + lerp() on transition instead of snapping
-* Ability to toggle the secondary optic out of aim, with a visual cue of the toggle
-* Mosin and M28 (not the MOD) can switch between the PU scope and iron sights on the `Secondary Optic` binding, same way the HAMR switches to its top dot
-* Reworked the PIP scope mode for realism
-* Reworked all optics with real eye relief (only in PIP) and magnification values.
+* Laser aiming devices are now zeroed at 30m and fade out at 50m instead of being parallel to infinity.
+* Mouse sensitivity scales with stance and progressively with zoom level + lerp() on transition instead of snapping.
+* Ability to toggle the secondary optic outside of aim, with a visual cue of the toggle.
+* Mosin and M28 (not the MOD) can switch between the PU scope and iron sights on the `Secondary Optic` binding, same way the HAMR switches to its top dot.
+* Reworked the PIP scope mode for realism.
+* Reworked all optics to use real eye relief and magnification values (eye relief applies in PIP only).
 * Scopes lose brightness at dusk and at night according to their exit pupil (only in PIP, adjust in LCM). At full night the light transmission is: ACOG 100%, HAMR and PU 73%, POSP at 6x 33%, Leopard at 8x 18% and Vudu at 10x 16%.
-* LPVO zoom is now accessible without aiming - gated by the Rail movement modifier by default to avoid collision with lower/raise weapon (change in LCM)
-* Added explicit bindings to the base game settings for optic zoom in/out (it was hardcoded to mouse wheel)
+* LPVO zoom is now accessible without aiming - gated by the Rail movement modifier by default to avoid collision with lower/raise weapon (change in LCM).
+* Added explicit bindings to the base game settings for optic zoom in/out (it was hardcoded to mouse wheel).
 
 ## Movement & Stamina
 
 * Reworked arm and leg stamina mechanics to drain based on weight and recover based on vitals.
-* Changed movement speed Crouch/walk/sprint from vanilla **1 / 2.5 / 5** to **0.7 / 3 / 7** (editable in LCM)
-* New movement breakpoints walk-canted/walk-aiming-1×/walk-scoped as a multiplier of the walk speed **0.4 / 0.4 / 0.3** (editable in LCM)
-* Footsteps cadence and noise now match player speed (no effect on AI detection)
-* Head bob and weapon bob match the footsteps
+* Changed movement speed Crouch/walk/sprint from vanilla **1 / 2.5 / 5** to **0.7 / 3 / 7** (editable in LCM).
+* New movement breakpoints walk-canted/walk-aiming-1×/walk-scoped as a multiplier of the walk speed **0.4 / 0.4 / 0.3** (editable in LCM).
+* Footsteps cadence and noise now match player speed (no effect on AI detection).
+* Head bob and weapon bob are synced to the footsteps.
+* Restricted sprint to only forward direction.
 
 ## Controls & HUD
 
 * Reworked input priority for Crouch/Sprint/Aim/Canted actions. Last action wins instead of following hardcoded order. Hold action always wins over toggle.
 * New bindings for optic zoom.
-* Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in LCM)
-* Additional weapon cards in Inspect/Ammo Check/Insert modes + icon replacers for ammo count and chamber status (check LCM settings)
-* Empty containers show no interaction prompt outside shelters, so you can tell which ones are worth opening. They can still be opened (disable in LCM)
-* Likho's protips in-game to make the user aware of the changed bindings
+* Crosshair in idle mode for interactions - auto-disabled when aiming/canted/raised (configure in LCM).
+* Additional weapon cards in inspect/ammo check/insert modes + icon replacers for ammo count and chamber status (check LCM settings).
+* Empty containers show no interaction prompt outside shelters, so you can tell which ones are worth opening. They can still be opened (disable in LCM).
+* Likho's protips in-game to make the user aware of the changed bindings.
 
 ## Flashlights
 
-* All flashlights now throw a much wider and shorter beam: the cone is **80%** wider and the range is **50%** of vanilla
-* Flashlight now supports both toggle and hold actions on the same binding
-* Flashlight will now shine on the weapon while inspecting
-* Fixed flashlight draining battery while the game world is frozen
+* All flashlights now throw a much wider and shorter beam: the cone is **80%** wider and the range is **50%** of vanilla.
+* Flashlight now supports both toggle and hold actions on the same binding.
+* Flashlight will now shine on the weapon while inspecting.
+* Fixed flashlight draining battery while the game world is frozen.
 
 ## Vanilla Bug Fixes
 
-* PIP viewport no longer bobs independently from the weapon rig
-* Ammo check no longer forces weapon into raised position (prior stance preserved)
-* Canted aim activation no longer blocked by interactables
-* Disabled interactable tooltip while aiming, so it doesn't block vision when aiming around doorways
-* Fixed Mosin ending up in a weird state (mag + 0) after opening+closing the bolt
-* Fixed Mosin round/casing not ejecting when opening the bolt to reload/insert and missing animations
-* Fixed HAMR's secondary optic switch permanently killing PIP plane on other scopes (state wasn't being properly reset)
-* Fixed HAMR's secondary optic vertical offset on all AK rifles (not RK), SVD and Vintorez (missing scale calc)
-* Fixed HAMR causing major flickering when toggling secondary on M4A1 (bug with foldable iron sights)
+* PIP viewport no longer bobs independently from the weapon rig.
+* Ammo check no longer forces weapon into raised position (prior stance resumed).
+* Canted aim activation no longer blocked by interactables (doors, containers, etc.).
+* Disabled interactable tooltip while aiming, so it doesn't block vision when aiming around doorways.
+* Fixed Mosin ending up in incorrect display state (mag + 0) after opening and closing the bolt.
+* Fixed the Mosin round/casing not ejecting, and missing animations, when opening the bolt to reload or insert.
+* Fixed HAMR's secondary optic switch permanently disabling the PIP plane on other scopes (state was not reset).
+* Fixed HAMR's secondary optic vertical offset on all AK rifles (not RK), SVD and Vintorez (missing scale calc).
+* Fixed HAMR causing major flickering when toggling secondary on M4A1 (bug with foldable iron sights).
 * Fixed laser ray misaligned with collision dot. You may notice that bullet holes are now very slightly offset from the laser dot - that's how real lasers work.
-* Fixed weapon collision being sized from coarse buckets instead of actual weapon length - an MP7 deflected off walls it was nowhere near, a Mosin clipped through them. Suppressors now count too.
-* Fixed bugs with optic rail movement due to incorrect limits and errors in floating point math.
-* Restricted sprint to only forward direction.
+* Fixed several bugs with optic rail movement due to incorrectly authored limits and errors in floating-point math.
 
 ## More details
 
 ### PIP mode
 Vanilla PIP is completely unusable - every scope feels like a "scout" scope. This mod addresses that:
-- *Realistic eye relief:* optics placed too close/far on the rail will get scope shadow (ACOG will suck the most!) Scope shadow no longer wobbles as you move and appears behind the reticle.
-- *Main camera FOV no longer narrows when scoped* — only the inside of the optic magnifies
-- *LPVOs stay "scoped" at 1x* — realistic lens distortion and DOF even at 1x
-- *Scope DOF reworked:* scales with magnification, near-DOF enabled for foreground/background softening
-- *PIP MSAA matches main viewport:* the optic's SubViewport now mirrors the antialiasing settings used by the rest of the game - vanilla left it disabled (disable in LCM if it causes performance issues)
-- *NVG-aware PIP blur:* when night vision is active and you aim a magnified optic, the PIP image will now blur. Real scopes cannot work under NVG because of eye relief differences (disable in LCM)
-- *Low light dimming:* a scope passes on only as much light as its exit pupil (objective diameter divided by magnification) lets through. In daylight every scope is at full brightness. At dusk and at night an ACOG 4x32 stays bright, a HAMR or PU keeps about 73% and a Vudu at 10x keeps about 16%. Zoom out to get the image back. Shelters are unaffected (adjust strength in LCM). Idea borrowed from the [ExitPupil mod](https://github.com/heikkit/exitpupil-vostok-mod) by heikkit.
+* *Realistic eye relief:* optics placed too close/far on the rail will get scope shadow (ACOG will suck the most!) Scope shadow no longer wobbles as you move and appears behind the reticle.
+* *Main camera FOV no longer narrows when scoped* - only the inside of the optic magnifies.
+* *LPVOs stay "scoped" at 1x* - realistic lens distortion and DOF even at 1x.
+* *Scope DOF reworked:* scales with magnification, near-DOF enabled for foreground/background softening.
+* *PIP MSAA matches main viewport:* the optic's SubViewport now mirrors the antialiasing settings used by the rest of the game - vanilla left it disabled (disable in LCM if it causes performance issues).
+* *NVG-aware PIP blur:* when night vision is active and you aim a magnified optic, the PIP image will now blur. Real scopes cannot work under NVG because of eye relief differences (disable in LCM).
+* *Low light dimming:* a scope passes on only as much light as its exit pupil (objective diameter divided by magnification) lets through. In daylight every scope is at full brightness. At dusk and at night an ACOG 4x32 stays bright, a HAMR or PU keeps about 73% and a Vudu at 10x keeps about 16%. Zoom out to get the image back. Shelters are unaffected (adjust strength in LCM). Idea borrowed from the [ExitPupil mod](https://github.com/heikkit/exitpupil-vostok-mod) by heikkit.
 
 ### Optics
-* All optics now have eye relief values and create scope shadow if mounted outside ideal eye relief (ACOG will suck on Combloc rifles!)
-* All scopes now have real objective lens diameters, shown in the tooltip next to magnification and eye relief
-* Changed Mark 8 ("Leopard") to 1.1-8x zoom and fixed reticle size at 1x
-* Changed Vudu to 1-10x zoom and made it legendary rarity
-* Changed POSP to be the 2-6x variant and fixed reticle size
-* Allowed POSP to move on the dovetail
-* HAMR is now legendary
-* PU moved back on the gun and it is now real 3.5x zoom
-* Input acceleration for zoom bindings to quick flick from min to max or vice versa
-* LCM setting for magnification control scheme
-	- *Short:* 3 zoom levels spread evenly along scope's magnification range - like vanilla but mid-point is visually middle. Choose this if you're more CoD than Tarkov guy.
-	- *Discrete:* literal, physical zoom levels. E.g. for Vudu: 1, 2, 3, 4,...,10. Input acceleration makes this setting tolerable.
-	- *Normalized:* a comfortable middle ground between the two options above.
+* All optics now have eye relief values and create scope shadow if mounted outside ideal eye relief (ACOG will suck on Combloc rifles!).
+* All scopes now have real objective lens diameters, shown in the tooltip next to magnification and eye relief.
+* Changed Mark 8 ("Leopard") to 1.1-8x zoom and fixed reticle size at 1x.
+* Changed Vudu to 1-10x zoom and made it legendary rarity.
+* Changed POSP to be the 2-6x variant and fixed reticle size.
+* Allowed POSP to move on the dovetail.
+* HAMR is now legendary.
+* PU moved back on the gun and it is now real 3.5x zoom.
+* Input acceleration for zoom bindings to quick flick from min to max or vice versa.
+* LCM setting for magnification control scheme.
+	* *Short:* 3 zoom levels spread evenly along scope's magnification range - like vanilla but mid-point is visually middle. Choose this if you're more of a CoD than a Tarkov player.
+	* *Discrete:* literal, physical zoom levels. E.g. for Vudu: 1, 2, 3, 4,...,10. Input acceleration makes this setting tolerable.
+	* *Normalized:* a comfortable middle ground between the two options above.
 
 ### Stamina
-Both stamina bars are now dynamic and much more realistic. 
+Both stamina bars are now dynamic and much more realistic.
 * There is now a dynamic delay for beginning recovery after use.
-* Arm stamina drain scales with the weight of the gun held and position it is held in (canted=slower; aiming=faster)
-* Arm stamina recovery and recovery delay scales with the Energy stat
-* Leg stamina drain scales with the inventory weight
-* Leg stamina recovery and recovery delay scales with the Hydration stat
-* Overweight, Fracture, razor wire and Leg Stamina=0 now block sprinting completely
-* Sprint now overrides crouch, so you can panic GTFO when discovered sneaking about
+* Arm stamina drain scales with the weight of the gun held and position it is held in (canted=slower; aiming=faster).
+* Arm stamina recovery and recovery delay scales with the Energy stat.
+* Leg stamina drain scales with the inventory weight.
+* Leg stamina recovery and recovery delay scales with the Hydration stat.
+* Overweight, Fracture, razor wire and Leg Stamina=0 now block sprinting completely.
+* Sprint now overrides crouch, so you can panic GTFO when discovered sneaking about.
 
 ### Inspect mode
 * Fixed and rewrote several overlapping and dangling key bindings and states.
 * Rail movement now works only in inspect mode. Rail movement binding is now unused.
-* Weapon rotation in inspect mode is now done with the Canted aim binding instead of mouse wheel.
-* Stamina drain removed
-* Added ammo and attachment cards to the inspect mode (disable in LCM)
+* Weapon rotation in inspect mode is now done with the canted aim binding instead of mouse wheel.
+* Stamina drain removed.
+* Added ammo and attachment cards to the inspect mode (disable in LCM).
 
 ### Ammo check & insert
-Ammo check receives much-needed love. 
+Ammo check receives much-needed love.
 * Reload binding (default R) will now perform ammo check when held down for longer than 300ms.
 * Old ammo check binding removed.
-* Perform reload directly from the ammo check state by clicking fire button (detachable mag guns only)
+* Perform reload directly from the ammo check state by clicking fire button (detachable mag guns only).
 * Ammo check is now responsive - it will show ammo as long as you hold it.
-* Mosin and 870 use the same hold-to-check, fire-to-insert scheme for loading rounds
+* Mosin and 870 use the same hold-to-check, fire-to-insert scheme for loading rounds.
 
 ## Why this is one mod and not several
 
-These changes started out as separate mods. The catch is that Road to Vostok's scripts have a handful of "god" methods that fold a lot of unrelated behavior into a single function and mix state mutation with rendering side effects in the same call. Hooking a method through the mod loader is all-or-nothing, you can't override only part of a function. So as soon as one fix needed to touch, say, `Handling.WeaponHandling`, every other tweak that also lives in that method had to ship in the same mod or get clobbered by it. That's how the ammo-check, canted, laser and PIP changes ended up bundled together.
+These changes started out as separate mods. The catch is that Road to Vostok's scripts have a handful of "god" methods that fold a lot of unrelated behavior into a single function and mix state mutation with rendering side effects in the same call. Hooking a method through the mod loader is all-or-nothing. You can't override only part of a function. So as soon as one fix needed to touch, say, `Handling.WeaponHandling`, every other tweak that also lives in that method had to ship in the same mod or get clobbered by it. That's how the ammo-check, canted, laser and PIP changes ended up bundled together.
 
 ## Requirements
 
-- Road to Vostok 0.2.0.0 (Godot 4.6.3)
-- [Metro Mod Loader (MML)](https://vostokmods.net/mod/metro-mod-loader) v3.4.1 or later
-- [Likho's Config Manager (LCM)](https://vostokmods.net/mod/likhos-config-manager). Optional, the mod runs on its default settings without it.
+* Road to Vostok 0.2.0.0 (Godot 4.6.3).
+* [Metro Mod Loader (MML)](https://vostokmods.net/mod/metro-mod-loader) v3.4.1 or later.
+* [Likho's Config Manager (LCM)](https://vostokmods.net/mod/likhos-config-manager). Optional. The mod runs on its default settings without it.
