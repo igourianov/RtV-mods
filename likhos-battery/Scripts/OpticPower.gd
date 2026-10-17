@@ -160,7 +160,8 @@ func _sighted_rig() -> WeaponRig:
 	if !_rig_manager || _rig_manager.get_child_count() == 0:
 		return null
 
-	var rig := _rig_manager.get_child(0) as WeaponRig
+	# the last child, as vanilla UpdateRig reads it; other mods park their own nodes in front of the rig
+	var rig := _rig_manager.get_child(-1) as WeaponRig
 	var optic = rig.activeOptic if rig && rig.slotData else null
 	if !optic || !optic.reticle || !SIGHTS.has(optic.attachmentData.file):
 		return null

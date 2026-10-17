@@ -100,7 +100,8 @@ func on_physics_process_post(delta: float) -> void:
 	if !is_instance_valid(_rig_manager):
 		_rig_manager = hud.get_node_or_null("/root/Map/Core/Camera/Manager")
 
-	var rig: WeaponRig = _rig_manager.get_child(0) as WeaponRig if _rig_manager && _rig_manager.get_child_count() > 0 else null
+	# the last child, as vanilla UpdateRig reads it; other mods park their own nodes in front of the rig
+	var rig: WeaponRig = _rig_manager.get_child(-1) as WeaponRig if _rig_manager && _rig_manager.get_child_count() > 0 else null
 
 	if is_instance_valid(_crosshair):
 		_crosshair.update(hud, delta)

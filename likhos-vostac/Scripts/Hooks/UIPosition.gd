@@ -23,7 +23,8 @@ func on_physics_process_post(_delta: float) -> void:
 
 	if !_rig_manager || !is_instance_valid(_rig_manager):
 		_rig_manager = node.get_node_or_null("/root/Map/Core/Camera/Manager")
-	var rig: Node = _rig_manager.get_child(0) if _rig_manager && _rig_manager.get_child_count() > 0 else null
+	# the last child, as vanilla UpdateRig reads it; other mods park their own nodes in front of the rig
+	var rig: Node = _rig_manager.get_child(-1) if _rig_manager && _rig_manager.get_child_count() > 0 else null
 	if !(rig is WeaponRig) || !rig.magazine || !rig.magazine.visible:
 		return
 

@@ -1,3 +1,6 @@
+# 3.8.2078
+* fixed ammo, chamber, attachment, fire mode and kill counter cards and the magazine tooltip not showing alongside mods that add their own nodes to the weapon (e.g. Realistic Gunplay)
+
 # 3.8.2077
 * reduced vertical weapon bob during sprint to original value (horizontal still doubled)
 

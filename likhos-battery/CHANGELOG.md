@@ -1,3 +1,6 @@
+# 2.1.37
+* fixed sight reticle power state not applying alongside mods that add their own nodes to the weapon (e.g. Realistic Gunplay)
+
 # 2.1.35
 * a long attachment list in the weapon tooltip wraps onto extra lines, in place of being cut off with an ellipsis
 
