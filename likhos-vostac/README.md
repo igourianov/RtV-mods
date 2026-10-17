@@ -19,7 +19,7 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 * Reworked the inspect mode and associated bindings.
 * Reworked manual action gun reload animations to be more fluid (reduced animation lockout time).
 * Mosin and 870 can now cycle the bolt with a full or empty magazine, like the real guns do (you will lose ammo).
-* Mosin and 870 now play a dry fire click on an empty chamber.
+* All guns now play a dry fire click on an empty chamber.
 * Negligent discharge (firing out of aim) is allowed (disable in LCM).
 * VSS can now mount the OZ5 laser, under the suppressor.
 * Fixed weapon collision size being based on coarse length buckets instead of the actual weapon length. An MP7 deflected off walls it was nowhere near and a Mosin clipped through them. Suppressors now count too.
