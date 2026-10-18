@@ -1,9 +1,9 @@
 # TODO
 - vostac: defaults for optics missing from ScopeCatalog.DATA (e.g. added by other mods): they get 1x magnification (_FALLBACK_MAG), no eye relief (vanilla aim depth in PIP), no low light dimming and no tooltip rows. Add fallback entries for scope and variable optics, and warn when an optic has no entry
-- vostac: disable aiming while jumping/falling
 - vostac: lower weapon attachment in free look mode a bit (-20 degrees?)
 
 # Closed
+- disable aiming while jumping/falling - done
 - bring back scope shadow on wide swings - done
 - lerp() scope brightness on magnification change - done
 - MP7 clipping in canted mode - will not fix (missing texture on the gun)
