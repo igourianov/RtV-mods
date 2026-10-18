@@ -10,11 +10,11 @@ enum IdleCategory { Default, Pistol, FuddGrip, SMG, StocklessSMG }
 
 var _idle_offsets := {
 	IdleCategory.Default: {
-		"pos": Vector3(0, -0.04, 0.02),
+		"pos": Vector3(0, 0, 0.02),
 		"rot": Vector3(10, 35, -20),
 	},
 	IdleCategory.SMG: {
-		"pos": Vector3(0, -0.06, 0.04),
+		"pos": Vector3(0, 0, 0.04),
 		"rot": Vector3(0, 45, 0),
 	},
 	IdleCategory.Pistol: {
@@ -28,13 +28,13 @@ var _idle_offsets := {
 		"hide_left_arm": true,
 	},
 	IdleCategory.FuddGrip: {
-		"pos": Vector3(0, -0.06, 0.05),
+		"pos": Vector3(0, 0, 0.05),
 		"rot": Vector3(-5, 40, 10),
 	},
 }
 
 const _SECONDARY_OPTIC_ROT_OFFSET := Vector3(-15.0, 0.0, 0)
-const _ANCHOR_PITCH := -10.0
+const _DETACH_PITCH := -10.0
 const _LOOK_DOWN_PITCH := -45.0
 const _STOW_POS_OFFSET := Vector3(0.15, -0.25, 0.3)
 const _STOW_HOLD_LOOK_DOWN := 0.2
@@ -64,7 +64,6 @@ var _handlingMode := HandlingMode.Default
 var _target_idle := false
 var _manager_local_baseline: Transform3D
 var _baseline_captured := false
-var _anchor_pitch: float = 0.0
 var _target_pitch: float = 0.0
 var _pitch_offset: float = 0.0
 var _stow_hold: float = 0.0
@@ -327,16 +326,14 @@ func _apply_target(h: Node, delta: float) -> void:
 	elif _stow_hold > 0.0:
 		_stow_hold -= delta
 
-	if cam_pitch_deg >= _ANCHOR_PITCH:
-		_anchor_pitch = cam_euler.x
-
 	var offset_target: float
 	if !_target_idle:
 		offset_target = 0.0
-	elif _stow_hold > 0.0 || cam_pitch_deg >= _ANCHOR_PITCH:
+	elif _stow_hold > 0.0:
 		offset_target = cam_euler.x
 	else:
-		offset_target = _anchor_pitch
+		# above the detach pitch the weapon holds at it in world space, below it the weapon follows the camera in its idle pose
+		offset_target = maxf(cam_euler.x - deg_to_rad(_DETACH_PITCH), 0.0)
 
 	_pitch_offset = lerp(_pitch_offset, offset_target, t)
 	_target_pitch = cam_euler.x - _pitch_offset
