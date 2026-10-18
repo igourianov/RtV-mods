@@ -6,7 +6,6 @@ uniform sampler2D reticle : repeat_disable;
 uniform float opacity : hint_range(0.0, 1.0, 0.1) = 1.0;
 uniform float size : hint_range(0.0, 1.0, 0.01) = 0.1;
 uniform float intensity : hint_range(0.0, 10.0, 1.0) = 5.0;
-uniform float shadow : hint_range(0.0, 1.0, 0.001) = 0.0;
 // Rescales `size` onto lens UV. Set per material, where Likho's Battery Powered reads it to place its own reticle pass the same way.
 uniform float lens_uv_scale = 1.0;
 
@@ -51,12 +50,6 @@ void fragment()
 	// Vanilla covers the image with the full edge ring, which at night blacks out the outer 30% of the lens radius.
 	float rim = 1.0 - smoothstep(occlusion - RIM_WIDTH, occlusion, r);
 
-	// Shadow ----------------------------------------
-
-	float aperture_outer = mix(0.58, 0.0, shadow);
-	float aperture_inner = aperture_outer - 0.08;
-	float shadowMask = scope ? smoothstep(aperture_inner, aperture_outer, r) : 0.0;
-
 	// Reticle ----------------------------------------
 
 	// Deliberately lens UV, not view space. Vanilla's view-space derivation made the sight
@@ -74,7 +67,7 @@ void fragment()
 	// Output ----------------------------------------
 
 	vec3 color = mix(vec3(0.0), reticleColor, opacity);
-	float alpha = mix(1.0, max(shadowMask, reticleAlpha), opacity * rim);
+	float alpha = mix(1.0, reticleAlpha, opacity * rim);
 
 	ALBEDO = color;
 	ALPHA = alpha;

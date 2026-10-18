@@ -145,15 +145,6 @@ static func get_optic_geometry(optic: Node3D) -> Dictionary:
 	}
 
 
-static func compute_shadow(lens_distance: float, eye_relief: Vector2) -> float:
-	var slack := 0.03
-	if lens_distance < eye_relief.x:
-		return clampf((eye_relief.x - lens_distance) / slack, 0.0, 1.0)
-	if lens_distance > eye_relief.y:
-		return clampf((lens_distance - eye_relief.y) / slack, 0.0, 1.0)
-	return 0.0
-
-
 static func compute_angle(lens_radius: float, lens_distance: float) -> float:
 	if lens_radius > 0.0 && lens_distance > 0.0:
 		return 2.0 * atan(lens_radius / lens_distance)

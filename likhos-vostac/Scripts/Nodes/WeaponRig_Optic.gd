@@ -76,14 +76,13 @@ func _handle_ads(delta: float) -> void:
 
 	if !gameData.isAiming || gameData.isColliding:
 		rig.ocularOpacity = move_toward(rig.ocularOpacity, 0.0 if (att.scope || att.variable) else 1.0, delta * 5.0)
-		_update_reticle(rig, optic, 0.0)
+		_update_reticle(rig, optic)
 		return
 
 	var geom = ScopeCatalog.get_optic_geometry(optic)
 	var handling = rig.get_node("Handling")
 	var lens_z: float = (optic.transform * geom.lens_center).z
 	var lens_distance: float = lens_z + handling.position.z
-	var shadow: float = ScopeCatalog.compute_shadow(lens_distance, geom.eye_relief)
 	var angle: float = ScopeCatalog.compute_angle(geom.lens_radius, lens_distance)
 
 	rig.ocularOpacity = move_toward(rig.ocularOpacity, 0.0 if (att.scope && gameData.secondaryOptic) else 1.0, delta * 5.0)
@@ -104,7 +103,7 @@ func _handle_ads(delta: float) -> void:
 	if gameData.PIP && gameData.isScoped:
 		_update_optic_camera(optic, delta, angle)
 
-	_update_reticle(rig, optic, shadow if gameData.PIP else 0.0)
+	_update_reticle(rig, optic)
 
 
 func _update_optic_camera(optic: Node3D, delta: float, optic_angle: float) -> void:
@@ -122,14 +121,12 @@ func _update_optic_camera(optic: Node3D, delta: float, optic_angle: float) -> vo
 	optic.camera.fov = lerp(optic.camera.fov, target_fov, delta * 10.0)
 
 
-func _update_reticle(rig: WeaponRig, optic: Node3D, shadow: float) -> void:
+func _update_reticle(rig: WeaponRig, optic: Node3D) -> void:
 	if !optic.reticle:
 		return
 	var att = optic.attachmentData
-	if att && (att.scope || att.variable):
-		if !("shader_parameter/shadow" in optic.reticle):
-			optic.reticle.shader = _RETICLE_SHADER
-			optic.reticle.set_shader_parameter("lens_uv_scale", _LENS_UV_SCALE)
-		optic.reticle.set_shader_parameter("shadow", shadow)
+	if att && (att.scope || att.variable) && !("shader_parameter/lens_uv_scale" in optic.reticle):
+		optic.reticle.shader = _RETICLE_SHADER
+		optic.reticle.set_shader_parameter("lens_uv_scale", _LENS_UV_SCALE)
 	optic.reticle.set_shader_parameter("size", rig.reticleSize)
 	optic.reticle.set_shader_parameter("opacity", rig.ocularOpacity)
