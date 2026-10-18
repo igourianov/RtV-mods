@@ -6,9 +6,6 @@ const _RETICLE_SHADER := preload("res://mods/likhos-vostac/Shaders/Reticle.gdsha
 # Per-optic `size` values are authored against vanilla's view-direction UV. This rescales them onto lens UV.
 const _LENS_UV_SCALE := 3.0
 
-var audioLibrary := preload("res://Resources/AudioLibrary.tres")
-var audioInstance2D := preload("res://Resources/AudioInstance2D.tscn")
-
 var _zoom := ZoomAccelerator.new()
 
 
@@ -86,15 +83,10 @@ func _handle_ads(delta: float) -> void:
 	var handling = rig.get_node("Handling")
 	var lens_z: float = (optic.transform * geom.lens_center).z
 	var lens_distance: float = lens_z + handling.position.z
-	var target_lens_distance: float = lens_z - handling.targetPosition.z
 	var shadow: float = ScopeCatalog.compute_shadow(lens_distance, geom.eye_relief)
 	var angle: float = ScopeCatalog.compute_angle(geom.lens_radius, lens_distance)
 
 	rig.ocularOpacity = move_toward(rig.ocularOpacity, 0.0 if (att.scope && gameData.secondaryOptic) else 1.0, delta * 5.0)
-
-	if gameData.isAiming && !_validate_lens_distance(rig, lens_distance, target_lens_distance):
-		gameData.isAiming = false
-		return
 
 	if (att.scope && !gameData.secondaryOptic) || att.variable:
 		var sizes: Vector3 = att.reticleSizeP if gameData.PIP else att.reticleSize
@@ -113,23 +105,6 @@ func _handle_ads(delta: float) -> void:
 		_update_optic_camera(optic, delta, angle)
 
 	_update_reticle(rig, optic, shadow if gameData.PIP else 0.0)
-
-
-func _validate_lens_distance(rig: WeaponRig, lens_distance: float, target_lens_distance: float) -> bool:
-	if target_lens_distance >= 0.02 || lens_distance >= 0.02:
-		return true
-	gameData.impact = true
-	gameData.damage = true
-	gameData.health -= 2.0
-
-	config.optic_shiner = true
-
-	var audio = audioInstance2D.instantiate()
-	rig.add_child(audio)
-	audio.PlayInstance(audioLibrary.damage)
-
-	Out.protip(&"optic-too-close", "The optic is mounted too close! You gave yourself a shiner by trying to ADS, you dummy.")
-	return false
 
 
 func _update_optic_camera(optic: Node3D, delta: float, optic_angle: float) -> void:

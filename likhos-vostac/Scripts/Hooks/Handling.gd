@@ -204,10 +204,6 @@ func on_weapon_handling(delta: float) -> void:
 
 
 func _resolve_aim_intent() -> void:
-	if config.optic_shiner:
-		_bus.withdraw_aim()
-		config.optic_shiner = false
-
 	# the bus already accounts for locks and for binoculars taking over the arms
 	gameData.isAiming = _bus.aim()
 	gameData.isCanted = _bus.canted()
