@@ -1,12 +1,4 @@
 # TODO
-- food and sleep rework
-- spawn new event after 30 minutes on the map
-- move manufacturer name into another field out of title
-- flashlight auto-on on PEQ15, similar to laser
-- gangster style for pistols
-- (0.2.0.0 follow-up, after more in-game testing) tag: add names and weights for new vanilla items: Jatimatic (9x19 SMG, 1.7kg) and magazine (20 rounds, 0.2kg), M28 and M28_MOD (7.62x54R bolt rifles, 4.0kg), HP_DA (9x19 pistol, 0.9kg) and magazine (14 rounds, 0.1kg), VIRVE, Watch_Tactical
-- (0.2.0.0 follow-up) keymod: decide whether to sell Key_Garage; vanilla sets no trader flag on it. New traders Driver and Hunter have no keys patched
-- (0.2.0.0 follow-up) vostac: review new rigs (Jatimatic, M28, HP_DA) for optic rail ranges, inspect positions and collision probe; add AMMO_CHECK_INTRO_TIMES entries for the new weapons (default is 1.0s)
 - vostac: defaults for optics missing from ScopeCatalog.DATA (e.g. added by other mods): they get 1x magnification (_FALLBACK_MAG), no eye relief (vanilla aim depth in PIP), no low light dimming and no tooltip rows. Add fallback entries for scope and variable optics, and warn when an optic has no entry
 - vostac: bring back scope shadow on wide swings (vostac removed it; vanilla way too aggressive)
 - vostac: lower weapon attachment in free look mode a bit (-20 degrees?)
