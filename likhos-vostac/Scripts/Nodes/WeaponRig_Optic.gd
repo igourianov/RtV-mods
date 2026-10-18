@@ -5,8 +5,19 @@ const ZoomAccelerator := preload("../ZoomAccelerator.gd")
 const _RETICLE_SHADER := preload("res://mods/likhos-vostac/Shaders/Reticle.gdshader")
 # Per-optic `size` values are authored against vanilla's view-direction UV. This rescales them onto lens UV.
 const _LENS_UV_SCALE := 3.0
+# Swing shadow response to the scope's misalignment angle, in degrees, and its reach in lens UV (lens width 1.0).
+const _SHADOW_DEAD_ZONE := 1.0
+const _SHADOW_FULL_ANGLE := 5.0
+const _SHADOW_MAX_REACH := 0.6
+# Per second.
+const _SHADOW_EXHAUSTION_RATE := 1.0
+# The exhausted wobble and the crouch or stand kick peak around the dead zone on their own, so they count this many times over.
+const _SHADOW_WOBBLE_GAIN := 3.0
+const _SHADOW_KICK_GAIN := 3.0
 
 var _zoom := ZoomAccelerator.new()
+var _shadow_exhaustion := 0.0
+var _shadow_offset := Vector2.ZERO
 
 
 func _ready() -> void:
@@ -74,6 +85,9 @@ func _handle_ads(delta: float) -> void:
 	if !optic || !att:
 		return
 
+	_shadow_exhaustion = move_toward(_shadow_exhaustion, 1.0 if gameData.armStamina <= 0.0 else 0.0, delta * _SHADOW_EXHAUSTION_RATE)
+	_shadow_offset = Vector2.ZERO
+
 	if !gameData.isAiming || gameData.isColliding:
 		rig.ocularOpacity = move_toward(rig.ocularOpacity, 0.0 if (att.scope || att.variable) else 1.0, delta * 5.0)
 		_update_reticle(rig, optic)
@@ -102,7 +116,30 @@ func _handle_ads(delta: float) -> void:
 	if gameData.PIP && gameData.isScoped:
 		_update_optic_camera(optic, delta, angle)
 
+	if gameData.isScoped:
+		_update_shadow(rig)
+
 	_update_reticle(rig, optic)
+
+
+func _update_shadow(rig: WeaponRig) -> void:
+	var sway = rig.get_node("Handling/Sway")
+	var noise = sway.get_node("Noise")
+	var impulse = noise.get_node("Tilt/Impulse")
+	var lag: Vector3 = sway.rotation_degrees - sway.originalRotation
+	var wobble: Vector3 = noise.rotation_degrees * _SHADOW_WOBBLE_GAIN * _shadow_exhaustion
+	var kick: Vector3 = impulse.rotation_degrees * _SHADOW_KICK_GAIN
+	var total: Vector3 = lag + wobble + kick
+	# x is the yaw, y the pitch, in view space with y up, signed so the vector points where the clear aperture shifts.
+	# A yaw to the right tilts the lens normal left, and vanilla's view ray plus normal offset then clears the right side.
+	var misalignment := Vector2(-total.y, total.x)
+	var magnitude := misalignment.length()
+
+	if magnitude <= _SHADOW_DEAD_ZONE:
+		return
+	var reach := clampf(inverse_lerp(_SHADOW_DEAD_ZONE, _SHADOW_FULL_ANGLE, magnitude), 0.0, 1.0) * _SHADOW_MAX_REACH
+	# Lens UV runs y down.
+	_shadow_offset = misalignment / magnitude * reach * Vector2(1.0, -1.0)
 
 
 func _update_optic_camera(optic: Node3D, delta: float, optic_angle: float) -> void:
@@ -124,8 +161,10 @@ func _update_reticle(rig: WeaponRig, optic: Node3D) -> void:
 	if !optic.reticle:
 		return
 	var att = optic.attachmentData
-	if att && (att.scope || att.variable) && !("shader_parameter/lens_uv_scale" in optic.reticle):
-		optic.reticle.shader = _RETICLE_SHADER
-		optic.reticle.set_shader_parameter("lens_uv_scale", _LENS_UV_SCALE)
+	if att && (att.scope || att.variable):
+		if !("shader_parameter/lens_uv_scale" in optic.reticle):
+			optic.reticle.shader = _RETICLE_SHADER
+			optic.reticle.set_shader_parameter("lens_uv_scale", _LENS_UV_SCALE)
+		optic.reticle.set_shader_parameter("shadow_offset", _shadow_offset)
 	optic.reticle.set_shader_parameter("size", rig.reticleSize)
 	optic.reticle.set_shader_parameter("opacity", rig.ocularOpacity)
