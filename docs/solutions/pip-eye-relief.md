@@ -25,8 +25,8 @@ Invert the VosTac eye relief logic in PIP mode. Today the player has to slide th
 
 Owned:
 
-* `likhos-vostac/Scripts/ScopeCatalog.gd`: eye relief data and the optic geometry, including the optimal eye relief and the optic's lens depth in rest pose.
-* `likhos-vostac/Scripts/Hooks/Handling.gd`: the aim target in PIP scoped ADS and the aim intent resolution in `_resolve_aim_intent`.
+* `likhos-vostac/Scripts/ScopeCatalog.gd`: eye relief data, the optic geometry including the optic's lens depth in rest pose, and the aim depth of a rig with an optic.
+* `likhos-vostac/Scripts/Hooks/Handling.gd`: the ADS aim target and the aim intent resolution in `_resolve_aim_intent`.
 * `likhos-vostac/Scripts/Nodes/WeaponRig_Optic.gd`: ADS state, PIP camera FOV and reticle push.
 * `likhos-vostac/Scripts/Config.gd`: only the dynamic state vars tied to ADS.
 * `likhos-vostac/Shaders/Reticle.gdshader`: the scope mask.
@@ -42,15 +42,16 @@ Context only:
 
 ### Optic geometry
 
-`ScopeCatalog` is the single source of an optic's geometry. For the active optic it provides the lens center and radius, the FFP flag, the optimal eye relief in meters and the lens depth in the rig's Handling space for the optic's current rail position in rest pose. Lens center and radius keep the existing fallback that measures them from the lens mesh when the catalog does not state them.
+`ScopeCatalog` is the single source of an optic's geometry. For the active optic it provides the lens center and radius, the FFP flag and the lens depth in the rig's Handling space for the optic's current rail position in rest pose. Lens center and radius keep the existing fallback that measures them from the lens mesh when the catalog does not state them.
 
-An optic without catalog eye relief has no optimal eye relief.
+### Aim depth
 
-### Aim target
+`ScopeCatalog` owns the aim depth of a rig with an optic: the Handling target Z for ADS. It decides the number for every optic type and mode, including the fallback:
 
-`Handling._set_target` decides the aim position. In PIP mode with a magnified optic active (`gameData.isScoped`, so not on a HAMR switched to its top dot) the aim depth is the one that puts the eye exactly at the optic's optimal eye relief behind the lens, read from `ScopeCatalog`. The vertical aim offset is `rig.aimOffset` as today.
+* In PIP mode with a magnified optic active (`gameData.isScoped`, so not on a HAMR switched to its top dot) and catalog eye relief, the aim depth puts the eye exactly at the optic's optimal eye relief behind the lens.
+* Every other aim with an optic keeps the weapon's `data.aimPosition.z`: red dots and holographic sights, a secondary sight, non-PIP mode and a magnified optic without catalog eye relief.
 
-Every other aim keeps `data.aimPosition.z`: no optic, red dots and holographic sights, a secondary sight, non-PIP mode and a magnified optic without catalog eye relief.
+`Handling._set_target` uses the number as is, with `rig.aimOffset` as the vertical aim offset as today. It holds no eye relief logic and no fallback of its own. With no optic it aims at `data.aimPosition`.
 
 There is no per weapon aim depth table. The optic data and its rail position alone decide the eye position in PIP scoped ADS.
 

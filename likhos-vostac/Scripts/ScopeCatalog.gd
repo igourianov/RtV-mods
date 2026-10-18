@@ -4,6 +4,8 @@ const Config := preload("./Config.gd")
 static var gameData := preload("res://Resources/GameData.tres")
 
 const _FALLBACK_MAG: Array[float] = [1.0]
+# PIP ADS puts the eye this many cm past the near eye relief bound
+const _EYE_RELIEF_MARGIN := 0.5
 
 # Simulation.time values at which vanilla World.TOD swaps the sun for the moon.
 const _SUNRISE := 600.0
@@ -121,9 +123,20 @@ static func sync_optic_state(rig: WeaponRig) -> void:
 			rig.aimOffset = -rig.data.aimPosition.y
 
 
+# Handling target Z for ADS with the rig's active optic
+static func get_aim_depth(rig: WeaponRig) -> float:
+	var optic = rig.activeOptic
+	var eye_relief: Vector2 = DATA.get(String(optic.attachmentData.file), {}).get("eye_relief", Vector2.ZERO) if optic else Vector2.ZERO
+	if !gameData.PIP || !gameData.isScoped || eye_relief.x <= 0.0:
+		return rig.data.aimPosition.z
+	# the eye lands at the optic's eye relief behind the lens, wherever the optic sits on the rail
+	return get_optic_geometry(optic).lens_depth - (eye_relief.x + _EYE_RELIEF_MARGIN) * 0.01
+
+
+# lens_depth: lens center Z in Handling space at the optic's rail position, rest pose
 static func get_optic_geometry(optic: Node3D) -> Dictionary:
 	if !optic:
-		return {"lens_center": Vector3.ZERO, "lens_radius": 0.0, "eye_relief": Vector2.ZERO, "isFFP": false}
+		return {"lens_center": Vector3.ZERO, "lens_radius": 0.0, "lens_depth": 0.0, "isFFP": false}
 
 	var key := String(optic.attachmentData.file)
 	var entry: Dictionary = DATA.get(key, {})
@@ -140,7 +153,7 @@ static func get_optic_geometry(optic: Node3D) -> Dictionary:
 	return {
 		"lens_center": lens_center,
 		"lens_radius": lens_radius,
-		"eye_relief": entry.get("eye_relief", Vector2.ZERO) * 0.01,
+		"lens_depth": (optic.transform * lens_center).z,
 		"isFFP": entry.get("isFFP", false),
 	}
 

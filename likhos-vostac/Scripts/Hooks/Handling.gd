@@ -58,31 +58,6 @@ const _SPEED_WEIGHT_LIGHT := 3.0
 const _SPEED_WEIGHT_LIGHT_MULT := 1.6
 const _SPEED_WEIGHT_HEAVY_MULT := 0.4
 
-const _AIM_POS_OVERRIDE := {
-	"SVD": -0.08,
-	"M78": -0.09,
-	"AKM": -0.07,
-	"AK_12": -0.04,
-	"AKS_74U": -0.1,
-	"VSS": -0.08,
-	"MP5SD": -0.1,
-	"MP5K": -0.1,
-	"MP5": -0.1,
-	"RK_95": -0.06,
-	"RK_62": -0.06,
-	"RK_62M": -0.06,
-	"M4A1": -0.07,
-	"MK18": -0.06,
-	"HK416": -0.06,
-	"KAR_21_223": -0.12,
-	"KAR_21_308": -0.12,
-	"MP7": -0.16,
-	"Mosin": -0.22,
-	"M28": -0.2,
-	"M28_MOD": -0.2,
-}
-
-
 var _lib
 var _bus: InputBus
 var _handlingMode := HandlingMode.Default
@@ -272,10 +247,8 @@ func _set_target(h: Node) -> void:
 
 		if !optic:
 			h.targetPosition = data.aimPosition
-		elif gameData.PIP && gameData.isScoped:
-			h.targetPosition = Vector3(0.0, -rig.aimOffset, _AIM_POS_OVERRIDE.get(data.file, data.aimPosition.z * 0.67))
 		else:
-			h.targetPosition = Vector3(0.0, -rig.aimOffset, data.aimPosition.z)
+			h.targetPosition = Vector3(0.0, -rig.aimOffset, ScopeCatalog.get_aim_depth(rig))
 
 		h.targetRotation = data.aimRotation
 		return
