@@ -42,7 +42,7 @@ Context only:
 
 ### Optic geometry
 
-`ScopeCatalog` is the single source of an optic's geometry. For the active optic it provides the lens center and radius, the FFP flag and the lens depth in the rig's Handling space for the optic's current rail position in rest pose. Lens center and radius keep the existing fallback that measures them from the lens mesh when the catalog does not state them.
+`ScopeCatalog` is the single source of an optic's geometry. For a mounted optic it provides the lens radius, the FFP flag and the lens depth: the lens center's depth in the rig's Handling space for the optic's current rail position in rest pose. Lens center and radius keep the existing fallback that measures them from the lens mesh when the catalog does not state them.
 
 ### Aim depth
 

@@ -84,12 +84,6 @@ func _handle_ads(delta: float) -> void:
 	var lens_distance: float = geom.lens_depth + handling.position.z
 	var angle: float = ScopeCatalog.compute_angle(geom.lens_radius, lens_distance)
 
-	# TEMP: checks lens_distance against the real camera to lens distance
-	var cam := get_viewport().get_camera_3d()
-	if cam && gameData.PIP && Engine.get_process_frames() % 60 == 0:
-		var real: float = -(cam.global_transform.affine_inverse() * (optic.global_transform * geom.lens_center)).z
-		Out.debug("eye relief check", att.file, "lens_distance:", lens_distance, "real:", real, "target:", geom.lens_depth - ScopeCatalog.get_aim_depth(rig))
-
 	rig.ocularOpacity = move_toward(rig.ocularOpacity, 0.0 if (att.scope && gameData.secondaryOptic) else 1.0, delta * 5.0)
 
 	if (att.scope && !gameData.secondaryOptic) || att.variable:

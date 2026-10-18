@@ -135,9 +135,6 @@ static func get_aim_depth(rig: WeaponRig) -> float:
 
 # lens_depth: lens center Z in Handling space at the optic's rail position, rest pose
 static func get_optic_geometry(optic: Node3D) -> Dictionary:
-	if !optic:
-		return {"lens_center": Vector3.ZERO, "lens_radius": 0.0, "lens_depth": 0.0, "isFFP": false}
-
 	var key := String(optic.attachmentData.file)
 	var entry: Dictionary = DATA.get(key, {})
 	var lens_center: Vector3 = entry.get("lens_center", Vector3.ZERO)
@@ -151,7 +148,6 @@ static func get_optic_geometry(optic: Node3D) -> Dictionary:
 			lens_radius = geom.radius
 
 	return {
-		"lens_center": lens_center,
 		"lens_radius": lens_radius,
 		"lens_depth": (optic.transform * lens_center).z,
 		"isFFP": entry.get("isFFP", false),
