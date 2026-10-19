@@ -1,6 +1,6 @@
 extends RefCounted
 
-const ScopeCatalog := preload("../ScopeCatalog.gd")
+const WeaponRig_Optic := preload("../Nodes/WeaponRig_Optic.gd")
 const Out := preload("../../Lib/Out.gd")
 const InputBus := preload("../Nodes/InputBus.gd")
 var config := preload("../Config.gd").instance
@@ -34,8 +34,8 @@ var _idle_offsets := {
 }
 
 const _SECONDARY_OPTIC_ROT_OFFSET := Vector3(-15.0, 0.0, 0)
-const _DETACH_PITCH := -10.0
-const _LOOK_DOWN_PITCH := -45.0
+const _DETACH_PITCH := deg_to_rad(-10.0)
+const _LOOK_DOWN_PITCH := deg_to_rad(-45.0)
 const _STOW_POS_OFFSET := Vector3(0.15, -0.25, 0.3)
 const _STOW_HOLD_LOOK_DOWN := 0.2
 const _LEFT_ARM_BONE := "Arm_Upper_L"
@@ -64,7 +64,6 @@ var _handlingMode := HandlingMode.Default
 var _target_idle := false
 var _manager_local_baseline: Transform3D
 var _baseline_captured := false
-var _target_pitch: float = 0.0
 var _pitch_offset: float = 0.0
 var _stow_hold: float = 0.0
 var _stow_rot: Vector3
@@ -106,7 +105,14 @@ func on_rig_update_post(_animate: bool) -> void:
 	config.current_weapon_action = data.weaponAction if data else ""
 	Out.debug("weapon weight: %.1fkg" % config.current_weapon_weight)
 
-	ScopeCatalog.sync_optic_state(rig)
+	# the optic handler is attached in the rig's _ready, which add_child runs before vanilla calls UpdateRig
+	var optic_handler: WeaponRig_Optic = rig.get_node_or_null("Likho_WeaponRig_Optic") if rig else null
+	if optic_handler:
+		optic_handler.sync_optic_state()
+	else:
+		gameData.secondaryOptic = false
+		gameData.isScoped = false
+		config.current_scope_mag = 1.0
 
 	# fold/unfold iron sights based on optic presence
 	# BUGFIX - vanilla doens't check frontSightIndex, which casues flicker on M4A1, which doens't have foldable front sight
@@ -248,7 +254,8 @@ func _set_target(h: Node) -> void:
 		if !optic:
 			h.targetPosition = data.aimPosition
 		else:
-			h.targetPosition = Vector3(0.0, -rig.aimOffset, ScopeCatalog.get_aim_depth(rig))
+			var optic_handler: WeaponRig_Optic = rig.get_node("Likho_WeaponRig_Optic")
+			h.targetPosition = Vector3(0.0, -rig.aimOffset, optic_handler.get_aim_depth())
 
 		h.targetRotation = data.aimRotation
 		return
@@ -320,9 +327,8 @@ func _apply_target(h: Node, delta: float) -> void:
 
 	var cam_xform: Transform3D = outer_cam.global_transform
 	var cam_euler := cam_xform.basis.get_euler()
-	var cam_pitch_deg := rad_to_deg(cam_euler.x)
 
-	if cam_pitch_deg < _LOOK_DOWN_PITCH:
+	if cam_euler.x < _LOOK_DOWN_PITCH:
 		_stow_hold = _STOW_HOLD_LOOK_DOWN
 	elif _stow_hold > 0.0:
 		_stow_hold -= delta
@@ -334,12 +340,11 @@ func _apply_target(h: Node, delta: float) -> void:
 		offset_target = cam_euler.x
 	else:
 		# above the detach pitch the weapon holds at it in world space, below it the weapon follows the camera in its idle pose
-		offset_target = maxf(cam_euler.x - deg_to_rad(_DETACH_PITCH), 0.0)
+		offset_target = maxf(cam_euler.x - _DETACH_PITCH, 0.0)
 
 	_pitch_offset = lerp(_pitch_offset, offset_target, t)
-	_target_pitch = cam_euler.x - _pitch_offset
 
-	var weapon_basis := Basis.from_euler(Vector3(_target_pitch, cam_euler.y, cam_euler.z))
+	var weapon_basis := Basis.from_euler(Vector3(cam_euler.x - _pitch_offset, cam_euler.y, cam_euler.z))
 	manager.global_transform = Transform3D(weapon_basis, cam_xform.origin) * _manager_local_baseline
 
 

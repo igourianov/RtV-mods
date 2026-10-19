@@ -1,17 +1,17 @@
 const Out := preload("../Lib/Out.gd")
 const Config := preload("./Config.gd")
 
-static var gameData := preload("res://Resources/GameData.tres")
-
-const _FALLBACK_MAG: Array[float] = [1.0]
-# PIP ADS puts the eye this many cm past the near eye relief bound
-const _EYE_RELIEF_MARGIN := 0.5
-
-# Simulation.time values at which vanilla World.TOD swaps the sun for the moon.
-const _SUNRISE := 600.0
-const _SUNSET := 1800.0
-# Half-width of the dusk and dawn ramps in Simulation.time units, 100 being one hour.
-const _TWILIGHT := 100.0
+# Entries for scope and variable optics missing from DATA, e.g. added by other mods. Eye relief is a single value, so near and far bound match.
+const _FALLBACK_FIXED := {
+	"mag_range": [4.0],
+	"objective": 28.0,
+	"eye_relief": Vector2(3.0, 3.0),
+}
+const _FALLBACK_VARIABLE := {
+	"mag_range": [1.1, 3.0, 6.0],
+	"objective": 24.0,
+	"eye_relief": Vector2(5.0, 5.0),
+}
 
 # weapon file -> scope file: rifles whose iron sights stay usable under that scope
 const _IRON_SIGHTS: Dictionary[String, String] = {
@@ -19,7 +19,8 @@ const _IRON_SIGHTS: Dictionary[String, String] = {
 	"M28": "PU",
 }
 
-static var _lens_geometry_cache := {}
+# optic file -> lens center and radius measured from the lens mesh
+static var _measured_lenses := {}
 
 const DATA := {
 	"ACOG": {
@@ -52,7 +53,6 @@ const DATA := {
 		"lens_center": Vector3(0.0, 0.0, -0.081),
 	},
 	"Vudu": {
-		"isFFP": true,
 		"mag_range": [1.0, 3.2, 10.0],
 		"mag_range_normalized": [1.0, 1.6, 2.5, 4.0, 6.3, 10.0],
 		"mag_range_discrete": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
@@ -62,7 +62,6 @@ const DATA := {
 		"lens_center": Vector3(0.0, 0.0, -0.131),
 	},
 	"Leopard": {
-		"isFFP": true,
 		"mag_range": [1.1, 3.0, 8.0],
 		"mag_range_normalized": [1.1, 1.7, 2.8, 4.8, 8.0],
 		"mag_range_discrete": [1.1, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
@@ -74,95 +73,45 @@ const DATA := {
 }
 
 
-static func get_mag_range(key: String) -> Array:
-	var entry: Dictionary = DATA.get(key, {})
+static func get_mag_range(att: AttachmentData) -> Array:
+	var entry := _entry(att)
 	var field := "mag_range"
 	match Config.instance.magnification_schema:
 		Config.MagnificationSchema.DISCRETE: field = "mag_range_discrete"
 		Config.MagnificationSchema.NORMALIZED: field = "mag_range_normalized"
-	return entry.get(field, entry.get("mag_range", _FALLBACK_MAG))
+	return entry.get(field, entry["mag_range"])
 
 
-# 1 in full daylight, 0 at night, ramping through dusk and dawn.
-static func daylight() -> float:
-	# shelters are lit from the inside and never run the day cycle
-	if gameData.shelter:
-		return 1.0
-	var time: float = Simulation.time
-	return smoothstep(_SUNRISE - _TWILIGHT, _SUNRISE + _TWILIGHT, time) - smoothstep(_SUNSET - _TWILIGHT, _SUNSET + _TWILIGHT, time)
+# Near and far bound in cm.
+static func get_eye_relief(att: AttachmentData) -> Vector2:
+	return _entry(att)["eye_relief"]
 
 
-# an optic's own top dot, or the iron sights of a listed weapon and scope pair
-static func has_secondary_sight(rig: WeaponRig) -> bool:
-	var optic = rig.activeOptic if rig else null
-	return optic && (optic.secondary || _IRON_SIGHTS.get(rig.data.file) == optic.attachmentData.file)
+# Objective lens diameter in mm.
+static func get_objective(att: AttachmentData) -> float:
+	return _entry(att)["objective"]
 
 
-static func sync_optic_state(rig: WeaponRig) -> void:
-	var optic = rig.activeOptic if rig else null
-	# BUGFIX: vanilla forgets to reset secondaryOptic when equipping another optic, breaking other scopes in PIP mode
-	if gameData.secondaryOptic && !has_secondary_sight(rig):
-		gameData.secondaryOptic = false
-	gameData.isScoped = optic && (optic.attachmentData.scope || optic.attachmentData.variable) && !gameData.secondaryOptic
-	if gameData.isScoped:
-		var mags := get_mag_range(optic.attachmentData.file)
-		Config.instance.current_scope_mag = mags[clamp(rig.slotData.zoom, 1, mags.size()) - 1]
-	else:
-		Config.instance.current_scope_mag = 1.0
+# Optic local lens center and radius, measured from the lens mesh where the catalog has none.
+static func get_lens(optic: Node3D) -> Dictionary:
+	var entry := _entry(optic.attachmentData)
+	var center: Vector3 = entry.get("lens_center", Vector3.ZERO)
+	var radius: float = entry.get("lens_radius", 0.0)
 
-	if rig:
-		if !optic:
-			rig.aimOffset = 0.0
-		elif !gameData.secondaryOptic:
-			rig.aimOffset = optic.position.y
-		elif optic.secondary:
-			# BUGFIX: vanilla fails to factor optic.scale, causing incorrect Y offset on several guns
-			rig.aimOffset = optic.position.y + optic.secondary.position.y * optic.scale.y
-		else:
-			# iron sights: Handling poses an optic aim at -aimOffset, so this lands on the no-optic aim pose
-			rig.aimOffset = -rig.data.aimPosition.y
+	if center == Vector3.ZERO || radius <= 0.0:
+		var measured := _measure_lens(optic)
+		if center == Vector3.ZERO:
+			center = measured.center
+		if radius <= 0.0:
+			radius = measured.radius
+
+	return {"center": center, "radius": radius}
 
 
-# Handling target Z for ADS with the rig's active optic
-static func get_aim_depth(rig: WeaponRig) -> float:
-	var optic = rig.activeOptic
-	var eye_relief: Vector2 = DATA.get(String(optic.attachmentData.file), {}).get("eye_relief", Vector2.ZERO) if optic else Vector2.ZERO
-	if !gameData.PIP || !gameData.isScoped || eye_relief.x <= 0.0:
-		return rig.data.aimPosition.z
-	# the eye lands at the optic's eye relief behind the lens, wherever the optic sits on the rail
-	return get_optic_geometry(optic).lens_depth - (eye_relief.x + _EYE_RELIEF_MARGIN) * 0.01
-
-
-# lens_depth: lens center Z in Handling space at the optic's rail position, rest pose
-static func get_optic_geometry(optic: Node3D) -> Dictionary:
-	var key := String(optic.attachmentData.file)
-	var entry: Dictionary = DATA.get(key, {})
-	var lens_center: Vector3 = entry.get("lens_center", Vector3.ZERO)
-	var lens_radius: float = entry.get("lens_radius", 0.0)
-
-	if lens_center == Vector3.ZERO || lens_radius <= 0.0:
-		var geom := _measure_lens(optic, key)
-		if lens_center == Vector3.ZERO:
-			lens_center = geom.center
-		if lens_radius <= 0.0:
-			lens_radius = geom.radius
-
-	return {
-		"lens_radius": lens_radius,
-		"lens_depth": (optic.transform * lens_center).z,
-		"isFFP": entry.get("isFFP", false),
-	}
-
-
-static func compute_angle(lens_radius: float, lens_distance: float) -> float:
-	if lens_radius > 0.0 && lens_distance > 0.0:
-		return 2.0 * atan(lens_radius / lens_distance)
-	return 0.0
-
-
-static func _measure_lens(optic: Node3D, key: String) -> Dictionary:
-	if _lens_geometry_cache.has(key):
-		return _lens_geometry_cache[key]
+static func _measure_lens(optic: Node3D) -> Dictionary:
+	var key: String = optic.attachmentData.file
+	if _measured_lenses.has(key):
+		return _measured_lenses[key]
 
 	var result := {"center": Vector3.ZERO, "radius": 0.0}
 	if optic.mesh == null || optic.mesh.mesh == null:
@@ -187,9 +136,24 @@ static func _measure_lens(optic: Node3D, key: String) -> Dictionary:
 
 	result.center = center
 	result.radius = sqrt(max_r_sq)
-	_lens_geometry_cache[key] = result
+	_measured_lenses[key] = result
 	Out.debug("extracted lens geometry for", key, "center:", center, "radius:", result.radius)
 	return result
+
+
+static func _entry(att: AttachmentData) -> Dictionary:
+	var entry = DATA.get(att.file)
+	if entry != null:
+		return entry
+	if att.variable:
+		return _FALLBACK_VARIABLE
+	if att.scope:
+		return _FALLBACK_FIXED
+	return {}
+
+
+static func has_iron_sights(weapon_key: String, scope_key: String) -> bool:
+	return _IRON_SIGHTS.get(weapon_key) == scope_key
 
 
 static func apply(lib) -> void:
