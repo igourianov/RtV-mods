@@ -21,7 +21,6 @@ var current_weapon_weight: float = 0.0
 var current_weapon_action: String = ""
 var ammo_check_view := false
 var hold_breath_state: float = 0.0
-var optic_shiner: bool = false
 var binoculars_active: bool = false
 var binoculars_mag: float = 6.0
 var kills: PackedByteArray = PackedByteArray([0, 0, 0, 1, 2, 3, 0, 4, 0, 1, 0, 0, 0])

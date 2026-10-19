@@ -19,8 +19,6 @@ var _pose_latch := Pose.NONE
 var _aim_held := false
 var _cant_held := false
 var _sprint_held := false
-# an optic strike ended the aim, and the key has to come up before it can aim again
-var _aim_withdrawn := false
 # set by the vanilla canted key, kept across aims as in vanilla
 var _aim_canted := false
 var _presses: int = 0
@@ -76,15 +74,6 @@ func crouch() -> bool:
 
 func hold_breath() -> bool:
 	return _arms == Arms.AIM && Input.is_action_pressed("hold_breath")
-
-
-# for a domain that has to end its own state without the user asking, e.g. an optic strike
-func withdraw_aim() -> void:
-	_aim_held = false
-	_aim_withdrawn = true
-	if _arms_latch == Arms.AIM:
-		_arms_latch = Arms.NONE
-	_settle()
 
 
 func withdraw_binoculars() -> void:
@@ -172,11 +161,9 @@ func _follow_held_keys() -> void:
 	# a sprint key held in place is no sprint, so it cannot end a crouch or an aim until the character heads forward
 	var sprintDown: bool = Input.is_action_pressed("sprint") && _moving_forward()
 
-	_aim_withdrawn = _aim_withdrawn && aimDown
-
 	if !aimDown:
 		_aim_held = false
-	elif !_aim_held && armed && !_aim_toggle() && !_aim_withdrawn:
+	elif !_aim_held && armed && !_aim_toggle():
 		_aim_held = true
 		_presses += 1
 		_aim_press = _presses

@@ -5,7 +5,6 @@ extends RefCounted
 const BLUR_RADIUS := 12.0
 
 const _NVG_PIP_SHADER := preload("res://mods/likhos-vostac/Shaders/PIP_NVG.gdshader")
-const Out := preload("../../Lib/Out.gd")
 const ScopeCatalog := preload("../ScopeCatalog.gd")
 var config := preload("../Config.gd").instance
 var gameData := preload("res://Resources/GameData.tres")
@@ -18,6 +17,11 @@ const _VANILLA_PIP_SSAA := 1
 const _EYE_PUPIL_DAY := 2.5
 const _EYE_PUPIL_NIGHT := 7.0
 
+# Simulation.time values at which vanilla World.TOD swaps the sun for the moon.
+const _SUNRISE := 600.0
+const _SUNSET := 1800.0
+# Half-width of the dusk and dawn ramps in Simulation.time units, 100 being one hour.
+const _TWILIGHT := 100.0
 
 
 var _lib
@@ -29,7 +33,7 @@ func _init(lib, preferences: Preferences) -> void:
 	_preferences = preferences
 
 
-func on_physics_process_pre(_delta: float) -> void:
+func on_physics_process_pre(delta: float) -> void:
 	var optic = _lib._caller
 	if !optic:
 		return
@@ -43,24 +47,25 @@ func on_physics_process_pre(_delta: float) -> void:
 	if pip_mat && pip_mat.shader:
 		if !("shader_parameter/blur_radius" in pip_mat):
 			pip_mat.shader = _NVG_PIP_SHADER
+			pip_mat.set_shader_parameter("transmission", 1.0)
 		var scoped: bool = gameData.isScoped && gameData.PIP
 		var blur_on: bool = scoped && gameData.NVG && config.NVG_PIP_blur
 		var radius: float = BLUR_RADIUS if blur_on else 0.0
 		pip_mat.set_shader_parameter("blur_radius", radius)
 		# The rig's unmounted optics run this hook too, and current_scope_mag belongs to the mounted one.
 		if scoped && optic.visible:
-			pip_mat.set_shader_parameter("transmission", _low_light_transmission(optic))
+			var current: float = pip_mat.get_shader_parameter("transmission")
+			pip_mat.set_shader_parameter("transmission", lerpf(current, _low_light_transmission(optic), delta * 10.0))
 
 
 # Share of the scene's brightness that reaches the eye: the area of the exit pupil over the area of the eye pupil.
 # An exit pupil wider than the eye pupil adds nothing, so every scope is at full brightness in daylight.
 func _low_light_transmission(optic: Node3D) -> float:
-	var objective: float = ScopeCatalog.DATA.get(optic.attachmentData.file, {}).get("objective", 0.0)
-	if objective <= 0.0:
-		return 1.0
-
-	var eye_pupil: float = lerpf(_EYE_PUPIL_NIGHT, _EYE_PUPIL_DAY, ScopeCatalog.daylight())
-	var exit_pupil: float = objective / config.current_scope_mag
+	# 1 in full daylight, 0 at night, ramping through dusk and dawn. Shelters are lit from the inside and never run the day cycle.
+	var time: float = Simulation.time
+	var daylight: float = 1.0 if gameData.shelter else smoothstep(_SUNRISE - _TWILIGHT, _SUNRISE + _TWILIGHT, time) - smoothstep(_SUNSET - _TWILIGHT, _SUNSET + _TWILIGHT, time)
+	var eye_pupil: float = lerpf(_EYE_PUPIL_NIGHT, _EYE_PUPIL_DAY, daylight)
+	var exit_pupil: float = ScopeCatalog.get_objective(optic.attachmentData) / config.current_scope_mag
 	var transmission: float = minf(1.0, (exit_pupil / eye_pupil) ** 2)
 	return lerpf(1.0, transmission, config.scope_low_light_dimming)
 

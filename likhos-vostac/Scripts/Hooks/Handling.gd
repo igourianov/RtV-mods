@@ -1,6 +1,7 @@
 extends RefCounted
 
 const ScopeCatalog := preload("../ScopeCatalog.gd")
+const RigOpticPatches := preload("../RigOpticPatches.gd")
 const Out := preload("../../Lib/Out.gd")
 const InputBus := preload("../Nodes/InputBus.gd")
 var config := preload("../Config.gd").instance
@@ -10,11 +11,11 @@ enum IdleCategory { Default, Pistol, FuddGrip, SMG, StocklessSMG }
 
 var _idle_offsets := {
 	IdleCategory.Default: {
-		"pos": Vector3(0, -0.04, 0.02),
+		"pos": Vector3(0, 0, 0.02),
 		"rot": Vector3(10, 35, -20),
 	},
 	IdleCategory.SMG: {
-		"pos": Vector3(0, -0.06, 0.04),
+		"pos": Vector3(0, 0, 0.04),
 		"rot": Vector3(0, 45, 0),
 	},
 	IdleCategory.Pistol: {
@@ -28,14 +29,14 @@ var _idle_offsets := {
 		"hide_left_arm": true,
 	},
 	IdleCategory.FuddGrip: {
-		"pos": Vector3(0, -0.06, 0.05),
+		"pos": Vector3(0, 0, 0.05),
 		"rot": Vector3(-5, 40, 10),
 	},
 }
 
 const _SECONDARY_OPTIC_ROT_OFFSET := Vector3(-15.0, 0.0, 0)
-const _ANCHOR_PITCH := -10.0
-const _LOOK_DOWN_PITCH := -45.0
+const _DETACH_PITCH := deg_to_rad(-10.0)
+const _LOOK_DOWN_PITCH := deg_to_rad(-45.0)
 const _STOW_POS_OFFSET := Vector3(0.15, -0.25, 0.3)
 const _STOW_HOLD_LOOK_DOWN := 0.2
 const _LEFT_ARM_BONE := "Arm_Upper_L"
@@ -58,39 +59,12 @@ const _SPEED_WEIGHT_LIGHT := 3.0
 const _SPEED_WEIGHT_LIGHT_MULT := 1.6
 const _SPEED_WEIGHT_HEAVY_MULT := 0.4
 
-const _AIM_POS_OVERRIDE := {
-	"SVD": -0.08,
-	"M78": -0.09,
-	"AKM": -0.07,
-	"AK_12": -0.04,
-	"AKS_74U": -0.1,
-	"VSS": -0.08,
-	"MP5SD": -0.1,
-	"MP5K": -0.1,
-	"MP5": -0.1,
-	"RK_95": -0.06,
-	"RK_62": -0.06,
-	"RK_62M": -0.06,
-	"M4A1": -0.07,
-	"MK18": -0.06,
-	"HK416": -0.06,
-	"KAR_21_223": -0.12,
-	"KAR_21_308": -0.12,
-	"MP7": -0.16,
-	"Mosin": -0.22,
-	"M28": -0.2,
-	"M28_MOD": -0.2,
-}
-
-
 var _lib
 var _bus: InputBus
 var _handlingMode := HandlingMode.Default
 var _target_idle := false
 var _manager_local_baseline: Transform3D
 var _baseline_captured := false
-var _anchor_pitch: float = 0.0
-var _target_pitch: float = 0.0
 var _pitch_offset: float = 0.0
 var _stow_hold: float = 0.0
 var _stow_rot: Vector3
@@ -132,7 +106,9 @@ func on_rig_update_post(_animate: bool) -> void:
 	config.current_weapon_action = data.weaponAction if data else ""
 	Out.debug("weapon weight: %.1fkg" % config.current_weapon_weight)
 
-	ScopeCatalog.sync_optic_state(rig)
+	# knife, grenade and fishing rigs come through as null and reset the optic state
+	RigOpticPatches.clamp_rail_position(rig as WeaponRig)
+	ScopeCatalog.sync_optic_state(rig as WeaponRig)
 
 	# fold/unfold iron sights based on optic presence
 	# BUGFIX - vanilla doens't check frontSightIndex, which casues flicker on M4A1, which doens't have foldable front sight
@@ -204,12 +180,9 @@ func on_weapon_handling(delta: float) -> void:
 
 
 func _resolve_aim_intent() -> void:
-	if config.optic_shiner:
-		_bus.withdraw_aim()
-		config.optic_shiner = false
-
 	# the bus already accounts for locks and for binoculars taking over the arms
-	gameData.isAiming = _bus.aim()
+	# airborne only suspends the aim here, so the bus keeps a held or latched aim and it comes back on landing
+	gameData.isAiming = _bus.aim() && !gameData.isFalling
 	gameData.isCanted = _bus.canted()
 
 
@@ -276,10 +249,8 @@ func _set_target(h: Node) -> void:
 
 		if !optic:
 			h.targetPosition = data.aimPosition
-		elif gameData.PIP && gameData.isScoped:
-			h.targetPosition = Vector3(0.0, -rig.aimOffset, _AIM_POS_OVERRIDE.get(data.file, data.aimPosition.z * 0.67))
 		else:
-			h.targetPosition = Vector3(0.0, -rig.aimOffset, data.aimPosition.z)
+			h.targetPosition = ScopeCatalog.get_aim_position(rig)
 
 		h.targetRotation = data.aimRotation
 		return
@@ -351,28 +322,24 @@ func _apply_target(h: Node, delta: float) -> void:
 
 	var cam_xform: Transform3D = outer_cam.global_transform
 	var cam_euler := cam_xform.basis.get_euler()
-	var cam_pitch_deg := rad_to_deg(cam_euler.x)
 
-	if cam_pitch_deg < _LOOK_DOWN_PITCH:
+	if cam_euler.x < _LOOK_DOWN_PITCH:
 		_stow_hold = _STOW_HOLD_LOOK_DOWN
 	elif _stow_hold > 0.0:
 		_stow_hold -= delta
 
-	if cam_pitch_deg >= _ANCHOR_PITCH:
-		_anchor_pitch = cam_euler.x
-
 	var offset_target: float
 	if !_target_idle:
 		offset_target = 0.0
-	elif _stow_hold > 0.0 || cam_pitch_deg >= _ANCHOR_PITCH:
+	elif _stow_hold > 0.0:
 		offset_target = cam_euler.x
 	else:
-		offset_target = _anchor_pitch
+		# above the detach pitch the weapon holds at it in world space, below it the weapon follows the camera in its idle pose
+		offset_target = maxf(cam_euler.x - _DETACH_PITCH, 0.0)
 
 	_pitch_offset = lerp(_pitch_offset, offset_target, t)
-	_target_pitch = cam_euler.x - _pitch_offset
 
-	var weapon_basis := Basis.from_euler(Vector3(_target_pitch, cam_euler.y, cam_euler.z))
+	var weapon_basis := Basis.from_euler(Vector3(cam_euler.x - _pitch_offset, cam_euler.y, cam_euler.z))
 	manager.global_transform = Transform3D(weapon_basis, cam_xform.origin) * _manager_local_baseline
 
 

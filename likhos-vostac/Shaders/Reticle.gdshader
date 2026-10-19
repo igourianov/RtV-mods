@@ -6,12 +6,15 @@ uniform sampler2D reticle : repeat_disable;
 uniform float opacity : hint_range(0.0, 1.0, 0.1) = 1.0;
 uniform float size : hint_range(0.0, 1.0, 0.01) = 0.1;
 uniform float intensity : hint_range(0.0, 10.0, 1.0) = 5.0;
-uniform float shadow : hint_range(0.0, 1.0, 0.001) = 0.0;
 // Rescales `size` onto lens UV. Set per material, where Likho's Battery Powered reads it to place its own reticle pass the same way.
 uniform float lens_uv_scale = 1.0;
+// Shift of the clear aperture in lens UV.
+uniform vec2 shadow_offset = vec2(0.0);
 
 // Width of the lens rim that fades the image out, in lens UV. The lens radius is 0.5.
 const float RIM_WIDTH = 0.05;
+// Width of the swing shadow's soft edge, in lens UV.
+const float SHADOW_EDGE = 0.08;
 
 varying float occlusion;
 varying float spherical;
@@ -53,9 +56,8 @@ void fragment()
 
 	// Shadow ----------------------------------------
 
-	float aperture_outer = mix(0.58, 0.0, shadow);
-	float aperture_inner = aperture_outer - 0.08;
-	float shadowMask = scope ? smoothstep(aperture_inner, aperture_outer, r) : 0.0;
+	// The soft edge starts at the lens radius, so an unshifted aperture leaves the whole lens clear.
+	float shadowMask = scope ? smoothstep(occlusion, occlusion + SHADOW_EDGE, length(UV - vec2(0.5) - shadow_offset)) : 0.0;
 
 	// Reticle ----------------------------------------
 
