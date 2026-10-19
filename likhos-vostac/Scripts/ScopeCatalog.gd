@@ -144,14 +144,15 @@ static func sync_optic_state(rig: WeaponRig) -> void:
 			rig.aimOffset = -rig.data.aimPosition.y
 
 
-# Handling target Z for ADS with the rig's active optic
-static func get_aim_depth(rig: WeaponRig) -> float:
-	if !gameData.PIP || !gameData.isScoped:
-		return rig.data.aimPosition.z
-	var optic = rig.activeOptic
-	# the eye lands at the optic's eye relief behind the lens center, wherever the optic sits on the rail
-	var lens_depth: float = (optic.transform * get_lens(optic).center).z
-	return lens_depth - (get_eye_relief(optic.attachmentData).x + _EYE_RELIEF_MARGIN) * 0.01
+# ADS target position for the rig's active optic
+static func get_aim_position(rig: WeaponRig) -> Vector3:
+	var depth: float = rig.data.aimPosition.z
+	if gameData.PIP && gameData.isScoped:
+		var optic = rig.activeOptic
+		# the eye lands at the optic's eye relief behind the lens center, wherever the optic sits on the rail
+		var lens_depth: float = (optic.transform * get_lens(optic).center).z
+		depth = lens_depth - (get_eye_relief(optic.attachmentData).x + _EYE_RELIEF_MARGIN) * 0.01
+	return Vector3(0.0, -rig.aimOffset, depth)
 
 
 static func _measure_lens(optic: Node3D) -> Dictionary:

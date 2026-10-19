@@ -248,7 +248,7 @@ func _set_target(h: Node) -> void:
 		if !optic:
 			h.targetPosition = data.aimPosition
 		else:
-			h.targetPosition = Vector3(0.0, -rig.aimOffset, ScopeCatalog.get_aim_depth(rig))
+			h.targetPosition = ScopeCatalog.get_aim_position(rig)
 
 		h.targetRotation = data.aimRotation
 		return

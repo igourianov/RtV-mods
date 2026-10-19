@@ -5,13 +5,13 @@ const SPRINT_FACTOR := 6.0
 const PITCH_LIMIT := deg_to_rad(89.0)
 
 var gameData := preload("res://Resources/GameData.tres")
-var view_camera: Camera3D
+var _view_camera: Camera3D
 var _yaw: float
 var _pitch: float
 
 
 func _init(source: Camera3D) -> void:
-	view_camera = source
+	_view_camera = source
 	# the world is frozen with a tree pause
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	fov = source.fov
@@ -25,7 +25,17 @@ func _init(source: Camera3D) -> void:
 
 
 func _ready() -> void:
-	global_position = view_camera.global_position
+	global_position = _view_camera.global_position
+	make_current()
+	get_tree().paused = true
+
+
+# also runs when the scene unloads under the free camera
+func _exit_tree() -> void:
+	get_tree().paused = false
+	# freeing the current camera hands the view to whichever camera the viewport picks next, e.g. the player's chain camera
+	if is_instance_valid(_view_camera) && _view_camera.is_inside_tree():
+		_view_camera.make_current()
 
 
 func _input(event: InputEvent) -> void:

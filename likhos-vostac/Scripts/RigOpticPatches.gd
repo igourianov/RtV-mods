@@ -2,12 +2,11 @@ extends RefCounted
 
 const Out := preload("../Lib/Out.gd")
 
-# Corrects optic node property values that ship wrong in vanilla rig scenes
-# (e.g. defaultPosition outside the [minPosition, maxPosition] rail range).
+# Rail range, default position and rail movement overrides for optics on vanilla rigs.
+# Ranges are tuned so the eye relief of magnified optics is reachable in PIP ADS, and fix vanilla values like defaultPosition outside [minPosition, maxPosition].
 #
-# Applied via the loader's SCENE_NODES registry: patches land on live rig
-# instances when they enter the tree. The PackedScene is never mutated and
-# every patch is reversible.
+# Applied via the loader's SCENE_NODES registry: patches land on live rig instances when they enter the tree.
+# The PackedScene is never mutated and every patch is reversible.
 #
 # Key format:   "<rig_scene_path>#<node_path_to_optic>"
 # Value format: { "<property>": <corrected_value>, ... }
@@ -93,16 +92,7 @@ const PATCHES := {
 		"minPosition": -0.01,
 		"maxPosition": 0.08,
 	},
-	"res://Items/Weapons/KAR-21/KAR-21_308_Rig.tscn#Handling/Sway/Noise/Tilt/Impulse/Recoil/Holder/KAR-21/Armature/Skeleton3D/Attachments/ACOG": {
-		"defaultPosition": 0.02,
-		"minPosition": -0.01,
-		"maxPosition": 0.08,
-	},
 	"res://Items/Weapons/KAR-21/KAR-21_223_Rig.tscn#Handling/Sway/Noise/Tilt/Impulse/Recoil/Holder/KAR-21/Armature/Skeleton3D/Attachments/HMR": {
-		"defaultPosition": 0.02,
-		"maxPosition": 0.06,
-	},
-	"res://Items/Weapons/KAR-21/KAR-21_308_Rig.tscn#Handling/Sway/Noise/Tilt/Impulse/Recoil/Holder/KAR-21/Armature/Skeleton3D/Attachments/HMR": {
 		"defaultPosition": 0.02,
 		"maxPosition": 0.06,
 	},
@@ -110,14 +100,23 @@ const PATCHES := {
 		"defaultPosition": 0.1,
 		"maxPosition": 0.13,
 	},
-	"res://Items/Weapons/KAR-21/KAR-21_308_Rig.tscn#Handling/Sway/Noise/Tilt/Impulse/Recoil/Holder/KAR-21/Armature/Skeleton3D/Attachments/Vudu": {
-		"defaultPosition": 0.1,
-		"maxPosition": 0.13,
-	},
 	"res://Items/Weapons/KAR-21/KAR-21_223_Rig.tscn#Handling/Sway/Noise/Tilt/Impulse/Recoil/Holder/KAR-21/Armature/Skeleton3D/Attachments/Leopard": {
 		"defaultPosition": 0.14,
 		"minPosition": 0.05,
 		"maxPosition": 0.18,
+	},
+	"res://Items/Weapons/KAR-21/KAR-21_308_Rig.tscn#Handling/Sway/Noise/Tilt/Impulse/Recoil/Holder/KAR-21/Armature/Skeleton3D/Attachments/ACOG": {
+		"defaultPosition": 0.02,
+		"minPosition": -0.01,
+		"maxPosition": 0.08,
+	},
+	"res://Items/Weapons/KAR-21/KAR-21_308_Rig.tscn#Handling/Sway/Noise/Tilt/Impulse/Recoil/Holder/KAR-21/Armature/Skeleton3D/Attachments/HMR": {
+		"defaultPosition": 0.02,
+		"maxPosition": 0.06,
+	},
+	"res://Items/Weapons/KAR-21/KAR-21_308_Rig.tscn#Handling/Sway/Noise/Tilt/Impulse/Recoil/Holder/KAR-21/Armature/Skeleton3D/Attachments/Vudu": {
+		"defaultPosition": 0.1,
+		"maxPosition": 0.13,
 	},
 	"res://Items/Weapons/KAR-21/KAR-21_308_Rig.tscn#Handling/Sway/Noise/Tilt/Impulse/Recoil/Holder/KAR-21/Armature/Skeleton3D/Attachments/Leopard": {
 		"defaultPosition": 0.14,
@@ -177,6 +176,11 @@ const PATCHES := {
 	"res://Items/Weapons/M4A1/M4A1_Rig.tscn#Handling/Sway/Noise/Tilt/Impulse/Recoil/Holder/M4A1/Armature/Skeleton3D/Attachments/Vudu": {
 		"defaultPosition": 0.1,
 		"maxPosition": 0.11,
+	},
+	"res://Items/Weapons/M4A1/M4A1_Rig.tscn#Handling/Sway/Noise/Tilt/Impulse/Recoil/Holder/M4A1/Armature/Skeleton3D/Attachments/Micro": {
+		"defaultPosition": 0.08,
+		"minPosition": 0.06,
+		"maxPosition": 0.1,
 	},
 	"res://Items/Weapons/MK18/MK18_Rig.tscn#Handling/Sway/Noise/Tilt/Impulse/Recoil/Holder/MK18/Armature/Skeleton3D/Attachments/ACOG": {
 		"maxPosition": 0.1,
@@ -260,11 +264,6 @@ const PATCHES := {
 		"defaultPosition": 0.06,
 		"minPosition": 0.05,
 		"maxPosition": 0.06,
-	},
-	"res://Items/Weapons/M4A1/M4A1_Rig.tscn#Handling/Sway/Noise/Tilt/Impulse/Recoil/Holder/M4A1/Armature/Skeleton3D/Attachments/Micro": {
-		"defaultPosition": 0.08,
-		"minPosition": 0.06,
-		"maxPosition": 0.1,
 	},
 	"res://Items/Weapons/AK-12/AK-12_Rig.tscn#Handling/Sway/Noise/Tilt/Impulse/Recoil/Holder/AK-12/Armature/Skeleton3D/Attachments/ACOG": {
 		"maxPosition": 0.12,

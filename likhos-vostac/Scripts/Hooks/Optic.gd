@@ -24,7 +24,6 @@ const _SUNSET := 1800.0
 const _TWILIGHT := 100.0
 
 
-
 var _lib
 var _preferences: Preferences
 
@@ -48,15 +47,15 @@ func on_physics_process_pre(delta: float) -> void:
 	if pip_mat && pip_mat.shader:
 		if !("shader_parameter/blur_radius" in pip_mat):
 			pip_mat.shader = _NVG_PIP_SHADER
+			pip_mat.set_shader_parameter("transmission", 1.0)
 		var scoped: bool = gameData.isScoped && gameData.PIP
 		var blur_on: bool = scoped && gameData.NVG && config.NVG_PIP_blur
 		var radius: float = BLUR_RADIUS if blur_on else 0.0
 		pip_mat.set_shader_parameter("blur_radius", radius)
 		# The rig's unmounted optics run this hook too, and current_scope_mag belongs to the mounted one.
 		if scoped && optic.visible:
-			var target: float = _low_light_transmission(optic)
-			var current = pip_mat.get_shader_parameter("transmission")
-			pip_mat.set_shader_parameter("transmission", target if current == null else lerpf(current, target, delta * 10.0))
+			var current: float = pip_mat.get_shader_parameter("transmission")
+			pip_mat.set_shader_parameter("transmission", lerpf(current, _low_light_transmission(optic), delta * 10.0))
 
 
 # Share of the scene's brightness that reaches the eye: the area of the exit pupil over the area of the eye pupil.
