@@ -7,6 +7,8 @@
 * brought back a mild scope shadow on wide swings and crouch/standup
 * force user out of aim on jump/falling
 * increased strength of scope DOF blur
+* NVG now blur everything up close, including the gun you hold (like real NVG would)
+	* NVG PIP blur setting renamed to NVG weapon blur, it turns back on once if you disabled it
 * low light dimming fades smoothly on magnification change instead of snapping
 * minor adjustments to free look pose
 * major refactoring of the optics and aiming code
