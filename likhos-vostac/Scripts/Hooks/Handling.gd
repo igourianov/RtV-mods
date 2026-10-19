@@ -1,6 +1,7 @@
 extends RefCounted
 
 const ScopeCatalog := preload("../ScopeCatalog.gd")
+const RigOpticPatches := preload("../RigOpticPatches.gd")
 const Out := preload("../../Lib/Out.gd")
 const InputBus := preload("../Nodes/InputBus.gd")
 var config := preload("../Config.gd").instance
@@ -106,6 +107,7 @@ func on_rig_update_post(_animate: bool) -> void:
 	Out.debug("weapon weight: %.1fkg" % config.current_weapon_weight)
 
 	# knife, grenade and fishing rigs come through as null and reset the optic state
+	RigOpticPatches.clamp_rail_position(rig as WeaponRig)
 	ScopeCatalog.sync_optic_state(rig as WeaponRig)
 
 	# fold/unfold iron sights based on optic presence

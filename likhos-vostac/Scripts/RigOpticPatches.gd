@@ -291,3 +291,20 @@ static func apply(lib) -> void:
 		if !lib.patch(lib.Registry.SCENE_NODES, id, PATCHES[id]):
 			Out.warning("rig optic patch failed: %s" % id)
 
+
+# The weapon saves the rail position as an offset from defaultPosition, and vanilla UpdateRig applies it unchecked.
+# An offset saved before a patch moved the default, narrowed the range or disabled rail movement can leave the optic out of range with no way back, so it is pulled into range.
+static func clamp_rail_position(rig: WeaponRig) -> void:
+	var optic = rig.activeOptic if rig else null
+	if !optic:
+		return
+
+	var z: float = optic.defaultPosition + rig.slotData.position
+	var clamped: float = clampf(z, optic.minPosition, optic.maxPosition) if optic.railMovement else optic.defaultPosition
+	if is_equal_approx(clamped, z):
+		return
+
+	Out.debug("rail position %.3f out of range on %s %s, moved to %.3f" % [z, rig.data.file, optic.name, clamped])
+	rig.slotData.position = clamped - optic.defaultPosition
+	optic.position.z = clamped
+
