@@ -19,30 +19,23 @@ func on_update_post(item: Item) -> void:
 	if !tooltip:
 		return
 
-	if !item || !item.slotData || !item.slotData.itemData:
+	if !item || !item.slotData:
 		return
 
-	var entry: Dictionary = ScopeCatalog.DATA.get(item.slotData.itemData.file, {})
-	if entry.is_empty():
+	# the catalog covers magnified optics only, with fallback values for the ones it does not list
+	var att := item.slotData.itemData as AttachmentData
+	if !att || !(att.scope || att.variable):
 		return
 
-	if entry.has("mag_range"):
-		var mag: Array = entry["mag_range"]
-		var text := ""
-		if mag.size() == 1:
-			text = "%sx" % _fmt_num(mag[0])
-		elif mag.size() > 1:
-			text = "%s-%sx" % [_fmt_num(mag[0]), _fmt_num(mag[-1])]
-		if text != "":
-			_show_row(tooltip, ROW_MAG, "Magnification:", text)
+	var mag := ScopeCatalog.get_mag_range(att)
+	var mag_text := "%sx" % _fmt_num(mag[0]) if mag.size() == 1 else "%s-%sx" % [_fmt_num(mag[0]), _fmt_num(mag[-1])]
+	_show_row(tooltip, ROW_MAG, "Magnification:", mag_text)
 
-	if entry.has("objective"):
-		_show_row(tooltip, ROW_OBJ, "Objective:", "%s mm" % _fmt_num(entry["objective"]))
+	_show_row(tooltip, ROW_OBJ, "Objective:", "%s mm" % _fmt_num(ScopeCatalog.get_objective(att)))
 
-	if entry.has("eye_relief"):
-		var er = entry["eye_relief"]
-		if er is Vector2:
-			_show_row(tooltip, ROW_EYE, "Eye Relief:", "%s-%s cm" % [_fmt_num(er.x), _fmt_num(er.y)])
+	var er := ScopeCatalog.get_eye_relief(att)
+	var er_text := "%s cm" % _fmt_num(er.x) if er.x == er.y else "%s-%s cm" % [_fmt_num(er.x), _fmt_num(er.y)]
+	_show_row(tooltip, ROW_EYE, "Eye Relief:", er_text)
 
 
 func _fmt_num(v: float) -> String:
