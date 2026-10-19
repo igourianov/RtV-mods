@@ -1,3 +1,16 @@
+# 3.10.2123
+* reworked PIP eye relief (too many people struggled to understand it)
+	* inverted eye relief logic to force aim pose into optimal eye relief instead of allowing user to position scope into it
+	* removed eye relief scope shadow and shiner logic
+	* odd combinations like ACOG on M28 will now work (even though they shouldn't)
+* reworked and fixed optic rail placement bounds and default values
+* brought back a mild scope shadow on wide swings and crouch/standup
+* force user out of aim on jump/falling
+* increased strength of scope DOF blur
+* low light dimming fades smoothly on magnification change instead of snapping
+* minor adjustments to free look pose
+* major refactoring of the optics and aiming code
+
 # 3.8.2078
 * fixed ammo, chamber, attachment, fire mode and kill counter cards and the magazine tooltip not showing alongside mods that add their own nodes to the weapon (e.g. Realistic Gunplay)
 
