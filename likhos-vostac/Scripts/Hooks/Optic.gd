@@ -1,10 +1,10 @@
 extends RefCounted
 
 # Tunable: blur radius in viewport texels for the NVG scope blur. 0 disables.
-# Larger = blurrier. If raised substantially, also raise STEPS in PIP_NVG.gdshader.
+# Larger = blurrier. If raised substantially, also raise STEPS in PIP.gdshader.
 const BLUR_RADIUS := 12.0
 
-const _NVG_PIP_SHADER := preload("res://mods/likhos-vostac/Shaders/PIP_NVG.gdshader")
+const _PIP_SHADER := preload("res://mods/likhos-vostac/Shaders/PIP.gdshader")
 const ScopeCatalog := preload("../ScopeCatalog.gd")
 var config := preload("../Config.gd").instance
 var gameData := preload("res://Resources/GameData.tres")
@@ -46,7 +46,7 @@ func on_physics_process_pre(delta: float) -> void:
 	var pip_mat: ShaderMaterial = optic.PIP
 	if pip_mat && pip_mat.shader:
 		if !("shader_parameter/blur_radius" in pip_mat):
-			pip_mat.shader = _NVG_PIP_SHADER
+			pip_mat.shader = _PIP_SHADER
 			pip_mat.set_shader_parameter("transmission", 1.0)
 		var scoped: bool = gameData.isScoped && gameData.PIP
 		var blur_on: bool = scoped && gameData.NVG && config.NVG_PIP_blur
