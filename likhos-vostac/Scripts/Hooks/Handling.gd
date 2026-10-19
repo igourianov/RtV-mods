@@ -1,6 +1,6 @@
 extends RefCounted
 
-const WeaponRig_Optic := preload("../Nodes/WeaponRig_Optic.gd")
+const ScopeCatalog := preload("../ScopeCatalog.gd")
 const Out := preload("../../Lib/Out.gd")
 const InputBus := preload("../Nodes/InputBus.gd")
 var config := preload("../Config.gd").instance
@@ -105,14 +105,8 @@ func on_rig_update_post(_animate: bool) -> void:
 	config.current_weapon_action = data.weaponAction if data else ""
 	Out.debug("weapon weight: %.1fkg" % config.current_weapon_weight)
 
-	# the optic handler is attached in the rig's _ready, which add_child runs before vanilla calls UpdateRig
-	var optic_handler: WeaponRig_Optic = rig.get_node_or_null("Likho_WeaponRig_Optic") if rig else null
-	if optic_handler:
-		optic_handler.sync_optic_state()
-	else:
-		gameData.secondaryOptic = false
-		gameData.isScoped = false
-		config.current_scope_mag = 1.0
+	# knife, grenade and fishing rigs come through as null and reset the optic state
+	ScopeCatalog.sync_optic_state(rig as WeaponRig)
 
 	# fold/unfold iron sights based on optic presence
 	# BUGFIX - vanilla doens't check frontSightIndex, which casues flicker on M4A1, which doens't have foldable front sight
@@ -254,8 +248,7 @@ func _set_target(h: Node) -> void:
 		if !optic:
 			h.targetPosition = data.aimPosition
 		else:
-			var optic_handler: WeaponRig_Optic = rig.get_node("Likho_WeaponRig_Optic")
-			h.targetPosition = Vector3(0.0, -rig.aimOffset, optic_handler.get_aim_depth())
+			h.targetPosition = Vector3(0.0, -rig.aimOffset, ScopeCatalog.get_aim_depth(rig))
 
 		h.targetRotation = data.aimRotation
 		return

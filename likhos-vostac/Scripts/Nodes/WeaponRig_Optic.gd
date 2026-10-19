@@ -3,8 +3,6 @@ extends "./WeaponRig_Base.gd"
 const ScopeCatalog := preload("../ScopeCatalog.gd")
 const ZoomAccelerator := preload("../ZoomAccelerator.gd")
 const _RETICLE_SHADER := preload("res://mods/likhos-vostac/Shaders/Reticle.gdshader")
-# PIP ADS puts the eye this many cm past the near eye relief bound
-const _EYE_RELIEF_MARGIN := 0.5
 # Per-optic `size` values are authored against vanilla's view-direction UV. This rescales them onto lens UV.
 const _LENS_UV_SCALE := 3.0
 # Swing shadow response to the scope's misalignment angle, in degrees, and its reach in lens UV (lens width 1.0).
@@ -68,62 +66,20 @@ func _handle_zoom(event: InputEvent, optic: Node3D) -> bool:
 	var new_zoom := _zoom.step(dir, rig.slotData.zoom - 1, max_zoom) + 1
 	if new_zoom != rig.slotData.zoom:
 		rig.slotData.zoom = new_zoom
-		sync_optic_state()
+		ScopeCatalog.sync_optic_state(rig)
 		_zoom_audio.click()
 	return true
 
 
 func _handle_secondary_optic(event: InputEvent) -> bool:
-	if !event.is_action_pressed("secondary_optic") || !has_secondary_sight():
+	var rig = get_parent()
+	if !event.is_action_pressed("secondary_optic") || !ScopeCatalog.has_secondary_sight(rig):
 		return false
 
 	gameData.secondaryOptic = !gameData.secondaryOptic
-	sync_optic_state()
+	ScopeCatalog.sync_optic_state(rig)
 
 	return true
-
-
-# an optic's own top dot, or the iron sights of a listed weapon and scope pair
-func has_secondary_sight() -> bool:
-	var rig = get_parent()
-	var optic = rig.activeOptic
-	return optic && (optic.secondary || ScopeCatalog.has_iron_sights(rig.data.file, optic.attachmentData.file))
-
-
-func sync_optic_state() -> void:
-	var rig = get_parent()
-	var optic = rig.activeOptic
-	# BUGFIX: vanilla forgets to reset secondaryOptic when equipping another optic, breaking other scopes in PIP mode
-	if gameData.secondaryOptic && !has_secondary_sight():
-		gameData.secondaryOptic = false
-	gameData.isScoped = optic && (optic.attachmentData.scope || optic.attachmentData.variable) && !gameData.secondaryOptic
-	if gameData.isScoped:
-		var mags := ScopeCatalog.get_mag_range(optic.attachmentData)
-		config.current_scope_mag = mags[clamp(rig.slotData.zoom, 1, mags.size()) - 1]
-	else:
-		config.current_scope_mag = 1.0
-
-	if !optic:
-		rig.aimOffset = 0.0
-	elif !gameData.secondaryOptic:
-		rig.aimOffset = optic.position.y
-	elif optic.secondary:
-		# BUGFIX: vanilla fails to factor optic.scale, causing incorrect Y offset on several guns
-		rig.aimOffset = optic.position.y + optic.secondary.position.y * optic.scale.y
-	else:
-		# iron sights: Handling poses an optic aim at -aimOffset, so this lands on the no-optic aim pose
-		rig.aimOffset = -rig.data.aimPosition.y
-
-
-# Handling target Z for ADS with the rig's active optic
-func get_aim_depth() -> float:
-	var rig = get_parent()
-	if !gameData.PIP || !gameData.isScoped:
-		return rig.data.aimPosition.z
-	var optic = rig.activeOptic
-	# the eye lands at the optic's eye relief behind the lens center, wherever the optic sits on the rail
-	var lens_depth: float = (optic.transform * ScopeCatalog.get_lens(optic).center).z
-	return lens_depth - (ScopeCatalog.get_eye_relief(optic.attachmentData).x + _EYE_RELIEF_MARGIN) * 0.01
 
 
 func _process(delta: float) -> void:

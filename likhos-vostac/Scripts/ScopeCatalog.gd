@@ -1,6 +1,11 @@
 const Out := preload("../Lib/Out.gd")
 const Config := preload("./Config.gd")
 
+static var gameData := preload("res://Resources/GameData.tres")
+
+# PIP ADS puts the eye this many cm past the near eye relief bound
+const _EYE_RELIEF_MARGIN := 0.5
+
 # Entries for scope and variable optics missing from DATA, e.g. added by other mods. Eye relief is a single value, so near and far bound match.
 const _FALLBACK_FIXED := {
 	"mag_range": [4.0],
@@ -108,6 +113,47 @@ static func get_lens(optic: Node3D) -> Dictionary:
 	return {"center": center, "radius": radius}
 
 
+# an optic's own top dot, or the iron sights of a listed weapon and scope pair
+static func has_secondary_sight(rig: WeaponRig) -> bool:
+	var optic = rig.activeOptic if rig else null
+	return optic && (optic.secondary || _IRON_SIGHTS.get(rig.data.file) == optic.attachmentData.file)
+
+
+static func sync_optic_state(rig: WeaponRig) -> void:
+	var optic = rig.activeOptic if rig else null
+	# BUGFIX: vanilla forgets to reset secondaryOptic when equipping another optic, breaking other scopes in PIP mode
+	if gameData.secondaryOptic && !has_secondary_sight(rig):
+		gameData.secondaryOptic = false
+	gameData.isScoped = optic && (optic.attachmentData.scope || optic.attachmentData.variable) && !gameData.secondaryOptic
+	if gameData.isScoped:
+		var mags := get_mag_range(optic.attachmentData)
+		Config.instance.current_scope_mag = mags[clamp(rig.slotData.zoom, 1, mags.size()) - 1]
+	else:
+		Config.instance.current_scope_mag = 1.0
+
+	if rig:
+		if !optic:
+			rig.aimOffset = 0.0
+		elif !gameData.secondaryOptic:
+			rig.aimOffset = optic.position.y
+		elif optic.secondary:
+			# BUGFIX: vanilla fails to factor optic.scale, causing incorrect Y offset on several guns
+			rig.aimOffset = optic.position.y + optic.secondary.position.y * optic.scale.y
+		else:
+			# iron sights: Handling poses an optic aim at -aimOffset, so this lands on the no-optic aim pose
+			rig.aimOffset = -rig.data.aimPosition.y
+
+
+# Handling target Z for ADS with the rig's active optic
+static func get_aim_depth(rig: WeaponRig) -> float:
+	if !gameData.PIP || !gameData.isScoped:
+		return rig.data.aimPosition.z
+	var optic = rig.activeOptic
+	# the eye lands at the optic's eye relief behind the lens center, wherever the optic sits on the rail
+	var lens_depth: float = (optic.transform * get_lens(optic).center).z
+	return lens_depth - (get_eye_relief(optic.attachmentData).x + _EYE_RELIEF_MARGIN) * 0.01
+
+
 static func _measure_lens(optic: Node3D) -> Dictionary:
 	var key: String = optic.attachmentData.file
 	if _measured_lenses.has(key):
@@ -150,10 +196,6 @@ static func _entry(att: AttachmentData) -> Dictionary:
 	if att.scope:
 		return _FALLBACK_FIXED
 	return {}
-
-
-static func has_iron_sights(weapon_key: String, scope_key: String) -> bool:
-	return _IRON_SIGHTS.get(weapon_key) == scope_key
 
 
 static func apply(lib) -> void:
