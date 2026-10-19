@@ -1,23 +1,11 @@
 extends RefCounted
 
 const _PIP_SHADER := preload("res://mods/likhos-vostac/Shaders/PIP.gdshader")
-const ScopeCatalog := preload("../ScopeCatalog.gd")
 var config := preload("../Config.gd").instance
-var gameData := preload("res://Resources/GameData.tres")
 
 # Vanilla scene defaults for the optic's SubViewport, applied when AA mirror is off.
 const _VANILLA_PIP_MSAA := 0
 const _VANILLA_PIP_SSAA := 1
-
-# Eye pupil diameter in mm: contracted in daylight, fully dilated at night.
-const _EYE_PUPIL_DAY := 2.5
-const _EYE_PUPIL_NIGHT := 7.0
-
-# Simulation.time values at which vanilla World.TOD swaps the sun for the moon.
-const _SUNRISE := 600.0
-const _SUNSET := 1800.0
-# Half-width of the dusk and dawn ramps in Simulation.time units, 100 being one hour.
-const _TWILIGHT := 100.0
 
 
 var _lib
@@ -29,7 +17,7 @@ func _init(lib, preferences: Preferences) -> void:
 	_preferences = preferences
 
 
-func on_physics_process_pre(delta: float) -> void:
+func on_physics_process_pre(_delta: float) -> void:
 	var optic = _lib._caller
 	if !optic:
 		return
@@ -41,31 +29,13 @@ func on_physics_process_pre(delta: float) -> void:
 
 	var pip_mat: ShaderMaterial = optic.PIP
 	if pip_mat && pip_mat.shader:
-		if !("shader_parameter/transmission" in pip_mat):
+		if !("shader_parameter/exposure" in pip_mat):
 			pip_mat.shader = _PIP_SHADER
-			pip_mat.set_shader_parameter("transmission", 1.0)
 		# The PIP camera renders with the shared world environment, so its picture already carries the exposure NVG raises.
 		# The main pass applies that exposure again when it tonemaps the lens, and the shader takes the second one back out.
 		var world: World3D = optic.get_world_3d()
 		var env: Environment = world.environment if world else null
 		pip_mat.set_shader_parameter("exposure", env.tonemap_exposure if env else 1.0)
-		var scoped: bool = gameData.isScoped && gameData.PIP
-		# The rig's unmounted optics run this hook too, and current_scope_mag belongs to the mounted one.
-		if scoped && optic.visible:
-			var current: float = pip_mat.get_shader_parameter("transmission")
-			pip_mat.set_shader_parameter("transmission", lerpf(current, _low_light_transmission(optic), delta * 10.0))
-
-
-# Share of the scene's brightness that reaches the eye: the area of the exit pupil over the area of the eye pupil.
-# An exit pupil wider than the eye pupil adds nothing, so every scope is at full brightness in daylight.
-func _low_light_transmission(optic: Node3D) -> float:
-	# 1 in full daylight, 0 at night, ramping through dusk and dawn. Shelters are lit from the inside and never run the day cycle.
-	var time: float = Simulation.time
-	var daylight: float = 1.0 if gameData.shelter else smoothstep(_SUNRISE - _TWILIGHT, _SUNRISE + _TWILIGHT, time) - smoothstep(_SUNSET - _TWILIGHT, _SUNSET + _TWILIGHT, time)
-	var eye_pupil: float = lerpf(_EYE_PUPIL_NIGHT, _EYE_PUPIL_DAY, daylight)
-	var exit_pupil: float = ScopeCatalog.get_objective(optic.attachmentData) / config.current_scope_mag
-	var transmission: float = minf(1.0, (exit_pupil / eye_pupil) ** 2)
-	return lerpf(1.0, transmission, config.scope_low_light_dimming)
 
 
 # preferences.antialiasing 1..4 -> Viewport.MSAA enum (0..3)

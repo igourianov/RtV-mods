@@ -34,7 +34,6 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 * Reworked the PIP scope mode for realism.
 * Reworked all optics to use real eye relief and magnification values. In PIP mode aiming a scope brings your eye to its eye relief, wherever it sits on the rail.
 * Fast or wide swings, exhausted arms and crouching or standing up while aiming push a dark crescent into the scope from the side. Steady aim and ordinary panning keep the full picture.
-* Scopes lose brightness at dusk and at night according to their exit pupil (only in PIP, adjust in LCM). At full night the light transmission is: ACOG 100%, HAMR and PU 73%, POSP at 6x 33%, Leopard at 8x 18% and Vudu at 10x 16%.
 * LPVO zoom is now accessible without aiming - gated by the Rail movement modifier by default to avoid collision with lower/raise weapon (change in LCM).
 * Added explicit bindings to the base game settings for optic zoom in/out (it was hardcoded to mouse wheel).
 
@@ -87,13 +86,11 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 * *Scope DOF reworked:* scales with magnification from 1x, near-DOF enabled for foreground/background softening.
 * *PIP MSAA matches main viewport:* the optic's SubViewport now mirrors the antialiasing settings used by the rest of the game - vanilla left it disabled (disable in LCM if it causes performance issues).
 * *NVG-aware PIP blur:* when night vision is active and you aim a magnified optic, the PIP image will now blur. Real scopes cannot work under NVG because of eye relief differences (disable in LCM).
-* *Low light dimming:* a scope passes on only as much light as its exit pupil (objective diameter divided by magnification) lets through. In daylight every scope is at full brightness. At dusk and at night an ACOG 4x32 stays bright, a HAMR or PU keeps about 73% and a Vudu at 10x keeps about 16%. Zoom out to get the image back. Shelters are unaffected (adjust strength in LCM). Idea borrowed from the [ExitPupil mod](https://github.com/heikkit/exitpupil-vostok-mod) by heikkit.
-
 ### Optics
 * All optics now have real eye relief values. Rail ranges and default positions of magnified optics are tuned so every scope can reach its eye relief in PIP mode.
 * All scopes now have real objective lens diameters, shown in the tooltip next to magnification and eye relief.
 * Scope swing shadow is back, much milder than vanilla. It only shows on fast or wide swings, with exhausted arms and on crouch or stand while aiming. It never blacks out the whole lens and the reticle stays visible over it. Red dots, secondary sights and the HAMR top dot never get it.
-* Scopes added by other mods get default magnification, objective and eye relief values, so eye relief, low light dimming and the tooltip work on them.
+* Scopes added by other mods get default magnification, objective and eye relief values, so eye relief and the tooltip work on them.
 * Changed Mark 8 ("Leopard") to 1.1-8x zoom and fixed reticle size at 1x.
 * Changed Vudu to 1-10x zoom and made it legendary rarity.
 * Changed POSP to be the 2-6x variant and fixed reticle size.

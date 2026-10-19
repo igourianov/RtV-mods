@@ -60,7 +60,6 @@ var gameData := preload("res://Resources/GameData.tres")
 @export var zoom_out_of_aim: ZoomOutOfAim = ZoomOutOfAim.RAIL_MOVEMENT
 @export var magnification_schema: MagnificationSchema = MagnificationSchema.NORMALIZED
 @export var NVG_weapon_blur: bool = true
-@export_range(0.0, 1.0, 0.1) var scope_low_light_dimming: float = 1.0
 @export var PIP_anti_aliasing: bool = true
 @export var zoom_DOF: bool = true
 
