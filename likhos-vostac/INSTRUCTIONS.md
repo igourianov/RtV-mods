@@ -20,7 +20,7 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 
 **Replace hooks** (other mods that also replace these will conflict, pick one):
 
-- `Camera.ScopeDOF`
+- `Camera.DOF`
 - `Controller.MovementStates`
 - `Controller._input`
 - `Controller.Crouch`

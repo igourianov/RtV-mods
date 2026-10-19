@@ -181,8 +181,8 @@ func on_weapon_handling(delta: float) -> void:
 
 func _resolve_aim_intent() -> void:
 	# the bus already accounts for locks and for binoculars taking over the arms
-	# airborne only suspends the aim here, so the bus keeps a held or latched aim and it comes back on landing
-	gameData.isAiming = _bus.aim() && !gameData.isFalling
+	# airborne and colliding only suspend the aim here, so the bus keeps a held or latched aim and it comes back on landing or once the weapon clears
+	gameData.isAiming = _bus.aim() && !gameData.isFalling && !gameData.isColliding
 	gameData.isCanted = _bus.canted()
 
 

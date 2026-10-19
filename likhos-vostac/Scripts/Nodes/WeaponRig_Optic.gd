@@ -95,7 +95,7 @@ func _handle_ads(delta: float) -> void:
 
 	_shadow_exhaustion = move_toward(_shadow_exhaustion, 1.0 if gameData.armStamina <= 0.0 else 0.0, delta * _SHADOW_EXHAUSTION_RATE)
 
-	if !gameData.isAiming || gameData.isColliding:
+	if !gameData.isAiming:
 		_rig.ocularOpacity = move_toward(_rig.ocularOpacity, 0.0 if (att.scope || att.variable) else 1.0, delta * 5.0)
 		_update_reticle(optic, Vector2.ZERO)
 		return

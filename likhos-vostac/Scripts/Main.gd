@@ -101,7 +101,7 @@ func setup(lib):
 	register_hook("weaponrig-ads", noop)
 	register_hook("weaponrig-_physics_process", noop)
 	register_hook("weaponrig-_input", noop)
-	register_hook("camera-scopedof", _camera.on_scope_dof)
+	register_hook("camera-dof", _camera.on_dof)
 	register_hook("controller-movementstates", _controller.on_movement_states)
 	register_hook("controller-_physics_process-post", _controller.on_physics_process_post)
 	register_hook("controller-_input", _controller.on_input)

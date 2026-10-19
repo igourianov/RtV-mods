@@ -1,14 +1,14 @@
 [mod]
 name="Likho's VosTac"
 id="likhos-vostac"
-version="3.10.2123"
+version="3.10.2124"
 prefix="[likho-vostac]"
 debug=false
 
 [hooks]
 "res://Scripts/Handling.gd"="WeaponHandling, WeaponPosition"
 "res://Scripts/WeaponRig.gd"="ADS, _physics_process, _input, _ready, CasingEject"
-"res://Scripts/Camera.gd"="ScopeDOF"
+"res://Scripts/Camera.gd"="DOF"
 "res://Scripts/Controller.gd"="MovementStates, Crouch, Headbob, _physics_process, _input"
 "res://Scripts/Noise.gd"="_physics_process"
 "res://Scripts/Tilt.gd"="_physics_process"

@@ -1,10 +1,6 @@
 extends RefCounted
 
-# Tunable: blur radius in viewport texels for the NVG scope blur. 0 disables.
-# Larger = blurrier. If raised substantially, also raise STEPS in PIP_NVG.gdshader.
-const BLUR_RADIUS := 12.0
-
-const _NVG_PIP_SHADER := preload("res://mods/likhos-vostac/Shaders/PIP_NVG.gdshader")
+const _PIP_SHADER := preload("res://mods/likhos-vostac/Shaders/PIP.gdshader")
 const ScopeCatalog := preload("../ScopeCatalog.gd")
 var config := preload("../Config.gd").instance
 var gameData := preload("res://Resources/GameData.tres")
@@ -45,13 +41,15 @@ func on_physics_process_pre(delta: float) -> void:
 
 	var pip_mat: ShaderMaterial = optic.PIP
 	if pip_mat && pip_mat.shader:
-		if !("shader_parameter/blur_radius" in pip_mat):
-			pip_mat.shader = _NVG_PIP_SHADER
+		if !("shader_parameter/transmission" in pip_mat):
+			pip_mat.shader = _PIP_SHADER
 			pip_mat.set_shader_parameter("transmission", 1.0)
+		# The PIP camera renders with the shared world environment, so its picture already carries the exposure NVG raises.
+		# The main pass applies that exposure again when it tonemaps the lens, and the shader takes the second one back out.
+		var world: World3D = optic.get_world_3d()
+		var env: Environment = world.environment if world else null
+		pip_mat.set_shader_parameter("exposure", env.tonemap_exposure if env else 1.0)
 		var scoped: bool = gameData.isScoped && gameData.PIP
-		var blur_on: bool = scoped && gameData.NVG && config.NVG_PIP_blur
-		var radius: float = BLUR_RADIUS if blur_on else 0.0
-		pip_mat.set_shader_parameter("blur_radius", radius)
 		# The rig's unmounted optics run this hook too, and current_scope_mag belongs to the mounted one.
 		if scoped && optic.visible:
 			var current: float = pip_mat.get_shader_parameter("transmission")
