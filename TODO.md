@@ -1,7 +1,7 @@
 # TODO
-- vostac: lower weapon attachment in free look mode a bit (-20 degrees?)
 
 # Closed
+- vostac: lower weapon attachment in free look mode a bit (-20 degrees?) - will not do
 - vostac: defaults for optics missing from ScopeCatalog.DATA (e.g. added by other mods): add fallback entries for scope and variable optics - done
 - disable aiming while jumping/falling - done
 - bring back scope shadow on wide swings - done
