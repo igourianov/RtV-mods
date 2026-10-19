@@ -1,0 +1,9 @@
+[mod]
+name="Likho's Debug"
+id="likhos-debug"
+version="1.0.8"
+prefix="[likho-debug]"
+debug=false
+
+[autoload]
+LikhosDebug="res://mods/likhos-debug/Scripts/Main.gd"
