@@ -50,6 +50,8 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `Interactor._physics_process` (pre)
 - `UIPosition._physics_process` (post)
 - `Item.UpdateDetails` (post)
+- `AI.WeaponDamage` (pre)
+- `AI.ExplosionDamage` (pre)
 - `AI.Death` (pre)
 - `Loader.LoadScene` (pre)
 - `Pickup._ready` (post)

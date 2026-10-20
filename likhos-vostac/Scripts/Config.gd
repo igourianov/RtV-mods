@@ -4,6 +4,7 @@ enum CrosshairStyle { OFF, DOT, SEGMENTED_CROSS }
 # DEFAULT follows the game's Aim Mode
 enum CantMode { DEFAULT, HOLD, TOGGLE }
 enum ChamberCardMode { ENABLED, MANUAL_GUNS_ONLY, DISABLED }
+enum KillCounterMode { ALL_DEATHS, PLAYER_KILLS, DISABLED }
 # RAIL_MOVEMENT requires the Rail Movement binding held as a modifier
 enum ZoomOutOfAim { ENABLED, DISABLED, RAIL_MOVEMENT }
 # an optic that lacks the chosen schema falls back to SHORT
@@ -26,6 +27,7 @@ var hold_breath_state: float = 0.0
 var binoculars_active: bool = false
 var binoculars_mag: float = 6.0
 var kills: PackedByteArray = PackedByteArray([0, 0, 0, 1, 2, 3, 0, 4, 0, 1, 0, 0, 0])
+var player_kills: PackedByteArray = PackedByteArray()
 var gameData := preload("res://Resources/GameData.tres")
 
 # config vars
@@ -53,7 +55,7 @@ var gameData := preload("res://Resources/GameData.tres")
 @export var ammo_cards_inspect: bool = false
 @export var ammo_cards_manual_reload: bool = true
 @export var chamber_card_mode: ChamberCardMode = ChamberCardMode.MANUAL_GUNS_ONLY
-@export var kill_counter_card: bool = true
+@export var kill_counter_mode: KillCounterMode = KillCounterMode.ALL_DEATHS
 
 @export_group("Aim tweaks")
 @export var free_look: bool = true
