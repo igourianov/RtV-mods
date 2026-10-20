@@ -172,9 +172,8 @@ func on_headbob(delta: float) -> void:
 		ctrl.canStep = true
 	elif vector.y > 0.5 && ctrl.canStep:
 		ctrl.canStep = false
-		# vanilla picks the sounds and adds one player per sound as the controller's last children
-		var first: int = ctrl.get_child_count()
+		# vanilla adds the footstep player first, then the optional gear and razor players after it
+		var footstep: int = ctrl.get_child_count()
 		ctrl.PlayFootstep()
-		var gain := linear_to_db(pow(minf(speed / _walk_speed(ctrl), 1.0), STEP_VOLUME_EXPONENT))
-		for i in range(first, ctrl.get_child_count()):
-			ctrl.get_child(i).volume_db += gain
+		if config.scale_footstep_volume:
+			ctrl.get_child(footstep).volume_db += linear_to_db(pow(minf(speed / _walk_speed(ctrl), 1.0), STEP_VOLUME_EXPONENT))

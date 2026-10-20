@@ -67,6 +67,7 @@ var gameData := preload("res://Resources/GameData.tres")
 
 @export_group("Movement speeds")
 @export var override_movement_speeds: bool = true
+@export var scale_footstep_volume: bool = true
 @export_range(0.0, 20.0, 0.1) var crouch_speed: float = 0.7
 @export_range(0.0, 20.0, 0.1) var walk_speed: float = 3.0
 @export_range(0.0, 20.0, 0.1) var sprint_speed: float = 7.0
