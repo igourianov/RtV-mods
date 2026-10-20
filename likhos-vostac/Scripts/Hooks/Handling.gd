@@ -301,11 +301,14 @@ func _set_target_idle(h: Node) -> void:
 
 
 func _apply_target(h: Node, delta: float) -> void:
-	var t: float = delta * h.handlingSpeed * (_handlingMode / 100.0)
+	var rate: float = h.handlingSpeed * (_handlingMode / 100.0)
 
 	# a weight of 0 means no weapon is resolved, the cap would give it the light mult
 	if config.current_weapon_weight > 0.0:
-		t *= clampf(remap(config.current_weapon_weight, _SPEED_WEIGHT_LIGHT, _SPEED_WEIGHT_BASE, _SPEED_WEIGHT_LIGHT_MULT, 1.0), _SPEED_WEIGHT_HEAVY_MULT, _SPEED_WEIGHT_LIGHT_MULT)
+		rate *= clampf(remap(config.current_weapon_weight, _SPEED_WEIGHT_LIGHT, _SPEED_WEIGHT_BASE, _SPEED_WEIGHT_LIGHT_MULT, 1.0), _SPEED_WEIGHT_HEAVY_MULT, _SPEED_WEIGHT_LIGHT_MULT)
+
+	config.current_handling_rate = rate
+	var t: float = delta * rate
 
 	h.position = lerp(h.position, Vector3(-h.targetPosition.x, h.targetPosition.y, -h.targetPosition.z), t)
 	var target_quat := Quaternion.from_euler(Vector3(deg_to_rad(h.targetRotation.x), deg_to_rad(h.targetRotation.y), deg_to_rad(h.targetRotation.z)))

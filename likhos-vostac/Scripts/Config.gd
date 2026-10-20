@@ -18,6 +18,8 @@ static var instance := new()
 # dynamic state vars
 var current_scope_mag: float = 1.0
 var current_weapon_weight: float = 0.0
+# Per second, the rate the rig closes on its handling target.
+var current_handling_rate: float = 0.0
 var current_weapon_action: String = ""
 var ammo_check_view := false
 var hold_breath_state: float = 0.0

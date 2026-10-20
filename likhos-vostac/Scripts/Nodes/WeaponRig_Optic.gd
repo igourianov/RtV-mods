@@ -21,10 +21,24 @@ const _SHADOW_LEAN_GAIN := 0.6
 const _SHADOW_LEAN_MAX_ANGLE := 3.2
 # Per second. Matches vanilla's leanSpeed.
 const _SHADOW_LEAN_SETTLE_RATE := 5.0
+# Yaw and pitch per meter the eye lags behind the rig's travel, so the crescent shows only while the rig moves into the aim pose.
+const _SHADOW_AIM_GAIN := 200.0
+# Soft cap on that angle, in degrees.
+const _SHADOW_AIM_MAX_ANGLE := 4.5
+# Fraction of the rig's handling rate. Below 1 the lag outlasts the travel, so the shadow fades after the rig arrives.
+# The lag curve's shape depends only on this ratio, so its strength holds across handling speeds and only its timing scales.
+const _SHADOW_AIM_SETTLE_RATIO := 0.4
+# Total spread, in degrees, of the random turn away from the rig's travel, rolled each time aiming starts.
+const _SHADOW_AIM_SPREAD := 45.0
 
 var _zoom := ZoomAccelerator.new()
 var _shadow_exhaustion := 0.0
 var _lean_settled := 0.0
+var _aim_settled := Vector2.ZERO
+var _aim_turn := 0.0
+var _was_aiming := false
+# TEMP calibration
+var _aim_peak := 0.0
 var _rig: WeaponRig
 var _handling: Node3D
 var _sway: Sway
@@ -42,6 +56,7 @@ func _ready() -> void:
 	_impulse = _rig.get_node("Handling/Sway/Noise/Tilt/Impulse")
 	_lean = get_node("/root/Map/Core/Controller/Pelvis")
 	_lean_settled = _lean.rotation_degrees.z
+	_aim_settled = Vector2(_handling.position.x, _handling.position.y)
 	set_process_input(true)
 	set_process(true)
 
@@ -100,6 +115,15 @@ func _handle_ads(delta: float) -> void:
 	var att = optic.attachmentData if optic else null
 	gameData.aimFOV = gameData.baseFOV
 	_lean_settled = lerp(_lean_settled, _lean.rotation_degrees.z, delta * _SHADOW_LEAN_SETTLE_RATE)
+	_aim_settled = _aim_settled.lerp(Vector2(_handling.position.x, _handling.position.y), delta * config.current_handling_rate * _SHADOW_AIM_SETTLE_RATIO)
+
+	if gameData.isAiming && !_was_aiming:
+		_aim_turn = deg_to_rad(randf_range(-0.5, 0.5) * _SHADOW_AIM_SPREAD)
+	# TEMP calibration
+	if !gameData.isAiming && _was_aiming && _aim_peak > 0.0:
+		print("[likho] aim shadow peak lag %.4f m" % _aim_peak)
+		_aim_peak = 0.0
+	_was_aiming = gameData.isAiming
 
 	if !optic || !att:
 		return
@@ -137,10 +161,15 @@ func _get_shadow_offset() -> Vector2:
 	var kick: Vector3 = _impulse.rotation_degrees * _SHADOW_KICK_GAIN
 	var total: Vector3 = lag + wobble + kick
 	var lean: float = tanh((_lean.rotation_degrees.z - _lean_settled) * _SHADOW_LEAN_GAIN / _SHADOW_LEAN_MAX_ANGLE) * _SHADOW_LEAN_MAX_ANGLE
+	var aim_lag := Vector2(_handling.position.x, _handling.position.y) - _aim_settled
+	var aim_lag_length := aim_lag.length()
+	_aim_peak = maxf(_aim_peak, aim_lag_length)
+	var aim: Vector2 = aim_lag.normalized().rotated(_aim_turn) * tanh(aim_lag_length * _SHADOW_AIM_GAIN / _SHADOW_AIM_MAX_ANGLE) * _SHADOW_AIM_MAX_ANGLE
 	# x is the yaw, y the pitch, in view space with y up, signed so the vector points where the clear aperture shifts.
 	# A yaw to the right tilts the lens normal left, and vanilla's view ray plus normal offset then clears the right side.
 	# The lean rolls positive to the left, and the rig rolls with it, so view space x stays lens x.
-	var misalignment := Vector2(-total.y + lean, total.x)
+	# The aim lag counts against the rig's travel, so the crescent comes from the side the rig moves toward.
+	var misalignment := Vector2(-total.y + lean, total.x) - aim
 	var magnitude := misalignment.length()
 
 	if magnitude <= _SHADOW_DEAD_ZONE:
