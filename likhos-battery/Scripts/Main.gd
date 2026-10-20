@@ -68,7 +68,7 @@ func setup(lib) -> void:
 	register_hook("tooltip-update-post", _tooltip.on_update_post)
 	# Later than VosTac's handler on the same hook, which switches the laser on in canted aim.
 	# Running first would let a dead laser show for a frame.
-	_hooks.append(lib.hook("laser-_process-post", _laser.on_process_post, 200) as int)
+	lib.hook("laser-_process-post", _laser.on_process_post, 200)
 
 	register_action("reticle_illumination", "Reticle Illumination", create_key_input(KEY_Y))
 	add_child(OpticPower.new())
