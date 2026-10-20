@@ -1,7 +1,15 @@
 extends RefCounted
 
 
-const BOB_MULT_SPRINT: float = 2.0
+# bob settings per mode: horizontal and vertical size relative to vanilla's intensity, then sharpness
+# sharpness 0 is a sine sway with a smooth dip, 1 a triangle sway that reverses sharply at the edges with a sharp dip
+const BOB_WALK := Vector3(0.7, 0.9, 0.0)
+const BOB_CANTED := Vector3(0.0, 0.6, 0.0)
+const BOB_SPRINT := Vector3(2.5, 0.5, 0.7)
+# each step's dip depth varies by up to this fraction either way
+const BOB_DIP_RANDOM: float = 0.4
+# a step plays where sin of the controller's phase rises through 0.5, which is a twelfth of a turn into the half rate stride
+const BOB_STEP_PHASE: float = PI / 12
 const WOBBLE_MULT: float = 3.0
 const WOBBLE_MULT_HOLD_BREATH: float = 0.5
 const WOBBLE_FREQ_MULT_EXHAUSTED: float = 2.0
@@ -14,7 +22,10 @@ var config := preload("../Config.gd").instance
 var _lib
 var _controller
 
-var _bob: Vector2 = Vector2.ZERO
+# horizontal size and vertical size in meters, then sharpness
+var _bob: Vector3 = Vector3.ZERO
+var _dip_step: int = 0
+var _dip_depth: float = 1.0
 var _wobble_frequency: float = 0.0
 var _wobble_amplitude: float = 0.0
 var _wobble_offset: Vector3 = Vector3.ZERO
@@ -37,24 +48,35 @@ func on_physics_process_post(delta: float) -> void:
 
 
 func _apply_bob(noise: Node, gd: GameData, delta: float) -> void:
-	# vanilla advances a phase of its own at a fixed rate per state, the controller's phase keeps the weapon in step with the footsteps
-	var target := Vector2.ZERO
+	# vanilla eases the position toward its curve, which lags the bob behind the steps
+	# here the curve runs straight off the controller's phase, so it stays on the footsteps, and only its settings are eased between modes
+	var target := Vector3.ZERO
 	if gd.isMoving && gd.isGrounded && !gd.freeze:
-		# sprinting runs the weapon at half the footstep rate, so it bobs on every second step
-		var phase: float = _controller.bob_phase * (0.5 if gd.isRunning else 1.0)
-		# a step plays a third of a cycle after the dip of sin(phase), vanilla's canted offset puts the dip just before it, so both modes use it
-		var vertical: float = sin(phase - 1.5)
-		var curve: Vector2 = Vector2(sin(phase + 1.5), vertical) if gd.isCanted else Vector2(sin(phase / 2), vertical * 2)
-		target = curve * noise.headbobIntensity
+		var mode: Vector3 = BOB_WALK
 		if gd.isRunning:
-			target.x *= BOB_MULT_SPRINT
-
-	# vanilla has already overwritten the previous position by now, so the hook eases its own copy
+			mode = BOB_SPRINT
+		elif gd.isCanted:
+			mode = BOB_CANTED
+		var size: float = noise.headbobIntensity
+		if gd.isAiming && gd.isScoped && gd.PIP:
+			size *= _calculate_speed_factor(gd)
+		target = Vector3(mode.x * size, mode.y * size, mode.z)
 	_bob = _bob.lerp(target, delta * noise.bobLerpSpeed)
-	if gd.isAiming && gd.isScoped && gd.PIP:
-		_bob *= _calculate_speed_factor(gd)
-	noise.position.x = _bob.x
-	noise.position.y = _bob.y
+
+	# one stride covers two steps, so the sway edges alternate sides and the dips land on every step
+	var stride: float = _controller.bob_phase / 2 - BOB_STEP_PHASE
+	var sway: float = cos(stride)
+	sway = lerp(sway, asin(sway) * 2 / PI, _bob.z)
+	# a new depth is drawn midway between steps, where the dip is zero and the change can't jump the weapon
+	var step: int = floori(stride / PI + 0.5)
+	if step != _dip_step:
+		_dip_step = step
+		_dip_depth = randf_range(1.0 - BOB_DIP_RANDOM, 1.0 + BOB_DIP_RANDOM)
+	var lift: float = absf(sin(stride))
+	var dip: float = 1.0 - 2.0 * (1.0 - lerp(lift * lift, lift, _bob.z)) * _dip_depth
+	# poses like the sprint one turn the parent frame so far that its x points mostly into the screen, so the curve is built in camera space and brought into that frame
+	var to_parent: Basis = noise.get_parent().global_basis.inverse() * noise.get_viewport().get_camera_3d().global_basis
+	noise.position = to_parent * Vector3(sway * _bob.x, dip * _bob.y, 0.0)
 
 
 func _apply_wobble(noise: Node, gd: GameData, delta: float) -> void:
@@ -85,11 +107,12 @@ func _apply_wobble(noise: Node, gd: GameData, delta: float) -> void:
 	) * _wobble_amplitude
 
 
+# these used to multiply the eased position every tick, which compounded to about these fractions of the regular bob
 func _calculate_speed_factor(gd: GameData) -> float:
 	if gd.isRunning:
 		return 1.0
 	if gd.isCrouching:
-		return 0.5
+		return 0.15
 	if gd.isWalking:
-		return 0.8
+		return 0.4
 	return 0.0

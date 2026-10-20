@@ -17,6 +17,8 @@
 * a hook conflict with another mod no longer switches off all of VosTac: only the conflicting part stops working, and the log names the hook
 * added LCM setting to disable footsteps volume scaling with player speed
 * footsteps volume scaling no longer affects gear and razor wire sounds
+* reworked weapon bob: it now follows the footsteps in every mode, with a slightly random dip on each step
+* footstep cadence now follows movement speed like a real gait: quicker steps when moving slowly (aim, canted, scoped), slower when sprinting
 
 # 3.8.2078
 * fixed ammo, chamber, attachment, fire mode and kill counter cards and the magazine tooltip not showing alongside mods that add their own nodes to the weapon (e.g. Realistic Gunplay)
