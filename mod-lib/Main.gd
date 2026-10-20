@@ -41,8 +41,9 @@ func _init_setup():
 
 
 # Only a replace hook can be rejected, when another hook already owns its slot. The loader exposes the owner's hook id, not the mod.
-func register_hook(hookName: String, callback: Callable):
-	if _lib.hook(hookName, callback) < 0:
+# Lower priority values fire first within the same hook variant.
+func register_hook(hookName: String, callback: Callable, priority: int = 100):
+	if _lib.hook(hookName, callback, priority) < 0:
 		Out.warning("hook %s rejected, slot owned by hook id %d" % [hookName, _lib.get_replace_owner(hookName)])
 
 

@@ -2,6 +2,7 @@ extends RefCounted
 
 const Out := preload("../../Lib/Out.gd")
 const AttachmentMounts := preload("../AttachmentMounts.gd")
+const ScopeCatalog := preload("../ScopeCatalog.gd")
 const WeaponRig_Fire := preload("../Nodes/WeaponRig_Fire.gd")
 const WeaponRig_Reload := preload("../Nodes/WeaponRig_Reload.gd")
 const WeaponRig_ManualReload := preload("../Nodes/WeaponRig_ManualReload.gd")
@@ -34,6 +35,15 @@ func _inject_handler(rig: WeaponRig, klass: GDScript, node_name: String) -> void
 	var h: Node = klass.new()
 	h.name = node_name
 	rig.add_child(h)
+
+
+# an unknown scope keeps vanilla ADS, and with it the ADS hooks of other mods
+func on_ads(_delta: float) -> void:
+	var rig: WeaponRig = _lib._caller
+	var optic = rig.activeOptic if rig else null
+	if optic && ScopeCatalog.is_unknown(optic.attachmentData):
+		return
+	_lib.skip_super()
 
 
 func on_casing_eject_post() -> void:

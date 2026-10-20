@@ -173,8 +173,16 @@ func on_weapon_handling(delta: float) -> void:
 	_resolve_aim_intent()
 	_handlingMode = HandlingMode.Default
 	_target_idle = false
-	
+
 	_set_target(h)
+
+
+# split from on_weapon_handling, so a targetPosition adjusted by another mod's post hook (e.g. a modded scope's aim depth) is applied
+func on_weapon_handling_post(delta: float) -> void:
+	var h = _lib._caller
+	if !h || config.gated():
+		return
+
 	_apply_target(h, delta)
 	_apply_left_arm(h)
 

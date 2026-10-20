@@ -34,7 +34,7 @@ func _inject_mosin_casing_eject() -> void:
 		return
 
 	# vanilla Reload already ejects on Mosin but not on M28 variants
-	# clips are resolved through the states, since modded rigs can swap in clips named after something other than data.file
+	# resolved through the states, since modded rigs may name their clips after something other than data.file
 	var keys := {"Insert_Start": 0.9, "Reload": 0.55}
 	for state_name in keys:
 		var state: AnimationNodeAnimation = machine.get_node(state_name) as AnimationNodeAnimation if machine.has_node(state_name) else null

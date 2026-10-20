@@ -24,8 +24,9 @@
 	* added LCM setting to disable footsteps volume scaling with player speed
 	* footsteps volume scaling no longer affects gear and razor wire sounds
 
-* a hook conflict with another mod no longer switches off all of VosTac: only the conflicting part stops working, and the log names the hook
 * kill counter LCM toggle is now a dropdown at the top of the settings: all deaths, player kills only or disabled
+* a hook conflict with another mod no longer switches off all of VosTac: only the conflicting part stops working, and the log names the hook
+* number of compatibility fixes for weapon and optic mods
 
 # 3.8.2078
 * fixed ammo, chamber, attachment, fire mode and kill counter cards and the magazine tooltip not showing alongside mods that add their own nodes to the weapon (e.g. Realistic Gunplay)

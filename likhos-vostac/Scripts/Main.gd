@@ -93,12 +93,14 @@ func setup(lib):
 	_loot_container = LootContainer.new(lib)
 
 	register_hook("handling-weaponhandling", _handling.on_weapon_handling)
+	# above the default priority 100, so it runs after other mods' post hooks
+	register_hook("handling-weaponhandling-post", _handling.on_weapon_handling_post, 200)
 	register_hook("handling-weaponposition", _handling.on_weapon_position)
 	register_hook("rigmanager-updaterig-post", _handling.on_rig_update_post)
 	register_hook("rigmanager-clearrig-post", _handling.on_clear_rig_post)
 	register_hook("weaponrig-_ready-post", _weapon_rig.on_ready_post)
 	register_hook("weaponrig-casingeject-post", _weapon_rig.on_casing_eject_post)
-	register_hook("weaponrig-ads", noop)
+	register_hook("weaponrig-ads", _weapon_rig.on_ads)
 	register_hook("weaponrig-_physics_process", noop)
 	register_hook("weaponrig-_input", noop)
 	register_hook("camera-dof", _camera.on_dof)

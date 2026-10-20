@@ -71,6 +71,10 @@ func _process(delta: float) -> void:
 func _handle_ads(delta: float) -> void:
 	var optic = _rig.activeOptic
 	var att = optic.attachmentData if optic else null
+	# vanilla ADS runs for an unknown scope and owns its FOV, reticle and ocular opacity
+	if att && ScopeCatalog.is_unknown(att):
+		return
+
 	gameData.aimFOV = gameData.baseFOV
 
 	if !optic || !att:

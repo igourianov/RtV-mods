@@ -6,7 +6,9 @@ static var gameData := preload("res://Resources/GameData.tres")
 # PIP ADS puts the eye this many cm past the near eye relief bound
 const _EYE_RELIEF_MARGIN := 0.5
 
-# Entries for scope and variable optics missing from DATA, e.g. added by other mods.
+# Entries for unknown scopes, e.g. added by other mods (see is_unknown).
+# Vanilla ADS drives their zoom, so these only feed current_scope_mag and the zoom input's step count.
+# The variable entry keeps three steps to match vanilla's zoom 1-3.
 const _FALLBACK_FIXED := {
 	"mag_range": [4.0],
 	"eye_relief": Vector2(3.5, 6.0),
@@ -79,6 +81,12 @@ static func get_mag_range(att: AttachmentData) -> Array:
 	return entry.get(field, entry["mag_range"])
 
 
+# A scope or variable optic missing from DATA, e.g. added by another mod.
+# VosTac leaves its zoom, isScoped, aim pose and tooltip to vanilla and to other mods.
+static func is_unknown(att: AttachmentData) -> bool:
+	return (att.scope || att.variable) && !DATA.has(att.file)
+
+
 # Near and far bound in cm.
 static func get_eye_relief(att: AttachmentData) -> Vector2:
 	return _entry(att)["eye_relief"]
@@ -111,8 +119,10 @@ static func sync_optic_state(rig: WeaponRig) -> void:
 	# BUGFIX: vanilla forgets to reset secondaryOptic when equipping another optic, breaking other scopes in PIP mode
 	if gameData.secondaryOptic && !has_secondary_sight(rig):
 		gameData.secondaryOptic = false
-	gameData.isScoped = optic && (optic.attachmentData.scope || optic.attachmentData.variable) && !gameData.secondaryOptic
-	if gameData.isScoped:
+	var scoped: bool = optic && (optic.attachmentData.scope || optic.attachmentData.variable) && !gameData.secondaryOptic
+	if !optic || !is_unknown(optic.attachmentData):
+		gameData.isScoped = scoped
+	if scoped:
 		var mags := get_mag_range(optic.attachmentData)
 		Config.instance.current_scope_mag = mags[clamp(rig.slotData.zoom, 1, mags.size()) - 1]
 	else:
@@ -134,8 +144,9 @@ static func sync_optic_state(rig: WeaponRig) -> void:
 # ADS target position for the rig's active optic
 static func get_aim_position(rig: WeaponRig) -> Vector3:
 	var depth: float = rig.data.aimPosition.z
-	if gameData.PIP && gameData.isScoped:
-		var optic = rig.activeOptic
+	var optic = rig.activeOptic
+	# an unknown scope keeps vanilla's aim pose
+	if gameData.PIP && gameData.isScoped && !is_unknown(optic.attachmentData):
 		# the eye lands at the optic's eye relief behind the lens center, wherever the optic sits on the rail
 		var lens_depth: float = (optic.transform * get_lens(optic).center).z
 		depth = lens_depth - (get_eye_relief(optic.attachmentData).x + _EYE_RELIEF_MARGIN) * 0.01

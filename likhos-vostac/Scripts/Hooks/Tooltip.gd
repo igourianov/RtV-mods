@@ -20,9 +20,9 @@ func on_update_post(item: Item) -> void:
 	if !item || !item.slotData:
 		return
 
-	# the catalog covers magnified optics only, with fallback values for the ones it does not list
+	# magnified optics only, and not unknown ones such as scopes added by other mods: VosTac has no true values for them
 	var att := item.slotData.itemData as AttachmentData
-	if !att || !(att.scope || att.variable):
+	if !att || !(att.scope || att.variable) || ScopeCatalog.is_unknown(att):
 		return
 
 	var mag := ScopeCatalog.get_mag_range(att)
