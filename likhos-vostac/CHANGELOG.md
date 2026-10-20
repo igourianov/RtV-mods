@@ -4,7 +4,9 @@
 	* removed eye relief scope shadow and shiner logic
 	* odd combinations like ACOG on M28 will now work (even though they shouldn't)
 * reworked and fixed optic rail placement bounds and default values
-* brought back a mild scope shadow on wide swings and crouch/standup
+* brought back a mild scope shadow on wide swings, exhausted arms, crouch/standup, lean and taking aim
+	* lean and aim shadows are brief and fade as the movement settles
+	* the side the shadow enters from varies a little with each aim
 * force user out of aim on jump/falling
 * increased strength of scope DOF blur
 * reworked NVG blur and scope picture under NVG

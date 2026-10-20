@@ -7,6 +7,7 @@ const WeaponRig_Reload := preload("../Nodes/WeaponRig_Reload.gd")
 const WeaponRig_ManualReload := preload("../Nodes/WeaponRig_ManualReload.gd")
 const WeaponRig_Optic := preload("../Nodes/WeaponRig_Optic.gd")
 const WeaponRig_Inspect := preload("../Nodes/WeaponRig_Inspect.gd")
+const WeaponRig_Shadow := preload("../Nodes/WeaponRig_Shadow.gd")
 
 var _lib
 
@@ -25,6 +26,7 @@ func on_ready_post() -> void:
 	_inject_handler(rig, WeaponRig_ManualReload, "Likho_WeaponRig_ManualReload")
 	_inject_handler(rig, WeaponRig_Optic, "Likho_WeaponRig_Optic")
 	_inject_handler(rig, WeaponRig_Inspect, "Likho_WeaponRig_Inspect")
+	_inject_handler(rig, WeaponRig_Shadow, "Likho_WeaponRig_Shadow")
 	AttachmentMounts.mount(rig.attachments, rig.data.file, "rig", rig)
 
 
