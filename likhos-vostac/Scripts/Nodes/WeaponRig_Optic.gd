@@ -2,61 +2,19 @@ extends "./WeaponRig_Base.gd"
 
 const ScopeCatalog := preload("../ScopeCatalog.gd")
 const ZoomAccelerator := preload("../ZoomAccelerator.gd")
-const Sway := preload("res://Scripts/Sway.gd")
 const _RETICLE_SHADER := preload("res://mods/likhos-vostac/Shaders/Reticle.gdshader")
 # Per-optic `size` values are authored against vanilla's view-direction UV. This rescales them onto lens UV.
 const _LENS_UV_SCALE := 3.0
-# Swing shadow response to the scope's misalignment angle, in degrees, and its reach in lens UV (lens width 1.0).
-const _SHADOW_DEAD_ZONE := 1.0
-const _SHADOW_FULL_ANGLE := 5.0
-const _SHADOW_MAX_REACH := 0.6
-# Per second.
-const _SHADOW_EXHAUSTION_RATE := 1.0
-# The exhausted wobble and the crouch or stand kick peak around the dead zone on their own, so they count this many times over.
-const _SHADOW_WOBBLE_GAIN := 3.0
-const _SHADOW_KICK_GAIN := 3.0
-# Yaw per degree the eye lags behind the lean roll, so the crescent shows only while the lean moves and comes from the side opposite the lean.
-const _SHADOW_LEAN_GAIN := 0.6
-# Soft cap on that yaw, in degrees. Switching straight from one lean to the other doubles the lag, which should not double the shadow.
-const _SHADOW_LEAN_MAX_ANGLE := 3.2
-# Per second. Matches vanilla's leanSpeed.
-const _SHADOW_LEAN_SETTLE_RATE := 5.0
-# Yaw and pitch per meter the eye lags behind the rig's travel, so the crescent shows only while the rig moves into the aim pose.
-const _SHADOW_AIM_GAIN := 200.0
-# Soft cap on that angle, in degrees.
-const _SHADOW_AIM_MAX_ANGLE := 4.5
-# Fraction of the rig's handling rate. Below 1 the lag outlasts the travel, so the shadow fades after the rig arrives.
-# The lag curve's shape depends only on this ratio, so its strength holds across handling speeds and only its timing scales.
-const _SHADOW_AIM_SETTLE_RATIO := 0.4
-# Total spread, in degrees, of the random turn away from the rig's travel, rolled each time aiming starts.
-const _SHADOW_AIM_SPREAD := 45.0
 
 var _zoom := ZoomAccelerator.new()
-var _shadow_exhaustion := 0.0
-var _lean_settled := 0.0
-var _aim_settled := Vector2.ZERO
-var _aim_turn := 0.0
-var _was_aiming := false
-# TEMP calibration
-var _aim_peak := 0.0
 var _rig: WeaponRig
 var _handling: Node3D
-var _sway: Sway
-var _noise: Node3D
-var _impulse: Node3D
-var _lean: Node3D
 
 
 func _ready() -> void:
 	# injected in the rig's _ready, so its node tree is complete
 	_rig = get_parent()
 	_handling = _rig.get_node("Handling")
-	_sway = _rig.get_node("Handling/Sway")
-	_noise = _rig.get_node("Handling/Sway/Noise")
-	_impulse = _rig.get_node("Handling/Sway/Noise/Tilt/Impulse")
-	_lean = get_node("/root/Map/Core/Controller/Pelvis")
-	_lean_settled = _lean.rotation_degrees.z
-	_aim_settled = Vector2(_handling.position.x, _handling.position.y)
 	set_process_input(true)
 	set_process(true)
 
@@ -114,25 +72,13 @@ func _handle_ads(delta: float) -> void:
 	var optic = _rig.activeOptic
 	var att = optic.attachmentData if optic else null
 	gameData.aimFOV = gameData.baseFOV
-	_lean_settled = lerp(_lean_settled, _lean.rotation_degrees.z, delta * _SHADOW_LEAN_SETTLE_RATE)
-	_aim_settled = _aim_settled.lerp(Vector2(_handling.position.x, _handling.position.y), delta * config.current_handling_rate * _SHADOW_AIM_SETTLE_RATIO)
-
-	if gameData.isAiming && !_was_aiming:
-		_aim_turn = deg_to_rad(randf_range(-0.5, 0.5) * _SHADOW_AIM_SPREAD)
-	# TEMP calibration
-	if !gameData.isAiming && _was_aiming && _aim_peak > 0.0:
-		print("[likho] aim shadow peak lag %.4f m" % _aim_peak)
-		_aim_peak = 0.0
-	_was_aiming = gameData.isAiming
 
 	if !optic || !att:
 		return
 
-	_shadow_exhaustion = move_toward(_shadow_exhaustion, 1.0 if gameData.armStamina <= 0.0 else 0.0, delta * _SHADOW_EXHAUSTION_RATE)
-
 	if !gameData.isAiming:
 		_rig.ocularOpacity = move_toward(_rig.ocularOpacity, 0.0 if (att.scope || att.variable) else 1.0, delta * 5.0)
-		_update_reticle(optic, Vector2.ZERO)
+		_update_reticle(optic)
 		return
 
 	_rig.ocularOpacity = move_toward(_rig.ocularOpacity, 0.0 if (att.scope && gameData.secondaryOptic) else 1.0, delta * 5.0)
@@ -151,32 +97,7 @@ func _handle_ads(delta: float) -> void:
 	if gameData.PIP && gameData.isScoped:
 		_update_optic_camera(optic, delta)
 
-	var shadow_offset: Vector2 = _get_shadow_offset() if gameData.isScoped else Vector2.ZERO
-	_update_reticle(optic, shadow_offset)
-
-
-func _get_shadow_offset() -> Vector2:
-	var lag: Vector3 = _sway.rotation_degrees - _sway.originalRotation
-	var wobble: Vector3 = _noise.rotation_degrees * _SHADOW_WOBBLE_GAIN * _shadow_exhaustion
-	var kick: Vector3 = _impulse.rotation_degrees * _SHADOW_KICK_GAIN
-	var total: Vector3 = lag + wobble + kick
-	var lean: float = tanh((_lean.rotation_degrees.z - _lean_settled) * _SHADOW_LEAN_GAIN / _SHADOW_LEAN_MAX_ANGLE) * _SHADOW_LEAN_MAX_ANGLE
-	var aim_lag := Vector2(_handling.position.x, _handling.position.y) - _aim_settled
-	var aim_lag_length := aim_lag.length()
-	_aim_peak = maxf(_aim_peak, aim_lag_length)
-	var aim: Vector2 = aim_lag.normalized().rotated(_aim_turn) * tanh(aim_lag_length * _SHADOW_AIM_GAIN / _SHADOW_AIM_MAX_ANGLE) * _SHADOW_AIM_MAX_ANGLE
-	# x is the yaw, y the pitch, in view space with y up, signed so the vector points where the clear aperture shifts.
-	# A yaw to the right tilts the lens normal left, and vanilla's view ray plus normal offset then clears the right side.
-	# The lean rolls positive to the left, and the rig rolls with it, so view space x stays lens x.
-	# The aim lag counts against the rig's travel, so the crescent comes from the side the rig moves toward.
-	var misalignment := Vector2(-total.y + lean, total.x) - aim
-	var magnitude := misalignment.length()
-
-	if magnitude <= _SHADOW_DEAD_ZONE:
-		return Vector2.ZERO
-	var reach := clampf(inverse_lerp(_SHADOW_DEAD_ZONE, _SHADOW_FULL_ANGLE, magnitude), 0.0, 1.0) * _SHADOW_MAX_REACH
-	# Lens UV runs y down.
-	return misalignment / magnitude * reach * Vector2(1.0, -1.0)
+	_update_reticle(optic)
 
 
 func _update_optic_camera(optic: Node3D, delta: float) -> void:
@@ -197,14 +118,12 @@ func _update_optic_camera(optic: Node3D, delta: float) -> void:
 	optic.camera.fov = lerp(optic.camera.fov, target_fov, delta * 10.0)
 
 
-func _update_reticle(optic: Node3D, shadow_offset: Vector2) -> void:
+func _update_reticle(optic: Node3D) -> void:
 	if !optic.reticle:
 		return
 	var att = optic.attachmentData
-	if att && (att.scope || att.variable):
-		if !("shader_parameter/lens_uv_scale" in optic.reticle):
-			optic.reticle.shader = _RETICLE_SHADER
-			optic.reticle.set_shader_parameter("lens_uv_scale", _LENS_UV_SCALE)
-		optic.reticle.set_shader_parameter("shadow_offset", shadow_offset)
+	if att && (att.scope || att.variable) && !("shader_parameter/lens_uv_scale" in optic.reticle):
+		optic.reticle.shader = _RETICLE_SHADER
+		optic.reticle.set_shader_parameter("lens_uv_scale", _LENS_UV_SCALE)
 	optic.reticle.set_shader_parameter("size", _rig.reticleSize)
 	optic.reticle.set_shader_parameter("opacity", _rig.ocularOpacity)

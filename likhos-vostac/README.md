@@ -33,7 +33,7 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 * Mosin and M28 (not the MOD) can switch between the PU scope and iron sights on the `Secondary Optic` binding, same way the HAMR switches to its top dot.
 * Reworked the PIP scope mode for realism.
 * Reworked all optics to use real eye relief and magnification values. In PIP mode aiming a scope brings your eye to its eye relief, wherever it sits on the rail.
-* Fast or wide swings, exhausted arms and crouching or standing up while aiming push a dark crescent into the scope from the side. Steady aim and ordinary panning keep the full picture.
+* Fast or wide swings, exhausted arms, crouching or standing up, leaning and taking aim push a dark crescent into the scope from the side. Lean and aim crescents are brief and fade as the movement settles. Steady aim and ordinary panning keep the full picture.
 * LPVO zoom is now accessible without aiming - gated by the Rail movement modifier by default to avoid collision with lower/raise weapon (change in LCM).
 * Added explicit bindings to the base game settings for optic zoom in/out (it was hardcoded to mouse wheel).
 
@@ -89,7 +89,7 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 ### Optics
 * All optics now have real eye relief values. Rail ranges and default positions of magnified optics are tuned so every scope can reach its eye relief in PIP mode.
 * All scopes now have real objective lens diameters, shown in the tooltip next to magnification and eye relief.
-* Scope swing shadow is back, much milder than vanilla. It only shows on fast or wide swings, with exhausted arms and on crouch or stand while aiming. It never blacks out the whole lens and the reticle stays visible over it. Red dots, secondary sights and the HAMR top dot never get it.
+* Scope shadow is back, much milder than vanilla. It only shows on fast or wide swings, with exhausted arms, on crouch or stand, while leaning and briefly as you take aim. The side it enters from varies a little with each aim. It never blacks out the whole lens and the reticle stays visible over it. Red dots, secondary sights and the HAMR top dot never get it.
 * Scopes added by other mods get default magnification, objective and eye relief values, so eye relief and the tooltip work on them.
 * Changed Mark 8 ("Leopard") to 1.1-8x zoom and fixed reticle size at 1x.
 * Changed Vudu to 1-10x zoom and made it legendary rarity.
