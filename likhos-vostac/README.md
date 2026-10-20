@@ -88,9 +88,9 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 * *NVG-aware PIP blur:* when night vision is active and you aim a magnified optic, the PIP image will now blur. Real scopes cannot work under NVG because of eye relief differences (disable in LCM).
 ### Optics
 * All optics now have real eye relief values. Rail ranges and default positions of magnified optics are tuned so every scope can reach its eye relief in PIP mode.
-* All scopes now have real objective lens diameters, shown in the tooltip next to magnification and eye relief.
+* Scope tooltips show magnification and eye relief.
 * Scope shadow is back, much milder than vanilla. It only shows on fast or wide swings, with exhausted arms, on crouch or stand, while leaning and briefly as you take aim. The side it enters from varies a little with each aim. It never blacks out the whole lens and the reticle stays visible over it. Red dots, secondary sights and the HAMR top dot never get it.
-* Scopes added by other mods get default magnification, objective and eye relief values, so eye relief and the tooltip work on them.
+* Scopes added by other mods get default magnification and eye relief values, so eye relief and the tooltip work on them.
 * Changed Mark 8 ("Leopard") to 1.1-8x zoom and fixed reticle size at 1x.
 * Changed Vudu to 1-10x zoom and made it legendary rarity.
 * Changed POSP to be the 2-6x variant and fixed reticle size.

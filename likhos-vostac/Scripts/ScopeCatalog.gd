@@ -6,16 +6,14 @@ static var gameData := preload("res://Resources/GameData.tres")
 # PIP ADS puts the eye this many cm past the near eye relief bound
 const _EYE_RELIEF_MARGIN := 0.5
 
-# Entries for scope and variable optics missing from DATA, e.g. added by other mods. Eye relief is a single value, so near and far bound match.
+# Entries for scope and variable optics missing from DATA, e.g. added by other mods.
 const _FALLBACK_FIXED := {
 	"mag_range": [4.0],
-	"objective": 28.0,
-	"eye_relief": Vector2(3.0, 3.0),
+	"eye_relief": Vector2(3.5, 6.0),
 }
 const _FALLBACK_VARIABLE := {
 	"mag_range": [1.1, 3.0, 6.0],
-	"objective": 24.0,
-	"eye_relief": Vector2(5.0, 5.0),
+	"eye_relief": Vector2(7.0, 11.0),
 }
 
 # weapon file -> scope file: rifles whose iron sights stay usable under that scope
@@ -30,14 +28,12 @@ static var _measured_lenses := {}
 const DATA := {
 	"ACOG": {
 		"mag_range": [4.0],
-		"objective": 32.0, # mm
 		"eye_relief": Vector2(2.5, 4.5),
 		"lens_radius": 0.013,
 		"lens_center": Vector3(0.0, 0.0, -0.102),
 	},
 	"HMR": {
 		"mag_range": [4.0],
-		"objective": 24.0,
 		"eye_relief": Vector2(5.5, 8.0),
 		"lens_radius": 0.017,
 		"lens_center": Vector3(0.0, 0.0, -0.069),
@@ -45,14 +41,12 @@ const DATA := {
 	"POSP": {
 		"mag_range": [2.0, 3.5, 6.0],
 		"mag_range_discrete": [2.0, 3.0, 4.0, 5.0, 6.0],
-		"objective": 24.0,
 		"eye_relief": Vector2(6.5, 9.0),
 		"lens_radius": 0.012,
 		"lens_center": Vector3(0.0, 0.0, -0.078),
 	},
 	"PU": {
 		"mag_range": [3.5],
-		"objective": 21.0,
 		"eye_relief": Vector2(6.5, 8.5),
 		"lens_radius": 0.0115,
 		"lens_center": Vector3(0.0, 0.0, -0.081),
@@ -61,7 +55,6 @@ const DATA := {
 		"mag_range": [1.0, 3.2, 10.0],
 		"mag_range_normalized": [1.0, 1.6, 2.5, 4.0, 6.3, 10.0],
 		"mag_range_discrete": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
-		"objective": 28.0,
 		"eye_relief": Vector2(6.5, 12.5),
 		"lens_radius": 0.020,
 		"lens_center": Vector3(0.0, 0.0, -0.131),
@@ -70,7 +63,6 @@ const DATA := {
 		"mag_range": [1.1, 3.0, 8.0],
 		"mag_range_normalized": [1.1, 1.7, 2.8, 4.8, 8.0],
 		"mag_range_discrete": [1.1, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
-		"objective": 24.0,
 		"eye_relief": Vector2(7.0, 11.5),
 		"lens_radius": 0.0185,
 		"lens_center": Vector3(0.0, 0.0, -0.177),
@@ -90,11 +82,6 @@ static func get_mag_range(att: AttachmentData) -> Array:
 # Near and far bound in cm.
 static func get_eye_relief(att: AttachmentData) -> Vector2:
 	return _entry(att)["eye_relief"]
-
-
-# Objective lens diameter in mm.
-static func get_objective(att: AttachmentData) -> float:
-	return _entry(att)["objective"]
 
 
 # Optic local lens center and radius, measured from the lens mesh where the catalog has none.
