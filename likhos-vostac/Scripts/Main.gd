@@ -124,6 +124,8 @@ func setup(lib):
 	register_hook("interactor-_physics_process-pre", _interactor.on_physics_process_pre)
 	register_hook("uiposition-_physics_process-post", _uiposition.on_physics_process_post)
 	register_hook("item-updatedetails-post", _item.on_update_details_post)
+	register_hook("ai-weapondamage-pre", _kill_counter.on_ai_weapon_damage)
+	register_hook("ai-explosiondamage-pre", _kill_counter.on_ai_explosion_damage)
 	register_hook("ai-death-pre", _kill_counter.on_ai_death)
 	register_hook("loader-loadscene-pre", _kill_counter.on_load_scene_pre)
 	register_hook("loader-loadscene-pre", _bus.on_load_scene_pre)

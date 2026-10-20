@@ -212,8 +212,8 @@ func _update_kill_cards(rig: WeaponRig) -> void:
 	if !is_instance_valid(_kill_container):
 		return
 
-	var kills := config.kills
-	if !config.kill_counter_card || !gameData.isInspecting || kills.is_empty() || !_camera || !rig || !rig.skeleton:
+	var kills := config.player_kills if config.kill_counter_mode == Config.KillCounterMode.PLAYER_KILLS else config.kills
+	if config.kill_counter_mode == Config.KillCounterMode.DISABLED || !gameData.isInspecting || kills.is_empty() || !_camera || !rig || !rig.skeleton:
 		_kill_container.hide()
 		return
 

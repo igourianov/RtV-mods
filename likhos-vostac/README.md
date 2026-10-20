@@ -6,7 +6,7 @@ Overhauls weapon handling. New tactical features. Fixes a number of vanilla weap
 
 * **Binoculars:** Added tactical [6-12x binos](https://www.youtube.com/watch?v=6d0zPQRmM3s) for observation. Hold `B` to activate (remap in game's vanilla bindings).
 * **Hold breath:** Function to steady aim at the expense of increased stamina drain. Hold the `Hold Breath` binding while aiming (defaults to the Sprint key).
-* **Kill counter:** Appears as a scratch list in weapon inspect mode (when you have kills). Green = nomad, purple = boss.
+* **Kill counter:** Appears as a scratch list in weapon inspect mode (when you have kills). Green = nomad, purple = boss. Counts all AI deaths or only your own kills (change in LCM).
 
 ## Weapons & Handling
 
