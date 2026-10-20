@@ -33,7 +33,7 @@ var gameData := preload("res://Resources/GameData.tres")
 # config vars
 @export var debug_enabled: bool = false
 @export var show_protips: bool = true
-@export var hide_empty_container_prompt: bool = true
+@export var hide_empty_container_prompt: bool = false
 @export var custom_stamina: bool = true
 @export var kill_counter_mode: KillCounterMode = KillCounterMode.ALL_DEATHS
 
