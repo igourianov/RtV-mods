@@ -1,21 +1,20 @@
-# 3.10.2123
+# 4.0.2143
 * reworked PIP eye relief (too many people struggled to understand it)
 	* inverted eye relief logic to force aim pose into optimal eye relief instead of allowing user to position scope into it
 	* removed eye relief scope shadow and shiner logic
 	* odd combinations like ACOG on M28 will now work (even though they shouldn't)
 * reworked and fixed optic rail placement bounds and default values
 * brought back a mild scope shadow on wide swings, exhausted arms, crouch/standup, lean and taking aim
-	* lean and aim shadows are brief and fade as the movement settles
-	* the side the shadow enters from varies a little with each aim
 * force user out of aim on jump/falling
-* increased strength of scope DOF blur
 * reworked NVG blur and scope picture under NVG
 	* NVG now blurs everything up close, including the gun you hold (like real NVG does)
 	* NVG PIP blur setting renamed to NVG weapon blur, it turns back on once if you disabled it
 	* fixed PIP scope picture being much brighter than the surroundings under NVG
 * removed scope low light dimming (exit pupil), the ExitPupil mod is no longer integrated
+* increased strength of scope DOF blur
 * minor adjustments to free look pose
 * major refactoring of the optics and aiming code
+* a hook conflict with another mod no longer switches off all of VosTac: only the conflicting part stops working, and the log names the hook
 
 # 3.8.2078
 * fixed ammo, chamber, attachment, fire mode and kill counter cards and the magazine tooltip not showing alongside mods that add their own nodes to the weapon (e.g. Realistic Gunplay)
