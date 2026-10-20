@@ -4,7 +4,6 @@ const Out := preload("./Out.gd")
 const Inputs := preload("./Inputs.gd")
 
 var _lib
-var _hooks: Array[int]
 var _inputs: Inputs
 
 var mod_id: String
@@ -38,22 +37,13 @@ func _load_mod_info():
 
 func _init_setup():
 	await _lib.frameworks_ready
-
-	_hooks = []
 	setup(_lib)
 
-	var registered := _hooks.filter(func(id): return id > -1)
-	if registered.size() == _hooks.size():
-		Out.debug("all hooks registered successfully")
-		return
 
-	Out.warning("mod registration failed, rolling back")
-	for id in registered:
-		_lib.unhook(id)
-
-
+# Only a replace hook can be rejected, when another hook already owns its slot. The loader exposes the owner's hook id, not the mod.
 func register_hook(hookName: String, callback: Callable):
-	_hooks.append(_lib.hook(hookName, callback) as int)
+	if _lib.hook(hookName, callback) < 0:
+		Out.warning("hook %s rejected, slot owned by hook id %d" % [hookName, _lib.get_replace_owner(hookName)])
 
 
 # event is the default binding: an InputEvent, the name of another action to take the binding from, or null for no default
