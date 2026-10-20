@@ -1,6 +1,7 @@
 extends "../Lib/Main.gd"
 
 const FreeCam := preload("./FreeCam.gd")
+const RigTuner := preload("./RigTuner.gd")
 
 var gameData := preload("res://Resources/GameData.tres")
 var _free_cam: FreeCam
@@ -27,4 +28,6 @@ func _input(event: InputEvent) -> void:
 		return
 
 	_free_cam = FreeCam.new(view_camera)
+	# lives and dies with the free camera, so the binds only act while the world is frozen
+	_free_cam.add_child(RigTuner.new())
 	get_tree().current_scene.add_child(_free_cam)
