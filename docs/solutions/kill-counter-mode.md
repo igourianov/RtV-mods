@@ -41,7 +41,7 @@ Context only:
 
 ### Recording
 
-`Config.gd` holds two faction lists for the current scene: every AI death and the AI the player killed. Both have the shape of today's `kills`: one faction byte per death, in order.
+`Config.gd` holds two faction lists for the current scene: every AI death and the AI the player killed. Both have the shape of today's `kills`: one faction byte per death, in order. The all deaths list keeps its sample seed, which shows the card outside a loaded scene and is cleared by the first scene load. The player kills list starts empty.
 
 `Hooks/KillCounter.gd` records each AI death once, into the all deaths list always and into the player kills list when the damage call that led into `Death` came from the player. It learns the source from pre hooks on `AI.WeaponDamage` and `AI.ExplosionDamage` and keeps the existing `AI.Death` pre hook as the point where a death is recorded. Both lists are cleared on scene load.
 
@@ -60,7 +60,7 @@ Recording does not depend on the mode, so switching the mode mid raid shows the 
 
 ### Observable result
 
-* `Kill counter` in LCM's Weapon Cards group is a dropdown: All deaths, Player kills, Disabled.
+* `Kill counter mode` in LCM's Weapon Cards group is a dropdown: All deaths, Player kills, Disabled.
 * All deaths behaves as the toggle did when on.
 * Player kills shows only AI killed by the player's guns, knife and grenades. AI killed by other AI or by sourceless explosions are left out.
 * Disabled hides the card.
