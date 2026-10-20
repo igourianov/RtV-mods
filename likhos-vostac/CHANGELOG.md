@@ -1,24 +1,31 @@
-# 4.0.2143
-* reworked PIP eye relief (too many people struggled to understand it)
+# 4.0.2155
+* reworked PIP eye relief (too many people struggled to understand it):
 	* inverted eye relief logic to force aim pose into optimal eye relief instead of allowing user to position scope into it
+	* brought back a mild scope shadow on wide swings, exhausted arms, crouch/standup, lean and taking aim
 	* removed eye relief scope shadow and shiner logic
-	* odd combinations like ACOG on M28 will now work (even though they shouldn't)
-* reworked and fixed optic rail placement bounds and default values
-* brought back a mild scope shadow on wide swings, exhausted arms, crouch/standup, lean and taking aim
-* force user out of aim on jump/falling
-* reworked NVG blur and scope picture under NVG
+	* weird combinations like ACOG on M28 MOD will now work (even though they shouldn't)
+
+* optics and aiming rework:
+	* major refactoring of the optics and aiming code
+	* multiple fixes for optic rail placement bounds and default values
+	* force user out of aim on jump/falling
+	* removed scope low light dimming (exit pupil), the ExitPupil mod is no longer integrated (redundant with NVG changes)
+	* increased strength of scope DOF blur
+	* minor adjustments to free look pose
+
+* reworked NVG blur and scope picture under NVG:
 	* NVG now blurs everything up close, including the gun you hold (like real NVG does)
 	* NVG PIP blur setting renamed to NVG weapon blur, it turns back on once if you disabled it
 	* fixed PIP scope picture being much brighter than the surroundings under NVG
-* removed scope low light dimming (exit pupil), the ExitPupil mod is no longer integrated
-* increased strength of scope DOF blur
-* minor adjustments to free look pose
-* major refactoring of the optics and aiming code
+
+* footsteps rework:
+	* weapon bob now follows the footsteps in every mode, with a slightly random dip on each step
+	* footstep cadence now follows movement speed like a real gait: quicker steps when moving slowly (aim, canted, scoped), slower when sprinting
+	* added LCM setting to disable footsteps volume scaling with player speed
+	* footsteps volume scaling no longer affects gear and razor wire sounds
+
 * a hook conflict with another mod no longer switches off all of VosTac: only the conflicting part stops working, and the log names the hook
-* added LCM setting to disable footsteps volume scaling with player speed
-* footsteps volume scaling no longer affects gear and razor wire sounds
-* reworked weapon bob: it now follows the footsteps in every mode, with a slightly random dip on each step
-* footstep cadence now follows movement speed like a real gait: quicker steps when moving slowly (aim, canted, scoped), slower when sprinting
+* kill counter LCM toggle is now a dropdown at the top of the settings: all deaths, player kills only or disabled
 
 # 3.8.2078
 * fixed ammo, chamber, attachment, fire mode and kill counter cards and the magazine tooltip not showing alongside mods that add their own nodes to the weapon (e.g. Realistic Gunplay)
