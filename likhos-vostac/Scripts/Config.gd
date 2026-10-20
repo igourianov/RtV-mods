@@ -35,6 +35,7 @@ var gameData := preload("res://Resources/GameData.tres")
 @export var show_protips: bool = true
 @export var hide_empty_container_prompt: bool = true
 @export var custom_stamina: bool = true
+@export var kill_counter_mode: KillCounterMode = KillCounterMode.ALL_DEATHS
 
 @export_group("Crosshair")
 @export var crosshair_style: CrosshairStyle = CrosshairStyle.SEGMENTED_CROSS
@@ -55,7 +56,6 @@ var gameData := preload("res://Resources/GameData.tres")
 @export var ammo_cards_inspect: bool = false
 @export var ammo_cards_manual_reload: bool = true
 @export var chamber_card_mode: ChamberCardMode = ChamberCardMode.MANUAL_GUNS_ONLY
-@export var kill_counter_mode: KillCounterMode = KillCounterMode.ALL_DEATHS
 
 @export_group("Aim tweaks")
 @export var free_look: bool = true

@@ -37,13 +37,13 @@ Context only:
 
 ### Setting
 
-`Config.gd` defines a `KillCounterMode` enum with `ALL_DEATHS`, `PLAYER_KILLS` and `DISABLED`, following `ChamberCardMode`. The `Weapon Cards` group exports `kill_counter_mode` in place of the `kill_counter_card` bool, defaulting to `ALL_DEATHS`. LCM shows it as a dropdown.
+`Config.gd` defines a `KillCounterMode` enum with `ALL_DEATHS`, `PLAYER_KILLS` and `DISABLED`, following `ChamberCardMode`. The ungrouped top section exports `kill_counter_mode`, after the other ungrouped settings, defaulting to `ALL_DEATHS`. LCM shows it as a dropdown.
 
 ### Recording
 
 `Config.gd` holds two faction lists for the current scene: every AI death and the AI the player killed. Both have the shape of today's `kills`: one faction byte per death, in order. The all deaths list keeps its sample seed, which shows the card outside a loaded scene and is cleared by the first scene load. The player kills list starts empty.
 
-`Hooks/KillCounter.gd` records each AI death once, into the all deaths list always and into the player kills list when the damage call that led into `Death` came from the player. It learns the source from pre hooks on `AI.WeaponDamage` and `AI.ExplosionDamage` and keeps the existing `AI.Death` pre hook as the point where a death is recorded. Both lists are cleared on scene load.
+`Hooks/KillCounter.gd` records each AI death once, into the all deaths list always and into the player kills list when the last damage call on that AI came from the player. Pre hooks on `AI.WeaponDamage` and `AI.ExplosionDamage` store that source on the damaged AI node as meta, so attribution is per AI and never carries from one AI to another. The existing `AI.Death` pre hook is the point where a death is recorded and reads the meta of the dying AI. Both lists are cleared on scene load.
 
 Recording does not depend on the mode, so switching the mode mid raid shows the matching history at once.
 
@@ -53,14 +53,14 @@ Recording does not depend on the mode, so switching the mode mid raid shows the 
 
 ### Flow
 
-1. The player or an AI hits an AI. Vanilla calls `WeaponDamage` or `ExplosionDamage` with the source. `KillCounter` notes whether the source is the player.
-2. If the hit is lethal, vanilla calls `Death`. `KillCounter` records the faction in the all deaths list and, for a player source, in the player kills list.
+1. The player or an AI hits an AI. Vanilla calls `WeaponDamage` or `ExplosionDamage` with the source. `KillCounter` marks the hit AI with whether the source is the player.
+2. If the hit is lethal, vanilla calls `Death`. `KillCounter` records the faction in the all deaths list and, when the dying AI is marked as hit by the player, in the player kills list.
 3. In inspect mode `HUD` renders the list the mode selects.
 4. On scene load both lists are cleared.
 
 ### Observable result
 
-* `Kill counter mode` in LCM's Weapon Cards group is a dropdown: All deaths, Player kills, Disabled.
+* `Kill counter mode` in LCM's ungrouped top section is a dropdown: All deaths, Player kills, Disabled.
 * All deaths behaves as the toggle did when on.
 * Player kills shows only AI killed by the player's guns, knife and grenades. AI killed by other AI or by sourceless explosions are left out.
 * Disabled hides the card.
@@ -69,4 +69,5 @@ Recording does not depend on the mode, so switching the mode mid raid shows the 
 
 * Two lists recorded always over one list recorded per the current mode. The cost: a second small byte list per scene. The gain: the mode applies retroactively within a raid.
 * Attribution from the damage calls over replacing `Death` or reading state after it. The cost: two more pre hooks on `AI.gd`, shared with any other mod hooking them.
+* Meta on the AI node over a source held by `KillCounter`. The cost: a mod meta key on vanilla nodes. The gain: a `Death` call that no damage call led into, e.g. from another mod, still takes the source of the last hit on that same AI.
 * No migration of the old bool. The cost: users who turned the counter off see it again once.
