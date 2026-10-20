@@ -15,14 +15,22 @@ const _SHADOW_EXHAUSTION_RATE := 1.0
 # The exhausted wobble and the crouch or stand kick peak around the dead zone on their own, so they count this many times over.
 const _SHADOW_WOBBLE_GAIN := 3.0
 const _SHADOW_KICK_GAIN := 3.0
+# Yaw per degree the eye lags behind the lean roll, so the crescent shows only while the lean moves and comes from the side opposite the lean.
+const _SHADOW_LEAN_GAIN := 0.6
+# Soft cap on that yaw, in degrees. Switching straight from one lean to the other doubles the lag, which should not double the shadow.
+const _SHADOW_LEAN_MAX_ANGLE := 3.2
+# Per second. Matches vanilla's leanSpeed.
+const _SHADOW_LEAN_SETTLE_RATE := 5.0
 
 var _zoom := ZoomAccelerator.new()
 var _shadow_exhaustion := 0.0
+var _lean_settled := 0.0
 var _rig: WeaponRig
 var _handling: Node3D
 var _sway: Sway
 var _noise: Node3D
 var _impulse: Node3D
+var _lean: Node3D
 
 
 func _ready() -> void:
@@ -32,6 +40,8 @@ func _ready() -> void:
 	_sway = _rig.get_node("Handling/Sway")
 	_noise = _rig.get_node("Handling/Sway/Noise")
 	_impulse = _rig.get_node("Handling/Sway/Noise/Tilt/Impulse")
+	_lean = get_node("/root/Map/Core/Controller/Pelvis")
+	_lean_settled = _lean.rotation_degrees.z
 	set_process_input(true)
 	set_process(true)
 
@@ -89,6 +99,7 @@ func _handle_ads(delta: float) -> void:
 	var optic = _rig.activeOptic
 	var att = optic.attachmentData if optic else null
 	gameData.aimFOV = gameData.baseFOV
+	_lean_settled = lerp(_lean_settled, _lean.rotation_degrees.z, delta * _SHADOW_LEAN_SETTLE_RATE)
 
 	if !optic || !att:
 		return
@@ -125,9 +136,11 @@ func _get_shadow_offset() -> Vector2:
 	var wobble: Vector3 = _noise.rotation_degrees * _SHADOW_WOBBLE_GAIN * _shadow_exhaustion
 	var kick: Vector3 = _impulse.rotation_degrees * _SHADOW_KICK_GAIN
 	var total: Vector3 = lag + wobble + kick
+	var lean: float = tanh((_lean.rotation_degrees.z - _lean_settled) * _SHADOW_LEAN_GAIN / _SHADOW_LEAN_MAX_ANGLE) * _SHADOW_LEAN_MAX_ANGLE
 	# x is the yaw, y the pitch, in view space with y up, signed so the vector points where the clear aperture shifts.
 	# A yaw to the right tilts the lens normal left, and vanilla's view ray plus normal offset then clears the right side.
-	var misalignment := Vector2(-total.y, total.x)
+	# The lean rolls positive to the left, and the rig rolls with it, so view space x stays lens x.
+	var misalignment := Vector2(-total.y + lean, total.x)
 	var magnitude := misalignment.length()
 
 	if magnitude <= _SHADOW_DEAD_ZONE:
