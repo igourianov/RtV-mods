@@ -1,8 +1,8 @@
 extends "./WeaponRig_Base.gd"
 
-const _AMMO_CHECK_INTRO_TIME_DEFAULT := 1.0
 const _VIEW_DELAY := 0.5
 
+# A weapon not listed plays the clip through without pausing, as vanilla does
 const AMMO_CHECK_INTRO_TIMES := {
 	"AKM": 1.65,
 	"AK_12": 1.45,
@@ -44,6 +44,7 @@ enum State {
 
 var _state: State = State.NONE
 var _state_timer: float = 0.0
+var _pauses := false
 
 
 func _ready() -> void:
@@ -101,10 +102,13 @@ func _process(delta: float) -> void:
 		rig.UpdateHUD()
 		start_animation("Ammo_Check")
 		_audio_player.play_event(rig.data.ammoCheck)
-		_state_timer = AMMO_CHECK_INTRO_TIMES.get(rig.data.file, _AMMO_CHECK_INTRO_TIME_DEFAULT)
+		var intro = AMMO_CHECK_INTRO_TIMES.get(rig.data.file)
+		_pauses = intro != null
+		_state_timer = intro if _pauses else 0.0
 		return
 
-	if _state == State.PULLING && timer_expired:
+	# without a pause the check stays in PULLING until release, so the reload on fire never starts from a reattached magazine
+	if _state == State.PULLING && timer_expired && _pauses:
 		_state = State.PAUSED
 		rig.animator.process_mode = Node.PROCESS_MODE_DISABLED
 		_audio_player.stream_paused = true
@@ -117,7 +121,9 @@ func _process(delta: float) -> void:
 		rig.animator.process_mode = Node.PROCESS_MODE_INHERIT
 		_audio_player.stream_paused = false
 		_set_view_delayed(false)
-		await await_animation(-0.5)
+		# a clip played through can already be back in Idle, whose length says nothing about the check
+		if rig.animator.get("parameters/playback").get_current_node() == &"Ammo_Check":
+			await await_animation(-0.5)
 		if is_instance_valid(self):
 			gameData.isChecking = false
 			_state = State.NONE
