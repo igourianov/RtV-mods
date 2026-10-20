@@ -288,7 +288,7 @@ func _set_target_idle(h: Node) -> void:
 		category = IdleCategory.StocklessSMG
 	elif data.weaponType == "Pistol":
 		category = IdleCategory.Pistol
-	elif data.file in ["Mosin", "M28", "M28_MOD", "Remington_870"]:
+	elif data.weaponAction == "Manual":
 		category = IdleCategory.FuddGrip
 	elif data.weaponType == "SMG":
 		category = IdleCategory.SMG

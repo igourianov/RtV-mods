@@ -29,23 +29,25 @@ func _inject_mosin_casing_eject() -> void:
 		return
 
 	var base := tree.get_node(tree.root_node)
-	if !base:
+	var machine := tree.tree_root as AnimationNodeStateMachine
+	if !base || !machine:
 		return
 
 	# vanilla Reload already ejects on Mosin but not on M28 variants
+	# clips are resolved through the states, since modded rigs can swap in clips named after something other than data.file
 	var keys := {"Insert_Start": 0.9, "Reload": 0.55}
-	for suffix in keys:
-		var anim_name: String = rig.data.file + "_" + suffix
-		if !player.has_animation(anim_name):
+	for state_name in keys:
+		var state: AnimationNodeAnimation = machine.get_node(state_name) as AnimationNodeAnimation if machine.has_node(state_name) else null
+		if !state || !player.has_animation(state.animation):
 			continue
 
-		var anim := player.get_animation(anim_name)
+		var anim := player.get_animation(state.animation)
 		if anim.has_meta("likho_eject_injected") || _has_casing_eject(anim):
 			continue
 
 		var track := anim.add_track(Animation.TYPE_METHOD)
 		anim.track_set_path(track, base.get_path_to(rig))
-		anim.track_insert_key(track, keys[suffix], {"method": &"CasingEject", "args": []})
+		anim.track_insert_key(track, keys[state_name], {"method": &"CasingEject", "args": []})
 		anim.set_meta("likho_eject_injected", true)
 
 
