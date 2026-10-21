@@ -1,8 +1,8 @@
 # TODO
 - use NVG outline for the binos
-- shine the light on the weapon
 
 # Closed
+- shine the light on the weapon - done
 - invert sprint stride vs weapon sway - done
 - vostac: lower weapon attachment in free look mode a bit (-20 degrees?) - will not do
 - vostac: defaults for optics missing from ScopeCatalog.DATA (e.g. added by other mods): add fallback entries for scope and variable optics - done

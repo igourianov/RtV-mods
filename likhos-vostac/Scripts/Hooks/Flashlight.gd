@@ -4,9 +4,16 @@ const Out := preload("../../Lib/Out.gd")
 # Tunable: beam shape as multiples of the vanilla range and cone angle.
 const RANGE_FACTOR := 0.5
 const CONE_FACTOR := 1.8
+# Shared by the beam and the near light that lights the player's own hands and weapon.
+# Vanilla puts the beam at (0, 0, 0.1) and the near light at (-1, 0, -2).
+const LIGHT_POSITION := Vector3(0, 0.1, 0.2)
+const WEAPON_LAYER := 1 << 1
+# Tunable: seconds the near light takes to fade in or out with inspect, roughly the inspect start and exit animations.
+const FPS_LIGHT_FADE := 0.5
 
 var _lib
 var _authored_cone: float
+var _fps_fade := 0.0
 
 
 func _init(lib) -> void:
@@ -31,6 +38,11 @@ func on_activate_post() -> void:
 
 	beam.spot_range *= RANGE_FACTOR
 	beam.spot_angle = _authored_cone * CONE_FACTOR
+	beam.position = LIGHT_POSITION
+	caller.lightFPS.position = LIGHT_POSITION
+
+	# Vanilla keeps the beam off the weapon layer.
+	beam.light_cull_mask |= WEAPON_LAYER
 
 
 func on_physics_process(delta: float) -> void:
@@ -44,6 +56,15 @@ func on_physics_process(delta: float) -> void:
 	caller.ResetCheck()
 	if !caller.gameData.freeze && caller.gameData.flashlight:
 		caller.Consumption(delta)
+
+	# Lighting the weapon only pays off while inspecting it.
+	_fps_fade = move_toward(_fps_fade, 1.0 if caller.gameData.isInspecting else 0.0, delta / FPS_LIGHT_FADE)
+	var fps_light = caller.lightFPS
+	fps_light.visible = _fps_fade > 0.0
+
+	# Fading the color leaves the energy to vanilla and to mods that dim it, like Likho's Battery Powered.
+	if caller.lightData:
+		fps_light.light_color = caller.lightData.color * _fps_fade
 
 	if !caller.has_node("FlashlightDriver"):
 		var driver := FlashlightDriver.new()

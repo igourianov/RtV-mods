@@ -24,6 +24,7 @@
 	* added LCM setting to disable footsteps volume scaling with player speed
 	* footsteps volume scaling no longer affects gear and razor wire sounds
 
+* flashlight's light source rework to be more realistic
 * kill counter LCM toggle is now a dropdown at the top of the settings: all deaths, player kills only or disabled
 * a hook conflict with another mod no longer switches off all of VosTac: only the conflicting part stops working, and the log names the hook
 * number of compatibility fixes for weapon and optic mods
