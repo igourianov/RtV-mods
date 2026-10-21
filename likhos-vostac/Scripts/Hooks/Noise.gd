@@ -5,7 +5,8 @@ extends RefCounted
 # sharpness 0 is a sine sway with a smooth dip, 1 a triangle sway that reverses sharply at the edges with a sharp dip
 const BOB_WALK := Vector3(0.7, 0.9, 0.0)
 const BOB_CANTED := Vector3(0.0, 0.6, 0.0)
-const BOB_SPRINT := Vector3(2.5, 0.5, 0.7)
+# negative sprint sway puts the weapon opposite the head bob's sideways shift, so it lags the body like a held weapon
+const BOB_SPRINT := Vector3(-2.5, 0.5, 0.7)
 # each step's dip depth varies by up to this fraction either way
 const BOB_DIP_RANDOM: float = 0.4
 # a step plays where sin of the controller's phase rises through 0.5, which is a twelfth of a turn into the half rate stride
