@@ -1,4 +1,4 @@
-# 4.0.2155
+# 4.0.2167
 * reworked PIP eye relief (too many people struggled to understand it):
 	* inverted eye relief logic to force aim pose into optimal eye relief instead of allowing user to position scope into it
 	* brought back a mild scope shadow on wide swings, exhausted arms, crouch/standup, lean and taking aim
