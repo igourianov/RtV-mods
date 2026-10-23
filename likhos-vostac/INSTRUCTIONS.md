@@ -54,5 +54,7 @@ This mod hooks multiple vanilla methods through Metro Mod Loader:
 - `AI.ExplosionDamage` (pre)
 - `AI.Death` (pre)
 - `Loader.LoadScene` (pre)
+- `Loader.SaveCharacter` (pre)
+- `Interface.LoadSlotItem` (post)
 - `Pickup._ready` (post)
 - `LootContainer.UpdateTooltip` (post)

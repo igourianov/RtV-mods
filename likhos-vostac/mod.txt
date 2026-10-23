@@ -26,7 +26,8 @@ debug=false
 "res://Scripts/UIPosition.gd"="_physics_process"
 "res://Scripts/Item.gd"="UpdateDetails"
 "res://Scripts/AI.gd"="WeaponDamage, ExplosionDamage, Death"
-"res://Scripts/Loader.gd"="LoadScene"
+"res://Scripts/Loader.gd"="LoadScene, SaveCharacter"
+"res://Scripts/Interface.gd"="LoadSlotItem"
 "res://Scripts/Pickup.gd"="_ready"
 "res://Scripts/LootContainer.gd"="UpdateTooltip"
 

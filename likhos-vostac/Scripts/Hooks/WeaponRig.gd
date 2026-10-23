@@ -3,6 +3,7 @@ extends RefCounted
 const Out := preload("../../Lib/Out.gd")
 const AttachmentMounts := preload("../AttachmentMounts.gd")
 const ScopeCatalog := preload("../ScopeCatalog.gd")
+const SlotMeta := preload("./SlotMeta.gd")
 const WeaponRig_Fire := preload("../Nodes/WeaponRig_Fire.gd")
 const WeaponRig_Reload := preload("../Nodes/WeaponRig_Reload.gd")
 const WeaponRig_ManualReload := preload("../Nodes/WeaponRig_ManualReload.gd")
@@ -29,6 +30,10 @@ func on_ready_post() -> void:
 	_inject_handler(rig, WeaponRig_Inspect, "Likho_WeaponRig_Inspect")
 	_inject_handler(rig, WeaponRig_Shadow, "Likho_WeaponRig_Shadow")
 	AttachmentMounts.mount(rig.attachments, rig.data.file, "rig", rig)
+	# vanilla _ready clears the secondary sight choice, so the weapon's own choice is restored over it.
+	# activeOptic is not set yet, so the RigManager.UpdateRig post hook syncs the optic state.
+	if rig.slotData:
+		ScopeCatalog.gameData.secondaryOptic = rig.slotData.get_meta(SlotMeta.SECONDARY_OPTIC, false)
 
 
 func _inject_handler(rig: WeaponRig, klass: GDScript, node_name: String) -> void:

@@ -2,6 +2,7 @@ extends "./WeaponRig_Base.gd"
 
 const ScopeCatalog := preload("../ScopeCatalog.gd")
 const ZoomAccelerator := preload("../ZoomAccelerator.gd")
+const SlotMeta := preload("../Hooks/SlotMeta.gd")
 const _RETICLE_SHADER := preload("res://mods/likhos-vostac/Shaders/Reticle.gdshader")
 # Per-optic `size` values are authored against vanilla's view-direction UV. This rescales them onto lens UV.
 const _LENS_UV_SCALE := 3.0
@@ -60,6 +61,11 @@ func _handle_secondary_optic(event: InputEvent) -> bool:
 
 	gameData.secondaryOptic = !gameData.secondaryOptic
 	ScopeCatalog.sync_optic_state(_rig)
+	if _rig.slotData:
+		if gameData.secondaryOptic:
+			_rig.slotData.set_meta(SlotMeta.SECONDARY_OPTIC, true)
+		else:
+			_rig.slotData.remove_meta(SlotMeta.SECONDARY_OPTIC)
 
 	return true
 

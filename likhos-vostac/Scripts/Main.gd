@@ -26,6 +26,7 @@ const Interactor = preload("./Hooks/Interactor.gd")
 const UIPosition = preload("./Hooks/UIPosition.gd")
 const Item = preload("./Hooks/Item.gd")
 const KillCounter = preload("./Hooks/KillCounter.gd")
+const SlotMeta = preload("./Hooks/SlotMeta.gd")
 const BinocularsOverlay = preload("./Nodes/BinocularsOverlay.gd")
 const InputBus = preload("./Nodes/InputBus.gd")
 
@@ -52,6 +53,7 @@ var _item
 var _kill_counter
 var _pickup
 var _loot_container
+var _slot_meta
 
 
 func setup(lib):
@@ -91,6 +93,7 @@ func setup(lib):
 	_kill_counter = KillCounter.new(lib)
 	_pickup = Pickup.new(lib)
 	_loot_container = LootContainer.new(lib)
+	_slot_meta = SlotMeta.new(lib)
 
 	register_hook("handling-weaponhandling", _handling.on_weapon_handling)
 	# above the default priority 100, so it runs after other mods' post hooks
@@ -131,6 +134,8 @@ func setup(lib):
 	register_hook("ai-death-pre", _kill_counter.on_ai_death)
 	register_hook("loader-loadscene-pre", _kill_counter.on_load_scene_pre)
 	register_hook("loader-loadscene-pre", _bus.on_load_scene_pre)
+	register_hook("loader-savecharacter-pre", _slot_meta.on_save_character_pre)
+	register_hook("interface-loadslotitem-post", _slot_meta.on_load_slot_item_post)
 	register_hook("pickup-_ready-post", _pickup.on_ready_post)
 	register_hook("lootcontainer-updatetooltip-post", _loot_container.on_update_tooltip_post)
 
