@@ -73,6 +73,21 @@ func _init_inputs_hooks():
 		register_hook("inputs-resetactions-post", _inputs.on_reset_actions_post)
 
 
+# Vanilla shares one pickup SlotData across instances of items without condition. Call for any item a mod gives a condition.
+func localize_pickup_slotdata(id: String) -> void:
+	var scene: PackedScene = Database.get(id)
+	if !scene:
+		Out.warning("%s scene unavailable, cannot fix shared slotData" % id)
+		return
+
+	var probe = scene.instantiate()
+	if probe.slotData:
+		probe.slotData.resource_local_to_scene = true
+	else:
+		Out.warning("%s pickup has no slotData, cannot fix sharing" % id)
+	probe.queue_free()
+
+
 func noop(_arg = null) -> void:
 	_lib.skip_super()
 

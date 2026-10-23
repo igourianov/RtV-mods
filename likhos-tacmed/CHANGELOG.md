@@ -1,3 +1,6 @@
+# 1.5.160
+* fixed IFAKs and AFAKs on the ground all taking the condition of the last one dropped
+
 # 1.5.159
 * AFAK can now be refilled by dragging a Medkit onto it, 50% per Medkit
 * removed the AFAK refill recipe, dragging Medkits onto the AFAK replaces it

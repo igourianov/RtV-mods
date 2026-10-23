@@ -48,6 +48,7 @@ func _patch_items(lib) -> void:
 		"headshot": false,
 		"doctor": true
 	})
+	localize_pickup_slotdata("IFAK")
 
 	compatible = [lib.get_entry(lib.Registry.ITEMS, "Medkit")]
 	lib.patch(lib.Registry.ITEMS, "AFAK", {
@@ -63,3 +64,4 @@ func _patch_items(lib) -> void:
 		"insanity": false,
 		"doctor": true
 	})
+	localize_pickup_slotdata("AFAK")

@@ -12,7 +12,7 @@ var _interface
 
 func setup(lib) -> void:
 	_patch_wrk(lib)
-	_localize_wrk_slotdata()
+	localize_pickup_slotdata(WRK_ID)
 
 	lib.register(lib.Registry.RECIPES, "likhos_cleaning_kit_refill", {
 		"recipe": CleaningKitRefill,
@@ -60,19 +60,3 @@ func _patch_wrk(lib) -> void:
 		"compatible": compatible,
 		"repairs": true,
 	})
-
-
-func _localize_wrk_slotdata() -> void:
-	var scene: PackedScene = Database.get(WRK_ID)
-	if !scene:
-		Out.warning("Weapon_Repair_Kit scene unavailable, cannot fix shared slotData")
-		return
-
-	var probe = scene.instantiate()
-	if !probe.slotData:
-		Out.warning("Weapon_Repair_Kit pickup has no slotData, cannot fix sharing")
-		probe.queue_free()
-		return
-
-	probe.slotData.resource_local_to_scene = true
-	probe.queue_free()
