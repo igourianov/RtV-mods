@@ -1,4 +1,4 @@
-# Unreleased
+# 4.0.2172
 * secondary sight choice is remembered per weapon
 * fixed intermittend errors loading crosshair settings
 
