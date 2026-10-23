@@ -1,6 +1,6 @@
 # 4.0.2172
 * secondary sight choice is remembered per weapon
-* fixed intermittend errors loading crosshair settings
+* fixed intermittent errors loading crosshair settings
 
 # 4.0.2167
 * reworked PIP eye relief (too many people struggled to understand it):
