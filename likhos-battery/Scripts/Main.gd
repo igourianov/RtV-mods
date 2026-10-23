@@ -31,6 +31,7 @@ func setup(lib) -> void:
 
 	lib.patch(lib.Registry.ITEMS, BatteryUtil.FILE, { "showCondition": true })
 	BatteryUtil.data = lib.get_entry(lib.Registry.ITEMS, BatteryUtil.FILE)
+	_localize_battery_slotdata()
 
 	for found: Dictionary in lib.find(lib.Registry.ITEMS, func(entry) -> bool: return entry is ItemData && entry.subtype == "Laser"):
 		_make_device(lib, found["id"], found["entry"], ItemData.Power.Medium)
@@ -72,6 +73,23 @@ func setup(lib) -> void:
 
 	register_action("reticle_illumination", "Reticle Illumination", create_key_input(KEY_Y))
 	add_child(OpticPower.new())
+
+
+# The vanilla battery pickup scene does not mark its SlotData local to scene, so every battery pickup shares one resource.
+# Vanilla Drop writes the dropped battery into it, so all batteries on the ground take the charge of the last one dropped.
+# The flag is set on the resource the PackedScene hands out, so every later instance gets its own copy.
+func _localize_battery_slotdata() -> void:
+	var scene: PackedScene = Database.get(BatteryUtil.FILE)
+	if !scene:
+		Out.warning("Batteries scene unavailable, cannot fix shared slotData")
+		return
+
+	var probe = scene.instantiate()
+	if probe.slotData:
+		probe.slotData.resource_local_to_scene = true
+	else:
+		Out.warning("Batteries pickup has no slotData, cannot fix sharing")
+	probe.queue_free()
 
 
 # Vanilla lasers and sights have no charge. These three fields make one a battery powered device with a drain rate.

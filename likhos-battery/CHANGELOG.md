@@ -1,3 +1,6 @@
+# 2.1.40
+* fixed batteries on the ground all taking the charge of the last battery dropped
+
 # 2.1.37
 * fixed sight reticle power state not applying alongside mods that add their own nodes to the weapon (e.g. Realistic Gunplay)
 
