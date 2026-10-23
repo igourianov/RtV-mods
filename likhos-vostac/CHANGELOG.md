@@ -1,5 +1,6 @@
 # Unreleased
-* secondary sight choice is remembered per weapon: switching weapons and moving to another map no longer resets it to the primary sight (kept for the game session)
+* secondary sight choice is remembered per weapon
+* fixed intermittend errors loading crosshair settings
 
 # 4.0.2167
 * reworked PIP eye relief (too many people struggled to understand it):

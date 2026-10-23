@@ -62,10 +62,10 @@ func update(hud: Node, delta: float) -> void:
 
 
 func _update_visibility(delta: float) -> void:
-	var cantedHidden := gameData.isCanted && !config.crosshair_while_canted
-	var runningHidden := gameData.isRunning && !config.crosshair_while_running
-	var raisedHidden := gameData.weaponPosition == 2 && !config.crosshair_while_raised
-	var shouldShow := !gameData.transition && !gameData.isAiming && !cantedHidden && !runningHidden && !raisedHidden && !_is_interaction_blocked() && config.crosshair_style != Config.CrosshairStyle.OFF
+	var cantedHidden: bool = gameData.isCanted && !config.crosshair_while_canted
+	var runningHidden: bool = gameData.isRunning && !config.crosshair_while_running
+	var raisedHidden: bool = gameData.weaponPosition == 2 && !config.crosshair_while_raised
+	var shouldShow: bool = !gameData.transition && !gameData.isAiming && !cantedHidden && !runningHidden && !raisedHidden && !_is_interaction_blocked() && config.crosshair_style != Config.CrosshairStyle.OFF
 
 	var target := 0.0
 	if shouldShow:
@@ -88,7 +88,7 @@ func _update_tooltip(hud: Node) -> void:
 		hud.tooltip.offset_bottom += d
 		_tooltip_shifted = wantShift
 
-	var aimingMode := gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2
+	var aimingMode: bool = gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2
 	# an empty text is how a hook asks for no prompt while leaving the interaction available
 	if aimingMode || _is_interaction_blocked() || gameData.tooltip == "":
 		hud.tooltip.visible = false
