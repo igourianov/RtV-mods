@@ -11,11 +11,11 @@ const BEAM_SHADOW_OPACITY := 0.7
 # The near light that lights the player's own hands and weapon always sits at the camera.
 # Vanilla puts the beam at (0, 0, 0.1) and the near light at (-1, 0, -2).
 const LIGHT_POSITIONS := {
-	"Narva": Vector3(-0.1, -0.05, -0.15),
-	"Polaris": Vector3(0, 0.05, -0.15),
+	"Narva": Vector3(-0.1, -0.05, -0.1),
+	"Polaris": Vector3(0, 0.05, -0.1),
 }
 # Phoenix, also used for lights from other mods.
-const DEFAULT_LIGHT_POSITION := Vector3(-0.15, 0.0, -0.15)
+const DEFAULT_LIGHT_POSITION := Vector3(-0.15, 0.0, -0.1)
 const WEAPON_LAYER := 1 << 1
 # Tunable: seconds the near light takes to fade in or out with inspect, roughly the inspect start and exit animations.
 const FPS_LIGHT_FADE := 0.5

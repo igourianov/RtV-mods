@@ -10,6 +10,7 @@ const WeaponRig_ManualReload := preload("../Nodes/WeaponRig_ManualReload.gd")
 const WeaponRig_Optic := preload("../Nodes/WeaponRig_Optic.gd")
 const WeaponRig_Inspect := preload("../Nodes/WeaponRig_Inspect.gd")
 const WeaponRig_Shadow := preload("../Nodes/WeaponRig_Shadow.gd")
+const WEAPON_LAYER := 1 << 1
 
 var _lib
 
@@ -30,6 +31,10 @@ func on_ready_post() -> void:
 	_inject_handler(rig, WeaponRig_Inspect, "Likho_WeaponRig_Inspect")
 	_inject_handler(rig, WeaponRig_Shadow, "Likho_WeaponRig_Shadow")
 	AttachmentMounts.mount(rig.attachments, rig.data.file, "rig", rig)
+	# enable shadow on weapon attachments
+	for mesh: GeometryInstance3D in rig.find_children("*", "GeometryInstance3D", true, false):
+		if mesh.layers & WEAPON_LAYER:
+			mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	# vanilla _ready clears the secondary sight choice, so the weapon's own choice is restored over it.
 	# activeOptic is not set yet, so the RigManager.UpdateRig post hook syncs the optic state.
 	if rig.slotData:
