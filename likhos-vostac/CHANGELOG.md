@@ -1,3 +1,7 @@
+# Unreleased
+* flashlight beam now has slightly different source for each model
+* enabled shadow and light spill on the equipped weapon
+
 # 4.0.2172
 * secondary sight choice is remembered per weapon
 * fixed intermittent errors loading crosshair settings
