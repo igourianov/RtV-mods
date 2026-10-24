@@ -1,18 +1,27 @@
 
 const Out := preload("../../Lib/Out.gd")
 
-# Tunable: beam shape as multiples of the vanilla range and cone angle.
-const RANGE_FACTOR := 0.5
-const CONE_FACTOR := 1.8
-# Shared by the beam and the near light that lights the player's own hands and weapon.
+# Tunable: beam range per ItemData.Power tier: None, Low, Medium, High. Half of vanilla's 25, 50 and 100.
+const BEAM_RANGES: Array[float] = [0.0, 12.5, 25.0, 50.0]
+# Tunable: beam cone angle in degrees. Vanilla authors 25.
+const BEAM_CONE := 45.0
+# Tunable: beam shadow opacity. Vanilla authors 0, which hides the shadows.
+const BEAM_SHADOW_OPACITY := 0.7
+# Beam source per light item file, relative to the camera: -Z is forward, -X is left.
+# The near light that lights the player's own hands and weapon always sits at the camera.
 # Vanilla puts the beam at (0, 0, 0.1) and the near light at (-1, 0, -2).
-const LIGHT_POSITION := Vector3(0, 0.1, 0.2)
+const LIGHT_POSITIONS := {
+	"Narva": Vector3(-0.1, -0.05, -0.15),
+	"Polaris": Vector3(0, 0.05, -0.15),
+}
+# Phoenix, also used for lights from other mods.
+const DEFAULT_LIGHT_POSITION := Vector3(-0.15, 0.0, -0.15)
 const WEAPON_LAYER := 1 << 1
 # Tunable: seconds the near light takes to fade in or out with inspect, roughly the inspect start and exit animations.
 const FPS_LIGHT_FADE := 0.5
 
+var gameData := preload("res://Resources/GameData.tres")
 var _lib
-var _authored_cone: float
 var _fps_fade := 0.0
 
 
@@ -24,25 +33,18 @@ func on_activate_post() -> void:
 	var caller = _lib._caller
 	var data = caller.lightData
 
-	# Vanilla writes a range only for an equipped light with a power tier.
-	# Without that write it is still the one scaled last time, and scaling it again would compound.
-	if caller.lightSlot.get_child_count() == 0 || !data || data.power == data.Power.None:
+	if !data:
 		return
 
+	caller.lightFPS.position = Vector3.ZERO
+
 	var beam: SpotLight3D = caller.lightWorld
-
-	# Vanilla never writes the cone and every flashlight node comes from the same scene, so the first cone seen is the authored one.
-	# Scaling the node's current cone instead would compound on every activation.
-	if !_authored_cone:
-		_authored_cone = beam.spot_angle
-
-	beam.spot_range *= RANGE_FACTOR
-	beam.spot_angle = _authored_cone * CONE_FACTOR
-	beam.position = LIGHT_POSITION
-	caller.lightFPS.position = LIGHT_POSITION
-
-	# Vanilla keeps the beam off the weapon layer.
-	beam.light_cull_mask |= WEAPON_LAYER
+	beam.spot_range = BEAM_RANGES[data.power]
+	beam.spot_angle = BEAM_CONE
+	beam.position = LIGHT_POSITIONS.get(data.file, DEFAULT_LIGHT_POSITION)
+	# Vanilla enables shadows but hides them with zero opacity and a caster mask of layers 21-32 only.
+	beam.shadow_opacity = BEAM_SHADOW_OPACITY
+	beam.shadow_caster_mask |= WEAPON_LAYER
 
 
 func on_physics_process(delta: float) -> void:
@@ -54,11 +56,21 @@ func on_physics_process(delta: float) -> void:
 		return
 
 	caller.ResetCheck()
-	if !caller.gameData.freeze && caller.gameData.flashlight:
+	if !gameData.freeze && gameData.flashlight:
 		caller.Consumption(delta)
 
+	# Vanilla keeps the beam off the weapon layer. Only canted and raised hold the weapon up into the beam.
+	var beam: SpotLight3D = caller.lightWorld
+	var mask: int = beam.light_cull_mask
+	if gameData.isAiming || gameData.isCanted || gameData.weaponPosition == 2:
+		mask |= WEAPON_LAYER
+	else:
+		mask &= ~WEAPON_LAYER
+	if beam.light_cull_mask != mask:
+		beam.light_cull_mask = mask
+
 	# Lighting the weapon only pays off while inspecting it.
-	_fps_fade = move_toward(_fps_fade, 1.0 if caller.gameData.isInspecting else 0.0, delta / FPS_LIGHT_FADE)
+	_fps_fade = move_toward(_fps_fade, 1.0 if gameData.isInspecting else 0.0, delta / FPS_LIGHT_FADE)
 	var fps_light = caller.lightFPS
 	fps_light.visible = _fps_fade > 0.0
 
