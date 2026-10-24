@@ -35,6 +35,8 @@ var _idle_offsets := {
 }
 
 const _SECONDARY_OPTIC_ROT_OFFSET := Vector3(-15.0, 0.0, 0)
+const _IDLE_SCOPE_OFFSET := Vector3(0.0, -0.01, 0.0)
+const _IDLE_SUPPRESSOR_OFFSET := Vector3(0.0, -0.1, 0.0)
 const _DETACH_PITCH := deg_to_rad(-10.0)
 const _LOOK_DOWN_PITCH := deg_to_rad(-45.0)
 const _STOW_POS_OFFSET := Vector3(0.15, -0.25, 0.3)
@@ -301,10 +303,20 @@ func _set_target_idle(h: Node) -> void:
 	elif data.weaponType == "SMG":
 		category = IdleCategory.SMG
 
+	var rig = h.get_parent()
+	var lower_offset := Vector3.ZERO
+	if category == IdleCategory.Pistol || category == IdleCategory.StocklessSMG:
+		if rig.activeMuzzle:
+			lower_offset = _IDLE_SUPPRESSOR_OFFSET
+	else:
+		var optic = rig.activeOptic
+		if optic && (optic.attachmentData.scope || optic.attachmentData.variable):
+			lower_offset = _IDLE_SCOPE_OFFSET
+
 	var entry: Dictionary = _idle_offsets[category]
 	_idle_hide_left_arm = entry.get("hide_left_arm", false)
 
-	h.targetPosition = data.lowPosition + entry["pos"]
+	h.targetPosition = data.lowPosition + entry["pos"] + lower_offset
 	h.targetRotation = data.lowRotation + entry["rot"] + (_SECONDARY_OPTIC_ROT_OFFSET if gameData.secondaryOptic else Vector3.ZERO)
 
 

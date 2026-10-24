@@ -1,4 +1,5 @@
-# Unreleased
+# 4.1.2188
+* pushed weapon rig idle pose down a bit when a large attachment equipped
 * flashlight beam now has slightly different source for each model
 * enabled shadow and light spill on the equipped weapon
 

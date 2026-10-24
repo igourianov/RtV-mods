@@ -1,7 +1,7 @@
 [mod]
 name="Likho's VosTac"
 id="likhos-vostac"
-version="4.0.2172"
+version="4.1.2188"
 prefix="[likho-vostac]"
 debug=false
 
