@@ -1,3 +1,6 @@
+# 4.1.2189
+* removed weapon shadow added in 4.1.2188, it was cast from all lights and not just the flashlight. Recommended to use with Joni's `Full 3D Body` mod to get full shadow.
+
 # 4.1.2188
 * pushed weapon rig idle pose down a bit when a large attachment equipped
 * flashlight beam now has slightly different source for each model
