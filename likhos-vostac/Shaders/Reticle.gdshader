@@ -12,6 +12,9 @@ uniform float lens_uv_scale = 1.0;
 uniform float glow = 0.0;
 // Shift of the clear aperture in lens UV.
 uniform vec2 shadow_offset = vec2(0.0);
+// First focal plane reticle. It is part of the image, so the shadow covers it with the rest of the image.
+// A second focal plane reticle is imaged by the eyepiece alone, so a lit one stays visible over the shadow.
+uniform bool ffp = false;
 
 // Width of the lens rim that fades the image out, in lens UV. The lens radius is 0.5.
 const float RIM_WIDTH = 0.05;
@@ -77,11 +80,12 @@ void fragment()
 
 	// Output ----------------------------------------
 
-	vec3 color = mix(vec3(0.0), reticleColor, opacity);
+	float reticleShown = ffp ? 1.0 - shadowMask : 1.0;
+	vec3 color = mix(vec3(0.0), reticleColor * reticleShown, opacity);
 	float alpha = mix(1.0, max(shadowMask, reticleAlpha), opacity * rim);
 
 	ALBEDO = color;
-	EMISSION = vec3(reticleSample.r * glow * reticleAlpha * opacity, 0.0, 0.0);
+	EMISSION = vec3(reticleSample.r * glow * reticleAlpha * reticleShown * opacity, 0.0, 0.0);
 	ALPHA = alpha;
 	ROUGHNESS = 0.1 + specular;
 	SPECULAR = reflection;

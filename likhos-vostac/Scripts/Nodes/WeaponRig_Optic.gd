@@ -135,5 +135,7 @@ func _update_reticle(optic: Node3D) -> void:
 	if att && (att.scope || att.variable) && !("shader_parameter/lens_uv_scale" in optic.reticle):
 		optic.reticle.shader = _RETICLE_SHADER
 		optic.reticle.set_shader_parameter("lens_uv_scale", _LENS_UV_SCALE)
+		# the same rule as the reticle size interpolation in _handle_ads; a fixed power scope counts as SFP
+		optic.reticle.set_shader_parameter("ffp", att.variable && att.reticleSize.x != att.reticleSize.z)
 	optic.reticle.set_shader_parameter("size", _rig.reticleSize)
 	optic.reticle.set_shader_parameter("opacity", _rig.ocularOpacity)
