@@ -44,6 +44,6 @@ This mod uses the registry API and hooks vanilla methods through Metro Mod Loade
 
 [Likho's Config Manager](https://vostokmods.net/mod/likhos-config-manager) is optional. Without it sights run on the default settings: red dots need charge and scope illumination is switched by the binding.
 
-The reticle of every powered sight is drawn by a second material that this mod chains to the sight's lens material as `next_pass`, and the lens material's own reticle texture is replaced by a blank one. A mod that sets `next_pass` on those materials or swaps reticle textures at runtime will conflict.
+Every frame this mod writes the `reticle` texture and `intensity` uniforms of the lens material of the powered sight in hands, and chains a rim glow material to it as `next_pass`. The lens shader, vanilla's or another mod's, draws the reticle from those uniforms. A mod that sets `next_pass` on those materials or writes `reticle` or `intensity` at runtime will conflict.
 
 The charge of a laser attached to a weapon is kept in the weapon's `storage`, which vanilla uses for furniture only. A mod that reads or clears `storage` on weapons will conflict.

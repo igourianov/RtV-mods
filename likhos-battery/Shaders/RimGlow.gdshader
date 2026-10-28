@@ -2,7 +2,7 @@ shader_type spatial;
 render_mode shadows_disabled;
 
 // A scope with its illumination running shows it on the rim of its lens while the reticle is faded out of view.
-// Kept apart from the reticle pass, which draws under a vanilla lens. The lens is opaque out of aim.
+// A pass of its own over the lens, which is opaque out of aim.
 
 uniform float opacity : hint_range(0.0, 1.0, 0.1) = 1.0;
 uniform bool rim_glow = false;
