@@ -20,6 +20,9 @@ enum _Phase { IDLE, RENDERING, READING }
 
 const _QUAD_SIZE := 0.01
 const _CAMERA_DISTANCE := 0.05
+# Forward+ left omni and spot lights out of the probe at 1 pixel per quad and a 10 cm far plane.
+# This size and the camera's far plane together let them in.
+const _QUAD_PIXELS := 32
 # Luminance weights of linear sRGB.
 const LUMA := Vector3(0.2126, 0.7152, 0.0722)
 
@@ -40,17 +43,18 @@ var _elapsed := INF
 
 func _init(samples: Array[Sample]) -> void:
 	self.samples = samples
-	size = Vector2i(samples.size(), 1)
+	size = Vector2i(samples.size() * _QUAD_PIXELS, _QUAD_PIXELS)
 	render_target_update_mode = SubViewport.UPDATE_DISABLED
 	# Half floats, so readings above 1 and below 1/255 survive.
 	use_hdr_2d = true
 	readings.resize(samples.size())
 
-	_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
 	_camera.keep_aspect = Camera3D.KEEP_HEIGHT
-	_camera.size = _QUAD_SIZE
+	# Frames one quad's height at the quads' distance.
+	_camera.fov = rad_to_deg(2.0 * atan(_QUAD_SIZE * 0.5 / _CAMERA_DISTANCE))
 	_camera.near = 0.001
-	_camera.far = _CAMERA_DISTANCE * 2.0
+	# Reaches past the lights around the probe. See _QUAD_PIXELS.
+	_camera.far = 20.0
 	# Exposure 1 and no auto exposure, whatever the world's camera attributes.
 	_camera.attributes = CameraAttributesPractical.new()
 	add_child(_camera)
@@ -126,13 +130,10 @@ func _read_back() -> void:
 
 
 func _store(data: PackedByteArray) -> void:
-	var stride := data.size() / readings.size()
+	# Half float RGBA, 8 bytes a pixel. Each sample is the middle pixel of its quad's span on the first row, which needs no row pitch.
 	for i in readings.size():
-		var at := i * stride
-		if stride == 8:
-			readings[i] = Color(data.decode_half(at), data.decode_half(at + 2), data.decode_half(at + 4))
-		else:
-			readings[i] = Color8(data[at], data[at + 1], data[at + 2]).srgb_to_linear()
+		var at := (i * _QUAD_PIXELS + _QUAD_PIXELS / 2) * 8
+		readings[i] = Color(data.decode_half(at), data.decode_half(at + 2), data.decode_half(at + 4))
 	_phase = _Phase.IDLE
 
 
