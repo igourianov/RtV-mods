@@ -6,6 +6,7 @@ const Flicker := preload("./Flicker.gd")
 const AudioChunkPlayer := preload("../Lib/AudioChunkPlayer.gd")
 const _RETICLE_SHADER := preload("res://mods/likhos-battery/Shaders/Reticle.gdshader")
 const _FIBER_SHADER := preload("res://mods/likhos-battery/Shaders/FiberReticle.gdshader")
+const _RIM_SHADER := preload("res://mods/likhos-battery/Shaders/RimGlow.gdshader")
 const _CLICK_AUDIO := preload("res://Audio/Character/Handling/Files/Gadget.wav")
 const _CLICK_VOLUME := -10.0
 const _RIG_MANAGER := "/root/Map/Core/Camera/Manager"
@@ -173,7 +174,16 @@ func _push(lens: ShaderMaterial, state: Reticle, rim_glow: bool) -> void:
 	var reticle := _reticle_pass(lens, _RETICLE_SHADER)
 	reticle.set_shader_parameter("intensity", lens.get_shader_parameter("intensity"))
 	reticle.set_shader_parameter("state", state)
-	reticle.set_shader_parameter("rim_glow", rim_glow)
+
+	var rim := reticle.next_pass as ShaderMaterial
+	if !rim:
+		rim = ShaderMaterial.new()
+		rim.shader = _RIM_SHADER
+		# Over the lens and the reticle.
+		rim.render_priority = lens.render_priority + 2
+		reticle.next_pass = rim
+	rim.set_shader_parameter("opacity", lens.get_shader_parameter("opacity"))
+	rim.set_shader_parameter("rim_glow", rim_glow)
 
 
 # The reticle pass of a lens on the given shader, placed for the frame.
@@ -184,8 +194,6 @@ func _reticle_pass(lens: ShaderMaterial, shader: Shader) -> ShaderMaterial:
 		reticle.shader = shader
 		for parameter: String in ["scope", "reticle"]:
 			reticle.set_shader_parameter(parameter, lens.get_shader_parameter(parameter))
-		# Godot orders the passes of a surface by priority, not by the chain. The reticle goes over the lens and its shadow.
-		reticle.render_priority = lens.render_priority + 1
 		lens.next_pass = reticle
 		# The lens shader goes on drawing glass, shadow and reflection, and no reticle of its own.
 		lens.set_shader_parameter("reticle", _blank)
@@ -194,5 +202,9 @@ func _reticle_pass(lens: ShaderMaterial, shader: Shader) -> ShaderMaterial:
 	reticle.set_shader_parameter("size", lens.get_shader_parameter("size"))
 	reticle.set_shader_parameter("opacity", lens.get_shader_parameter("opacity"))
 	# VosTac sets it on the lens materials it places from the lens UV. Absent, the pass keeps vanilla's placement.
-	reticle.set_shader_parameter("lens_uv_scale", lens.get_shader_parameter("lens_uv_scale"))
+	var lens_uv_scale = lens.get_shader_parameter("lens_uv_scale")
+	reticle.set_shader_parameter("lens_uv_scale", lens_uv_scale)
+	# Godot orders the passes of a surface by priority, not by the chain.
+	# A vanilla lens draws over the reticle, so its eye relief shadow hides it. VosTac draws its reticle over its own shadow.
+	reticle.render_priority = lens.render_priority + (1 if lens_uv_scale else -1)
 	return reticle

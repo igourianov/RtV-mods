@@ -1,3 +1,6 @@
+# Unreleased
+* compatibility fix for other mods modifying scope shadow
+
 # 2.1.40
 * fixed batteries on the ground all taking the charge of the last battery dropped
 
