@@ -9,7 +9,7 @@ uniform bool rim_glow = false;
 
 // Tunable: the rim glow. Width in lens UV, where the lens radius is 0.5.
 const float GLOW_WIDTH = 0.05;
-const float GLOW_STRENGTH = 0.05;
+const float GLOW_STRENGTH = 0.07;
 
 void fragment()
 {
