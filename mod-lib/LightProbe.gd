@@ -5,14 +5,14 @@ extends SubViewport
 # A reading is the linear lit color of a white surface, ready in `readings` a frame or two after its render.
 
 class Sample:
-	# Counts light from every side, as a fiber gathers it. Otherwise light counts by its angle to `normal`.
-	var omni := false
+	# World space direction the sampled surface faces. Light counts by its angle to it.
+	var normal := Vector3.UP
 	var shadows := true
 	# Also counts light arriving from behind, as a spatial shader's BACKLIGHT does.
 	var backlight := false
 
-	func _init(omni := false, shadows := true, backlight := false) -> void:
-		self.omni = omni
+	func _init(normal := Vector3.UP, shadows := true, backlight := false) -> void:
+		self.normal = normal
 		self.shadows = shadows
 		self.backlight = backlight
 
@@ -24,9 +24,11 @@ const _CAMERA_DISTANCE := 0.05
 const LUMA := Vector3(0.2126, 0.7152, 0.0722)
 
 var origin: Vector3
-var normal := Vector3.UP
+# The camera's view direction onto the quads. It decides nothing about the light, each sample's normal does.
+var view := Vector3.DOWN
 # Seconds between renders.
 var interval := 0.25
+var samples: Array[Sample]
 var readings := PackedColorArray()
 
 var _camera := Camera3D.new()
@@ -36,6 +38,7 @@ var _elapsed := 0.0
 
 
 func _init(samples: Array[Sample]) -> void:
+	self.samples = samples
 	size = Vector2i(samples.size(), 1)
 	render_target_update_mode = SubViewport.UPDATE_DISABLED
 	# Half floats, so readings above 1 and below 1/255 survive.
@@ -77,14 +80,16 @@ func _process(delta: float) -> void:
 		return
 	_elapsed = 0.0
 
-	# Quads face `normal`, side by side, the camera looks back at them along it.
-	var up := Vector3.FORWARD if absf(normal.dot(Vector3.UP)) > 0.99 else Vector3.UP
-	var basis := Basis.looking_at(-normal, up)
-	_camera.global_transform = Transform3D(basis, origin + normal * _CAMERA_DISTANCE)
+	# Quads side by side, facing the camera that looks at them along `view`.
+	var up := Vector3.FORWARD if absf(view.dot(Vector3.UP)) > 0.99 else Vector3.UP
+	var basis := Basis.looking_at(view, up)
+	_camera.global_transform = Transform3D(basis, origin - view * _CAMERA_DISTANCE)
 	for i in _quads.size():
 		var offset := (i - (_quads.size() - 1) * 0.5) * _QUAD_SIZE
 		_quads[i].global_transform = Transform3D(basis, origin + basis.x * offset)
-		(_quads[i].material_override as ShaderMaterial).set_shader_parameter("probe_camera", _camera.global_position)
+		var material := _quads[i].material_override as ShaderMaterial
+		material.set_shader_parameter("probe_camera", _camera.global_position)
+		material.set_shader_parameter("surface_normal", samples[i].normal)
 
 	# The world's environment as it is now, minus everything that is not light on a surface.
 	var env := world_3d.environment if world_3d.environment else world_3d.fallback_environment
@@ -141,6 +146,7 @@ static func _shader_code(sample: Sample) -> String:
 		code += "render_mode shadows_disabled;\n"
 	code += """
 uniform vec3 probe_camera;
+uniform vec3 surface_normal = vec3(0.0, 1.0, 0.0);
 
 void fragment()
 {
@@ -149,6 +155,8 @@ void fragment()
 	{
 		discard;
 	}
+	// Lit as the sampled surface, whichever way the quad faces the camera.
+	NORMAL = normalize((VIEW_MATRIX * vec4(surface_normal, 0.0)).xyz);
 	ALBEDO = vec3(1.0);
 	ROUGHNESS = 1.0;
 	SPECULAR = 0.0;
@@ -156,11 +164,4 @@ void fragment()
 	if sample.backlight:
 		code += "\tBACKLIGHT = vec3(1.0);\n"
 	code += "}\n"
-	if sample.omni:
-		code += """
-void light()
-{
-	DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR / PI;
-}
-"""
 	return code

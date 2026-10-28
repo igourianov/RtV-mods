@@ -21,7 +21,7 @@ const SECONDARY_DRAIN := 1.25
 const FIBER_GAIN := 0.8
 # Ceiling for a fiber lens's intensity, where the lens itself gets almost no light.
 const _FIBER_MAX_INTENSITY := 10.0
-# The probe's samples: light as a fiber gathers it, and light as the lens shaders count it.
+# The probe's samples: light on the fiber collector atop the housing, and light as the lens shaders count it.
 enum _Probe { FIBER, LENS }
 
 # What a sight powers.
@@ -67,8 +67,9 @@ var _click := AudioChunkPlayer.new(_CLICK_AUDIO, _CLICK_VOLUME)
 var _blank := ImageTexture.create_from_image(Image.create_empty(1, 1, false, Image.FORMAT_RGBA8))
 var _authored: Dictionary[ShaderMaterial, Authored] = {}
 var _probe := LightProbe.new([
-	LightProbe.Sample.new(true, true, false),
-	LightProbe.Sample.new(false, false, true),
+	LightProbe.Sample.new(Vector3.UP, true, false),
+	# Faces the eye, set each frame. The lens shaders receive no shadows.
+	LightProbe.Sample.new(Vector3.BACK, false, true),
 ] as Array[LightProbe.Sample])
 # One sight is live at a time, so the flicker state is kept once.
 var _flicker := Flicker.new()
@@ -157,12 +158,12 @@ func _process(delta: float) -> void:
 # Scales the fiber lens's intensity by the light around the scope.
 # The lens shader lights the reticle again as albedo, so intensity is the fiber light over the light the lens gets on its own.
 func _light_fiber(optic) -> void:
-	# The probe sits just behind the scope, at the eyepiece, facing the eye.
-	var camera := get_viewport().get_camera_3d()
+	# The probe sits on top of the housing, where the fiber collector is.
 	var mesh: MeshInstance3D = optic.mesh
 	var bounds := mesh.global_transform * mesh.get_aabb()
-	_probe.normal = camera.global_basis.z
-	_probe.origin = bounds.get_center() + _probe.normal * (0.5 * bounds.size.dot(_probe.normal.abs()) + 0.01)
+	var center := bounds.get_center()
+	_probe.origin = Vector3(center.x, bounds.end.y + 0.01, center.z)
+	_probe.samples[_Probe.LENS].normal = get_viewport().get_camera_3d().global_basis.z
 
 	var lens_light := _probe.luminance(_Probe.LENS)
 	# Zero until the first reading, and too noisy to divide by in near darkness.
