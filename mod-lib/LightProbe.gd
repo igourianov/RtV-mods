@@ -34,7 +34,8 @@ var readings := PackedColorArray()
 var _camera := Camera3D.new()
 var _quads: Array[MeshInstance3D] = []
 var _phase := _Phase.IDLE
-var _elapsed := 0.0
+# Starts due, so the first reading does not wait out a whole interval.
+var _elapsed := INF
 
 
 func _init(samples: Array[Sample]) -> void:

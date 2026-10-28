@@ -96,6 +96,7 @@ Vanilla PIP is completely unusable - every scope feels like a "scout" scope. Thi
 * Changed POSP to be the 2-6x variant and fixed reticle size.
 * Allowed POSP to move on the dovetail.
 * HAMR is now legendary.
+* ACOG reticle is fiber optic lit: it glows by the light on top of the scope and dims in shade. In full darkness its tritium lamp keeps a faint glow.
 * PU moved back on the gun and it is now real 3.5x zoom.
 * Input acceleration for zoom bindings to quick flick from min to max or vice versa.
 * LCM setting for magnification control scheme.

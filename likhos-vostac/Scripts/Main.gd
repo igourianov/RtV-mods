@@ -29,6 +29,7 @@ const KillCounter = preload("./Hooks/KillCounter.gd")
 const SlotMeta = preload("./Hooks/SlotMeta.gd")
 const BinocularsOverlay = preload("./Nodes/BinocularsOverlay.gd")
 const InputBus = preload("./Nodes/InputBus.gd")
+const FiberReticle = preload("./Nodes/FiberReticle.gd")
 
 
 var _handling
@@ -149,6 +150,7 @@ func setup(lib):
 
 	_binoculars = BinocularsOverlay.new(_bus)
 	add_child(_binoculars)
+	add_child(FiberReticle.new())
 
 
 func _on_config_applied() -> void:

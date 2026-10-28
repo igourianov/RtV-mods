@@ -6,8 +6,10 @@ uniform sampler2D reticle : repeat_disable;
 uniform float opacity : hint_range(0.0, 1.0, 0.1) = 1.0;
 uniform float size : hint_range(0.0, 1.0, 0.01) = 0.1;
 uniform float intensity : hint_range(0.0, 10.0, 1.0) = 5.0;
-// Rescales `size` onto lens UV. Set per material, where Likho's Battery Powered reads it to place its own reticle pass the same way.
+// Rescales `size` onto lens UV. Set per material.
 uniform float lens_uv_scale = 1.0;
+// Light the red of the reticle emits on its own, for a fiber or tritium lit reticle.
+uniform float glow = 0.0;
 // Shift of the clear aperture in lens UV.
 uniform vec2 shadow_offset = vec2(0.0);
 
@@ -79,6 +81,7 @@ void fragment()
 	float alpha = mix(1.0, max(shadowMask, reticleAlpha), opacity * rim);
 
 	ALBEDO = color;
+	EMISSION = vec3(reticleSample.r * glow * reticleAlpha * opacity, 0.0, 0.0);
 	ALPHA = alpha;
 	ROUGHNESS = 0.1 + specular;
 	SPECULAR = reflection;

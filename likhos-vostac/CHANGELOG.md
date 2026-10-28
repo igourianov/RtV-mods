@@ -1,3 +1,6 @@
+# Unreleased
+* ACOG reticle glows by the light on top of the scope, where its fiber optic is, and keeps a faint tritium glow in full darkness (moved here from Likho's Battery Powered, update both mods)
+
 # 4.1.2189
 * removed weapon shadow added in 4.1.2188, it was cast from all lights and not just the flashlight. Recommended to use with Joni's `Full 3D Body` mod to get full shadow.
 

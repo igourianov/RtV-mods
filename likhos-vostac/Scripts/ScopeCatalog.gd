@@ -33,6 +33,8 @@ const DATA := {
 		"eye_relief": Vector2(2.5, 4.5),
 		"lens_radius": 0.013,
 		"lens_center": Vector3(0.0, 0.0, -0.102),
+		# the TA31 reticle is lit by a fiber optic collector atop the housing and a tritium lamp
+		"fiber_lit": true,
 	},
 	"HMR": {
 		"mag_range": [4.0],
@@ -85,6 +87,10 @@ static func get_mag_range(att: AttachmentData) -> Array:
 # VosTac leaves its zoom, isScoped, aim pose and tooltip to vanilla and to other mods.
 static func is_unknown(att: AttachmentData) -> bool:
 	return (att.scope || att.variable) && !DATA.has(att.file)
+
+
+static func is_fiber_lit(att: AttachmentData) -> bool:
+	return _entry(att).get("fiber_lit", false)
 
 
 # Near and far bound in cm.
