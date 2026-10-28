@@ -27,7 +27,7 @@ const SECONDARY_DRAIN := 1.25
 # FIBER: a reticle lit by the light around the scope, with a tritium floor. Draws no power and has no switch.
 enum Sight { DOT, SCOPE, SCOPE_WHOLE, SCOPE_DOT, FIBER }
 # What the reticle pass draws. The values are the `state` uniform of Reticle.gdshader.
-enum Reticle { NONE, UNLIT, LIT, LIT_WHOLE }
+enum ReticleState { NONE, UNLIT, LIT, LIT_WHOLE }
 
 # By item file. A sight that is not listed draws no power and is left as vanilla or VosTac draws it.
 const SIGHTS: Dictionary[String, Sight] = {
@@ -112,14 +112,14 @@ func _process(delta: float) -> void:
 			rate *= SECONDARY_DRAIN
 		powered = _draw_power(rig.slotData, item, rate, delta)
 
-	var dot: Reticle = Reticle.LIT if powered || !dot_on_battery else Reticle.NONE
+	var dot: ReticleState = ReticleState.LIT if powered || !dot_on_battery else ReticleState.NONE
 	var illuminated: bool = lit && powered
-	var scope: Reticle = Reticle.LIT
+	var scope: ReticleState = ReticleState.LIT
 	if scope_on_battery && !illuminated:
-		scope = Reticle.UNLIT
+		scope = ReticleState.UNLIT
 	elif scope_on_battery && sight == Sight.SCOPE_WHOLE:
-		scope = Reticle.LIT_WHOLE
-	_push(optic.reticle, dot if sight == Sight.DOT else scope, illuminated)
+		scope = ReticleState.LIT_WHOLE
+	_push_state(optic.reticle, dot if sight == Sight.DOT else scope, illuminated)
 
 	if sight == Sight.SCOPE_DOT:
 		# The second dot is one more surface of the scope's mesh, with a lens material that is not `optic.reticle`.
@@ -127,7 +127,7 @@ func _process(delta: float) -> void:
 		for surface in mesh.get_surface_override_material_count():
 			var lens := mesh.get_surface_override_material(surface) as ShaderMaterial
 			if lens && lens != optic.reticle && lens.get_shader_parameter("reticle"):
-				_push(lens, dot, false)
+				_push_state(lens, dot, false)
 
 
 # Whether the weapon's scope illumination is on: by its own switch, or by the clock with the light sensor.
@@ -170,41 +170,42 @@ func _sighted_rig() -> WeaponRig:
 
 
 # A lens material is shared by every instance of its sight, so the weapon in hands pushes its state each frame.
-func _push(lens: ShaderMaterial, state: Reticle, rim_glow: bool) -> void:
-	var reticle := _reticle_pass(lens, _RETICLE_SHADER)
-	reticle.set_shader_parameter("intensity", lens.get_shader_parameter("intensity"))
-	reticle.set_shader_parameter("state", state)
+func _push_state(lens: ShaderMaterial, state: ReticleState, rim_glow: bool) -> void:
+	var pass_mat := _reticle_pass(lens, _RETICLE_SHADER)
+	pass_mat.set_shader_parameter("intensity", lens.get_shader_parameter("intensity"))
+	pass_mat.set_shader_parameter("state", state)
 
-	var rim := reticle.next_pass as ShaderMaterial
+	var rim := pass_mat.next_pass as ShaderMaterial
 	if !rim:
 		rim = ShaderMaterial.new()
 		rim.shader = _RIM_SHADER
 		# Over the lens and the reticle.
 		rim.render_priority = lens.render_priority + 2
-		reticle.next_pass = rim
+		pass_mat.next_pass = rim
 	rim.set_shader_parameter("opacity", lens.get_shader_parameter("opacity"))
 	rim.set_shader_parameter("rim_glow", rim_glow)
 
 
 # The reticle pass of a lens on the given shader, placed for the frame.
 func _reticle_pass(lens: ShaderMaterial, shader: Shader) -> ShaderMaterial:
-	var reticle := lens.next_pass as ShaderMaterial
-	if !reticle || reticle.shader != shader:
-		reticle = ShaderMaterial.new()
-		reticle.shader = shader
+	var pass_mat := lens.next_pass as ShaderMaterial
+	if !pass_mat || pass_mat.shader != shader:
+		pass_mat = ShaderMaterial.new()
+		pass_mat.shader = shader
 		for parameter: String in ["scope", "reticle"]:
-			reticle.set_shader_parameter(parameter, lens.get_shader_parameter(parameter))
-		lens.next_pass = reticle
+			pass_mat.set_shader_parameter(parameter, lens.get_shader_parameter(parameter))
+		lens.next_pass = pass_mat
 		# The lens shader goes on drawing glass, shadow and reflection, and no reticle of its own.
 		lens.set_shader_parameter("reticle", _blank)
 
 	# Vanilla or VosTac wrote these two for the frame.
-	reticle.set_shader_parameter("size", lens.get_shader_parameter("size"))
-	reticle.set_shader_parameter("opacity", lens.get_shader_parameter("opacity"))
+	pass_mat.set_shader_parameter("size", lens.get_shader_parameter("size"))
+	pass_mat.set_shader_parameter("opacity", lens.get_shader_parameter("opacity"))
 	# VosTac sets it on the lens materials it places from the lens UV. Absent, the pass keeps vanilla's placement.
 	var lens_uv_scale = lens.get_shader_parameter("lens_uv_scale")
-	reticle.set_shader_parameter("lens_uv_scale", lens_uv_scale)
+	pass_mat.set_shader_parameter("lens_uv_scale", lens_uv_scale)
+	var vostac_lens: bool = lens_uv_scale != null
 	# Godot orders the passes of a surface by priority, not by the chain.
 	# A vanilla lens draws over the reticle, so its eye relief shadow hides it. VosTac draws its reticle over its own shadow.
-	reticle.render_priority = lens.render_priority + (1 if lens_uv_scale else -1)
-	return reticle
+	pass_mat.render_priority = lens.render_priority + (1 if vostac_lens else -1)
+	return pass_mat
