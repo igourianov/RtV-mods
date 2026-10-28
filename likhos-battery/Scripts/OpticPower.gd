@@ -19,10 +19,11 @@ const SECONDARY_DRAIN := 1.25
 
 # What a sight powers.
 # DOT: the dot of a red dot sight, always on.
-# SCOPE: illumination of the texels the reticle texture authors red, or of the whole reticle for a sight in WHOLE_RETICLES.
+# SCOPE: illumination of the texels the reticle texture authors red.
+# SCOPE_WHOLE: illumination of the whole reticle, for a texture that authors nothing red.
 # SCOPE_DOT: a SCOPE that also carries an always-on dot on a lens surface of its own.
-enum Sight { DOT, SCOPE, SCOPE_DOT }
-# What a lens draws for its reticle. LIT_WHOLE draws the sight's texture from WHOLE_RETICLES.
+enum Sight { DOT, SCOPE, SCOPE_WHOLE, SCOPE_DOT }
+# What a lens draws for its reticle.
 enum ReticleState { NONE, UNLIT, LIT, LIT_WHOLE }
 
 # By item file. A sight that is not listed draws no power and is left as vanilla or VosTac draws it.
@@ -36,19 +37,18 @@ const SIGHTS: Dictionary[String, Sight] = {
 	"Kobra": Sight.DOT,
 	"Vudu": Sight.SCOPE,
 	"Leopard": Sight.SCOPE,
-	"POSP": Sight.SCOPE,
+	"POSP": Sight.SCOPE_WHOLE,
 	"HMR": Sight.SCOPE_DOT,
-}
-
-# By item file. Scopes whose texture authors nothing red, lit from a copy with every opaque texel red.
-const WHOLE_RETICLES: Dictionary[String, String] = {
-	"POSP": "res://mods/likhos-battery/Textures/POSP_Reticle_Whole.png",
 }
 
 # A lens material's own reticle and intensity, kept before the first state push overwrites them.
 class Authored:
 	var reticle: Texture2D
 	var intensity: float
+	# The reticle with every opaque texel red, for a SCOPE_WHOLE sight. A worker thread builds it into `whole_image`.
+	var whole: Texture2D
+	var whole_image: Image
+	var whole_task := -1
 
 var gameData := preload("res://Resources/GameData.tres")
 var config := Config.instance
@@ -56,7 +56,6 @@ var config := Config.instance
 var _rig_manager: Node
 var _click := AudioChunkPlayer.new(_CLICK_AUDIO, _CLICK_VOLUME)
 var _blank := ImageTexture.create_from_image(Image.create_empty(1, 1, false, Image.FORMAT_RGBA8))
-var _whole_reticles: Dictionary[String, Texture2D] = {}
 var _authored: Dictionary[ShaderMaterial, Authored] = {}
 # One sight is live at a time, so the flicker state is kept once.
 var _flicker := Flicker.new()
@@ -67,11 +66,6 @@ var _dip: bool
 
 func _init() -> void:
 	add_child(_click)
-	# Loaded up front, so lighting a scope for the first time does not stall a frame.
-	for file: String in WHOLE_RETICLES:
-		var image := Image.load_from_file(WHOLE_RETICLES[file])
-		image.generate_mipmaps()
-		_whole_reticles[file] = ImageTexture.create_from_image(image)
 
 
 func _input(event: InputEvent) -> void:
@@ -122,7 +116,8 @@ func _process(delta: float) -> void:
 
 	var dot: ReticleState = ReticleState.LIT if powered || !dot_on_battery else ReticleState.NONE
 	var illuminated: bool = lit && powered
-	var whole: Texture2D = _whole_reticles.get(item.file)
+	# Null while the copy is being built, so the scope shows as authored until it is ready.
+	var whole: Texture2D = _whole(optic.reticle) if sight == Sight.SCOPE_WHOLE else null
 	var scope: ReticleState = ReticleState.LIT
 	if scope_on_battery && !illuminated:
 		scope = ReticleState.UNLIT
@@ -181,13 +176,7 @@ func _sighted_rig() -> WeaponRig:
 # A lens material is shared by every instance of its sight, so the weapon in hands pushes its state each frame.
 # The lens shader, vanilla's or another mod's, draws the reticle from these uniforms with its own placement, shadow and aim fade.
 func _push_state(lens: ShaderMaterial, state: ReticleState, rim_glow: bool, whole: Texture2D = null) -> void:
-	var authored: Authored = _authored.get(lens)
-	if !authored:
-		authored = Authored.new()
-		authored.reticle = lens.get_shader_parameter("reticle")
-		authored.intensity = lens.get_shader_parameter("intensity")
-		_authored[lens] = authored
-
+	var authored := _authored_of(lens)
 	var texture: Texture2D = authored.reticle
 	var intensity: float = authored.intensity
 	if state == ReticleState.NONE:
@@ -209,3 +198,47 @@ func _push_state(lens: ShaderMaterial, state: ReticleState, rim_glow: bool, whol
 		lens.next_pass = rim
 	rim.set_shader_parameter("opacity", lens.get_shader_parameter("opacity"))
 	rim.set_shader_parameter("rim_glow", rim_glow)
+
+
+# The reticle and intensity a lens material came with, kept the first time the mod meets it.
+func _authored_of(lens: ShaderMaterial) -> Authored:
+	var authored: Authored = _authored.get(lens)
+	if !authored:
+		authored = Authored.new()
+		authored.reticle = lens.get_shader_parameter("reticle")
+		authored.intensity = lens.get_shader_parameter("intensity")
+		_authored[lens] = authored
+	return authored
+
+
+# The lens's reticle with every opaque texel red, or null until a worker thread has built it.
+# Built from the texture on the lens, so a game update or another mod's replacement carries over.
+func _whole(lens: ShaderMaterial) -> Texture2D:
+	var authored := _authored_of(lens)
+	if authored.whole || !authored.reticle:
+		return authored.whole
+
+	if authored.whole_task < 0:
+		# The readback stays on the main thread, the work on the pixels goes to the worker.
+		authored.whole_image = authored.reticle.get_image()
+		authored.whole_task = WorkerThreadPool.add_task(_fill_red.bind(authored.whole_image))
+	elif WorkerThreadPool.is_task_completed(authored.whole_task):
+		WorkerThreadPool.wait_for_task_completion(authored.whole_task)
+		authored.whole = ImageTexture.create_from_image(authored.whole_image)
+		authored.whole_image = null
+	return authored.whole
+
+
+# Runs on a worker thread.
+static func _fill_red(image: Image) -> void:
+	# Imported reticles are VRAM compressed.
+	image.decompress()
+	image.clear_mipmaps()
+	image.convert(Image.FORMAT_RGBA8)
+	var data := image.get_data()
+	for i in range(0, data.size(), 4):
+		data[i] = 255
+	image.set_data(image.get_width(), image.get_height(), false, Image.FORMAT_RGBA8, data)
+	image.generate_mipmaps()
+	# Back to the VRAM size of the original. Where the build has no compressor the copy stays uncompressed.
+	image.compress(Image.COMPRESS_S3TC)
