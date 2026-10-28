@@ -239,6 +239,5 @@ static func _fill_red(image: Image) -> void:
 	for i in range(0, data.size(), 4):
 		data[i] = 255
 	image.set_data(image.get_width(), image.get_height(), false, Image.FORMAT_RGBA8, data)
+	# Stays uncompressed. Export builds ship no BC compressor and Image.compress logs an error there.
 	image.generate_mipmaps()
-	# Back to the VRAM size of the original. Where the build has no compressor the copy stays uncompressed.
-	image.compress(Image.COMPRESS_S3TC)
