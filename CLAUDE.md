@@ -107,6 +107,50 @@ MyModMain="res://mods/my-mod-id/Scripts/Main.gd"
 
 Do not modify mod version property unless specifically requested to do so. Build process does it automatically.
 
+`build.ps1` bumps the patch version in `mod.txt` on every build of a mod whose folder has uncommitted changes (`git status` not clean). A clean folder builds at its current version.
+
+### `CHANGELOG.md`
+
+Each mod has `<mod-id>/CHANGELOG.md`. It ships at the archive root and `publish.ps1` posts its new sections to Nexus.
+
+Format:
+
+```
+# Unreleased
+* new entry
+
+# 2.1.40
+* fixed batteries on the ground all taking the charge of the last battery dropped
+```
+
+* Sections are newest first. Each heading is `# ` followed by a version (`X.Y.Z`) or `Unreleased`. No other text in a heading.
+* Entries are `* ` bullets, one line each. Do not hard wrap them.
+* Write entries for players: what changed in game, not how the code changed. Start lowercase, no trailing period (match the existing file).
+* Add new entries under a `# Unreleased` section at the top, creating it when absent. Use a specific version heading only when asked to.
+* Edit an existing entry in place when the change only amends something not yet published, rather than adding a corrective entry.
+
+### Publishing to Nexus
+
+Publish only when asked. It uploads to a public mod page and cannot be undone from here.
+
+Inputs:
+* `nexus-api.key` at the repo root (personal Nexus API key), or `-ApiKey`.
+* `publish.config.json`: `mods.<mod-id>` needs `mod_id` (from the mod page URL) and `file_id` (from the mod's file URL). Optional `category` (`main`, `optional`, `miscellaneous`, default `main`) and `update_mod_version` (default `true`).
+* `build.config.json`: game dir, used to find `<game>/mods/<mod-id>.vmz`.
+
+Steps:
+1. Stamp the changelog. `publish.ps1` throws on any heading that is not a version, so rename `# Unreleased` to the next patch version: the current `mod.txt` version with patch + 1. The rename makes the folder dirty, so the next build bumps `mod.txt` to exactly that version.
+2. `.\build.ps1 -Mod <mod-id>`. Confirm the printed `built: <mod-id> vX.Y.Z` matches the stamped heading.
+3. `.\publish.ps1 -Mod <mod-id> -DryRun`. Check the version and the changelog text it would send.
+4. `.\publish.ps1 -Mod <mod-id>`.
+
+What `publish.ps1` does:
+* Reads `id` and `version` from `mod.txt` inside the built `.vmz`, wraps the `.vmz` in `<mod-id>.zip` and uploads it as a new version of `file_id`. Uploads over 100 MiB are not supported.
+* Refuses a version equal to or older than the live one on Nexus unless `-Force`.
+* Archives the previous file version unless `-NoArchive`. Updates the mod page version unless `-NoBumpModVersion` or `update_mod_version: false`.
+* Posts a Nexus changelog built from the repo's `<mod-id>/CHANGELOG.md` (not the archived copy): every section newer than the live version, up to and including the published version, merged into one list. Bullet markers and blank lines are dropped. A missing file or no new sections only gives a warning.
+* `-Vmz <path>` publishes a given archive in place of the built one. `-Category` overrides the config category.
+
 ### Debugging
 
 Runtime log lives at `%APPDATA%\Road to Vostok\logs\godot.log` (plus session-stamped rolls in the same folder). `print()` in mod scripts lands there. Useful greps:
