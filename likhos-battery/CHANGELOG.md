@@ -1,6 +1,6 @@
 # Unreleased
 * compatibility fix for other mods modifying scope shadow
-* the ACOG reticle looks as the game ships it again, without the ambient light response and tritium glow
+* the ACOG reticle no longer keeps a faint tritium glow in full darkness
 
 # 2.1.40
 * fixed batteries on the ground all taking the charge of the last battery dropped

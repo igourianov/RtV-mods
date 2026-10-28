@@ -25,7 +25,8 @@ Removable batteries. Powered lasers and sights. Flicker at low charge.
 * On red dot and holographic sights the dot is on whenever the weapon is in your hands and draws very little: a full battery lasts about 5.5 hours. At 0% there is no dot.
 * Vudu, Leopard, HAMR and POSP have switchable reticle illumination on the `Reticle Illumination` binding (default `Y`). Scopes start unlit with a black reticle. A lit reticle empties a battery in about 83 minutes. At 0% the reticle stays black and usable.
 * The HAMR's top dot runs off the same battery as its reticle. Unlit, the HAMR drains like a red dot. Lit, a battery lasts about 67 minutes.
-* The ACOG and the PU need no battery and look as the game ships them.
+* The ACOG is fiber optic lit and needs no battery. Its reticle derives brightness level from the light around the scope, and dims in shade.
+* The PU has no illumination and needs no battery.
 * The `Red Dot Power Draw` setting in LCM:
 	- *Disabled:* dots draw no power and always show, as the game ships them.
 	- *Always On:* a dot needs charge and drains it while the weapon is in your hands.

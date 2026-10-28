@@ -4,6 +4,7 @@ const Config := preload("./Config.gd")
 const BatteryUtil := preload("./BatteryUtil.gd")
 const Flicker := preload("./Flicker.gd")
 const AudioChunkPlayer := preload("../Lib/AudioChunkPlayer.gd")
+const LightProbe := preload("../Lib/LightProbe.gd")
 const _RIM_SHADER := preload("res://mods/likhos-battery/Shaders/RimGlow.gdshader")
 const _CLICK_AUDIO := preload("res://Audio/Character/Handling/Files/Gadget.wav")
 const _CLICK_VOLUME := -10.0
@@ -16,13 +17,20 @@ const _SUNRISE := 600.0
 const _SUNSET := 1800.0
 # Tunable: how much faster a lit scope drains for carrying a second dot.
 const SECONDARY_DRAIN := 1.25
+# Tunable: fiber glow per unit of light around the scope.
+const FIBER_GAIN := 0.8
+# Ceiling for a fiber lens's intensity, where the lens itself gets almost no light.
+const _FIBER_MAX_INTENSITY := 10.0
+# The probe's samples: light as a fiber gathers it, and light as the lens shaders count it.
+enum _Probe { FIBER, LENS }
 
 # What a sight powers.
 # DOT: the dot of a red dot sight, always on.
 # SCOPE: illumination of the texels the reticle texture authors red.
 # SCOPE_WHOLE: illumination of the whole reticle, for a texture that authors nothing red.
 # SCOPE_DOT: a SCOPE that also carries an always-on dot on a lens surface of its own.
-enum Sight { DOT, SCOPE, SCOPE_WHOLE, SCOPE_DOT }
+# FIBER: a reticle lit by the light around the scope. Draws no power and has no switch.
+enum Sight { DOT, SCOPE, SCOPE_WHOLE, SCOPE_DOT, FIBER }
 # What a lens draws for its reticle.
 enum ReticleState { NONE, UNLIT, LIT, LIT_WHOLE }
 
@@ -39,6 +47,7 @@ const SIGHTS: Dictionary[String, Sight] = {
 	"Leopard": Sight.SCOPE,
 	"POSP": Sight.SCOPE_WHOLE,
 	"HMR": Sight.SCOPE_DOT,
+	"ACOG": Sight.FIBER,
 }
 
 # A lens material's own reticle and intensity, kept before the first state push overwrites them.
@@ -57,6 +66,10 @@ var _rig_manager: Node
 var _click := AudioChunkPlayer.new(_CLICK_AUDIO, _CLICK_VOLUME)
 var _blank := ImageTexture.create_from_image(Image.create_empty(1, 1, false, Image.FORMAT_RGBA8))
 var _authored: Dictionary[ShaderMaterial, Authored] = {}
+var _probe := LightProbe.new([
+	LightProbe.Sample.new(true, true, false),
+	LightProbe.Sample.new(false, false, true),
+] as Array[LightProbe.Sample])
 # One sight is live at a time, so the flicker state is kept once.
 var _flicker := Flicker.new()
 # Physics frame of the last flicker step, and whether that step was a dip.
@@ -66,6 +79,7 @@ var _dip: bool
 
 func _init() -> void:
 	add_child(_click)
+	add_child(_probe)
 
 
 func _input(event: InputEvent) -> void:
@@ -76,7 +90,7 @@ func _input(event: InputEvent) -> void:
 
 	var rig := _sighted_rig()
 	var optic = rig.activeOptic if rig else null
-	if !optic || SIGHTS[optic.attachmentData.file] == Sight.DOT:
+	if !optic || SIGHTS[optic.attachmentData.file] in [Sight.DOT, Sight.FIBER]:
 		return
 
 	var slotData: SlotData = rig.slotData
@@ -90,6 +104,8 @@ func _input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
+	# The probe renders only while a fiber lit sight is in hands.
+	_probe.set_process(false)
 	var rig := _sighted_rig()
 	if !rig:
 		return
@@ -97,6 +113,10 @@ func _process(delta: float) -> void:
 	var optic = rig.activeOptic
 	var item: ItemData = optic.attachmentData
 	var sight: Sight = SIGHTS[item.file]
+	if sight == Sight.FIBER:
+		_probe.set_process(true)
+		_light_fiber(optic)
+		return
 
 	# A consumer whose setting is DISABLED draws no power and shows as authored, whatever the charge.
 	var scope_on_battery: bool = sight != Sight.DOT && config.scope_power_draw != Config.ScopePowerDraw.DISABLED
@@ -132,6 +152,24 @@ func _process(delta: float) -> void:
 			var lens := mesh.get_surface_override_material(surface) as ShaderMaterial
 			if lens && lens != optic.reticle && lens.get_shader_parameter("reticle"):
 				_push_state(lens, dot, false)
+
+
+# Scales the fiber lens's intensity by the light around the scope.
+# The lens shader lights the reticle again as albedo, so intensity is the fiber light over the light the lens gets on its own.
+func _light_fiber(optic) -> void:
+	# The probe sits just behind the scope, at the eyepiece, facing the eye.
+	var camera := get_viewport().get_camera_3d()
+	var mesh: MeshInstance3D = optic.mesh
+	var bounds := mesh.global_transform * mesh.get_aabb()
+	_probe.normal = camera.global_basis.z
+	_probe.origin = bounds.get_center() + _probe.normal * (0.5 * bounds.size.dot(_probe.normal.abs()) + 0.01)
+
+	var lens_light := _probe.luminance(_Probe.LENS)
+	# Zero until the first reading, and too noisy to divide by in near darkness.
+	if lens_light < 0.001:
+		return
+	var intensity := FIBER_GAIN * _probe.luminance(_Probe.FIBER) / lens_light
+	(optic.reticle as ShaderMaterial).set_shader_parameter("intensity", minf(intensity, _FIBER_MAX_INTENSITY))
 
 
 # Whether the weapon's scope illumination is on: by its own switch, or by the clock with the light sensor.

@@ -31,6 +31,7 @@ When modifying behavior, first locate the relevant script/scene in `src/` to und
 * `Main.gd` - base class for mod Main's, contains additional hooks
 * `Out.gd` - class for printing debug and warning statements in normalized way
 * `Inputs.gd` - class to control in-game action bindings
+* `LightProbe.gd` - SubViewport that measures the light the renderer puts on a point of the world, read back asynchronously
 
 mod-lib has it's own set of hooks and dependencies, that should be included with every mod and noted in the INSTRUCTIONS.md file.
 
