@@ -57,8 +57,16 @@ Key facts when reading `src/`:
 GDRE numbers `ext_resource` ids sequentially, so one added resource renumbers every id and reference after it. `tools/normalize-src.js` rewrites each id to the resource uid and sorts the `ext_resource` block by path. Committed `src/` content is normalized this way.
 
 * Run `node tools/normalize-src.js` after every decompile, before staging in `src/`. A fresh decompile is un-normalized again, so skipping the run produces a diff touching thousands of files.
+* The script also keeps the committed (`HEAD`) text of `Transform3D` properties whose components all differ by less than 1e-3. GDRE produces float noise there on every decompile (skeleton rest poses). It does the same for `sub_resource` ids, which Godot regenerates randomly (matched per type, in order, when the counts of vanished and new ids are equal). So run it before committing the new version, while `HEAD` is still the previous one.
 * Running it on already normalized files changes nothing.
-* This script is the only allowed way to modify files under `src/`.
+* This script is the only allowed way to modify files under `src/`, apart from the decompile sync below.
+
+Decompile procedure (`gdre_tools` is on PATH via scoop):
+1. Run `gdre_tools --headless --recover=<game>/RTV.pck --output=<scratch dir>`. Never output straight into `src/`.
+2. Sync the scratch dir into `src/` with a copy that does not delete (`robocopy <scratch> src /E`). NEVER use `/MIR` or `/PURGE`: `src/` holds files that are not in the decompile output (`.git`, `.gitignore`), and mirroring deletes them. Without `src/.gitignore`, `git add -A` stages ignored files and takes minutes.
+3. Run `node tools/normalize-src.js`.
+4. Check `git -C src status --short` for deleted files (` D`) before staging. Only files the game actually removed may be deleted. `.gitignore` must never appear. Restore anything else with `git -C src checkout HEAD -- <path>`.
+5. Commit in `src/` with the game version as the message (`config/version` in `src/project.godot`).
 
 
 ## `vostok-mod-loader/` holds the loader source + docs (read-only reference)
