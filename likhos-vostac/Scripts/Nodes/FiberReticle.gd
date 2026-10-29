@@ -23,7 +23,8 @@ func _init() -> void:
 
 
 func _process(delta: float) -> void:
-	if !is_instance_valid(_rig_manager):
+	# A map being left is out of the tree before it is freed, and its rig has no global transform.
+	if !is_instance_valid(_rig_manager) || !_rig_manager.is_inside_tree():
 		_rig_manager = get_node_or_null(_RIG_MANAGER)
 	# the last child, as vanilla UpdateRig reads it; other mods park their own nodes in front of the rig
 	var rig: WeaponRig = _rig_manager.get_child(-1) as WeaponRig if _rig_manager && _rig_manager.get_child_count() > 0 else null
