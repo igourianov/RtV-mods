@@ -1,6 +1,6 @@
-# Unreleased
-* ACOG reticle glows by the light on top of the scope, where its fiber optic is, and keeps a faint tritium glow in full darkness (moved here from Likho's Battery Powered, update both mods)
-* scope shadow now covers the reticle of first focal plane scopes (Vudu, Leopard), while a lit reticle of other scopes stays visible over it
+# 4.2.2201
+* moved ACOG reticle fiber illumination here from `Battery Powered` mod
+* split FFP/SFP behavior: reticle appears behind scope shadow for FFP scopes (Vudu and Mark 8) and in front of it for the SFP scopes (all the rest)
 
 # 4.1.2189
 * removed weapon shadow added in 4.1.2188, it was cast from all lights and not just the flashlight. Recommended to use with Joni's `Full 3D Body` mod to get full shadow.

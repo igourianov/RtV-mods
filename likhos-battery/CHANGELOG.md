@@ -1,5 +1,5 @@
-# Unreleased
-* compatibility fix for other mods modifying scope shadow
+# 2.2.57
+* compatibility fix for other mods modifying scope shadow (removed shader duplication)
 * ACOG reticle brightness moved to VosTac (update both mods)
 
 # 2.1.40
